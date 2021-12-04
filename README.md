@@ -1,41 +1,6 @@
 ![](http://www.pocketmine.net/favicon.png)
 
-# PocketMine-MP [![Build Status](https://travis-ci.org/PocketMine/PocketMine-MP.png?branch=master)](https://travis-ci.org/PocketMine/PocketMine-MP)
-
-```
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-```	
-
-__PocketMine-MP is a sofware for creating Minecraft Pocket Edition servers__. It has a Plugin API that enables a developer to extend it and add new features, or change default ones.
-
-The entire server is done in PHP, and has been tested, profiled and optimized to run smoothly.
-
-### [Homepage](http://www.pocketmine.net/)
-
-### [Forums](http://forums.pocketmine.net/)
-
-### [Wiki](https://github.com/PocketMine/PocketMine-MP/wiki/)
-
-### [FAQ: Frequently Asked Questions](https://github.com/PocketMine/PocketMine-MP/wiki/Frequently-Asked-Questions)
-
-
-
-### [Twitter @PocketMine](https://twitter.com/PocketMine)
-
-## IRC Chat #pocketmine (or #mcpedevs) @ irc.freenode.net
-[#pocketmine + #mcpedevs channel WebIRC](http://webchat.freenode.net/?channels=pocketmine,mcpedevs)
-
+# Legacy PocketMine-MP
 
 ## Third-party Libraries/Protocols Used
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
