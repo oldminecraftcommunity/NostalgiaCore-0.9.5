@@ -1,6 +1,8 @@
 ![](http://www.pocketmine.net/favicon.png)
 
-# Legacy PocketMine-MP
+# NostalgiaCore
+
+NostalgiaCore is a fork of Legacy PocketMine-MP, which is fixing bugs of Legacy PocketMine-MP, and brings a *new* live into it.
 
 ## Third-party Libraries/Protocols Used
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
