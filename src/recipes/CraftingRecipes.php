@@ -55,6 +55,7 @@ class CraftingRecipes{
 		"IRON_INGOT:?x2=>SHEARS:0x1",		
 		"COAL:0x1,STICK:?x1=>TORCH:0x4",
 		"COAL:1x1,STICK:?x1=>TORCH:0x4",
+		"BEETROOT:?x1=>DYE:1x2",
 		
 		//Food & protection		
 		"MELON_SLICE:?x1=>MELON_SEEDS:0x1",
@@ -106,9 +107,9 @@ class CraftingRecipes{
 		"WOODEN_PLANKS:1x6=>SPRUCE_WOOD_STAIRS:0x4",
 		"WOODEN_PLANKS:1x3=>WOOD_SLAB:1x6",
 		"WOODEN_PLANKS:2x6=>BIRCH_WOOD_STAIRS:0x4",
-		"WOODEN_PLANKS:2x3=>BIRCH_WOOD_SLAB:2x6",
+		"WOODEN_PLANKS:2x3=>WOOD_SLAB:2x6",
 		"WOODEN_PLANKS:3x6=>JUNGLE_WOOD_STAIRS:0x4",
-		"WOODEN_PLANKS:3x3=>JUNGLE_WOOD_SLAB:3x6",
+		"WOODEN_PLANKS:3x3=>WOOD_SLAB:3x6",
 		
 		//Tools
 		"STICK:?x1,FEATHER:?x1,FLINT:?x1=>ARROW:0x4",
@@ -142,6 +143,7 @@ class CraftingRecipes{
 		"WOODEN_PLANKS:?x3,STICK:?x2=>WOODEN_PICKAXE:0x1",
 		"WOODEN_PLANKS:?x1,STICK:?x2=>WOODEN_SHOVEL:0x1",
 		"WOODEN_PLANKS:?x2,STICK:?x1=>WOODEN_SWORD:0x1",
+		"IRON_INGOT:?x6,STICK:?x1=>RAIL:0x16",
 		
 		//Food & protection
 		"BEETROOT:?x4,BOWL:?x1=>BEETROOT_SOUP:0x1",
@@ -184,6 +186,7 @@ class CraftingRecipes{
 		"IRON_INGOT:?x6=>IRON_BARS:0x16",
 		"COAL:0x9=>COAL_BLOCK:0x1",
 		"COAL_BLOCK:?x1=>COAL:0x9",
+		"MELON_SLICE:?x9=>MELON_BLOCK:?x1",
 	);
 	
 	private static $stone = array(

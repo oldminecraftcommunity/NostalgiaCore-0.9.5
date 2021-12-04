@@ -101,7 +101,7 @@ define("DOOR_BLOCK", 64);
 define("WOODEN_DOOR_BLOCK", 64);
 define("WOOD_DOOR_BLOCK", 64);
 define("LADDER", 65);
-
+define("RAIL", 66);
 define("COBBLE_STAIRS", 67);
 define("COBBLESTONE_STAIRS", 67);
 define("WALL_SIGN", 68);

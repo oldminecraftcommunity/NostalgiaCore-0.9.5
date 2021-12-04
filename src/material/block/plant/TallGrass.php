@@ -59,8 +59,14 @@ class TallGrassBlock extends FlowableBlock{
 			0,
 			0,
 			0,
+			0,
+			0,
+			0,
+			0,
 		);
-		if(($item = $possibleDrops[mt_rand(0, count($possibleDrops) - 1)]) !== 0){
+		if ($item->isShears()){
+			$drops[] = array(TALL_GRASS, 0, 1);
+		}elseif(($item = $possibleDrops[mt_rand(0, count($possibleDrops) - 1)]) !== 0){
 			$drops[] = $item;
 		}
 		return $drops;

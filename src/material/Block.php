@@ -79,7 +79,7 @@ abstract class Block extends Position{
 			SIGN_POST => "SignPostBlock",
 			WOOD_DOOR_BLOCK => "WoodDoorBlock",
 			LADDER => "LadderBlock",
-
+			RAIL => "RailBlock",
 			COBBLESTONE_STAIRS => "CobblestoneStairsBlock",
 			WALL_SIGN => "WallSignBlock",
 

@@ -37,10 +37,6 @@ if(strpos(" ".strtoupper(php_uname("s")), " WIN") !== false){
 
 $daylight = (int) date("I");
 
-if($daylight === 0){
-	$offset -= 3600;
-}
-
 date_default_timezone_set(timezone_name_from_abbr("", $offset, $daylight));
 
 gc_enable();
@@ -60,7 +56,7 @@ ini_set("memory_limit", "128M"); //Default
 define("LOG", true);
 define("START_TIME", microtime(true));
 define("MAJOR_VERSION", "Alpha_1.3.11");
-define("CODENAME", "甘いビートルート");
+define("CODENAME", "kotyara :3");
 define("CURRENT_MINECRAFT_VERSION", "v0.8.1 alpha");
 define("CURRENT_API_VERSION", 11);
 define("CURRENT_PHP_VERSION", "5.5");

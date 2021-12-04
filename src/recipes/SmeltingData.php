@@ -37,6 +37,10 @@ class SmeltingData{
 		RAW_CHICKEN => array(COOKED_CHICKEN, 0),
 		RED_MUSHROOM => array(DYE, 1),
 		POTATO => array(BAKED_POTATO, 0),
+		BEETROOT => array(DYE, 1),
+		COAL => array(DYE, 0),
+		STONE_BRICKS => array(STONE_BRICKS, 2),
+		
 	);
 
 }

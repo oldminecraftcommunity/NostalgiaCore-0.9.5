@@ -28,6 +28,13 @@ class PluginAPI extends stdClass{
 		$this->randomNonce = Utils::getRandomBytes(16, false);
 	}
 
+	public function __destruct(){
+		foreach($this->plugins as $p){
+			$p[0]->__destruct();
+		}
+		unset($plugins);
+	}
+
 	public function getList(){
 		$list = array();
 		foreach($this->plugins as $p){

@@ -110,7 +110,7 @@ class EntityAPI{
 
 	public function spawnToAll(Entity $e){
 		foreach($this->server->api->player->getAll($e->level) as $player){
-			if($player->eid !== false and $player->eid !== $e->eid and $e->class !== ENTITY_PLAYER){
+			if($player->eid !== false and $player->eid !== $e->eid and $e->class !== ENTITY_PLAYER and $e instanceof Entity){
 				$e->spawn($player);
 			}
 		}
@@ -124,6 +124,7 @@ class EntityAPI{
 			"x" => $pos->x + mt_rand(-10, 10) / 50,
 			"y" => $pos->y + 0.19,
 			"z" => $pos->z + mt_rand(-10, 10) / 50,
+			"level" => $pos->level,
 			//"speedX" => mt_rand(-3, 3) / 8,
 			"speedY" => mt_rand(5, 8) / 2,
 			//"speedZ" => mt_rand(-3, 3) / 8,
