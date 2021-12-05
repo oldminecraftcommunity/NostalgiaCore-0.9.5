@@ -389,7 +389,7 @@ class Level{
 			return false;
 		}
 		Cache::remove("world:{$this->name}:$X:$Z");
-		return $this->level->unloadChunk($X, $Z);
+		return $this->level->unloadChunk($X, $Z, $this->server->saveEnabled);
 	}
 
 	public function getOrderedChunk($X, $Z, $Yndex){
@@ -402,9 +402,8 @@ class Level{
 				return $cache;
 			}
 		}
-
-
-
+		
+		
 		$raw = array();
 		for($Y = 0; $Y < 8; ++$Y){
 			if(($Yndex & (1 << $Y)) > 0){

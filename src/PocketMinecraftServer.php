@@ -413,7 +413,6 @@ class PocketMinecraftServer{
 		if(stripos($er["file"], "plugin") !== false){
 			$dump .= "THIS ERROR WAS CAUSED BY A PLUGIN. REPORT IT TO THE PLUGIN DEVELOPER.\r\n";
 		}
-
 		$dump .= "Code: \r\n";
 		$file = @file($er["file"], FILE_IGNORE_NEW_LINES);
 		for($l = max(0, $er["line"] - 10); $l < $er["line"] + 10; ++$l){
@@ -444,7 +443,6 @@ class PocketMinecraftServer{
 			}
 			$dump .= "\r\n\r\n";
 		}
-
 		$extensions = array();
 		foreach(get_loaded_extensions() as $ext){
 			$extensions[$ext] = phpversion($ext);

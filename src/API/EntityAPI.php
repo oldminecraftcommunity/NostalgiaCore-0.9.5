@@ -120,9 +120,21 @@ class EntityAPI{
 		if($item->getID() === AIR or $item->count <= 0){
 			return;
 		}
+		$i = 0;
+		do { // drop the block to the first supporting block
+		$i++;
+		$v = new Vector3($pos->x, $pos->y - $i, $pos->z);
+		$b = $pos->level->getBlock($v);
+		if($b->isSolid === true) break;
+		if(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL)
+							break;
+		
+		}
+		while ($i<200);
+		if ($i==200) $i=0;
 		$data = array(
 			"x" => $pos->x + mt_rand(-10, 10) / 50,
-			"y" => $pos->y + 0.19,
+			"y" => $pos->y + 0.19 - $i + 1,
 			"z" => $pos->z + mt_rand(-10, 10) / 50,
 			"level" => $pos->level,
 			//"speedX" => mt_rand(-3, 3) / 8,
@@ -130,6 +142,7 @@ class EntityAPI{
 			//"speedZ" => mt_rand(-3, 3) / 8,
 			"item" => $item,
 		);
+
 		if($this->server->api->handle("item.drop", $data) !== false){
 			for($count = $item->count; $count > 0; ){
 				$item->count = min($item->getMaxStackSize(), $count);

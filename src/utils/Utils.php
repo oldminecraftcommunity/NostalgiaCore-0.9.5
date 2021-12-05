@@ -30,7 +30,7 @@ class Utils{
 	public static function isOnline(){
 		return ((@fsockopen("google.com", 80, $e = null, $n = null, 2) !== false or @fsockopen("www.linux.org", 80, $e = null, $n = null, 2) !== false or @fsockopen("www.php.net", 80, $e = null, $n = null, 2) !== false) ? true:false);
 	}
-
+	
 	public static function getUniqueID($raw = false, $extra = ""){
 		$machine = php_uname("a");
 		$machine .= file_exists("/proc/cpuinfo") ? file_get_contents("/proc/cpuinfo") : "";		
@@ -121,7 +121,7 @@ class Utils{
 	}
 
 	public static function readTriad($str){
-		list(,$unpacked) = unpack("N", "\x00".$str);
+		list(,$unpacked) = @unpack("N", "\x00".$str);
 		return $unpacked;
 	}
 
@@ -457,7 +457,7 @@ class Utils{
 	}
 
 	public static function readShort($str, $signed = true){
-		list(,$unpacked) = unpack("n", $str);
+		list(,$unpacked) = @unpack("n", $str);
 		if($unpacked > 0x7fff and $signed === true){
 			$unpacked -= 0x10000; // Convert unsigned short to signed short
 		}
@@ -472,7 +472,7 @@ class Utils{
 	}
 
 	public static function readLShort($str, $signed = true){
-		list(,$unpacked) = unpack("v", $str);
+		list(,$unpacked) = @unpack("v", $str);
 		if($unpacked > 0x7fff and $signed === true){
 			$unpacked -= 0x10000; // Convert unsigned short to signed short
 		}
@@ -487,7 +487,7 @@ class Utils{
 	}
 
 	public static function readInt($str){
-		list(,$unpacked) = unpack("N", $str);
+		list(,$unpacked) = @unpack("N", $str);
 		if($unpacked >= 2147483648){
 			$unpacked -= 4294967296;
 		}
@@ -502,7 +502,7 @@ class Utils{
 	}
 
 	public static function readLInt($str){
-		list(,$unpacked) = unpack("V", $str);
+		list(,$unpacked) = @unpack("V", $str);
 		if($unpacked >= 2147483648){
 			$unpacked -= 4294967296;
 		}
@@ -517,7 +517,7 @@ class Utils{
 	}
 
 	public static function readFloat($str){
-		list(,$value) = ENDIANNESS === BIG_ENDIAN ? unpack("f", $str):unpack("f", strrev($str));
+		list(,$value) = ENDIANNESS === BIG_ENDIAN ? @unpack("f", $str):@unpack("f", strrev($str));
 		return $value;
 	}
 
@@ -526,7 +526,7 @@ class Utils{
 	}
 
 	public static function readLFloat($str){
-		list(,$value) = ENDIANNESS === BIG_ENDIAN ? unpack("f", strrev($str)):unpack("f", $str);
+		list(,$value) = ENDIANNESS === BIG_ENDIAN ? @unpack("f", strrev($str)):@unpack("f", $str);
 		return $value;
 	}
 
@@ -539,7 +539,7 @@ class Utils{
 	}
 
 	public static function readDouble($str){
-		list(,$value) = ENDIANNESS === BIG_ENDIAN ? unpack("d", $str):unpack("d", strrev($str));
+		list(,$value) = ENDIANNESS === BIG_ENDIAN ? @unpack("d", $str):@unpack("d", strrev($str));
 		return $value;
 	}
 
@@ -548,7 +548,7 @@ class Utils{
 	}
 
 	public static function readLDouble($str){
-		list(,$value) = ENDIANNESS === BIG_ENDIAN ? unpack("d", strrev($str)):unpack("d", $str);
+		list(,$value) = ENDIANNESS === BIG_ENDIAN ? @unpack("d", strrev($str)):@unpack("d", $str);
 		return $value;
 	}
 
@@ -569,7 +569,7 @@ class Utils{
 
 		for($i = 0; $i < 8; $i += 4){
 			$value = bcmul($value, "4294967296", 0); //4294967296 == 2^32
-			$value = bcadd($value, 0x1000000 * ord($x{$i}) + ((ord($x{$i + 1}) << 16) | (ord($x{$i + 2}) << 8) | ord($x{$i + 3})), 0);
+			$value = bcadd($value, 0x1000000 * ord(@$x{$i}) + ((ord(@$x{$i + 1}) << 16) | (ord(@$x{$i + 2}) << 8) | ord(@$x{$i + 3})), 0);
 		}
 		return ($negative === true ? "-".$value:$value);
 	}

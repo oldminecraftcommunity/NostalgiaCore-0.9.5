@@ -106,9 +106,11 @@ class Explosion{
 				$server->api->entity->spawnToAll($e);
 			}elseif(mt_rand(0, 10000) < ((1/$this->size) * 10000)){
 				if(isset(self::$specialDrops[$block->getID()])){
-					$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem(self::$specialDrops[$block->getID()], 0));				
+					//$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem(self::$specialDrops[$block->getID()], 0));
+					return;				
 				}else{
-					$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($block->getID(), $this->level->level->getBlockDamage($block->x, $block->y, $block->z)));				
+					//$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($block->getID(), $this->level->level->getBlockDamage($block->x, $block->y, $block->z)));	
+					return;			
 				}
 			}
 			$this->level->level->setBlockID($block->x, $block->y, $block->z, 0);

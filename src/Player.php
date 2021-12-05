@@ -1285,8 +1285,6 @@ class Player{
 					$this->username = $data["username"];
 					$this->iusername = strtolower($this->username);
 				}else{
-					$this->username = $data["username"];
-					$this->iusername = strtolower($this->username);
 					$this->close("Bad username", false);
 					break;
 				}
@@ -1307,6 +1305,11 @@ class Player{
 				$u = $this->server->api->player->get($this->iusername, false);
 				if($u !== false){
 					$u->close("logged in from another location");
+				}
+				
+				if(!isset($this->CID) or $this->CID == null){
+					console("[DEBUG] Player ".$this->username." does not have a CID", true, true, 2);
+					$this->CID = Utils::readLong(Utils::getRandomBytes(8, false));
 				}
 				
 				$this->server->api->player->add($this->CID);
@@ -1370,7 +1373,7 @@ class Player{
 				));
 				if(($this->gamemode & 0x01) === 0x01){
 					$this->slot = 0;
-					$this->hotbar = array();
+				$this->hotbar = array();
 				}elseif($this->data->exists("hotbar")){
 					$this->hotbar = $this->data->get("hotbar");
 					$this->slot = $this->hotbar[0];
@@ -2218,6 +2221,7 @@ class Player{
 		foreach($this->hotbar as $slot){
 			$hotbar[] = $slot <= -1 ? -1 : $slot + 9;
 		}
+		
 		$this->dataPacket(MC_CONTAINER_SET_CONTENT, array(
 			"windowid" => 0,
 			"count" => count($this->inventory),

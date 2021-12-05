@@ -201,6 +201,7 @@ class Entity extends Position{
 				case MOB_PIGMAN:
 					return array(
 						array(COOKED_PORKCHOP, 0, mt_rand(0,2)),
+						array(GOLD_INGOT, 0, mt_rand(0,2)),
 					);
 				case MOB_CREEPER:
 					return array(
@@ -367,10 +368,7 @@ class Entity extends Position{
 							break;
 						case FIRE: //Fire block damage
 							if($this->inBlock(new Vector3($x, $y, $z))){
-								$this->harm(1, "fire");
-								$this->fire = 300;
-								$this->updateMetadata();
-								$hasUpdate = true;
+								//patched
 							}
 							break;
 						case CACTUS: //Cactus damage
