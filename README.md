@@ -4,6 +4,8 @@
 
 NostalgiaCore is a fork of Legacy PocketMine-MP, which is fixing bugs of Legacy PocketMine-MP, and brings a *new* live into it.
 
+Supported version: 0.8.1
+
 ## Third-party Libraries/Protocols Used
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
 * __[PHP SQLite3](http://php.net/manual/en/book.sqlite3.php)__
