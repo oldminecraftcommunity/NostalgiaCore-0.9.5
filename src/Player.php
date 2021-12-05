@@ -1263,8 +1263,10 @@ class Player{
 				if($this->loggedIn === true){
 					break;
 				}
+				$this->username = $data["username"];
+				$this->iusername = strtolower($this->username);
 				$this->realmsData = array("clientId" => $data["clientId"], "realms_data" => $data["realms_data"]);
-				if(count($this->server->clients) > $this->server->maxClients){
+				if(count($this->server->clients) > $this->server->maxClients and !$this->server->api->ban->isOp($this->iusername)){
 					$this->close("server is full!", false);
 					return;
 				}
