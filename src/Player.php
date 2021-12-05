@@ -1475,15 +1475,16 @@ class Player{
 				}
 				if(($this->entity instanceof Entity) and $data["counter"] > $this->lastMovement){
 					$this->lastMovement = $data["counter"];
+					$newPos = new Vector3($data["x"], $data["y"], $data["z"]);
 					if($this->forceMovement instanceof Vector3){
-						if($this->forceMovement->distance(new Vector3($data["x"], $data["y"], $data["z"])) <= 0.7){
+						if($this->forceMovement->distance($newPos) <= 0.7){
 							$this->forceMovement = false;
 						}else{
 							$this->teleport($this->forceMovement, $this->entity->yaw, $this->entity->pitch, false);
 						}
 					}
 					$speed = $this->entity->getSpeedMeasure();
-					if($this->blocked === true or ($this->server->api->getProperty("allow-flight") !== true and (($speed > 9 and ($this->gamemode & 0x01) === 0x00) or $speed > 20)) or $this->server->api->handle("player.move", $this->entity) === false){
+					if($this->blocked === true or ($this->server->api->getProperty("allow-flight") !== true and (($speed > 9 and ($this->gamemode & 0x01) === 0x00) or $speed > 20 or $this->entity->distance($newPos) > 7)) or $this->server->api->handle("player.move", $this->entity) === false){
 						if($this->lastCorrect instanceof Vector3){
 							$this->teleport($this->lastCorrect, $this->entity->yaw, $this->entity->pitch, false);
 						}
@@ -1491,7 +1492,7 @@ class Player{
 							console("[WARNING] ".$this->username." moved too quickly!");
 						}
 					}else{
-						$this->entity->setPosition(new Vector3($data["x"], $data["y"], $data["z"]), $data["yaw"], $data["pitch"]);
+						$this->entity->setPosition($newPos, $data["yaw"], $data["pitch"]);
 					}
 				}
 				break;
