@@ -1283,10 +1283,7 @@ class Player{
 					$this->close("Incorrect protocol #".$data["protocol1"], false);
 					break;
 				}
-				if(preg_match('#[^a-zA-Z0-9_]#', $data["username"]) == 0 and $data["username"] != ""){
-					$this->username = $data["username"];
-					$this->iusername = strtolower($this->username);
-				}else{
+				if(preg_match('#[^a-zA-Z0-9_]#', $data["username"]) > 0 or $data["username"] === "" or strtolower($data["username"]) === "rcon" or strtolower($data["username"]) === "console"){
 					$this->close("Bad username", false);
 					break;
 				}
