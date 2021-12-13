@@ -6,6 +6,17 @@ NostalgiaCore is a fork of Legacy PocketMine-MP, which is fixing bugs of Legacy 
 
 Supported version: 0.8.1
 
+# Why using NostalgiaCore to run a Minecraft Pocket Edition 0.8.1 server?
+
+• Items are dropping normally.
+• Dupes, that was in pmmp by mistake is fixed.
+• Player hotbar is saved.
+• Advanced cache option.
+• Server is starting faster.
+• Vector2 are fixed.
+• Players can't join as "RCON" or "CONSOLE".
+...and etc.
+
 ## Third-party Libraries/Protocols Used
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
 * __[PHP SQLite3](http://php.net/manual/en/book.sqlite3.php)__
