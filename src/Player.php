@@ -145,8 +145,8 @@ class Player{
 		if(!($this->entity instanceof Entity) or $this->connected === false){
 			return false;
 		}
-		$X = ($this->entity->x - 0.5) / 16;
-		$Z = ($this->entity->z - 0.5) / 16;
+		$X = $this->entity->x >> 4;
+		$Z = $this->entity->z >> 4;
 		$v = new Vector2($X, $Z);		
 		$this->chunksOrder = array();
 		for($x = 0; $x < 16; ++$x){
