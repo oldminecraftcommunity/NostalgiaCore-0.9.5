@@ -468,8 +468,9 @@ class PocketMinecraftServer{
 			$this->tickMeasure[] = $this->lastTick = $time;
 			unset($this->tickMeasure[key($this->tickMeasure)]);
 			++$this->ticks;
-			$this->tickerFunction($time);
+			return $this->tickerFunction($time);
 		}
+		return 0;
 	}
 
 	public static function clientID($ip, $port){
@@ -567,6 +568,8 @@ class PocketMinecraftServer{
 			if($packet !== false){
 				$this->packetHandler($packet);
 				$lastLoop = 0;
+			}elseif($this->tick() > 0){
+				$lastLoop = 0;
 			}else{
 				++$lastLoop;
 				if($lastLoop < 16){
@@ -622,6 +625,7 @@ class PocketMinecraftServer{
 		$this->preparedSQL->selectActions->bindValue(":time", $time, SQLITE3_FLOAT);
 		$actions = $this->preparedSQL->selectActions->execute();
 
+		$actionCount = 0;
 		if($actions instanceof SQLite3Result){
 			while(($action = $actions->fetchArray(SQLITE3_ASSOC)) !== false){
 				$cid = $action["ID"];
@@ -632,6 +636,7 @@ class PocketMinecraftServer{
 				if(!@is_callable($this->schedule[$cid][0])){
 					$return = false;
 				}else{
+					++$actionCount;
 					$return = call_user_func($this->schedule[$cid][0], $this->schedule[$cid][1], $this->schedule[$cid][2]);
 				}
 
@@ -643,6 +648,7 @@ class PocketMinecraftServer{
 			}
 			$actions->finalize();
 		}
+		return $actionCount;
 	}
 
 	public function event($event,callable $func){
