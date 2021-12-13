@@ -9,12 +9,19 @@ Supported version: 0.8.1
 # Why using NostalgiaCore to run a Minecraft Pocket Edition 0.8.1 server?
 
 • Items are dropping normally.
+
 • Dupes, that was in pmmp by mistake is fixed.
+
 • Player hotbar is saved.
+
 • Advanced cache option.
+
 • Server is starting faster.
+
 • Vector2 are fixed.
+
 • Players can't join as "RCON" or "CONSOLE".
+
 ...and etc.
 
 ## Third-party Libraries/Protocols Used
