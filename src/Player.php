@@ -1432,9 +1432,6 @@ class Player{
 						$this->sendArmor();
 						$this->sendChat($this->server->motd."\n");
 						
-						if($this->iusername === "steve" or $this->iusername === "stevie"){
-							$this->sendChat("You're using the default username. Please change it on the Minecraft PE settings.\n");
-						}
 						$this->sendInventory();
 						$this->sendSettings();
 						$this->server->schedule(50, array($this, "orderChunks"), array(), true);
