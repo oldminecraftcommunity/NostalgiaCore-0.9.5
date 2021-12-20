@@ -175,7 +175,7 @@ class Level{
 						$entities[] = array(
 							"id" => $entity->type,
 							"TileX" => $entity->x,
-							"TileX" => $entity->y,
+							"TileY" => $entity->y,
 							"TileX" => $entity->z,
 							"Health" => $entity->health,
 							"Motive" => $entity->data["Motive"],
