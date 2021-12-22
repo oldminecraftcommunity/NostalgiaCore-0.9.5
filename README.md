@@ -6,6 +6,8 @@ NostalgiaCore is a fork of Legacy PocketMine-MP, which is fixing bugs of Legacy 
 
 Supported version: 0.8.1
 
+(Special thx to GullCraft Network and DartMiner43)
+
 # Why using NostalgiaCore to run a Minecraft Pocket Edition 0.8.1 server?
 
 • Items are dropping normally.
