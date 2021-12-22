@@ -24,5 +24,11 @@ class SnowBlock extends SolidBlock{
 		parent::__construct(SNOW_BLOCK, 0, "Snow Block");
 		$this->hardness = 1;
 	}
+
+	public function getDrops(Item $item, Player $player){
+	return array(
+		array(SNOWBALL, 0, 4),
+		);
+	}
 	
 }

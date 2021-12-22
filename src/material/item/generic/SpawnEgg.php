@@ -32,6 +32,11 @@ class SpawnEggItem extends Item{
 			case MOB_SHEEP:
 			case MOB_COW:
 			case MOB_PIG:
+			case MOB_ZOMBIE:
+			case MOB_CREEPER:
+			case MOB_SKELETON:
+			case MOB_SPIDER:
+			case MOB_PIGMAN:
 				$data = array(
 					"x" => $block->x + 0.5,
 					"y" => $block->y,
