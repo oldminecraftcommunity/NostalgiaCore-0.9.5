@@ -24,6 +24,8 @@ Supported version: 0.8.1
 
 ...and etc.
 
+Special thx to Gullcraft Network and DartMiner43
+
 ## Third-party Libraries/Protocols Used
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
 * __[PHP SQLite3](http://php.net/manual/en/book.sqlite3.php)__
