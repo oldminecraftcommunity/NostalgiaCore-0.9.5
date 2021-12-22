@@ -53,7 +53,7 @@ define("LAPIS_BLOCK", 22);
 define("SANDSTONE", 24);
 
 define("BED_BLOCK", 26);
-
+define("POWERED_RAIL", 27);
 
 define("COBWEB", 30);
 define("TALL_GRASS", 31);

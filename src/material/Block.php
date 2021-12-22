@@ -46,6 +46,7 @@ abstract class Block extends Position{
 			LAPIS_BLOCK => "LapisBlock",
 			SANDSTONE => "SandstoneBlock",
 			BED_BLOCK => "BedBlock",
+			POWERED_RAIL => "PoweredRailBlock",
 			COBWEB => "CobwebBlock",
 			TALL_GRASS => "TallGrassBlock",
 			DEAD_BUSH => "DeadBushBlock",
