@@ -50,7 +50,7 @@ class SnowLayerBlock extends FlowableBlock{
 	public function getDrops(Item $item, Player $player){
 		if($item->isShovel() !== false){
 			return array(
-				array(SNOWBALL, 0, 2),
+				array(SNOWBALL, 0, 1),
 			);
 		}
 	}
