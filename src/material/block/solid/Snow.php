@@ -26,9 +26,11 @@ class SnowBlock extends SolidBlock{
 	}
 
 	public function getDrops(Item $item, Player $player){
-	return array(
-		array(SNOWBALL, 0, 4),
-		);
+		if($item->isShovel() !== false){
+		return array(
+			array(SNOWBALL, 0, 4),
+			);
+		}
 	}
 	
 }
