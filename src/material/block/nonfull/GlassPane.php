@@ -25,5 +25,9 @@ class GlassPaneBlock extends TransparentBlock{
 		$this->isFullBlock = false;
 		$this->isSolid = false;
 	}
-	
+	public function getDrops(Item $item, Player $player){
+		return array(
+			array(GLASS_PANE, 0, 0),
+		);
+	}
 }
