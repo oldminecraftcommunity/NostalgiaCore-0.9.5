@@ -36,4 +36,13 @@ class DeadBushBlock extends FlowableBlock{
 		return false;
 	}
 	
+	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+		$down = $this->getSide(0);
+		if($down->getID() == 12){
+			$this->level->setBlock($block, $this, true, false, true);
+			return true;
+		} 
+		return false;
+	}
+	
 }
