@@ -61,15 +61,23 @@ class TallGrassBlock extends FlowableBlock{
 			0,
 			0,
 			0,
-			0,
-			0,
 		);
 		if ($item->isShears()){
-			$drops[] = array(TALL_GRASS, 0, 1);
-		}elseif(($item = $possibleDrops[mt_rand(0, count($possibleDrops) - 1)]) !== 0){
+			$drops[] = array($this->id, $this->meta & 0x03, 1);
+		}
+		elseif(($item = $possibleDrops[mt_rand(0, count($possibleDrops) - 1)]) !== 0){
 			$drops[] = $item;
 		}
 		return $drops;
+	}
+	
+		public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+		$down = $this->getSide(0);
+		if($down->getID() == 2 or $down->getID() == 3){
+			$this->level->setBlock($block, $this, true, false, true);
+			return true;
+		} 
+		return false;
 	}
 
 }
