@@ -41,7 +41,7 @@ class WheatBlock extends FlowableBlock{
 			$this->meta = 0x07;
 			$this->level->setBlock($this, $this, true, false, true);
 			if(($player->gamemode & 0x01) === 0){
-				$item->count--;
+				$player->removeItem(DYE,0x0F,1);
 			}
 			return true;
 		}
