@@ -28,6 +28,7 @@ define("CREATIVE", 1);
 define("ADVENTURE", 2);
 define("VIEW", 3);
 define("VIEWER", 3);
+define("SPECTATOR", 3);
 
 
 //Players
@@ -64,6 +65,7 @@ define("ENTITY_MOB", 2);
 define("ENTITY_OBJECT", 3);
 	define("OBJECT_PRIMEDTNT", 65);
 	define("OBJECT_ARROW", 80);
+	define("OBJECT_SNOWBALL", 81);
 	define("OBJECT_PAINTING", 83);
 
 define("ENTITY_ITEM", 4);

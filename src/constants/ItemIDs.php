@@ -19,23 +19,23 @@
  *
 */
 
-define("IRON_SHOVEL", 256);//Implemented
-define("IRON_PICKAXE", 257);//Implemented
-define("IRON_AXE", 258);//Implemented
+define("IRON_SHOVEL", 256);
+define("IRON_PICKAXE", 257);
+define("IRON_AXE", 258);
 define("FLINT_STEEL", 259);
 define("FLINT_AND_STEEL", 259);
-define("APPLE", 260);//Implemented
+define("APPLE", 260);
 define("BOW", 261);
 define("ARROW", 262);
-define("COAL", 263);//Implemented
-define("DIAMOND", 264);//Implemented
-define("IRON_INGOT", 265);//Implemented
-define("GOLD_INGOT", 266);//Implemented
+define("COAL", 263);
+define("DIAMOND", 264);
+define("IRON_INGOT", 265);
+define("GOLD_INGOT", 266);
 define("IRON_SWORD", 267);
-define("WOODEN_SWORD", 268);//Implemented
-define("WOODEN_SHOVEL", 269);//Implemented
-define("WOODEN_PICKAXE", 270);//Implemented
-define("WOODEN_AXE", 271);//Implemented
+define("WOODEN_SWORD", 268);
+define("WOODEN_SHOVEL", 269);
+define("WOODEN_PICKAXE", 270);
+define("WOODEN_AXE", 271);
 define("STONE_SWORD", 272);
 define("STONE_SHOVEL", 273);
 define("STONE_PICKAXE", 274);
@@ -44,9 +44,9 @@ define("DIAMOND_SWORD", 276);
 define("DIAMOND_SHOVEL", 277);
 define("DIAMOND_PICKAXE", 278);
 define("DIAMOND_AXE", 279);
-define("STICK", 280);//Implemented
+define("STICK", 280);
 define("STICKS", 280);
-define("BOWL", 281);//Implemented
+define("BOWL", 281);
 define("MUSHROOM_STEW", 282);
 define("GOLD_SWORD", 283);
 define("GOLD_SHOVEL", 284);
@@ -57,11 +57,11 @@ define("GOLDEN_SHOVEL", 284);
 define("GOLDEN_PICKAXE", 285);
 define("GOLDEN_AXE", 286);
 define("STRING", 287);
-define("FEATHER", 288);//Implemented
+define("FEATHER", 288);
 define("GUNPOWDER", 289);
 define("WOODEN_HOE", 290);
 define("STONE_HOE", 291);
-define("IRON_HOE", 292);//Implemented
+define("IRON_HOE", 292);
 define("DIAMOND_HOE", 293);
 define("GOLD_HOE", 294);
 define("GOLDEN_HOE", 294);
@@ -129,9 +129,7 @@ define("SUGAR", 353);
 define("CAKE", 354);
 define("BED", 355);
 
-
 //define("COOKIE", 357);
-
 
 define("SHEARS", 359);
 define("MELON", 360);
@@ -148,11 +146,8 @@ define("COOKED_CHICKEN", 366);
 define("SPAWN_EGG", 383);
 
 define("CARROT", 391);
-define("CARROTS", 391);
 define("POTATO", 392);
-define("POTATOES", 392);//@shoghicp Why the heck do we need plural redundant Item ID here????
 define("BAKED_POTATO", 393);
-define("BAKED_POTATOES", 393);
 
 define("PUMPKIN_PIE", 400);
 
