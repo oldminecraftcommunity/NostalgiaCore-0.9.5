@@ -27,7 +27,7 @@ class TallGrassObject{
 			BlockAPI::get(CYAN_FLOWER, 0),
 			BlockAPI::get(TALL_GRASS, 1),
 			BlockAPI::get(TALL_GRASS, 1),
-			BlockAPI::get(TALL_GRASS, 1),
+			BlockAPI::get(TALL_GRASS, 2),
 			BlockAPI::get(TALL_GRASS, 1)
 		);
 		$arrC = count($arr) - 1;
