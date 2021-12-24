@@ -136,7 +136,7 @@ class Entity extends Position{
 					$this->setHealth(10000000, "generic");
 					$this->server->schedule(5, array($this, "updateFuse"), array(), true);
 					$this->update();
-				}elseif($this->type === OBJECT_ARROW){
+				}elseif($this->type === (OBJECT_ARROW or OBJECT_SNOWBALL)){
 					$this->server->schedule(1210, array($this, "update")); //Despawn
 					$this->update();
 				}
@@ -266,7 +266,7 @@ class Entity extends Position{
 				$this->close(); //Despawn timer
 				return false;
 			}
-		}elseif($this->class === ENTITY_OBJECT and ($this->type === OBJECT_ARROW) or ($this->type === OBJECT_SNOWBALL)){
+		}elseif($this->class === ENTITY_OBJECT and ($this->type === OBJECT_ARROW or OBJECT_SNOWBALL)){
 			if(($time - $this->spawntime) >= 60){
 				$this->close(); //Despawn timer
 				return false;
@@ -742,6 +742,15 @@ class Entity extends Position{
 						"did" => 0,
 					));
 				}elseif($this->type === OBJECT_SNOWBALL){
+					$player->dataPacket(MC_ADD_ENTITY, array(
+						"eid" => $this->eid,
+						"type" => $this->type,
+						"x" => $this->x,
+						"y" => $this->y,
+						"z" => $this->z,
+						"did" => 0,
+					));
+				}elseif($this->type === OBJECT_MINECART){
 					$player->dataPacket(MC_ADD_ENTITY, array(
 						"eid" => $this->eid,
 						"type" => $this->type,

@@ -45,4 +45,11 @@ class DeadBushBlock extends FlowableBlock{
 		return false;
 	}
 	
+		public function getDrops(Item $item, Player $player){
+			if($item->isShears()){
+				return array(
+				array(DEAD_BUSH, 0, 1),
+			);
+			}
+		}
 }

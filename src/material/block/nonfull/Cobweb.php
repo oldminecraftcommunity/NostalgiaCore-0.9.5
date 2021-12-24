@@ -27,6 +27,15 @@ class CobwebBlock extends FlowableBlock{
 		$this->hardness = 25;
 	}
 	public function getDrops(Item $item, Player $player){
-		return array();
+		if ($item->isSword()){
+			return array(
+			array(287, 0, 1),
+		);
+		}
+		elseif ($item->isShears()){
+			return array(
+			array(COBWEB, 0, 1),
+		);
+		}
 	}	
 }
