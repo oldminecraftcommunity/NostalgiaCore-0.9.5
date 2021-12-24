@@ -266,11 +266,12 @@ class Entity extends Position{
 				$this->close(); //Despawn timer
 				return false;
 			}
-		}elseif($this->class === ENTITY_OBJECT and $this->type === OBJECT_ARROW){
+		}elseif($this->class === ENTITY_OBJECT and ($this->type === OBJECT_ARROW) or ($this->type === OBJECT_SNOWBALL)){
 			if(($time - $this->spawntime) >= 60){
 				$this->close(); //Despawn timer
 				return false;
 			}
+			
 		}
 		
 		if($this->class === ENTITY_MOB){
@@ -729,6 +730,15 @@ class Entity extends Position{
 						"title" => $this->data["Motive"],
 					));
 				}elseif($this->type === OBJECT_PRIMEDTNT){
+					$player->dataPacket(MC_ADD_ENTITY, array(
+						"eid" => $this->eid,
+						"type" => $this->type,
+						"x" => $this->x,
+						"y" => $this->y,
+						"z" => $this->z,
+						"did" => 0,
+					));
+				}elseif($this->type === OBJECT_SNOWBALL){
 					$player->dataPacket(MC_ADD_ENTITY, array(
 						"eid" => $this->eid,
 						"type" => $this->type,
