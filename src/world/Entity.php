@@ -369,7 +369,10 @@ class Entity extends Position{
 							break;
 						case FIRE: //Fire block damage
 							if($this->inBlock(new Vector3($x, $y, $z))){
-								//patched
+								$this->harm(1, "fire");
+								$this->fire = 150;
+								$this->updateMetadata();
+								$hasUpdate = true;
 							}
 							break;
 						case CACTUS: //Cactus damage
