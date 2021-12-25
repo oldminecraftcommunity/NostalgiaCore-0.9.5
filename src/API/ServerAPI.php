@@ -145,7 +145,7 @@ class ServerAPI{
 		$this->server->api = $this;
 		self::$serverRequest = $this->server;
 		console("[INFO] This server is running PocketMine-MP version ".($version->isDev() ? FORMAT_YELLOW:"").MAJOR_VERSION.FORMAT_RESET." \"".CODENAME."\" (MCPE: ".CURRENT_MINECRAFT_VERSION.") (API ".CURRENT_API_VERSION.")", true, true, 0);
-		console("[INFO] PocketMine-MP is distibuted under the LGPL License", true, true, 0);
+		console("[INFO] PocketMine-MP is distributed under the LGPL License", true, true, 0);
 		
 		if(ADVANCED_CACHE == true){
 			console("[INFO] Advanced cache enabled");
@@ -160,7 +160,7 @@ class ServerAPI{
 			console("[INFO] Checking for new server version");
 			console("[INFO] Last check: ".FORMAT_AQUA.date("Y-m-d H:i:s", $this->getProperty("last-update"))."\x1b[0m");
 			if($this->server->version->isDev()){
-				$info = json_decode(Utils::curl_get("https://api.github.com/repos/PocketMine/PocketMine-MP/commits"), true);
+				$info = json_decode(Utils::curl_get("https://api.github.com/repos/kotyaralih/NostalgiaCore/commits"), true);
 				if($info === false or !isset($info[0])){
 					console("[ERROR] Github API error");
 				}else{
@@ -169,7 +169,7 @@ class ServerAPI{
 					if($last >= $this->getProperty("last-update") and $this->getProperty("last-update") !== false and GIT_COMMIT != $info[0]["sha"]){
 						console("[NOTICE] ".FORMAT_YELLOW."A new DEVELOPMENT version of PocketMine-MP has been released!");
 						console("[NOTICE] ".FORMAT_YELLOW."Commit \"".$info[0]["commit"]["message"]."\" [".substr($info[0]["sha"], 0, 10)."] by ".$info[0]["commit"]["committer"]["name"]);
-						console("[NOTICE] ".FORMAT_YELLOW."Get it at PocketMine.net or at https://github.com/PocketMine/PocketMine-MP/archive/".$info[0]["sha"].".zip");
+						console("[NOTICE] ".FORMAT_YELLOW."Get it at PocketMine.net or at https://github.com/kotyaralih/NostalgiaCore/archive/".$info[0]["sha"].".zip");
 						console("[NOTICE] This message will dissapear after issuing the command \"/update-done\"");
 					}else{
 						$this->setProperty("last-update", time());
@@ -177,7 +177,7 @@ class ServerAPI{
 					}
 				}
 			}else{
-				$info = json_decode(Utils::curl_get("https://api.github.com/repos/PocketMine/PocketMine-MP/tags"), true);
+				$info = json_decode(Utils::curl_get("https://api.github.com/repos/kotyaralih/NostalgiaCore/tags"), true);
 				if($info === false or !isset($info[0])){
 					console("[ERROR] Github API error");
 				}else{
