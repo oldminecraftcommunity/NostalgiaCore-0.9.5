@@ -1,4 +1,4 @@
-![](http://www.pocketmine.net/favicon.png)
+![](http://185.117.153.152/nc_favicon.png)
 
 # NostalgiaCore
 
