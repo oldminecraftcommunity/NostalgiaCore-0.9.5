@@ -170,8 +170,8 @@ class BlockAPI{
 		array(CARPET, 8),
 		
 		//Tools
-		//array(RAILS, 0),
-		//array(POWERED_RAILS, 0),
+		array(RAIL, 0),
+		array(POWERED_RAIL, 0),
 		array(TORCH, 0),		
 		array(BUCKET, 0),
 		array(BUCKET, 8),
@@ -189,6 +189,11 @@ class BlockAPI{
 		array(SPAWN_EGG, MOB_COW),
 		array(SPAWN_EGG, MOB_PIG),
 		array(SPAWN_EGG, MOB_SHEEP),
+		array(SPAWN_EGG, MOB_ZOMBIE),
+		array(SPAWN_EGG, MOB_CREEPER),
+		array(SPAWN_EGG, MOB_SKELETON),
+		array(SPAWN_EGG, MOB_SPIDER),
+		array(SPAWN_EGG, MOB_PIGMAN),
 		
 		//Seeds
 		array(SUGARCANE, 0),
