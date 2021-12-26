@@ -237,15 +237,15 @@ class Player{
 			$this->data->set("achievements", $this->achievements);
 			$this->data->set("position", array(
 				"level" => $this->entity->level->getName(),
-				"x" => $this->entity->x,
-				"y" => $this->entity->y,
-				"z" => $this->entity->z,
+				"x" => (float) $this->entity->x,
+				"y" => (float) $this->entity->y,
+				"z" => (float) $this->entity->z,
 			));
 			$this->data->set("spawn", array(
 				"level" => $this->spawnPosition->level->getName(),
-				"x" => $this->spawnPosition->x,
-				"y" => $this->spawnPosition->y,
-				"z" => $this->spawnPosition->z,
+				"x" => (float) $this->spawnPosition->x,
+				"y" => (float) $this->spawnPosition->y,
+				"z" => (float) $this->spawnPosition->z,
 			));
 			$inv = array();			
 			foreach($this->inventory as $slot => $item){
