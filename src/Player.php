@@ -291,6 +291,9 @@ class Player{
 			$this->directDataPacket(MC_DISCONNECT);
 			$this->connected = false;
 			$this->level->freeAllChunks($this);
+			if($msg === true and $this->username != "" and $this->spawned !== false){
+				$this->server->api->chat->broadcast($this->username." left the game");
+			}
 			$this->spawned = false;
 			$this->loggedIn = false;
 			$this->buffer = null;
@@ -301,9 +304,6 @@ class Player{
 			$this->ackQueue = array();
 			$this->server->interface->stopChunked($this->CID);
 			$this->server->api->player->remove($this->CID);
-			if($msg === true and $this->username != "" and $this->spawned !== false){
-				$this->server->api->chat->broadcast($this->username." left the game");
-			}
 			console("[INFO] ".FORMAT_AQUA.$this->username.FORMAT_RESET."[/".$this->ip.":".$this->port."] logged out due to ".$reason);
 			$this->windows = array();
 			$this->armor = array();
