@@ -2,7 +2,7 @@
 
 # NostalgiaCore
 
-NostalgiaCore is a fork of Legacy PocketMine-MP, which is fixing bugs of Legacy PocketMine-MP, and brings a *new* live into it.
+NostalgiaCore is a fork of Legacy PocketMine-MP 1.3.11, which is fixing bugs of Legacy PocketMine-MP, and brings a *new* live into it.
 
 Supported version: 0.8.1
 
