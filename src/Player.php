@@ -238,14 +238,14 @@ class Player{
 			$this->data->set("position", array(
 				"level" => $this->entity->level->getName(),
 				"x" => (float) $this->entity->x,
-				"y" => (float) $this->entity->y,
+				"y" => $this->entity->y,
 				"z" => (float) $this->entity->z,
 			));
 			$this->data->set("spawn", array(
 				"level" => $this->spawnPosition->level->getName(),
-				"x" => (float) $this->spawnPosition->x,
-				"y" => (float) $this->spawnPosition->y,
-				"z" => (float) $this->spawnPosition->z,
+				"x" => $this->spawnPosition->x,
+				"y" => $this->spawnPosition->y,
+				"z" => $this->spawnPosition->z,
 			));
 			$inv = array();			
 			foreach($this->inventory as $slot => $item){
@@ -1283,7 +1283,7 @@ class Player{
 					$this->close("Incorrect protocol #".$data["protocol1"], false);
 					break;
 				}
-				if(preg_match('#[^a-zA-Z0-9_]#', $data["username"]) > 0 or $data["username"] === "" or strtolower($data["username"]) === "rcon" or strtolower($data["username"]) === "console"){
+				if(preg_match('#[^a-zA-Z0-9_]#', $data["username"]) > 0 or $data["username"] === "" or strtolower($data["username"]) === "rcon" or strtolower($data["username"]) === "console" or strtolower($data["username"]) === "server"){
 					$this->close("Bad username", false);
 					break;
 				}
@@ -1363,9 +1363,9 @@ class Player{
 				));
 				$this->dataPacket(MC_START_GAME, array(
 					"seed" => $this->level->getSeed(),
-					"x" => $this->data->get("position")["x"],
-					"y" => $this->data->get("position")["y"],
-					"z" => $this->data->get("position")["z"],
+					"x" => round($this->data->get("position")["x"], 4),
+					"y" => $this->data->get("position")["y"] + 1,
+					"z" => round($this->data->get("position")["z"], 4),
 					"generator" => 0,
 					"gamemode" => ($this->gamemode & 0x01),
 					"eid" => 0,
@@ -1409,7 +1409,7 @@ class Player{
 				$this->evid[] = $this->server->event("tile.update", array($this, "eventHandler"));
 				$this->lastMeasure = microtime(true);
 				$this->server->schedule(50, array($this, "measureLag"), array(), true);
-				console("[INFO] ".FORMAT_AQUA.$this->username.FORMAT_RESET."[/".$this->ip.":".$this->port."] logged in with entity id ".$this->eid." at (".$this->entity->level->getName().", ".round($this->entity->x, 2).", ".round($this->entity->y, 2).", ".round($this->entity->z, 2).")");
+				console("[INFO] ".FORMAT_AQUA.$this->username.FORMAT_RESET."[/".$this->ip.":".$this->port."] logged in with entity id ".$this->eid." at (".$this->entity->level->getName().", ".round($this->entity->x, 4).", ".round($this->entity->y, 4).", ".round($this->entity->z, 4).")");
 				break;
 			case MC_READY:
 				if($this->loggedIn === false){
