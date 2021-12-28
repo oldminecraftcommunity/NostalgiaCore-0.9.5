@@ -192,8 +192,8 @@ class Player{
 
 		$c = key($this->chunksOrder);
 		$d = @$this->chunksOrder[$c];
-		if($c === null or $d > $this->server->api->getProperty("view-distance")){
-			$this->server->schedule(50, array($this, "getNextChunk"));
+		if($c === null or $d === null){
+			$this->server->schedule(40, array($this, "getNextChunk"));
 			return false;
 		}
 		unset($this->chunksOrder[$c]);
