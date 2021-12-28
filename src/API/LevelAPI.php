@@ -151,6 +151,10 @@ class LevelAPI{
 		$path = DATA_PATH."worlds/".$name."/";
 		console("[INFO] Preparing level \"".$name."\"");
 		$level = new PMFLevel($path."level.pmf");
+		if(!$level->isLoaded){
+			console("[ERROR] Could not load level \"".$name."\"");
+			return false;
+		}
 		$entities = new Config($path."entities.yml", CONFIG_YAML);
 		if(file_exists($path."tileEntities.yml")){
 			@rename($path."tileEntities.yml", $path."tiles.yml");
