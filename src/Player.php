@@ -1939,7 +1939,7 @@ class Player{
 				if(trim($data["message"]) != "" and strlen($data["message"]) <= 255){
 					$message = $data["message"];
 					if($message{0} === "/"){ //Command
-						console("[INFO] " . FORMAT_AQUA . $data["player"] . FORMAT_RESET . " used a command: " . FORMAT_AQUA . $message);
+						console("[INFO] " . FORMAT_AQUA . $data["player"] . FORMAT_RESET . " issued a command: " . FORMAT_AQUA . $message);
 						$this->server->api->console->run(substr($message, 1), $this);
 					}else{
 						$data = array("player" => $this, "message" => $message);
