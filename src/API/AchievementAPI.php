@@ -91,6 +91,11 @@ class AchievementAPI{
 				"acquireIron",
 			),
 		),
+		"leather" => array(
+			"name" => "Get leather",
+			"requires" => array(
+				"buildSword",
+			),
 		
 	);
 
@@ -102,9 +107,9 @@ class AchievementAPI{
 			$result = ServerAPI::request()->api->dhandle("achievement.broadcast", array("player" => $player, "achievementId" => $achievementId));
 			if($result !== false and $result !== true){
 				if(ServerAPI::request()->api->getProperty("announce-player-achievements") == true){
-					ServerAPI::request()->api->chat->broadcast($player->username." has just earned the achievement ".self::$achievements[$achievementId]["name"]);
+					ServerAPI::request()->api->chat->broadcast($player->username." has just earned the achievement [".self::$achievements[$achievementId]["name"]."]");
 				}else{
-					$player->sendChat("You have just earned the achievement ".self::$achievements[$achievementId]["name"]);
+				$player->sendChat("You have just earned the achievement [".self::$achievements[$achievementId]["name"]."]");
 				}			
 			}
 			return true;
