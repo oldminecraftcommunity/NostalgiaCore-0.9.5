@@ -42,7 +42,7 @@ class PluginAPI extends stdClass{
 				$output = $output === "Plugins: " ? "No plugins installed.\n" : substr($output, 0, -2)."\n";
 				break;
 			case "version":
-				$output = "PocketMine-MP ".MAJOR_VERSION." 「".CODENAME."」 API #".CURRENT_API_VERSION." for Minecraft: PE ".CURRENT_MINECRAFT_VERSION;
+				$output = "This server is running PocketMine-MP version ".MAJOR_VERSION." 「".CODENAME."」(Implementing API version #".CURRENT_API_VERSION." for Minecraft: PE ".CURRENT_MINECRAFT_VERSION.")";
 				if(GIT_COMMIT !== str_repeat("00", 20)){
 					$output .= " (git ".GIT_COMMIT.")";
 				}
