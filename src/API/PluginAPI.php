@@ -29,20 +29,23 @@ class PluginAPI extends stdClass{
 		$this->server->api->console->register("plugins", "", array($this, "commandHandler"));
 		$this->server->api->console->register("version", "", array($this, "commandHandler"));
 		$this->server->api->ban->cmdWhitelist("version");
+		$this->server->api->console->alias("pl", "plugins");
+		$this->server->api->console->alias("ver", "version");
+		$this->server->api->console->alias("about", "version");
 	}
 
     public function commandHandler($cmd, $params, $issuer, $alias){
 		$output = "";
 		switch($cmd){
 			case "plugins":
-				$output = "Plugins: ";
+				$output = "Plugins (" . count($this->plugins) . "): ";
 				foreach($this->getList() as $plugin){
-					$output .= $plugin["name"] . ": ".$plugin["version"] .", ";
+					$output .= $plugin["name"] . " v".$plugin["version"] .", ";
 				}
-				$output = $output === "Plugins: " ? "No plugins installed.\n" : substr($output, 0, -2)."\n";
+				$output = $output === "Plugins (0): " ? "No plugins installed.\n" : substr($output, 0, -2)."\n";
 				break;
 			case "version":
-				$output = "This server is running PocketMine-MP version ".MAJOR_VERSION." 「".CODENAME."」(Implementing API version #".CURRENT_API_VERSION." for Minecraft: PE ".CURRENT_MINECRAFT_VERSION.")";
+				$output = "This server is running PocketMine-MP version " . MAJOR_VERSION . "\nCODENAME: 「 " . CODENAME . " 」\n(Implementing API version #" . CURRENT_API_VERSION . " for Minecraft: PE " . CURRENT_MINECRAFT_VERSION . ")";
 				if(GIT_COMMIT !== str_repeat("00", 20)){
 					$output .= " (git ".GIT_COMMIT.")";
 				}
