@@ -96,6 +96,7 @@ class AchievementAPI{
 			"requires" => array(
 				"buildSword",
 			),
+		),
 		
 	);
 
