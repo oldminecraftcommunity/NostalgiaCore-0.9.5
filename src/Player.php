@@ -1828,7 +1828,7 @@ class Player{
 						$target->harm($damage, $this->eid);
 						if($slot->isTool() === true and ($this->gamemode & 0x01) === 0){
 							if($slot->useOn($target) and $slot->getMetadata() >= $slot->getMaxDurability()){
-								$this->setSlot($this->slot, new Item(AIR, 0, 0), false);
+								$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
 							}
 						}
 					}
