@@ -54,6 +54,15 @@ if(!extension_loaded("sockets") and @dl((PHP_SHLIB_SUFFIX === "dll" ? "php_":"")
 if(!extension_loaded("pthreads") and @dl((PHP_SHLIB_SUFFIX === "dll" ? "php_":"") . "pthreads." . PHP_SHLIB_SUFFIX) === false){
 	console("[ERROR] Unable to find the pthreads extension.", true, true, 0);
 	++$errors;
+}else{
+	$pthreads_version = phpversion("pthreads");
+	if(substr_count($pthreads_version, ".") < 2){
+		$pthreads_version = "0.$pthreads_version";
+	}
+	if(version_compare($pthreads_version, "0.1.0") < 0){
+		console("[ERROR] pthreads >= 0.1.0 is required, while you have $pthreads_version.", true, true, 0);
+		++$errors;
+	}	
 }
 
 if(!extension_loaded("curl") and @dl((PHP_SHLIB_SUFFIX === "dll" ? "php_":"") . "curl." . PHP_SHLIB_SUFFIX) === false){
@@ -63,6 +72,11 @@ if(!extension_loaded("curl") and @dl((PHP_SHLIB_SUFFIX === "dll" ? "php_":"") . 
 
 if(!extension_loaded("sqlite3") and @dl((PHP_SHLIB_SUFFIX === "dll" ? "php_":"") . "sqlite3." . PHP_SHLIB_SUFFIX) === false){
 	console("[ERROR] Unable to find the SQLite3 extension.", true, true, 0);
+	++$errors;
+}
+
+if(!extension_loaded("yaml") and @dl((PHP_SHLIB_SUFFIX === "dll" ? "php_":"") . "yaml." . PHP_SHLIB_SUFFIX) === false){
+	console("[ERROR] Unable to find the YAML extension.", true, true, 0);
 	++$errors;
 }
 
@@ -95,3 +109,9 @@ foreach($inc as $s){
 }
 /***REM_END***/
 define("SOURCE_SHA1SUM", bin2hex($sha1sum));
+
+/***REM_START***/
+if(!file_exists(DATA_PATH."server.properties") and arg("no-wizard", false) != true){
+	$installer = new Installer();
+}
+/***REM_END***/

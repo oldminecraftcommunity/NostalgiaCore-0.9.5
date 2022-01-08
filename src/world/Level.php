@@ -34,7 +34,7 @@ class Level{
 		$this->nextSave = $this->startCheck = microtime(true);
 		$this->nextSave += 90;
 		$this->stopTime = false;
-		$this->server->schedule(2, array($this, "checkThings"), array(), true);
+		$this->server->schedule(15, array($this, "checkThings"), array(), true);
 		$this->server->schedule(20 * 13, array($this, "checkTime"), array(), true);
 		$this->name = $name;
 		$this->usedChunks = array();
@@ -78,10 +78,11 @@ class Level{
 		}
 		if($this->server->api->dhandle("time.change", array("level" => $this, "time" => $time)) !== false){
 			$this->time = $time;
-			$this->server->api->player->broadcastPacket($this->players, MC_SET_TIME, array(
-				"time" => (int) $this->time,
-				"started" => $this->stopTime == false,
-			));
+			
+			$pk = new SetTimePacket;
+			$pk->time = (int) $this->time;
+			$pk->started = $this->stopTime == false;
+			$this->server->api->player->broadcastPacket($this->players, $pk);
 		}
 	}
 	
@@ -109,13 +110,13 @@ class Level{
 			if(count($this->changedBlocks) > 0){
 				foreach($this->changedBlocks as $blocks){
 					foreach($blocks as $b){
-						$this->server->api->player->broadcastPacket($this->players, MC_UPDATE_BLOCK, array(
-							"x" => $b->x,
-							"y" => $b->y,
-							"z" => $b->z,
-							"block" => $b->getID(),
-							"meta" => $b->getMetadata(),
-						));
+						$pk = new UpdateBlockPacket;
+						$pk->x = $b->x;
+						$pk->y = $b->y;
+						$pk->z = $b->z;
+						$pk->block = $b->getID();
+						$pk->meta = $b->getMetadata();
+						$this->server->api->player->broadcastPacket($this->players, $pk);
 					}
 				}
 				$this->changedBlocks = array();
@@ -127,10 +128,10 @@ class Level{
 				if(count($c) === 0){
 					unset($this->usedChunks[$i]);
 					$X = explode(".", $i);
-					$Z = (int) array_pop($X);
-					$X = (int) array_pop($X);
+					$Z = array_pop($X);
+					$X = array_pop($X);
 					if(!$this->isSpawnChunk($X, $Z)){
-						$this->level->unloadChunk($X, $Z, $this->server->saveEnabled);
+						$this->level->unloadChunk((int) $X, (int) $Z, $this->server->saveEnabled);
 					}
 				}
 			}
@@ -179,7 +180,7 @@ class Level{
 							"id" => $entity->type,
 							"TileX" => $entity->x,
 							"TileY" => $entity->y,
-							"TileX" => $entity->z,
+							"TileZ" => $entity->z,
 							"Health" => $entity->health,
 							"Motive" => $entity->data["Motive"],
 							"Pos" => array(
@@ -289,13 +290,13 @@ class Level{
 	public function setBlockRaw(Vector3 $pos, Block $block, $direct = true, $send = true){
 		if(($ret = $this->level->setBlock($pos->x, $pos->y, $pos->z, $block->getID(), $block->getMetadata())) === true and $send !== false){
 			if($direct === true){
-				$this->server->api->player->broadcastPacket($this->players, MC_UPDATE_BLOCK, array(
-					"x" => $pos->x,
-					"y" => $pos->y,
-					"z" => $pos->z,
-					"block" => $block->getID(),
-					"meta" => $block->getMetadata(),
-				));
+				$pk = new UpdateBlockPacket;
+				$pk->x = $pos->x;
+				$pk->y = $pos->y;
+				$pk->z = $pos->z;
+				$pk->block = $block->getID();
+				$pk->meta = $block->getMetadata();
+				$this->server->api->player->broadcastPacket($this->players, $pk);
 			}elseif($direct === false){
 				if(!($pos instanceof Position)){
 					$pos = new Position($pos->x, $pos->y, $pos->z, $this);
@@ -329,13 +330,13 @@ class Level{
 			$block->position($pos);
 
 			if($direct === true){
-				$this->server->api->player->broadcastPacket($this->players, MC_UPDATE_BLOCK, array(
-					"x" => $pos->x,
-					"y" => $pos->y,
-					"z" => $pos->z,
-					"block" => $block->getID(),
-					"meta" => $block->getMetadata(),
-				));
+				$pk = new UpdateBlockPacket;
+				$pk->x = $pos->x;
+				$pk->y = $pos->y;
+				$pk->z = $pos->z;
+				$pk->block = $block->getID();
+				$pk->meta = $block->getMetadata();
+				$this->server->api->player->broadcastPacket($this->players, $pk);
 			}else{
 				$i = ($pos->x >> 4).":".($pos->y >> 4).":".($pos->z >> 4);
 				if(!isset($this->changedBlocks[$i])){
@@ -434,7 +435,7 @@ class Level{
 		}
 		if(ADVANCED_CACHE == true and $Yndex == 0xff){
 			Cache::add($identifier, $ordered, 60);
-		}
+		}		
 		return $ordered;
 	}
 

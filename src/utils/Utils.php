@@ -28,7 +28,15 @@ class Utils{
 	public static $ip = false;
 	
 	public static function isOnline(){
-		return ((@fsockopen("google.com", 80, $e = null, $n = null, 2) !== false or @fsockopen("www.linux.org", 80, $e = null, $n = null, 2) !== false or @fsockopen("www.php.net", 80, $e = null, $n = null, 2) !== false) ? true:false);
+		return ((@fsockopen("8.8.8.8", 80, $e = null, $n = null, 2) !== false or @fsockopen("www.linux.org", 80, $e = null, $n = null, 2) !== false or @fsockopen("www.php.net", 80, $e = null, $n = null, 2) !== false) ? true:false);
+	}
+	
+	public static function getCallableIdentifier(callable $variable){
+		if(is_array($variable)){
+			return sha1(strtolower(get_class($variable[0]))."::".strtolower($variable[1]));
+		}else{
+			return sha1(strtolower($variable));
+		}
 	}
 	
 	public static function getUniqueID($raw = false, $extra = ""){
@@ -90,13 +98,23 @@ class Utils{
 	}
 
 	public static function getOS(){
-		$uname = trim(strtoupper(php_uname("s")));
-		if(strpos($uname, "DARWIN") !== false){
-			return "mac";
-		}elseif(strpos($uname, "WIN") !== false){
+		$uname = php_uname("s");
+		if(stripos($uname, "Darwin") !== false){
+			if(strpos(php_uname("m"), "iP") === 0){
+				return "ios";
+			}else{
+				return "mac";
+			}
+		}elseif(stripos($uname, "Win") !== false or $uname === "Msys"){
 			return "win";
-		}elseif(strpos($uname, "LINUX") !== false){
-			return "linux";
+		}elseif(stripos($uname, "Linux") !== false){
+			if(@file_exists("/system/build.prop")){
+				return "android";
+			}else{
+				return "linux";
+			}
+		}elseif(stripos($uname, "BSD") !== false or $uname === "DragonFly"){
+			return "bsd";
 		}else{
 			return "other";
 		}

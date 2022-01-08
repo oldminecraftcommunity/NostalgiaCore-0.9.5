@@ -241,8 +241,7 @@ class LevelAPI{
 		}
 	}
 	
-	public function getAll()
-	{
+	public function getAll(){
 		return $this->levels;
 	}
 	
