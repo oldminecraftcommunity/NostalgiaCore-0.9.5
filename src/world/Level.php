@@ -131,7 +131,7 @@ class Level{
 					$Z = array_pop($X);
 					$X = array_pop($X);
 					if(!$this->isSpawnChunk($X, $Z)){
-						$this->level->unloadChunk((int) array_pop($X), (int) $Z, $this->server->saveEnabled);
+						$this->level->unloadChunk((int) $X, (int) $Z, $this->server->saveEnabled);
 					}
 				}
 			}
