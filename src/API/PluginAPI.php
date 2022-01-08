@@ -55,6 +55,13 @@ class PluginAPI extends stdClass{
 		return $output;
 	}
 
+	public function __destruct(){
+		foreach($this->plugins as $p){
+			$p[0]->__destruct();
+		}
+		unset($plugins);
+	}
+
 	public function getList(){
 		$list = array();
 		foreach($this->plugins as $p){
@@ -206,11 +213,11 @@ class PluginAPI extends stdClass{
 	}
 
 	public function readYAML($file){
-		return Spyc::YAMLLoad(file_get_contents($file));
+		return yaml_parse(preg_replace("#^([ ]*)([a-zA-Z_]{1}[^\:]*)\:#m", "$1\"$2\":", file_get_contents($file)));
 	}
 
 	public function writeYAML($file, $data){
-		return file_put_contents($file, Spyc::YAMLDump($data));
+		return file_put_contents($file, yaml_emit($data, YAML_UTF8_ENCODING));
 	}
 
 	public function init(){

@@ -32,7 +32,7 @@ class PlayerAPI{
         $this->server->api->console->register("kill", "<player>", array($this, "commandHandler"));
         $this->server->api->console->register("gamemode", "<mode> [player]", array($this, "commandHandler"));
         $this->server->api->console->register("tp", "[target player] <destination player|w:world> OR /tp [target player] <x> <y> <z>", array($this, "commandHandler"));
-        $this->server->api->console->register("setspawn", "[player] [x] [y] [z]", array($this, "commandHandler"));
+        $this->server->api->console->register("spawnpoint", "[player] [x] [y] [z]", array($this, "commandHandler"));
         $this->server->api->console->register("spawn", "", array($this, "commandHandler"));
         $this->server->api->console->register("ping", "", array($this, "commandHandler"));
         $this->server->api->console->alias("lag", "ping");
@@ -118,7 +118,7 @@ class PlayerAPI{
     public function commandHandler($cmd, $params, $issuer, $alias){
         $output = "";
         switch($cmd){
-            case "setspawn":
+            case "spawnpoint":
                 if(!($issuer instanceof Player)){
                     $output .= "Please run this command in-game.\n";
                     break;
@@ -324,7 +324,7 @@ class PlayerAPI{
 				}
             }
 		}
-
+		
 		if($multiple === false){
 			if(count($players) > 0){
 				return array_shift($players);
@@ -353,11 +353,9 @@ class PlayerAPI{
         return $this->server->clients;
     }
 
-    public function broadcastPacket(array $players, $id, $data = array()){
-        $data = new CustomPacketHandler($id, "", $data, true);
-        $packet = array("raw" => chr($id).$data->raw);
+    public function broadcastPacket(array $players, RakNetDataPacket $packet){
         foreach($players as $p){
-            $p->dataPacket(false, $packet);
+            $p->dataPacket(clone $packet);
         }
     }
 
@@ -404,14 +402,14 @@ class PlayerAPI{
             if($p !== $player and ($p->entity instanceof Entity)){
                 $p->entity->spawn($player);
                 if($p->level !== $player->level){
-                    $player->dataPacket(MC_MOVE_ENTITY_POSROT, array(
-                        "eid" => $p->entity->eid,
-                        "x" => -256,
-                        "y" => 128,
-                        "z" => -256,
-                        "yaw" => 0,
-                        "pitch" => 0,
-                    ));
+					$pk = new MoveEntityPacket_PosRot;
+					$pk->eid = $p->entity->eid;
+					$pk->x = -256;
+					$pk->y = 128;
+					$pk->z = -256;
+					$pk->yaw = 0;
+					$pk->pitch = 0;
+                    $player->dataPacket($pk);
                 }
             }
         }
@@ -422,14 +420,14 @@ class PlayerAPI{
             if($p !== $player and ($p->entity instanceof Entity) and ($player->entity instanceof Entity)){
                 $player->entity->spawn($p);
                 if($p->level !== $player->level){
-                    $p->dataPacket(MC_MOVE_ENTITY_POSROT, array(
-                        "eid" => $player->entity->eid,
-                        "x" => -256,
-                        "y" => 128,
-                        "z" => -256,
-                        "yaw" => 0,
-                        "pitch" => 0,
-                    ));
+					$pk = new MoveEntityPacket_PosRot;
+					$pk->eid = $player->entity->eid;
+					$pk->x = -256;
+					$pk->y = 128;
+					$pk->z = -256;
+					$pk->yaw = 0;
+					$pk->pitch = 0;
+                    $p->dataPacket($pk);
                 }
             }
         }
@@ -471,7 +469,7 @@ class PlayerAPI{
                 "z" => $this->server->spawn->z,
             ),
             "inventory" => array_fill(0, PLAYER_SURVIVAL_SLOTS, array(AIR, 0, 0)),
-            "hotbar" => array(0, -1, -1, -1, -1, -1, -1, -1, -1),
+			"hotbar" => array(0, -1, -1, -1, -1, -1, -1, -1, -1),
             "armor" => array_fill(0, 4, array(AIR, 0)),
             "gamemode" => $this->server->gamemode,
             "health" => 20,

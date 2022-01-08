@@ -142,7 +142,6 @@ class EntityAPI{
 			//"speedZ" => mt_rand(-3, 3) / 8,
 			"item" => $item,
 		);
-
 		if($this->server->api->handle("item.drop", $data) !== false){
 			for($count = $item->count; $count > 0; ){
 				$item->count = min($item->getMaxStackSize(), $count);
@@ -170,14 +169,14 @@ class EntityAPI{
 			$entity->closed = true;
 			$this->server->query("DELETE FROM entities WHERE EID = ".$eid.";");
 			if($entity->class === ENTITY_PLAYER){
-				$this->server->api->player->broadcastPacket($this->server->api->player->getAll(), MC_REMOVE_PLAYER, array(
-					"clientID" => 0,
-					"eid" => $entity->eid,
-				));
+				$pk = new RemovePlayerPacket;
+				$pk->eid = $entity->eid;
+				$pk->clientID = 0;
+				$this->server->api->player->broadcastPacket($this->server->api->player->getAll(), $pk);
 			}else{
-				$this->server->api->player->broadcastPacket($this->server->api->player->getAll($entity->level), MC_REMOVE_ENTITY, array(
-					"eid" => $entity->eid,
-				));
+				$pk = new RemoveEntityPacket;
+				$pk->eid = $entity->eid;
+				$this->server->api->player->broadcastPacket($this->server->api->player->getAll($entity->level), $pk);
 			}
 			$this->server->api->dhandle("entity.remove", $entity);
 			$entity = null;

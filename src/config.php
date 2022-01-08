@@ -38,16 +38,15 @@ if(ini_get("date.timezone") == ""){ //No Timezone set
 		$offset = round((intval(trim($t[0])) - time()) / 60) * 60;
 	}
 
-$daylight = (int) date("I");
-
-$d = timezone_name_from_abbr("", $offset, $daylight);
-	ini_set("date.timezone", $d);
+	$daylight = (int) date("I");
+	$d = timezone_name_from_abbr("", $offset, $daylight);
+	@ini_set("date.timezone", $d);
 	date_default_timezone_set($d);
 }else{
 	$d = @date_default_timezone_get();
 	if(strpos($d, "/") === false){
 		$d = timezone_name_from_abbr($d);
-		ini_set("date.timezone", $d);
+		@ini_set("date.timezone", $d);
 		date_default_timezone_set($d);
 	}
 }
@@ -71,7 +70,7 @@ define("START_TIME", microtime(true));
 define("MAJOR_VERSION", "Alpha_1.3.11");
 define("CODENAME", "懐かしさ (Nostalgia)"); //i'm not very creative - kotyaralih
 define("CURRENT_MINECRAFT_VERSION", "v0.8.1 alpha");
-define("CURRENT_API_VERSION", 11);
+define("CURRENT_API_VERSION", 12);
 define("CURRENT_PHP_VERSION", "5.5");
 $gitsha1 = false;
 if(file_exists(FILE_PATH.".git/refs/heads/master")){ //Found Git information!

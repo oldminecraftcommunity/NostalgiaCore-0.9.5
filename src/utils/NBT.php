@@ -43,7 +43,7 @@ class NBT{
 		$this->offset += $n;
 		return substr($this->binary, $this->offset - $n, $n);
 	}
-
+	
 	private function feof(){
 		return !isset($this->binary{$this->offset});
 	}

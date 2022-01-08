@@ -47,6 +47,8 @@ class Vector2{
 		if(($x instanceof Vector2) === true){
 			return $this->add($x->x, $x->y);
 		}else{
+			$this->x += $x;
+			$this->y += $y;
 			return new Vector2($this->x + $x, $this->y + $y);
 		}
 	}
