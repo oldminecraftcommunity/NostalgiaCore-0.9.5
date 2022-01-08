@@ -170,8 +170,8 @@ class BlockAPI{
 		array(CARPET, 8),
 		
 		//Tools
-		array(RAILS, 0),
-		array(POWERED_RAILS, 0),
+		array(RAIL, 0),
+		array(POWERED_RAIL, 0),
 		array(TORCH, 0),		
 		array(BUCKET, 0),
 		array(BUCKET, 8),
