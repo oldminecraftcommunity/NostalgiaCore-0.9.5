@@ -197,10 +197,10 @@ LICENSE;
 
 	class InstallerLang{
 		public static $languages = array(
+			"ru" => "Pyccĸий",
 			"en" => "English",
 			"es" => "Español",
 			"zh" => "中文",
-			"ru" => "Pyccĸий",
 			"ja" => "日本語",
 			"de" => "Deutsch",
 			//"vi" => "Tiếng Việt",

@@ -96,7 +96,7 @@ class PocketMinecraftServer{
 	public function titleTick(){
 		$time = microtime(true);
 		if(defined("DEBUG") and DEBUG >= 0 and ENABLE_ANSI === true){
-			echo "\x1b]0;PocketMine-MP ".MAJOR_VERSION." | Online ". count($this->clients)."/".$this->maxClients." | RAM ".round((memory_get_usage() / 1024) / 1024, 2)."MB | U ".round(($this->interface->bandwidth[1] / max(1, $time - $this->interface->bandwidth[2])) / 1024, 2)." D ".round(($this->interface->bandwidth[0] / max(1, $time - $this->interface->bandwidth[2])) / 1024, 2)." kB/s | TPS ".$this->getTPS()."\x07";
+			echo "\x1b]0;NostalgiaCore ".MAJOR_VERSION." | Online ". count($this->clients)."/".$this->maxClients." | RAM ".round((memory_get_usage() / 1024) / 1024, 2)."MB | U ".round(($this->interface->bandwidth[1] / max(1, $time - $this->interface->bandwidth[2])) / 1024, 2)." D ".round(($this->interface->bandwidth[0] / max(1, $time - $this->interface->bandwidth[2])) / 1024, 2)." kB/s | TPS ".$this->getTPS()."\x07";
 		}
 		$this->interface->bandwidth = array(0, 0, $time);
 	}
@@ -390,7 +390,7 @@ class PocketMinecraftServer{
 		}
 		ini_set("memory_limit", "-1"); //Fix error dump not dumped on memory problems
 		console("[SEVERE] An unrecovereable has ocurred and the server has crashed. Creating an error dump");
-		$dump = "```\r\n# PocketMine-MP Error Dump ".date("D M j H:i:s T Y")."\r\n";
+		$dump = "```\r\n# NostalgiaCore Error Dump ".date("D M j H:i:s T Y")."\r\n";
 		$er = error_get_last();
 		$errorConversion = array(
 			E_ERROR => "E_ERROR",
@@ -422,7 +422,7 @@ class PocketMinecraftServer{
 		}
 		$dump .= "\r\n\r\n";
 		$version = new VersionString();
-		$dump .= "PocketMine-MP version: ".$version." #".$version->getNumber()." [Protocol ".ProtocolInfo::CURRENT_PROTOCOL."; API ".CURRENT_API_VERSION."]\r\n";
+		$dump .= "NostalgiaCore version: ".$version." #".$version->getNumber()." [Protocol ".ProtocolInfo::CURRENT_PROTOCOL."; API ".CURRENT_API_VERSION."]\r\n";
 		$dump .= "Git commit: ".GIT_COMMIT."\r\n";
 		$dump .= "Source SHA1 sum: ".SOURCE_SHA1SUM."\r\n";
 		$dump .= "uname -a: ".php_uname("a")."\r\n";
