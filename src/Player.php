@@ -2011,6 +2011,7 @@ class Player{
 				if(trim($packet->message) != "" and strlen($packet->message) <= 255){
 					$message = $packet->message;
 					if($message{0} === "/"){ //Command
+						console("[INFO] " . FORMAT_AQUA . $this->username . FORMAT_RESET . " issued a command: " . FORMAT_AQUA . $message);
 						$this->server->api->console->run(substr($message, 1), $this);
 					}else{
 						$data = array("player" => $this, "message" => $message);
