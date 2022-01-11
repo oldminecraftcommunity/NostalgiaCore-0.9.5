@@ -9,6 +9,6 @@ fi
 if [ -f ./bin/php ]; then
 	./bin/php -d enable_dl=On PocketMine-MP.php $@
 else
-	echo "[WARNING] You are not using the standalone PocketMine-MP PHP binary."
+	echo "[WARNING] You are not using the standalone NostalgiaCore PHP binary."
 	php -d enable_dl=On PocketMine-MP.php $@
 fi

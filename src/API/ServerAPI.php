@@ -112,13 +112,12 @@ class ServerAPI{
 		console("[INFO] Loading properties...");
 		$this->config = new Config(DATA_PATH . "server.properties", CONFIG_PROPERTIES, array(
 			"server-name" => "Minecraft: PE Server",
-			"description" => "Server made using PocketMine-MP",
+			"description" => "Server made using NostalgiaCore",
 			"motd" => "Welcome @player to this server!",
 			"server-ip" => "",
 			"server-port" => 19132,
 			"server-type" => "normal",
 			"memory-limit" => "128M",
-			"last-update" => false,
 			"white-list" => false,
 			"announce-player-achievements" => true,
 			"spawn-protection" => 16,
@@ -160,50 +159,8 @@ class ServerAPI{
 		$this->server = new PocketMinecraftServer($this->getProperty("server-name"), $this->getProperty("gamemode"), ($seed = $this->getProperty("level-seed")) != "" ? (int) $seed:false, $this->getProperty("server-port"), ($ip = $this->getProperty("server-ip")) != "" ? $ip:"0.0.0.0");
 		$this->server->api = $this;
 		self::$serverRequest = $this->server;
-		console("[INFO] This server is running PocketMine-MP version ".($version->isDev() ? FORMAT_YELLOW:"").MAJOR_VERSION.FORMAT_RESET." \"".CODENAME."\" (MCPE: ".CURRENT_MINECRAFT_VERSION.") (API ".CURRENT_API_VERSION.")", true, true, 0);
-		console("[INFO] PocketMine-MP is distributed under the LGPL License", true, true, 0);
-
-		if($this->getProperty("last-update") === false or ($this->getProperty("last-update") + 3600) < time()){
-			console("[INFO] Checking for new server version");
-			console("[INFO] Last check: ".FORMAT_AQUA.date("Y-m-d H:i:s", $this->getProperty("last-update"))."\x1b[0m");
-			if($this->server->version->isDev()){
-				$info = json_decode(Utils::curl_get("https://api.github.com/repos/kotyaralih/NostalgiaCore/commits"), true);
-				if($info === false or !isset($info[0])){
-					console("[ERROR] Github API error");
-				}else{
-					$last = new DateTime($info[0]["commit"]["committer"]["date"]);
-					$last = $last->getTimestamp();
-					if($last >= $this->getProperty("last-update") and $this->getProperty("last-update") !== false and GIT_COMMIT != $info[0]["sha"]){
-						console("[NOTICE] ".FORMAT_YELLOW."A new DEVELOPMENT version of PocketMine-MP has been released!");
-						console("[NOTICE] ".FORMAT_YELLOW."Commit \"".$info[0]["commit"]["message"]."\" [".substr($info[0]["sha"], 0, 10)."] by ".$info[0]["commit"]["committer"]["name"]);
-						console("[NOTICE] ".FORMAT_YELLOW."Get it at PocketMine.net or at https://github.com/kotyaralih/NostalgiaCore/archive/".$info[0]["sha"].".zip");
-						console("[NOTICE] This message will dissapear after issuing the command \"/update-done\"");
-					}else{
-						$this->setProperty("last-update", time());
-						console("[INFO] ".FORMAT_AQUA."This is the latest DEVELOPMENT version");
-					}
-				}
-			}else{
-				$info = json_decode(Utils::curl_get("https://api.github.com/repos/kotyaralih/NostalgiaCore/tags"), true);
-				if($info === false or !isset($info[0])){
-					console("[ERROR] Github API error");
-				}else{
-					$newest = new VersionString(MAJOR_VERSION);
-					$newestN = $newest->getNumber();
-					$update = new VersionString($info[0]["name"]);
-					$updateN = $update->getNumber();
-					if($updateN > $newestN){
-						console("[NOTICE] ".FORMAT_GREEN."A new STABLE version of PocketMine-MP has been released!");
-						console("[NOTICE] ".FORMAT_GREEN."Version \"".$info[0]["name"]."\" #".$updateN);
-						console("[NOTICE] Get it at PocketMine.net or at ".$info[0]["zipball_url"]);
-						console("[NOTICE] This message will dissapear as soon as you update");
-					}else{
-						$this->setProperty("last-update", time());
-						console("[INFO] ".FORMAT_AQUA."This is the latest STABLE version");
-					}
-				}
-			}
-		}
+		console("[INFO] This server is running NostalgiaCore version ".($version->isDev() ? FORMAT_YELLOW:"").MAJOR_VERSION.FORMAT_RESET." \"".CODENAME."\" (MCPE: ".CURRENT_MINECRAFT_VERSION.") (API ".CURRENT_API_VERSION.")", true, true, 0);
+		console("[INFO] NostalgiaCore is distributed under the LGPL License", true, true, 0);
 
 		$this->loadProperties();
 		
@@ -287,7 +244,7 @@ class ServerAPI{
 			$value = array("M" => 1, "G" => 1024);
 			$real = ((int) substr($memory, 0, -1)) * $value[substr($memory, -1)];
 			if($real < 128){
-				console("[WARNING] PocketMine-MP may not work right with less than 128MB of RAM", true, true, 0);
+				console("[WARNING] NostalgiaCore may not work right with less than 128MB of RAM", true, true, 0);
 			}
 			@ini_set("memory_limit", $memory);
 		}else{
@@ -312,13 +269,6 @@ class ServerAPI{
 	private function parseProperties(){
 		foreach($this->config->getAll() as $n => $v){
 			switch($n){
-				case "last-update":
-					if($v === false){
-						$v = time();
-					}else{
-						$v = (int) $v;
-					}
-					break;
 				case "gamemode":
 				case "max-players":
 				case "server-port":
@@ -426,13 +376,6 @@ class ServerAPI{
 					break;
 			}
 			switch($name){
-				case "last-update":
-					if($v === false){
-						$v = time();
-					}else{
-						$v = (int) $v;
-					}
-					break;
 				case "gamemode":
 				case "max-players":
 				case "server-port":
