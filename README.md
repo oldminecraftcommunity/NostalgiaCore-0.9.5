@@ -26,6 +26,10 @@ Supported version: 0.8.1
 
 ...and etc.
 
+# Our discord server
+
+https://discord.gg/uSHEWe6NC3
+
 ## Third-party Libraries/Protocols Used
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
 * __[PHP SQLite3](http://php.net/manual/en/book.sqlite3.php)__
