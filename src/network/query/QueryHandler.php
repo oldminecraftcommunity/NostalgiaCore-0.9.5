@@ -51,7 +51,7 @@ class QueryHandler{
 	
 	public function regenerateInfo(){
 		$str = "";
-		$plist = "PocketMine-MP ".MAJOR_VERSION;
+		$plist = "NostalgiaCore ".MAJOR_VERSION;
 		$pl = $this->server->api->plugin->getList();
 		if(count($pl) > 0){
 			$plist .= ":";
@@ -66,7 +66,7 @@ class QueryHandler{
 			"gametype" => ($this->server->gamemode & 0x01) === 0 ? "SMP":"CMP",
 			"game_id" => "MINECRAFTPE",
 			"version" => CURRENT_MINECRAFT_VERSION,
-			"server_engine" => "PocketMine-MP ".MAJOR_VERSION,
+			"server_engine" => "NostalgiaCore ".MAJOR_VERSION,
 			"plugins" => $plist,
 			"map" => $this->server->api->level->getDefault()->getName(),
 			"numplayers" => count($this->server->clients),
