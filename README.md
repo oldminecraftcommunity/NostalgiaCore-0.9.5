@@ -20,7 +20,7 @@ Supported version: 0.8.1
 
 • Server is starting faster.
 
-• Vector2 are fixed.
+• Vector2 is fixed.
 
 • Players can't join as "RCON" or "CONSOLE".
 
