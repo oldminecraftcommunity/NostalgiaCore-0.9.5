@@ -67,7 +67,7 @@ class QueryHandler{
 			"game_id" => "MINECRAFTPE",
 			"version" => CURRENT_MINECRAFT_VERSION,
 			"server_engine" => "NostalgiaCore ".MAJOR_VERSION,
-			"plugins" => $plist,
+			"plugins" => $plist, /* write "off" to turn off display of plugins in Query */
 			"map" => $this->server->api->level->getDefault()->getName(),
 			"numplayers" => count($this->server->clients),
 			"maxplayers" => $this->server->maxClients,
