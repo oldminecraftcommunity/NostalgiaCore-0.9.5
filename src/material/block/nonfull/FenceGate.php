@@ -47,19 +47,17 @@ class FenceGateBlock extends TransparentBlock{
 		);
 	}
 	public function onActivate(Item $item, Player $player){
-		$faces = array(
-			0 => 3,
-			1 => 0,
-			2 => 1,
-			3 => 2,
-		);
-		$this->meta = ($faces[$player->entity->getDirection()] & 0x03) | ((~$this->meta) & 0x04);
-		if(($this->meta & 0x04) === 0x04){
-			$this->isFullBlock = true;
-		}else{
-			$this->isFullBlock = false;
-		}
+                $this->meta ^= 0x04;
 		$this->level->setBlock($this, $this, true, false, true);
+		$players = ServerAPI::request()->api->player->getAll($this->level);
+		unset($players[$player->CID]);
+		$pk = new LevelEventPacket;
+		$pk->x = $this->x;
+		$pk->y = $this->y;
+		$pk->z = $this->z;
+		$pk->evid = 1003;
+		$pk->data = 0;
+		ServerAPI::request()->api->player->broadcastPacket($players, $pk);
 		return true;
 	}	
 }
