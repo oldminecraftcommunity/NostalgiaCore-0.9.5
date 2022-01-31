@@ -71,7 +71,7 @@ class PocketMinecraftServer{
 		if(!defined("NO_THREADS")){
 			$this->asyncThread = new AsyncMultipleQueue();
 		}
-		console("[NostalgiaCore] Loading extra.properties...");
+		console("[INFO] Loading extra.properties...");
         $this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, array(
 			"update-client-on-world-switch" => true,
             "update-frequency" => 8,
