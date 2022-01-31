@@ -479,12 +479,14 @@ class PlayerAPI{
         );
 
         if(!file_exists(DATA_PATH."players/".$iname.".yml")){
-            console("[NOTICE] Player data not found for \"".$iname."\", creating new profile");
-            $data = new Config(DATA_PATH."players/".$iname.".yml", CONFIG_YAML, $default);
-            $data->save();
-        }else{
-            $data = new Config(DATA_PATH."players/".$iname.".yml", CONFIG_YAML, $default);
+            if($this->server->extraprops->get("save-player-data")) {
+			    console("[NOTICE] Player data not found for \"".$iname."\", creating new profile");
+			    $data = new Config(DATA_PATH."players/".$iname.".yml", CONFIG_YAML, $default);
+			    $data->save();
+            }
         }
+
+        $data = new Config(DATA_PATH."players/".$iname.".yml", CONFIG_YAML, $default);
 
         if(($data->get("gamemode") & 0x01) === 1){
             $data->set("health", 20);
@@ -494,7 +496,9 @@ class PlayerAPI{
     }
 
     public function saveOffline(Config $data){
-        $this->server->handle("player.offline.save", $data);
-        $data->save();
+        if($this->server->extraprops->get("save-player-data")) {
+            $this->server->handle("player.offline.save", $data);
+            $data->save();
+        }
     }
 }

@@ -21,7 +21,7 @@
 
 class PocketMinecraftServer{
 	public $tCnt;
-	public $serverID, $interface, $database, $version, $invisible, $tickMeasure, $preparedSQL, $seed, $gamemode, $name, $maxClients, $clients, $eidCnt, $custom, $description, $motd, $port, $saveEnabled;
+	public $extraprops, $serverID, $interface, $database, $version, $invisible, $tickMeasure, $preparedSQL, $seed, $gamemode, $name, $maxClients, $clients, $eidCnt, $custom, $description, $motd, $port, $saveEnabled;
 	private $serverip, $evCnt, $handCnt, $events, $eventsID, $handlers, $serverType, $lastTick, $ticks, $memoryStats, $async = array(), $asyncID = 0;
 
 	/**
@@ -30,6 +30,7 @@ class PocketMinecraftServer{
 	public $api;
 	
 	private function load(){
+		global $dolog;
 		$this->version = new VersionString();
 		/*if(defined("DEBUG") and DEBUG >= 0){
 			@cli_set_process_title("PocketMine-MP ".MAJOR_VERSION);
@@ -70,6 +71,15 @@ class PocketMinecraftServer{
 		if(!defined("NO_THREADS")){
 			$this->asyncThread = new AsyncMultipleQueue();
 		}
+		console("[NostalgiaCore] Loading extra.properties...");
+        $this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, array(
+			"update-client-on-world-switch" => true,
+            "update-frequency" => 8,
+            "save-player-data" => true,
+            "save-console-data" => true
+        ));
+
+        $dolog = $this->extraprops->get("save-console-data");
 	}
 
 	function __construct($name, $gamemode = SURVIVAL, $seed = false, $port = 19132, $serverip = "0.0.0.0"){

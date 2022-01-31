@@ -939,6 +939,12 @@ class Player{
 					}
 				}
 				
+				if($pos->level->getName() !== $this->level->getName()) { // we're switching levels.
+                    $rf = new ClientRenderFix($this);
+                    if($this->server->extraprops->get("update-client-on-world-switch")) {
+                        $rf = new ClientRenderFix($this, $this->server->extraprops->get("update-frequency"));
+                    }
+                }
 
 				$this->level->freeAllChunks($this);
 				$this->level = $pos->level;
