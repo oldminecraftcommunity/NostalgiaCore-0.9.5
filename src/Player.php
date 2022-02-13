@@ -941,8 +941,9 @@ class Player{
 				
 				if($pos->level->getName() !== $this->level->getName()) { // we're switching levels.
                     $rf = new ClientRenderFix($this);
+					$freq = $this->server->extraprops->get("update-frequency");
                     if($this->server->extraprops->get("update-client-on-world-switch")) {
-                        $rf = new ClientRenderFix($this, $this->server->extraprops->get("update-frequency"));
+                        $rf = new ClientRenderFix($this, $freq);
                     }
                 }
 
