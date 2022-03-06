@@ -21,41 +21,104 @@
 
 class Item{
 	public static $class = array(
-		SUGARCANE => "SugarcaneItem",	
-		WHEAT_SEEDS => "WheatSeedsItem",
-		PUMPKIN_SEEDS => "PumpkinSeedsItem",
-		MELON_SEEDS => "MelonSeedsItem",
+	
+		//armor
+		
+		//food
+		APPLE => "AppleItem",
 		MUSHROOM_STEW => "MushroomStewItem",
-		BEETROOT_SOUP => "BeetrootSoupItem",
+		BREAD => "BreadItem",
+		PORKCHOP => "PorkchopItem",
+		COOKED_PORKCHOP => "CookedPorkchopItem",
+		CAKE => "CakeItem",
+		MELON => "MelonItem",
+		BEEF => "BeefItem",
+		STEAK => "SteakItem",
+		RAW_CHICKEN => "RawChickenItem",
+		COOKED_CHICKEN => "CookedChickenItem",
 		CARROT => "CarrotItem",
 		POTATO => "PotatoItem",
-		BEETROOT_SEEDS => "BeetrootSeedsItem",
+		BAKED_POTATO => "CookedPotatoItem",
+		PUMPKIN_PIE => "PumpkinPieItem",
+		BEETROOT => "BeetrootItem",
+		BEETROOT_SOUP => "BeetrootSoupItem",
+	
+		//generic
+		ARROW => "ArrowItem",
+		COAL => "CoalItem",
+		DIAMOND => "DiamondItem",
+		IRON_INGOT => "IronIngotItem",
+		GOLD_INGOT => "GoldIngotItem",
+		STICK => "StickItem",
+		BOWL => "BowlItem",
+		'STRING' => "StringItem",
+		FEATHER => "FeatherItem",
+		GUNPOWDER => "GunpowderItem",
+		WHEAT_SEEDS => "WheatSeedsItem",
+		WHEAT => "WheatItem",
+		FLINT => "FlintItem",
+		PAINTING => "PaintingItem",
 		SIGN => "SignItem",
 		WOODEN_DOOR => "WoodenDoorItem",
 		BUCKET => "BucketItem",
+		MINECART => "MinecartItem",
+		SADDLE => "SaddleItem",
 		IRON_DOOR => "IronDoorItem",
-		CAKE => "CakeItem",
-		BED => "BedItem",
-		PAINTING => "PaintingItem",
-		COAL => "CoalItem",
-		APPLE => "AppleItem",
-		SPAWN_EGG => "SpawnEggItem",
-		DIAMOND => "DiamondItem",
-		STICK => "StickItem",
-		BOWL => "BowlItem",
-		FEATHER => "FeatherItem",
+		REDSTONE => "RedstoneItem",
+		SNOWBALL => "SnowballItem",
+		LEATHER => "LeatherItem",
 		BRICK => "BrickItem",
-		IRON_INGOT => "IronIngotItem",
-		GOLD_INGOT => "GoldIngotItem",
+		CLAY => "ClayItem",
+		SUGARCANE => "SugarCaneItem",
+		PAPER => "PaperItem",
+		BOOK => "BookItem",
+		SLIMEBALL => "SlimeballItem",
+		EGG => "EggItem",
+		GLOWSTONE_DUST => "GlowstoneDustItem",
+		DYE => "DyeItem",
+		BONE => "BoneItem",
+		SUGAR => "SugarItem",
+		BED => "BedItem",
+		PUMPKIN_SEEDS => "PumpkinSeedsItem",
+		MELON_SEEDS => "MelonSeedsItem",
+		SPAWN_EGG => "SpawnEggItem",
+		NETHER_BRICK => "NetherBrickItem",
+		QUARTZ => "QuartzItem",
+		CAMERA => "CameraItem",
+		BEETROOT_SEEDS => "BeetrootSeedsItem",
+		
+		//tool
 		IRON_SHOVEL => "IronShovelItem",
 		IRON_PICKAXE => "IronPickaxeItem",
 		IRON_AXE => "IronAxeItem",
-		IRON_HOE => "IronHoeItem",
+		FLINT_STEEL => "FlintSteelItem",
+		BOW => "BowItem",
+		IRON_SWORD => "IronSwordItem",
 		WOODEN_SWORD => "WoodenSwordItem",
 		WOODEN_SHOVEL => "WoodenShovelItem",
 		WOODEN_PICKAXE => "WoodenPickaxeItem",
 		WOODEN_AXE => "WoodenAxeItem",
-		FLINT_STEEL => "FlintSteelItem",
+		STONE_SWORD => "StoneSwordItem",
+		STONE_SHOVEL => "StoneShovelItem",
+		STONE_PICKAXE => "StonePickaxeItem",
+		STONE_AXE => "StoneAxeItem",
+		DIAMOND_SWORD => "DiamondSwordItem",
+		DIAMOND_SHOVEL => "DiamondShovelItem",
+		DIAMOND_PICKAXE => "DiamondPickaxeItem",
+		DIAMOND_AXE => "DiamondAxeItem",
+		GOLDEN_SWORD => "GoldenSwordItem",
+		GOLDEN_SHOVEL => "GoldenShovelItem",
+		GOLDEN_PICKAXE => "GoldenPickaxeItem",
+		GOLDEN_AXE => "GoldenAxeItem",
+		WOODEN_HOE => "WoodenHoeItem",
+		STONE_HOE => "StoneHoeItem",
+		IRON_HOE => "IronHoeItem",
+		DIAMOND_HOE => "DiamondHoeItem",
+		GOLDEN_HOE => "GoldenHoeItem",
+		COMPASS => "CompassItem",
+		CLOCK => "ClockItem",
+		SHEARS => "ShearsItem",
+		
 	);
 	protected $block;
 	protected $id;
@@ -195,7 +258,7 @@ class Item{
 				return 3;
 			case DIAMOND_PICKAXE:
 				return 5;
-			case GOLD_PICKAXE:
+			case GOLDEN_PICKAXE:
 				return 2;
 			default:
 				return false;
@@ -212,7 +275,7 @@ class Item{
 				return 3;
 			case DIAMOND_AXE:
 				return 5;
-			case GOLD_AXE:
+			case GOLDEN_AXE:
 				return 2;
 			default:
 				return false;
@@ -229,7 +292,7 @@ class Item{
 				return 3;
 			case DIAMOND_SWORD:
 				return 5;
-			case GOLD_SWORD:
+			case GOLDEN_SWORD:
 				return 2;
 			default:
 				return false;
@@ -246,7 +309,7 @@ class Item{
 				return 3;
 			case DIAMOND_SHOVEL:
 				return 5;
-			case GOLD_SHOVEL:
+			case GOLDEN_SHOVEL:
 				return 2;
 			default:
 				return false;
@@ -259,7 +322,7 @@ class Item{
 			case WOODEN_HOE:
 			case STONE_HOE:
 			case DIAMOND_HOE:
-			case GOLD_HOE:
+			case GOLDEN_HOE:
 				return true;
 			default:
 				return false;

@@ -19,9 +19,8 @@
  *
 */
 
-class IronIngotItem extends Item{
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(IRON_INGOT, 0, $count, "Iron Ingot");
+class CookedPorkchopItem extends Item{
+	public function __construct($meta = 0){
+		parent::__construct(COOKED_PORKCHOP, 0, "Cooked Porkchop");
 	}
-
 }

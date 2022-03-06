@@ -133,6 +133,7 @@ define("LIT_PUMPKIN", 91);
 define("JACK_O_LANTERN", 91);
 define("CAKE_BLOCK", 92);
 
+define("INVISIBLE_BEDROCK", 95);
 define("TRAPDOOR", 96);
 
 define("STONE_BRICKS", 98);
@@ -191,3 +192,7 @@ define("BEETROOT_BLOCK", 244);
 define("STONECUTTER", 245);
 define("GLOWING_OBSIDIAN", 246);
 define("NETHER_REACTOR", 247);
+define("INFO_UPDATE", 248);
+define("INFO_UPDATE2", 249);
+
+define("RESERVED6", 255);

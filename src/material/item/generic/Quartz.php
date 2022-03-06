@@ -19,9 +19,9 @@
  *
 */
 
-class IronIngotItem extends Item{
+class QuartzItem extends Item{
 	public function __construct($meta = 0, $count = 1){
-		parent::__construct(IRON_INGOT, 0, $count, "Iron Ingot");
+		parent::__construct(QUARTZ, 0, $count, "Nether Quartz");
 	}
 
 }

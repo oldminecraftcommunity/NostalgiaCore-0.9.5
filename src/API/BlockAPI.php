@@ -297,6 +297,8 @@ class BlockAPI{
 				
 				if(!isset($params[2])){
 					$item->count = $item->getMaxStackSize();
+				}elseif((!isset($params[2])) and ($item->getMaxStackSize() == 0)){
+					$item->count = 64;
 				}else{
 					$item->count = (int) $params[2];
 				}

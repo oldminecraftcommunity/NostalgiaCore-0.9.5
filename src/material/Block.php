@@ -102,6 +102,8 @@ abstract class Block extends Position{
 			GLOWSTONE_BLOCK => "GlowstoneBlock",
 
 			LIT_PUMPKIN => "LitPumpkinBlock",
+			INVISIBLE_BEDROCK => "InvisibleBedrockBlock",
+			
 			CAKE_BLOCK => "CakeBlock",
 			
 			TRAPDOOR => "TrapdoorBlock",
@@ -146,6 +148,9 @@ abstract class Block extends Position{
 			STONECUTTER => "StonecutterBlock",
 			GLOWING_OBSIDIAN => "GlowingObsidianBlock",
 			NETHER_REACTOR => "NetherReactorBlock",
+			INFO_UPDATE => "InfoUpdateBlock",
+			INFO_UPDATE2 => "InfoUpdate2Block",
+			RESERVED6 => "Reserved6Block",
 	);
 	protected $id;
 	protected $meta;

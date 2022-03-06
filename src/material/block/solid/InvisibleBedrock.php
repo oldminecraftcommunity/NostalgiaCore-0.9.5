@@ -19,9 +19,18 @@
  *
 */
 
-class IronIngotItem extends Item{
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(IRON_INGOT, 0, $count, "Iron Ingot");
+class InvisibleBedrockBlock extends SolidBlock{
+	public function __construct(){
+		parent::__construct(INVISIBLE_BEDROCK, 0, ".name<");
+		$this->breakable = false;
+		$this->hardness = 3600000;
 	}
-
+	
+	public function isBreakable(Item $item, Player $player){
+		if(($player->gamemode & 0x01) === 0x01){
+			return true;
+		}
+		return false;
+	}
+	
 }

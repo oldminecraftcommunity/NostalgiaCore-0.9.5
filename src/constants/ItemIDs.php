@@ -90,7 +90,7 @@ define("GOLD_CHESTPLATE", 315);
 define("GOLD_LEGGINGS", 316);
 define("GOLD_BOOTS", 317);
 define("FLINT", 318);
-define("RAW_PORKCHOP", 319);
+define("PORKCHOP", 319);
 define("COOKED_PORKCHOP", 320);
 define("PAINTING", 321);
 define("GOLDEN_APPLE", 322);
@@ -111,7 +111,7 @@ define("BRICK", 336);
 define("CLAY", 337);
 define("SUGARCANE", 338);
 define("SUGAR_CANE", 338);
-define("SUGAR_CANES", 338);
+define("REED", 338);
 define("PAPER", 339);
 define("BOOK", 340);
 define("SLIMEBALL", 341);
@@ -121,25 +121,20 @@ define("COMPASS", 345);
 
 define("CLOCK", 347);
 define("GLOWSTONE_DUST", 348);
-//define("RAW_FISH", 349);
-//define("COOKED_FISH", 350);
 define("DYE", 351);
 define("BONE", 352);
 define("SUGAR", 353);
 define("CAKE", 354);
 define("BED", 355);
 
-//define("COOKIE", 357);
-
 define("SHEARS", 359);
 define("MELON", 360);
 define("MELON_SLICE", 360);
 define("PUMPKIN_SEEDS", 361);
 define("MELON_SEEDS", 362);
-define("RAW_BEEF", 363);
+define("BEEF", 363);
 define("STEAK", 364);
 define("COOKED_BEEF", 364);
-
 define("RAW_CHICKEN", 365);
 define("COOKED_CHICKEN", 366);
 
