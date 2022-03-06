@@ -90,7 +90,7 @@ define("GOLD_CHESTPLATE", 315);
 define("GOLD_LEGGINGS", 316);
 define("GOLD_BOOTS", 317);
 define("FLINT", 318);
-define("PORKCHOP", 319);
+define("RAW_PORKCHOP", 319);
 define("COOKED_PORKCHOP", 320);
 define("PAINTING", 321);
 define("GOLDEN_APPLE", 322);

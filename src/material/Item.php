@@ -28,7 +28,7 @@ class Item{
 		APPLE => "AppleItem",
 		MUSHROOM_STEW => "MushroomStewItem",
 		BREAD => "BreadItem",
-		PORKCHOP => "PorkchopItem",
+		RAW_PORKCHOP => "RawPorkchopItem",
 		COOKED_PORKCHOP => "CookedPorkchopItem",
 		CAKE => "CakeItem",
 		MELON => "MelonItem",

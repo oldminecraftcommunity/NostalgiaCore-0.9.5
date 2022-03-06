@@ -19,8 +19,8 @@
  *
 */
 
-class PorkItem extends Item{
+class RawPorkchopItem extends Item{
 	public function __construct($meta = 0){
-		parent::__construct(PORK, 0, "Pork");
+		parent::__construct(RAW_PORKCHOP, 0, "Raw Porkchop");
 	}
 }

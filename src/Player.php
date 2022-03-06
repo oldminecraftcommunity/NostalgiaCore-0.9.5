@@ -1946,7 +1946,7 @@ class Player{
 							BREAD => 5,
 							RAW_PORKCHOP => 3,
 							COOKED_PORKCHOP => 8,
-							RAW_BEEF => 3,
+							BEEF => 3,
 							STEAK => 8,
 							COOKED_CHICKEN => 6,
 							RAW_CHICKEN => 2,
@@ -1956,9 +1956,6 @@ class Player{
 							CARROT => 4,
 							POTATO => 1,
 							BAKED_POTATO => 6,
-							//COOKIE => 2,
-							//COOKED_FISH => 5,
-							//RAW_FISH => 2,
 						);
 						$slot = $this->getSlot($this->slot);
 						if($this->entity->getHealth() < 20 and isset($items[$slot->getID()])){
