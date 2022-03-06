@@ -24,4 +24,5 @@ class PotatoItem extends Item{
 		$this->block = BlockAPI::get(POTATO_BLOCK);
 		parent::__construct(POTATO, 0, $count, "Potato");
 	}
+	
 }
