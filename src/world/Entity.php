@@ -220,7 +220,7 @@ class Entity extends Position{
 				case MOB_COW:
 					return array(
 						array(LEATHER, 0, mt_rand(0,2)),
-						array(($this->fire > 0 ? STEAK:RAW_BEEF), 0, 1),
+						array(($this->fire > 0 ? STEAK:BEEF), 0, 1),
 					);
 				case MOB_PIG:
 					return array(
