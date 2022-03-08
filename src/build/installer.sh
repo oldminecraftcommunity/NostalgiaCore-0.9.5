@@ -3,14 +3,13 @@ echo "==================================="
 echo "NostalgiaCore Installer"
 echo "==================================="
 echo "["$(date +%k:%M)"] Downloading NostalgiaCore..."
-wget https://owouwu.ru/master.zip > /dev/null
+apt install git
+git clone https://github.com/kotyaralih/NostalgiaCore
 echo "["$(date +%k:%M)"] Extracting..."
-unzip master.zip > /dev/null
-cd NostalgiaCore-master
+cd NostalgiaCore
 mv * ../
 cd ../
-rm -r NostalgiaCore-master
-rm master.zip
+rm -r NostalgiaCore
 rm bin.7z
 echo "["$(date +%k:%M)"] Downloading PHP..."
 wget https://owouwu.ru/NC_bin.tar.gz > /dev/null
