@@ -23,6 +23,26 @@ class Item{
 	public static $class = array(
 	
 		//armor
+		LEATHER_CAP => "LeatherCapItem",
+		LEATHER_TUNIC => "LeatherTunicItem",
+		LEATHER_PANTS => "LeatherPantsItem",
+		LEATHER_BOOTS => "LeatherBootsItem",
+		CHAIN_HELMET => "ChainHelmetItem",
+		CHAIN_CHESTPLATE => "ChainChestplateItem",
+		CHAIN_LEGGINGS => "ChainLeggingsItem",
+		CHAIN_BOOTS => "ChainBootsItem",
+		IRON_HELMET => "IronHelmetItem",
+		IRON_CHESTPLATE => "IronChestplateItem",
+		IRON_LEGGINGS => "IronLeggingsItem",
+		IRON_BOOTS => "IronBootsItem",
+		DIAMOND_HELMET => "DiamondHelmetItem",
+		DIAMOND_CHESTPLATE => "DiamondChestplateItem",
+		DIAMOND_LEGGINGS => "DiamondLeggingsItem",
+		DIAMOND_BOOTS => "DiamondBootsItem",
+		GOLDEN_HELMET => "GoldenHelmetItem",
+		GOLDEN_CHESTPLATE => "GoldenChestplateItem",
+		GOLDEN_LEGGINGS => "GoldenLeggingsItem",
+		GOLDEN_BOOTS => "GoldenBootsItem",
 		
 		//food
 		APPLE => "AppleItem",

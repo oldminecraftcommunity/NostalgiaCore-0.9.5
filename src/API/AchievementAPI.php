@@ -92,7 +92,7 @@ class AchievementAPI{
 			),
 		),
 		"leather" => array(
-			"name" => "Get leather",
+			"name" => "Cow Tipper",
 			"requires" => array(
 				"buildSword",
 			),
