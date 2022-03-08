@@ -177,11 +177,6 @@ class ConsoleAPI{
 			if(isset($this->alias[$cmd])){
 				return $this->run($this->alias[$cmd] . ($params !== "" ? " " .$params:""), $issuer, $cmd);
 			}
-			if($issuer instanceof Player){
-				console("[DEBUG] ".FORMAT_AQUA.$issuer->username.FORMAT_RESET." issued server command: ".ltrim("$alias ")."/$cmd ".$params, true, true, 2);
-			}else{
-				console("[DEBUG] ".FORMAT_YELLOW."*".$issuer.FORMAT_RESET." issued server command: ".ltrim("$alias ")."/$cmd ".$params, true, true, 2);
-			}
 			
 			if(preg_match_all('#@([@a-z]{1,})#', $params, $matches, PREG_OFFSET_CAPTURE) > 0){
 				$offsetshift = 0;
