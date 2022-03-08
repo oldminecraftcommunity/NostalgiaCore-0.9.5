@@ -861,7 +861,7 @@ class Player{
 						AchievementAPI::grantAchievement($this, "bakeCake");
 						break;
 					case STONE_PICKAXE:
-					case GOLD_PICKAXE:
+					case GOLDEN_PICKAXE:
 					case IRON_PICKAXE:
 					case DIAMOND_PICKAXE:
 						AchievementAPI::grantAchievement($this, "buildBetterPickaxe");
@@ -1827,7 +1827,7 @@ class Player{
 						$slot = $this->getSlot($this->slot);
 						switch($slot->getID()){
 							case WOODEN_SWORD:
-							case GOLD_SWORD:
+							case GOLDEN_SWORD:
 								$damage = 5;
 								break;
 							case STONE_SWORD:
@@ -1841,7 +1841,7 @@ class Player{
 								break;
 								
 							case WOODEN_AXE:
-							case GOLD_AXE:
+							case GOLDEN_AXE:
 								$damage = 3;
 								break;
 							case STONE_AXE:
@@ -1855,7 +1855,7 @@ class Player{
 								break;
 
 							case WOODEN_PICKAXE:
-							case GOLD_PICKAXE:
+							case GOLDEN_PICKAXE:
 								$damage = 2;
 								break;
 							case STONE_PICKAXE:
@@ -1869,7 +1869,7 @@ class Player{
 								break;
 
 							case WOODEN_SHOVEL:
-							case GOLD_SHOVEL:
+							case GOLDEN_SHOVEL:
 								$damage = 1;
 								break;
 							case STONE_SHOVEL:
