@@ -26,6 +26,10 @@ Supported version: 0.8.1
 
 ...and etc.
 
+# How to use auto-restart?
+
+Simply start your server using ./start.sh -l
+
 # Our discord server
 
 https://discord.gg/uSHEWe6NC3
