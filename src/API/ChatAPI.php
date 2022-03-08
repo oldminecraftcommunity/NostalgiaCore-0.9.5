@@ -92,12 +92,12 @@ class ChatAPI{
 					}
 				}
 				$mes = implode(" ", $params);
-				$output .= "You're whispering to ".$target." ".$mes."\n";
+				$output .= "You're whispering to ".$target.": ".$mes."\n";
 				if($target !== "Console" and $target !== "Rcon"){
 					$this->sendTo(false, $sender." whispers to you: ".$mes, $target);
 				}
 				if($target === "Console" or $sender === "Console"){
-					console("[INFO] ".$sender." whispers to ".$target." : ".$mes);
+					console("[INFO] ".$sender." whispers to ".$target.": ".$mes);
 				}
 				break;
 		}

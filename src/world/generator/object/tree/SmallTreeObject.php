@@ -70,13 +70,13 @@ class SmallTreeObject extends TreeObject{
 
       // Now build the tree (from the top down)
       $leaflevel = 0;
-      for( $yy = ($this->trunkHeight + 1); $yy >= 0; --$yy )
+      for( $yy = ($this->trunkHeight); $yy >= 0; --$yy )
       {
          if( $leaflevel < self::$leavesHeight )
          {
             // The size is a slight variation on the trunkheight
             $radius = self::$leafRadii[ $leaflevel ] + $leafPre;
-            $bRadius = 3;
+            $bRadius = 2;
             for( $xx = -$bRadius; $xx <= $bRadius; ++ $xx )
             {
                for( $zz = -$bRadius; $zz <= $bRadius; ++ $zz )
@@ -99,6 +99,7 @@ class SmallTreeObject extends TreeObject{
             $trunkpos = new Vector3( $pos->x, $pos->y + $yy, $pos->z );
             $level->setBlockRaw($trunkpos, new WoodBlock( $this->type ) );
          }
+
       }
    }
 }
