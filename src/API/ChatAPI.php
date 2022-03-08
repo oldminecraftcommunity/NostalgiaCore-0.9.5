@@ -55,6 +55,11 @@ class ChatAPI{
 				$this->server->api->chat->broadcast("[$sender] ".$s);
 				break;
 			case "me":
+				$s = implode(" ", $params);
+				if(trim($s) == ""){
+					$output .= "Usage: /me <message>\n";
+					break;
+				}
 				if(!($issuer instanceof Player)){
 					if($issuer === "rcon"){
 						$sender = "Rcon";
