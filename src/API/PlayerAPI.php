@@ -248,7 +248,7 @@ class PlayerAPI{
                     $player = $this->get($params[0]);
                 }
                 if($player instanceof Player){
-                    $player->entity->harm(1000, "console", true);
+                    $player->entity->harm(PHP_INT_MAX, "console", true);
                     $player->sendChat("Ouch. That looks like it hurt.\n");
                 }else{
                     $output .= "Usage: /$cmd [player]\n";
