@@ -56,12 +56,14 @@ abstract class RakNetDataPacket extends stdClass{
 		if($len <= 0){
 			$this->offset = strlen($this->buffer) - 1;
 			return "";
-		}
-		if($len === true){
+		}elseif($len === true){
 			return substr($this->buffer, $this->offset);
 		}
-		$this->offset += $len;
-		return substr($this->buffer, $this->offset - $len, $len);
+		$buffer = b"";
+		for(; $len > 0; --$len, ++$this->offset){
+			$buffer .= $this->buffer{$this->offset};
+		}
+		return $buffer;
 	}
 	
 	protected function put($str){
