@@ -58,7 +58,7 @@ class Item{
 		COOKED_CHICKEN => "CookedChickenItem",
 		CARROT => "CarrotItem",
 		POTATO => "PotatoItem",
-		BAKED_POTATO => "CookedPotatoItem",
+		BAKED_POTATO => "BakedPotatoItem",
 		PUMPKIN_PIE => "PumpkinPieItem",
 		BEETROOT => "BeetrootItem",
 		BEETROOT_SOUP => "BeetrootSoupItem",
