@@ -36,4 +36,145 @@ class DirtBlock extends SolidBlock{
 		}
 		return false;
 	}
+
+	public function onUpdate($type){
+		$this->level->scheduleBlockUpdate(new Position($this, 0, 0, $this->level), Utils::getRandomUpdateTicks(), BLOCK_UPDATE_RANDOM);
+		if($type === BLOCK_UPDATE_RANDOM){
+			if(mt_rand(0, 3) == 0){
+				if($this->getSide(1)->isTransparent === false) return false;
+				if($this->getRadiusGrass() > 0){
+					$this->level->setBlock($this, BlockAPI::get(GRASS, 0), true, false, true);
+					return BLOCK_UPDATE_RANDOM;
+				}
+			}
+		}
+		return false;
+	}
+
+	public function getRadiusGrass(){
+		$grass = 0;
+		$x = $this->x;
+		$y = $this->y;
+		$z = $this->z;
+		$x0 = ++$x;
+		$x2 = --$x;
+
+		for($i = 0; $i < 9; ++$i){//x+1
+
+			if($i < 3){//0,1,2
+				$z0 = $z;
+				$y0 = $y;
+				for(++$y0;;){
+					if($i == 0) ++$z0;
+					if($i == 2) --$z0;
+
+					$b = $this->level->getBlock(new Vector3($x0, $y0, $z0));
+					if ($b->getID() === GRASS) ++$grass;
+					break 1;
+				}
+			}
+			elseif($i > 2 and $i < 6){
+				$z1 = $z;
+				for(;;){
+					if($i == 3) ++$z1;
+					if($i == 5) --$z1;
+
+					$b = $this->level->getBlock(new Vector3($x0, $y, $z1));
+					if ($b->getID() === GRASS) ++$grass;
+					break 1;
+				}
+			}
+			elseif($i > 5){
+				$z2 = $z;
+				$y2 = $y;
+				for(--$y2;;){
+					if($i == 6) ++$z2;
+					if($i == 8) --$z2;
+
+					$b = $this->level->getBlock(new Vector3($x0, $y2, $z2));
+					if ($b->getID() === GRASS) ++$grass;
+					break 1;
+				}
+			}
+		}
+
+		for($i = 0; $i < 9; ++$i){//x
+
+			if($i < 3){
+				$z0 = $z;
+				$y0 = $y;
+				for(++$y0;;){
+					if($i == 0) ++$z0;
+					if($i == 2) --$z0;
+
+					$b = $this->level->getBlock(new Vector3($x, $y0, $z0));
+					if ($b->getID() === GRASS) ++$grass;
+					break 1;
+				}
+			}
+			elseif($i > 2 and $i < 6){
+				$z1 = $z;
+				for(;;){
+					if($i == 3) ++$z1;
+					if($i == 5) --$z1;
+
+					$b = $this->level->getBlock(new Vector3($x, $y, $z1));
+					if ($b->getID() === GRASS) ++$grass;
+					break 1;
+				}
+			}
+			elseif($i > 5){
+				$z2 = $z;
+				$y2 = $y;
+				for(--$y2;;){
+					if($i == 6) ++$z2;
+					if($i == 8) --$z2;
+
+					$b = $this->level->getBlock(new Vector3($x, $y2, $z2));
+					if ($b->getID() === GRASS) ++$grass;
+					break 1;
+				}
+			}
+		}
+
+		for($i = 0, $x2 = --$x; $i < 9; ++$i){//x-1
+
+			if($i < 3){
+				$z0 = $z;
+				$y0 = $y;
+				for(++$y0;;){
+					if($i == 0) ++$z0;
+					if($i == 2) --$z0;
+
+					$b = $this->level->getBlock(new Vector3($x2, $y0, $z0));
+					if ($b->getID() === GRASS) ++$grass;
+					break 1;
+				}
+			}
+			elseif($i > 2 and $i < 6){
+				$z1 = $z;
+				for(;;){
+					if($i == 3) ++$z1;
+					if($i == 5) --$z1;
+
+					$b = $this->level->getBlock(new Vector3($x2, $y, $z1));
+					if ($b->getID() === GRASS) ++$grass;
+					break 1;
+				}
+			}
+			elseif($i > 5){
+				$z2 = $z;
+				$y2 = $y;
+				for(--$y2;;){
+					if($i == 6) ++$z2;
+					if($i == 8) --$z2;
+
+					$b = $this->level->getBlock(new Vector3($x2, $y2, $z2));
+					if ($b->getID() === GRASS) ++$grass;
+					break 1;
+				}
+			}
+		}
+		return $grass;
+	}
 }
