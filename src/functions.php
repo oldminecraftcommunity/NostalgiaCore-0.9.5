@@ -197,7 +197,7 @@ function console($message, $EOL = true, $log = true, $level = 1){
 						break;
 					case "INTERNAL":
 					case "DEBUG":
-						$add .= FORMAT_GRAY;
+						$add .= FORMAT_WHITE;
 						break;
 					case "WARNING":
 						$add .= FORMAT_YELLOW;
@@ -206,7 +206,7 @@ function console($message, $EOL = true, $log = true, $level = 1){
 						$add .= FORMAT_AQUA;
 						break;
 					default:
-						$add = "";
+						$add .= FORMAT_GRAY;
 						break;
 				}
 			}
