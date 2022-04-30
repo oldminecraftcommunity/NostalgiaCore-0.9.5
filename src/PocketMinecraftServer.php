@@ -73,11 +73,26 @@ class PocketMinecraftServer{
 		}
 		console("[INFO] Loading extra.properties...");
         	$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, array(
+			        "version" => "2",
             		"save-player-data" => true,
-            		"save-console-data" => true
+            		"save-console-data" => true,
+		            "discord-msg" => false,
+					"discord-webhook-url" => "none",
+					"discord-bot-name" => "NostalgiaCore Logger"
         	));
-
-        	$dolog = $this->extraprops->get("save-console-data");
+        
+	        if($this->extraprops->get("discord-msg") == true){
+				if($this->extraprops->get("discord-webhook-url") !== "none"){
+					console("[INFO] Discord Logger is enabled.");
+				} else {
+					console("[WARNING] Discord Logger is enabled in extra.properties,");
+					console("[WARNING] but you didn't put the webhook url, so it won't work.");
+				}
+			} elseif($this->extraprops->get("version") == null){
+				console("[WARNING] Your extra.properties file is corrupted!");
+				console("To fix it - just remove it! Server will generate it automatically.");
+			}
+	    $dolog = $this->extraprops->get("save-console-data");
 	}
 
 	function __construct($name, $gamemode = SURVIVAL, $seed = false, $port = 19132, $serverip = "0.0.0.0"){
@@ -695,5 +710,21 @@ class PocketMinecraftServer{
 			}
 		}
 	}
-
+	
+	public function send2Discord($msg){
+		if($this->extraprops->get("discord-msg") == true and $this->extraprops->get("discord-webhook-url") !== "none"){
+			$url = $this->extraprops->get("discord-webhook-url");
+			$name = $this->extraprops->get("discord-bot-name");
+			$headers = [ 'Content-Type: application/json; charset=utf-8' ];
+			$POST = [ 'username' => $name, 'content' => $msg];
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($POST));
+			$response   = curl_exec($ch);
+		}
+	}
 }

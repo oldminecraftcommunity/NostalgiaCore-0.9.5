@@ -305,8 +305,9 @@ class Player{
 			if($msg === true and $this->username != "" and $this->spawned !== false){
 				$this->server->api->chat->broadcast($this->username." left the game");
 			}
-                        $this->spawned = false;
+			$this->spawned = false;
 			console("[INFO] ".FORMAT_AQUA.$this->username.FORMAT_RESET."[/".$this->ip.":".$this->port."] logged out due to ".$reason);
+			$this->server->send2Discord($this->username . " left the game: ".$reason);
 			$this->windows = array();
 			$this->armor = array();
 			$this->inventory = array();
@@ -1348,6 +1349,8 @@ class Player{
 					return;
 				}
 				
+				$this->server->send2Discord($this->username . " joined the game");
+				
 				$this->auth = true;
 				if(!$this->data->exists("inventory") or ($this->gamemode & 0x01) === 0x01){
 					if(($this->gamemode & 0x01) === 0x01){
@@ -2016,6 +2019,7 @@ class Player{
 					}else{
 						$data = array("player" => $this, "message" => $message);
 						if($this->server->api->handle("player.chat", $data) !== false){
+							$this->server->send2Discord("<" . $this->username . "> " . $message);
 							if(isset($data["message"])){
 								$this->server->api->chat->send($this, $data["message"]);
 							}else{
