@@ -31,7 +31,7 @@ class CactusBlock extends TransparentBlock{
 			$down = $this->getSide(0);
 			if($down->getID() !== SAND and $down->getID() !== CACTUS){ //Replace with common break method
 				$this->level->setBlock($this, new AirBlock(), false);
-				ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem($this->id));
+				ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem($this->id));
 				return BLOCK_UPDATE_NORMAL;
 			}
 		}elseif($type === BLOCK_UPDATE_RANDOM){

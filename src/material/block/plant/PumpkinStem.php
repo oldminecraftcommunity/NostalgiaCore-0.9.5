@@ -38,7 +38,7 @@ class PumpkinStemBlock extends FlowableBlock{
 	public function onUpdate($type){
 		if($type === BLOCK_UPDATE_NORMAL){
 			if($this->getSide(0)->isTransparent === true){ //Replace with common break method
-				ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem(PUMPKIN_SEEDS, 0, mt_rand(0, 2)));
+				ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem(PUMPKIN_SEEDS, 0, mt_rand(0, 2)));
 				$this->level->setBlock($this, new AirBlock(), false, false, true);
 				return BLOCK_UPDATE_NORMAL;
 			}

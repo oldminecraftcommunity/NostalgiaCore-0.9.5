@@ -56,7 +56,7 @@ class SugarcaneBlock extends FlowableBlock{
 		if($type === BLOCK_UPDATE_NORMAL){
 			$down = $this->getSide(0);
 			if($down->isTransparent === true and $down->getID() !== SUGARCANE_BLOCK){ //Replace with common break method
-				ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem(SUGARCANE));
+				ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y, $this->z+0.5, $this->level), BlockAPI::getItem(SUGARCANE));
 				$this->level->setBlock($this, new AirBlock(), false, false, true);
 				return BLOCK_UPDATE_NORMAL;
 			}
