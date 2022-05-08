@@ -110,6 +110,7 @@ class PlayerAPI{
                     }
                 }
                 $this->server->api->chat->broadcast($data["player"]->username . $message);
+				$this->server->send2Discord($data["player"]->username . $message);
                 return true;
                 break;
         }
