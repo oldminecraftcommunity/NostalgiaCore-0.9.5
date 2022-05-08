@@ -73,10 +73,11 @@ class PocketMinecraftServer{
 		}
 		console("[INFO] Loading extra.properties...");
         	$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, array(
-			        "version" => "2",
+			        "version" => "3",
             		"save-player-data" => true,
             		"save-console-data" => true,
-		            "discord-msg" => false,
+		            "query-plugins" => false,
+					"discord-msg" => false,
 					"discord-webhook-url" => "none",
 					"discord-bot-name" => "NostalgiaCore Logger"
         	));
@@ -90,7 +91,7 @@ class PocketMinecraftServer{
 				}
 			} elseif($this->extraprops->get("version") == null){
 				console("[WARNING] Your extra.properties file is corrupted!");
-				console("To fix it - just remove it! Server will generate it automatically.");
+				console("To fix it - just remove it! Server will generate it again automatically.");
 			}
 	    $dolog = $this->extraprops->get("save-console-data");
 	}
@@ -716,15 +717,9 @@ class PocketMinecraftServer{
 			$url = $this->extraprops->get("discord-webhook-url");
 			$name = $this->extraprops->get("discord-bot-name");
 			$headers = [ 'Content-Type: application/json; charset=utf-8' ];
-			$POST = [ 'username' => $name, 'content' => str_replace("@", "", $msg)];
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($POST));
-			$response   = curl_exec($ch);
+			$POST = [ 'username' => $name, 'content' => $msg];
+			include_once('discord.php');
+			discord::run($url, $headers, $POST);
 		}
 	}
 }
