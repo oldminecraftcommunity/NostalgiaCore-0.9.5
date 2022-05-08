@@ -716,7 +716,7 @@ class PocketMinecraftServer{
 			$url = $this->extraprops->get("discord-webhook-url");
 			$name = $this->extraprops->get("discord-bot-name");
 			$headers = [ 'Content-Type: application/json; charset=utf-8' ];
-			$POST = [ 'username' => $name, 'content' => str_replace("@"," ",$msg)];
+			$POST = [ 'username' => $name, 'content' => str_replace("@", "", $msg)];
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_POST, true);
