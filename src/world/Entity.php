@@ -201,7 +201,7 @@ class Entity extends Position{
 				case MOB_PIGMAN:
 					return array(
 						array(COOKED_PORKCHOP, 0, mt_rand(0,2)),
-						array(GOLD_INGOT, 0, mt_rand(0,2)),
+						array(GOLD_INGOT, 0, mt_rand(0,1)),
 					);
 				case MOB_CREEPER:
 					return array(

@@ -40,6 +40,7 @@ class ConsoleAPI{
 		$this->register("stop", "", array($this, "defaultCommands"));
 		$this->register("defaultgamemode", "<mode>", array($this, "defaultCommands"));
 		$this->server->api->ban->cmdWhitelist("help");
+		$this->server->api->ban->cmdWhitelist("status");
 	}
 
 	function __destruct(){

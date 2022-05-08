@@ -610,6 +610,9 @@ class Player{
 						case DIAMOND:
 							AchievementAPI::grantAchievement($this, "diamond");
 							break;
+						case LEATHER:
+							AchievementAPI::grantAchievement($this, "leather");
+							break;
 					}
 				}elseif($data["entity"]->level === $this->level){
 					$pk = new TakeItemEntityPacket;
