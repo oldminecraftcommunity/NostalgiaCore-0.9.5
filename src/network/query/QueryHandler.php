@@ -20,8 +20,8 @@
 */
 
 /*
-Implementation of the UT3 Query Protocol (GameSpot)
-Source: http://wiki.unrealadmin.org/UT3_query_protocol
+ Implementation of the UT3 Query Protocol (GameSpot)
+ Source: http://wiki.unrealadmin.org/UT3_query_protocol
 */
 
 class QueryHandler{
@@ -52,13 +52,15 @@ class QueryHandler{
 	public function regenerateInfo(){
 		$str = "";
 		$plist = "NostalgiaCore ".MAJOR_VERSION;
-		$pl = $this->server->api->plugin->getList();
-		if(count($pl) > 0){
-			$plist .= ":";
-			foreach($pl as $p){
-				$plist .= " ".str_replace(array(";", ":", " "), array("", "", "_"), $p["name"])." ".str_replace(array(";", ":", " "), array("", "", "_"), $p["version"]).";";
+		if($this->server->extraprops->get("query-plugins") == true){
+			$pl = $this->server->api->plugin->getList();
+			if(count($pl) > 0){
+				$plist .= ":";
+				foreach($pl as $p){
+					$plist .= " ".str_replace(array(";", ":", " "), array("", "", "_"), $p["name"])." ".str_replace(array(";", ":", " "), array("", "", "_"), $p["version"]).";";
+				}
+				$plist = substr($plist, 0, -1);
 			}
-			$plist = substr($plist, 0, -1);
 		}
 		$KVdata = array(
 			"splitnum" => chr(128),
@@ -67,7 +69,7 @@ class QueryHandler{
 			"game_id" => "MINECRAFTPE",
 			"version" => CURRENT_MINECRAFT_VERSION,
 			"server_engine" => "NostalgiaCore ".MAJOR_VERSION,
-			"plugins" => $plist, /* write "off" to turn off display of plugins in Query */
+			"plugins" => $plist,
 			"map" => $this->server->api->level->getDefault()->getName(),
 			"numplayers" => count($this->server->clients),
 			"maxplayers" => $this->server->maxClients,
