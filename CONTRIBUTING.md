@@ -1,18 +1,13 @@
-![](http://www.pocketmine.net/favicon.png)
+![](http://owouwu.ru/favicon.png)
 
 # NostalgiaCore Contribution Guidelines
 
 Before contributing to NostalgiaCore, please read this.
 
-
-## I've a question
-* For questions, please refer to the _#pocketmine_ or _#mcpedevs_ IRC channel on Freenode. There is a [WebIRC](http://webchat.freenode.net?channels=pockdetmine,mcpedevs&uio=d4) if you want.
-* You can ask directly to _[@PocketMine](https://twitter.com/PocketMine)_ in Twitter, but don't expect an inmediate reply.
-
 ## I want to create an issue
 * First, use the [Issue Search](https://github.com/kotyaralih/NostalgiaCore/search?ref=cmdform&type=Issues) to check if anyone has reported it.
 * Is your issue related to a Plugin? If so, please contact their original author instead of reporting it here.
- * And no, we won't update a Plugin because you need it.
+* And no, we won't update a Plugin because you need it.
 * When reporting, give as much info as you can, and if the Issue is a crash, give the Crash Dump.
 * Issues should be written in English.
 
