@@ -33,7 +33,7 @@ function UPnP_PortForward($port){
 		if($com === false or !is_object($com->StaticPortMappingCollection)){
 			return false;
 		}
-		$com->StaticPortMappingCollection->Add($port, "UDP", $port, $myLocalIP, true, "PocketMine-MP");
+		$com->StaticPortMappingCollection->Add($port, "UDP", $port, $myLocalIP, true, "NostalgiaCore");
 	}catch(Exception $e){
 		return false;
 	}

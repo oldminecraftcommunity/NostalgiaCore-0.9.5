@@ -30,7 +30,7 @@
 		
 		private $lang, $config;
 		public function __construct(){
-			echo "[*] PocketMine-MP set-up wizard\n";
+			echo "[*] NostalgiaCore set-up wizard\n";
 			echo "[*] Please select a language:\n";
 			foreach(InstallerLang::$languages as $short => $native){
 				echo " $native => $short\n";

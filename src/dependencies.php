@@ -42,7 +42,7 @@ if(version_compare("5.4.0", PHP_VERSION) > 0){
 }
 
 if(php_sapi_name() !== "cli"){
-	console("[ERROR] You must run PocketMine-MP using the CLI.", true, true, 0);
+	console("[ERROR] You must run NostalgiaCore using the CLI.", true, true, 0);
 	++$errors;
 }
 
