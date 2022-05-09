@@ -137,7 +137,6 @@ class ServerAPI{
 			"enable-query" => true,
 			"enable-rcon" => false,
 			"rcon.password" => substr(base64_encode(Utils::getRandomBytes(20, false)), 3, 10),
-			"send-usage" => true,
 			"auto-save" => true,
 		));
 		
@@ -201,32 +200,6 @@ class ServerAPI{
 	public function autoSave(){
 		console("[DEBUG] Saving....", true, true, 2);
 		$this->server->api->level->saveAll();
-	}
-		
-	public function sendUsage(){
-		console("[DEBUG] Sending usage data...", true, true, 2);
-		$plist = "";
-		foreach($this->plugin->getList() as $p){
-			$plist .= str_replace(array(";", ":"), "", $p["name"]).":".str_replace(array(";", ":"), "", $p["version"]).";";
-		}
-		
-		$this->asyncOperation(ASYNC_CURL_POST, array(
-			"url" => "http://stats.pocketmine.net/usage.php",
-			"data" => array(
-				"serverid" => $this->server->serverID,
-				"port" => $this->server->port,
-				"os" => Utils::getOS(),
-				"memory_total" => $this->getProperty("memory-limit"),
-				"memory_usage" => memory_get_usage(true),
-				"php_version" => PHP_VERSION,
-				"version" => MAJOR_VERSION,
-				"mc_version" => CURRENT_MINECRAFT_VERSION,
-				"protocol" => ProtocolInfo::CURRENT_PROTOCOL,
-				"online" => count($this->server->clients),
-				"max" => $this->server->maxClients,
-				"plugins" => $plist,
-			),
-		), NULL);
 	}
 
 	public function __destruct(){
@@ -294,10 +267,6 @@ class ServerAPI{
 			self::$serverRequest = $this->server;
 		}
 
-		if($this->getProperty("send-usage") !== false){
-			$this->server->schedule(6000, array($this, "sendUsage"), array(), true); //Send the info after 5 minutes have passed
-			$this->sendUsage();
-		}
 		if($this->getProperty("auto-save") === true){
 			$this->server->schedule(18000, array($this, "autoSave"), array(), true);	
 		}
