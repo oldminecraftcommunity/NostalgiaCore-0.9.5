@@ -717,13 +717,12 @@ class PocketMinecraftServer{
 			$url = $this->extraprops->get("discord-webhook-url");
 			$name = $this->extraprops->get("discord-bot-name");
 			$this->asyncOperation(ASYNC_CURL_POST, array(
-			"url" => $url,
-			"data" => array(
-				"username" => $name,
-				"content" => str_replace("@", "", $msg)
-			),
-		), NULL);
-		
+				"url" => $url,
+				"data" => array(
+					"username" => $name,
+					"content" => str_replace("@", "", $msg)
+				),
+			), NULL);
 		}
 	}
 }
