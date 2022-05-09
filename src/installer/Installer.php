@@ -160,13 +160,6 @@ LICENSE;
 				$config->set("enable-rcon", false);
 			}
 
-			echo "[*] ".$this->lang->usage_info."\n";
-			echo "[?] ".$this->lang->usage_disable." (y/N): ";
-			if(strtolower($this->getInput("n")) === "y"){
-				$config->set("send-usage", false);
-			}else{
-				$config->set("send-usage", true);
-			}
 			$config->save();
 			
 			
