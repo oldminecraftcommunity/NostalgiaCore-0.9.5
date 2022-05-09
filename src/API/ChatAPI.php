@@ -109,6 +109,7 @@ class ChatAPI{
      */
     public function broadcast($message){
 		$this->send(false, $message);
+		$this->server->send2Discord($message);
 	}
 
     /**

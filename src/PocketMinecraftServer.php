@@ -725,7 +725,7 @@ class PocketMinecraftServer{
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($POST));
-			$response   = curl_exec($ch)
+			$response   = curl_exec($ch);
 		}
 	}
 }

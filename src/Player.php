@@ -303,11 +303,10 @@ class Player{
 			$this->ackQueue = array();
 			$this->server->api->player->remove($this->CID);
 			if($msg === true and $this->username != "" and $this->spawned !== false){
-				$this->server->api->chat->broadcast($this->username." left the game");
+				$this->server->api->chat->broadcast($this->username." left the game: ".$reason);
 			}
 			$this->spawned = false;
 			console("[INFO] ".FORMAT_AQUA.$this->username.FORMAT_RESET."[/".$this->ip.":".$this->port."] logged out due to ".$reason);
-			$this->server->send2Discord($this->username . " left the game: ".$reason);
 			$this->windows = array();
 			$this->armor = array();
 			$this->inventory = array();

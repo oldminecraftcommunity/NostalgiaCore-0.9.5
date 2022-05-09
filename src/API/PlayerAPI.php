@@ -38,6 +38,7 @@ class PlayerAPI{
         $this->server->api->console->alias("lag", "ping");
         $this->server->api->console->alias("suicide", "kill");
         $this->server->api->console->alias("tppos", "tp");
+		$this->server->api->console->alias("who", "list");
         $this->server->api->ban->cmdWhitelist("list");
         $this->server->api->ban->cmdWhitelist("ping");
         $this->server->api->ban->cmdWhitelist("spawn");
@@ -110,7 +111,6 @@ class PlayerAPI{
                     }
                 }
                 $this->server->api->chat->broadcast($data["player"]->username . $message);
-				$this->server->send2Discord($data["player"]->username . $message);
                 return true;
                 break;
         }
