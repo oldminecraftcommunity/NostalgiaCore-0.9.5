@@ -34,8 +34,8 @@ Simply start your server using ./start.sh -l
 
 https://discord.gg/uSHEWe6NC3
 
-###​ ​Want to contribute? 
-​*​ Check the [​Contributing Guidelines​](CONTRIBUTING.md)
+## Want to contribute?
+​* Check the [Contributing Guidelines](CONTRIBUTING.md)
 
 ## Third-party Libraries/Protocols Used
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
