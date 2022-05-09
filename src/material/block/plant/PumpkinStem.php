@@ -71,8 +71,8 @@ class PumpkinStemBlock extends FlowableBlock{
 		if($item->getID() === DYE and $item->getMetadata() === 0x0F){ //Bonemeal
 			$this->meta += mt_rand(0, 3) + 2;
 			if ($this->meta > 7) {
-                $this->meta = 7;
-            }
+				$this->meta = 7;
+			}
 			$this->level->setBlock($this, $this, true, false, true);
 			if(($player->gamemode & 0x01) === 0){
 				$player->removeItem(DYE,0x0F,1);
