@@ -48,7 +48,9 @@ class BucketItem extends Item{
 			}
 		}elseif($this->meta === LAVA){
 			if($block->getID() === AIR){
-				$level->setBlock($block, new LavaBlock(), true, false, true);
+				$lava = new LavaBlock();
+				$level->setBlock($block, $lava, true, false, true);
+				$lava->place(clone $this, $player, $block, $target, $face, $fx, $fy, $fz);
 				if(($player->gamemode & 0x01) === 0){
 					$this->meta = 0;
 				}
