@@ -59,7 +59,7 @@ class TorchBlock extends FlowableBlock{
 			$this->meta = $faces[$face];
 			$this->level->setBlock($block, $this, true, false, true);
 			return true;
-		}elseif($this->getSide(0)->isTransparent === false or $this->getSide(0)->getID() === FENCE){
+		}elseif($this->getSide(0)->isTransparent === false or $this->getSide(0)->getID() === FENCE or $this->getSide(0)->getID() === STONE_WALL){
 			$this->meta = 0;
 			$this->level->setBlock($block, $this, true, false, true);
 			return true;

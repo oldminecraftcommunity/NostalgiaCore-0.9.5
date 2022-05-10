@@ -39,9 +39,6 @@ class TrapdoorBlock extends TransparentBlock{
 					5 => 3,
 				);
 				$this->meta = $faces[$face] & 0x03;
-				if($fy > 0.5){
-					$this->meta |= 0x08;
-				}
 				$this->level->setBlock($block, $this, true, false, true);
 				return true;
 			}
@@ -50,6 +47,26 @@ class TrapdoorBlock extends TransparentBlock{
 		return array(
 			array($this->id, 0, 1),
 		);
+	}
+	public function onUpdate($type){
+		if($type === BLOCK_UPDATE_NORMAL){
+			$faces = array( //meta => side
+					0 => 3,
+					4 => 3, //activated
+					1 => 2,
+					5 => 2, //activated
+					2 => 5,
+					6 => 5, //activated
+					3 => 4,
+					7 => 4, //activated
+			);
+			$side = $faces[$this->meta];
+			if($this->getSide($side) instanceof AirBlock){ //Replace with common break method
+				ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem($this->id, 0, 1));
+				$this->level->setBlock($this, new AirBlock(), true, false, true);
+				return BLOCK_UPDATE_NORMAL;
+			}
+		}
 	}
 	public function onActivate(Item $item, Player $player){
 		$this->meta ^= 0x04;

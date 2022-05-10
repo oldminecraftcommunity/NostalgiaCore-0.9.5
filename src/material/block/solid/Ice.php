@@ -28,6 +28,7 @@ class IceBlock extends TransparentBlock{
 	public function onBreak(Item $item, Player $player){
 		if(($player->gamemode & 0x01) === 0){
 			$this->level->setBlock($this, new WaterBlock(), true, false, true);
+			ServerAPI::request()->api->block->scheduleBlockUpdate(clone $this, 10, BLOCK_UPDATE_NORMAL);
 		}else{
 			$this->level->setBlock($this, new AirBlock(), true, false, true);
 		}
