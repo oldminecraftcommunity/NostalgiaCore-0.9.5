@@ -94,24 +94,23 @@ class WaterBlock extends LiquidBlock{
 		$from = $this->getFrom();
 		//Has Source or Its Source
 		if($from !== null || $level == 0x00){
-			if($level !== 0x07){
-				if($down instanceof AirBlock || $down instanceof WaterBlock){
-					$this->level->setBlock($down, new WaterBlock(0x01), false, false, true);
-					ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($down, 0, 0, $this->level), 10, BLOCK_UPDATE_NORMAL);
-				}else{
-					for($side = 2; $side <= 5; ++$side){
-						$b = $this->getSide($side);
-						if($b instanceof WaterBlock){
-							if( $this->getSourceCount() >= 2 && $level != 0x00){
-								$this->level->setBlock($this, new WaterBlock(0), false, false, true);
-							}
-						}elseif($b->isFlowable === true){
-							$this->level->setBlock($b, new WaterBlock($level + 1), false, false, true);
-							ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 10, BLOCK_UPDATE_NORMAL);
+			if($down instanceof AirBlock || $down instanceof WaterBlock){
+				$this->level->setBlock($down, new WaterBlock(0x01), false, false, true);
+				ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($down, 0, 0, $this->level), 10, BLOCK_UPDATE_NORMAL);
+			}elseif($level !== 0x07){{
+				for($side = 2; $side <= 5; ++$side){
+					$b = $this->getSide($side);
+					if($b instanceof WaterBlock){
+						if( $this->getSourceCount() >= 2 && $level != 0x00){
+							$this->level->setBlock($this, new WaterBlock(0), false, false, true);
 						}
+					}elseif($b->isFlowable === true){
+						$this->level->setBlock($b, new WaterBlock($level + 1), false, false, true);
+						ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 10, BLOCK_UPDATE_NORMAL);
 					}
 				}
 			}
+		}
 		}else{
 			//Extend Remove for Left Waters
 			for($side = 2; $side <= 5; ++$side){

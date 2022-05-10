@@ -36,7 +36,7 @@ class LavaBlock extends LiquidBlock{
 		for($side = 2; $side <= 5; ++$side){
 			if($this->getSide($side) instanceof LavaBlock ){
 				$b = $this->getSide($side);
-				$level = $b->meta & 0x07;
+				$level = $b->meta & 0x06;
 				if($level == 0x00){
 					$count++;
 				}
@@ -49,7 +49,7 @@ class LavaBlock extends LiquidBlock{
 		for($side = 1; $side <= 5; ++$side){
 			$b = $this->getSide($side);
 			if($b instanceof WaterBlock){
-				$level = $this->meta & 0x07;
+				$level = $this->meta & 0x06;
 				if($level == 0x00){
 					$this->level->setBlock($this, new ObsidianBlock(), false, false, true);
 				}else{
@@ -63,9 +63,9 @@ class LavaBlock extends LiquidBlock{
 		for($side = 0; $side <= 5; ++$side){
 			$b = $this->getSide($side);
 			if($b instanceof LavaBlock){
-				$tlevel = $b->meta & 0x07;
-				$level = $this->meta & 0x07;
-				if( ($tlevel + 2) == $level || ($side == 0x01 && $level == 0x01 ) || ($tlevel == 6 && $level == 7 )){
+				$tlevel = $b->meta & 0x06;
+				$level = $this->meta & 0x06;
+				if( ($tlevel + 2) == $level || ($side == 0x01 && $level == 0x01 ) || ($tlevel == 6 && $level == 6 )){
 					return $b;
 				}
 			}
@@ -76,7 +76,7 @@ class LavaBlock extends LiquidBlock{
 	public function onUpdate($type){
 		//return false;
 		$newId = $this->id;
-		$level = $this->meta & 0x07;
+		$level = $this->meta & 0x06;
 		if($type !== BLOCK_UPDATE_NORMAL){
 			return false;
 		}
@@ -90,19 +90,17 @@ class LavaBlock extends LiquidBlock{
 		
 		$from = $this->getFrom();
 		if($from !== null || $level == 0x00){
-			if($level !== 0x07){
-				if($down instanceof AirBlock || $down instanceof LavaBlock){
-					$this->level->setBlock($down, new LavaBlock(0x01), false, false, true);
-					ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($down, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
-				}else{
-					for($side = 2; $side <= 5; ++$side){
-						$b = $this->getSide($side);
-						if($b instanceof LavaBlock){
-							
-						}elseif($b->isFlowable === true){
-							$this->level->setBlock($b, new LavaBlock( min($level + 2,7) ), false, false, true);
-							ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
-						}
+			if($down instanceof AirBlock || $down instanceof LavaBlock){
+				$this->level->setBlock($down, new LavaBlock(0x01), false, false, true);
+				ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($down, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
+			}elseif($level !== 0x06){
+				for($side = 2; $side <= 5; ++$side){
+					$b = $this->getSide($side);
+					if($b instanceof LavaBlock){
+						
+					}elseif($b->isFlowable === true){
+						$this->level->setBlock($b, new LavaBlock( min($level + 2,6) ), false, false, true);
+						ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
 					}
 				}
 			}
@@ -111,7 +109,7 @@ class LavaBlock extends LiquidBlock{
 			for($side = 2; $side <= 5; ++$side){
 				$sb = $this->getSide($side);
 				if($sb instanceof LavaBlock){
-					$tlevel = $sb->meta & 0x07;
+					$tlevel = $sb->meta & 0x06;
 					if($tlevel != 0x00){
 						for ($s = 0; $s <= 5; $s++) {
                 					$ssb = $sb->getSide($s);
@@ -122,7 +120,7 @@ class LavaBlock extends LiquidBlock{
 				}
 				$b = $this->getSide(0)->getSide($side);
 				if($b instanceof LavaBlock){
-					$tlevel = $b->meta & 0x07;
+					$tlevel = $b->meta & 0x06;
 					if($tlevel != 0x00){
 				              	for ($s = 0; $s <= 5; $s++) {
 				              		$ssb = $sb->getSide($s);
