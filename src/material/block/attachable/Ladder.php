@@ -27,29 +27,34 @@ class LadderBlock extends TransparentBlock{
 		$this->hardness = 2;
 	}
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+		if($face === 0 || $face === 1){
+			return false; //fix of placing invalid ids without array
+		}
 		if($target->isTransparent === false){
-				$faces = array(
-					2 => 2,
-					3 => 3,
-					4 => 4,
-					5 => 5,
-				);
-			if(isset($faces[$face])){
-				$this->meta = $faces[$face];
-				$this->level->setBlock($block, $this, true, false, true);
-				return true;
-			}
+			$this->meta = $face;
+			$this->level->setBlock($block, $this, true, false, true);
+			return true;
 		}
 		return false;
 	}
 
 	public function onUpdate($type){
+		
 		if($type === BLOCK_UPDATE_NORMAL){
-			/*if($this->getSide(0)->getID() === AIR){ //Replace with common break method
-				ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem(LADDER, 0, 1));
-				$this->level->setBlock($this, new AirBlock(), true, true, true);
+			$side = $this->getMetadata();
+			$faces = array( //magical tranformation
+					3 => 2,
+					2 => 3,
+					5 => 4,
+					4 => 5,
+			);
+			//$b = $this->getSide($this->meta); Debug stuff
+			//console($b->x . " " . $b->y . " " . $b->z . " " .  $b . " meta->>" . $this->meta . "-uwu-" . $faces[$side]); 
+			if($this->getSide($faces[$side]) instanceof AirBlock){ //Replace with common break method
+				ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem($this->id, 0, 1));
+				$this->level->setBlock($this, new AirBlock(), true, false, true);
 				return BLOCK_UPDATE_NORMAL;
-			}*/
+			}
 		}
 		return false;
 	}
