@@ -635,10 +635,8 @@ class Entity extends Position{
 				$this->data["Color"] = mt_rand(0,15);
 			}
 			$d[16]["value"] = (($this->data["Sheared"] == 1 ? 1:0) << 4) | ($this->data["Color"] & 0x0F);
-		}elseif($this->type === OBJECT_PRIMEDTNT){
-			if(isset($this->data["fuse"])){ //ladder fix
-				$d[16]["value"] = (int) max(0, $this->data["fuse"] - (microtime(true) - $this->spawntime) * 20);
-			}
+		}elseif($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT){ //ladder fix 2.0
+			$d[16]["value"] = (int) max(0, $this->data["fuse"] - (microtime(true) - $this->spawntime) * 20);
 		}elseif($this->class === ENTITY_PLAYER){
 			if($this->player->isSleeping !== false){
 				$d[16]["value"] = 2;
