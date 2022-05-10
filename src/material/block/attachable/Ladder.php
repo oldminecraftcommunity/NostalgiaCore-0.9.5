@@ -48,8 +48,6 @@ class LadderBlock extends TransparentBlock{
 					5 => 4,
 					4 => 5,
 			);
-			//$b = $this->getSide($this->meta); Debug stuff
-			//console($b->x . " " . $b->y . " " . $b->z . " " .  $b . " meta->>" . $this->meta . "-uwu-" . $faces[$side]); 
 			if($this->getSide($faces[$side]) instanceof AirBlock){ //Replace with common break method
 				ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem($this->id, 0, 1));
 				$this->level->setBlock($this, new AirBlock(), true, false, true);
