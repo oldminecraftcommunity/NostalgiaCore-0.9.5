@@ -19,7 +19,7 @@
  *
 */
 
-class GlowingRedstoneOreBlock extends SolidBlock{
+class GlowingRedstoneOreBlock extends SolidBlock implements LightingBlock{
 	public function __construct(){
 		parent::__construct(GLOWING_REDSTONE_ORE, 0, "Glowing Redstone Ore");
 		$this->hardness = 15;
@@ -34,7 +34,9 @@ class GlowingRedstoneOreBlock extends SolidBlock{
 		}
 		return false;
 	}
-	
+	public function getMaxLightValue(){
+		return 9;
+	}
 
 	public function getBreakTime(Item $item, Player $player){
 		if(($player->gamemode & 0x01) === 0x01){
