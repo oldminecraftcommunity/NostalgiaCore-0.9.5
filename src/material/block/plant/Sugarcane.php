@@ -22,6 +22,7 @@
 class SugarcaneBlock extends FlowableBlock{
 	public function __construct($meta = 0){
 		parent::__construct(SUGARCANE_BLOCK, $meta, "Sugarcane");
+		$this->isActivable = true;
 		$this->hardness = 0;
 	}
 	
@@ -67,7 +68,6 @@ class SugarcaneBlock extends FlowableBlock{
 						$b = $this->level->getBlock(new Vector3($this->x, $this->y + $y, $this->z));
 						if($b->getID() === AIR){
 							$this->level->setBlock($b, new SugarcaneBlock(), true, false, true);							
-							break;
 						}
 					}
 					$this->meta = 0;
