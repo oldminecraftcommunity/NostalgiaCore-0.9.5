@@ -19,7 +19,7 @@
  *
 */
 
-class LavaBlock extends LiquidBlock{
+class LavaBlock extends LiquidBlock implements LightingBlock{
 	public function __construct($meta = 0){
 		parent::__construct(LAVA, $meta, "Lava");
 		$this->hardness = 0;
@@ -29,6 +29,10 @@ class LavaBlock extends LiquidBlock{
 		$ret = $this->level->setBlock($this, $this, true, false, true);
 		ServerAPI::request()->api->block->scheduleBlockUpdate(clone $this, 40, BLOCK_UPDATE_NORMAL);
 		return $ret;
+	}
+	
+	public function getMaxLightValue(){
+		return 15;
 	}
 	
 	public function getSourceCount(){

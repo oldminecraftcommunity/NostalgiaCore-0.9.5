@@ -19,12 +19,14 @@
  *
 */
 
-class TorchBlock extends FlowableBlock{
+class TorchBlock extends FlowableBlock implements LightingBlock{
 	public function __construct($meta = 0){
 		parent::__construct(TORCH, $meta, "Torch");
 		$this->hardness = 0;
 	}
-	
+	public function getMaxLightValue(){
+		return 15;
+	}
 	public function onUpdate($type){
 		if($type === BLOCK_UPDATE_NORMAL){
 			$side = $this->getMetadata();
