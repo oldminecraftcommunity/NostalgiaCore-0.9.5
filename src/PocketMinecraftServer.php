@@ -113,7 +113,11 @@ class PocketMinecraftServer{
      */
     public function getTPS(){
 		$v = array_values($this->tickMeasure);
-		$tps = 40 / ($v[39] - $v[0]);
+		$divval = ($v[39] - $v[0]);
+		if($divval === 0){
+			return 0;
+		}
+		$tps = 40 / $divval;
 		return round($tps, 4);
 	}
 	

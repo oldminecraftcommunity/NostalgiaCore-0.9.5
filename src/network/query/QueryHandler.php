@@ -76,6 +76,7 @@ class QueryHandler{
 			"whitelist" => $this->server->api->getProperty("white-list") === true ? "on":"off",
 			"hostport" => $this->server->api->getProperty("server-port"),
 			//"hostip" => $this->server->api->getProperty("server-ip", "0.0.0.0")
+			"tps" => $this->server->debugInfo()["tps"],
 		);
 		foreach($KVdata as $key => $value){
 			$str .= $key."\x00".$value."\x00";
