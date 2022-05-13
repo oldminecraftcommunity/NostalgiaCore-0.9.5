@@ -74,6 +74,7 @@ class PocketMinecraftServer{
 		console("[INFO] Loading extra.properties...");
         	$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, array(
 			        "version" => "3",
+					"enable-rail-connection" => false,
             		"save-player-data" => true,
             		"save-console-data" => true,
 		            "query-plugins" => false,
@@ -81,7 +82,7 @@ class PocketMinecraftServer{
 					"discord-webhook-url" => "none",
 					"discord-bot-name" => "NostalgiaCore Logger"
         	));
-        
+			RailBlock::$shouldconnectrails = $this->extraprops->get("enable-rail-connection"); //Rail connection in config
 	        if($this->extraprops->get("discord-msg") == true){
 				if($this->extraprops->get("discord-webhook-url") !== "none"){
 					console("[INFO] Discord Logger is enabled.");
