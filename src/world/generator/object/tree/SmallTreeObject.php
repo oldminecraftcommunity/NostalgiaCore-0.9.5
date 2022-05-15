@@ -80,7 +80,7 @@ class SmallTreeObject extends TreeObject{
 					if($xOff === $mid and $zOff === $mid and ($yOff === 0 or mt_rand(0, 2) === 0)){
 						continue;
 					}
-					if(!$level->getBlock(new Vector3($x, $y + $yy, $z))->isSolid){
+					if(!$level->getBlock(new Vector3($xx, $yy, $zz))->isSolid){
 						$leafpos = new Vector3($xx, $yy, $zz);
 						$level->setBlockRaw($leafpos, new LeavesBlock($this->type));
 					}
