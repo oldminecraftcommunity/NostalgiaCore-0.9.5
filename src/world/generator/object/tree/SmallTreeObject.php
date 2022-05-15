@@ -69,8 +69,7 @@ class SmallTreeObject extends TreeObject{
 		$x = $pos->getX();
 		$y = $pos->getY();
 		$z = $pos->getZ();
-		$this->placeTrunk($level, $x, $y, $z, $random, $this->treeHeight - 1);
-
+		
 		for($yy = $y - 3 + $this->treeHeight; $yy <= $y + $this->treeHeight; ++$yy){
 			$yOff = $yy - ($y + $this->treeHeight);
 			$mid = (int) (1 - $yOff / 2);
@@ -88,6 +87,8 @@ class SmallTreeObject extends TreeObject{
 				}
 			}
 		}
+		$this->placeTrunk($level, $x, $y, $z, $random, $this->treeHeight - 1);
+
 	}
 	
 }
