@@ -55,7 +55,7 @@ class SmallTreeObject extends TreeObject{
 		$dirtpos = new Vector3($x, $y - 1, $z);
 		$level->setBlockRaw($dirtpos, new DirtBlock());
 
-		for($yy = 0; $yy < $trunkHeight; ++$yy){
+		for($yy = 0; $yy < $this->treeHeight; ++$yy){
 			$blockId = $level->getBlock(new Vector3($x, $y + $yy, $z))->getID();
 			if(isset($this->overridable[$blockId])){
 				$trunkpos = new Vector3($x, $y + $yy, $z);
