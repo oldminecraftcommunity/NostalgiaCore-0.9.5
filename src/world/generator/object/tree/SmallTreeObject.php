@@ -28,7 +28,7 @@ class SmallTreeObject extends TreeObject{
 	private $trunkHeight = 5;
 	private static $leavesHeight = 4; // All trees appear to be 4 tall
 	private static $leafRadii = array( 1, 1.41, 2.83, 2.24 );
-
+	public $treeHeight = 7;
 	private $addLeavesVines = false;
 	private $addLogVines = false;
 	private $addCocoaPlants = false;
@@ -49,57 +49,46 @@ class SmallTreeObject extends TreeObject{
 		}
 		return true;
 	}
+	
+	protected function placeTrunk(Level $level, $x, $y, $z, Random $random, $trunkHeight){
+		// The base dirt block
+		$dirtpos = new Vector3($x, $y - 1, $z);
+		$level->setBlockRaw($dirtpos, new DirtBlock());
 
+		for($yy = 0; $yy < $this->treeHeight; ++$yy){
+			$blockId = $level->getBlock(new Vector3($x, $y + $yy, $z))->getID();
+			if(isset($this->overridable[$blockId])){
+				$trunkpos = new Vector3($x, $y + $yy, $z);
+				$level->setBlockRaw($trunkpos, new WoodBlock($this->type));
+			}
+		}
+	}
+	
 	public function placeObject(Level $level, Vector3 $pos, Random $random){
-      // The base dirt block
-      $dirtpos = new Vector3( $pos->x, $pos->y - 1, $pos->z );
-		$level->setBlockRaw( $dirtpos, new DirtBlock() );
+		$this->treeHeight = mt_rand(0, 3) + 4; //randomized tree height
+		$x = $pos->getX();
+		$y = $pos->getY();
+		$z = $pos->getZ();
+		
+		for($yy = $y - 3 + $this->treeHeight; $yy <= $y + $this->treeHeight; ++$yy){
+			$yOff = $yy - ($y + $this->treeHeight);
+			$mid = (int) (1 - $yOff / 2);
+			for($xx = $x - $mid; $xx <= $x + $mid; ++$xx){
+				$xOff = abs($xx - $x);
+				for($zz = $z - $mid; $zz <= $z + $mid; ++$zz){
+					$zOff = abs($zz - $z);
+					if($xOff === $mid and $zOff === $mid and ($yOff === 0 or mt_rand(0, 2) === 0)){
+						continue;
+					}
+					if(!$level->getBlock(new Vector3($xx, $yy, $zz))->isSolid){
+						$leafpos = new Vector3($xx, $yy, $zz);
+						$level->setBlockRaw($leafpos, new LeavesBlock($this->type));
+					}
+				}
+			}
+		}
+		$this->placeTrunk($level, $x, $y, $z, $random, $this->treeHeight - 1);
 
-      // Adjust the tree trunk's height randomly
-      //    plot [-14:11] int( x / 8 ) + 5
-      //    - min=4 (all leaves are 4 tall, some trunk must show)
-      //    - max=6 (top leaves are within ground-level whacking range
-      //             on all small trees)
-      $heightPre = $random->nextRange(-14, 11);
-      $this->trunkHeight = intval( $heightPre / 8 ) + 5;
-
-      // Adjust the starting leaf density using the trunk height as a
-      // starting position (tall trees with skimpy leaves don't look
-      // too good)
-      $leafPre = $random->nextRange($this->trunkHeight, 10) / 20; // (TODO: seed may apply)
-
-      // Now build the tree (from the top down)
-      $leaflevel = 0;
-      for( $yy = ($this->trunkHeight); $yy >= 0; --$yy )
-      {
-         if( $leaflevel < self::$leavesHeight )
-         {
-            // The size is a slight variation on the trunkheight
-            $radius = self::$leafRadii[ $leaflevel ] + $leafPre;
-            $bRadius = 2;
-            for( $xx = -$bRadius; $xx <= $bRadius; ++ $xx )
-            {
-               for( $zz = -$bRadius; $zz <= $bRadius; ++ $zz )
-               {
-                  if( sqrt(($xx * $xx) + ($zz * $zz)) <= $radius )
-                  {
-                     $leafpos = new Vector3( $pos->x + $xx,
-                                             $pos->y + $yy,
-                                             $pos->z + $zz );
-                     $level->setBlockRaw($leafpos, new LeavesBlock( $this->type ) );
-                  }
-               }
-            }
-            $leaflevel ++;
-         }
-
-         // Place the trunk last
-         if($leaflevel > 1)
-         {
-            $trunkpos = new Vector3( $pos->x, $pos->y + $yy, $pos->z );
-            $level->setBlockRaw($trunkpos, new WoodBlock( $this->type ) );
-         }
-
-      }
-   }
+	}
+	
 }
