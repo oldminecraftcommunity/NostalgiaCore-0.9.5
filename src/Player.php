@@ -19,7 +19,11 @@
  *
 */
 
-
+class PlayerNull extends Player{
+	public function __construct(){
+		
+	}
+}
 class Player{
 	private $server;
 	private $recoveryQueue = array();
