@@ -27,6 +27,7 @@ class Explosion{
 		DIAMOND_ORE => DIAMOND,
 		REDSTONE_ORE => REDSTONE,
 	);
+	public static $enableExplosions = true;
 	private $rays = 16; //Rays
 	public $level;
 	public $source;
@@ -64,6 +65,9 @@ class Explosion{
 		return $send;
 	}
 	public function explode(){
+		if(!Explosion::$enableExplosions){ /*Disable Explosions*/
+			return;
+		}
 		$server = ServerAPI::request();
 		if($this->size < 0.1 or $server->api->dhandle("entity.explosion", array(
 			"level" => $this->level,
