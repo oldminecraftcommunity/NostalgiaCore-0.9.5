@@ -34,12 +34,13 @@ class Explosion{
 	public $affectedBlocks = array();
 	public $stepLen = 0.3;
 	private $air;
+	private $nullPlayer;
 	public function __construct(Position $center, $size){
 		$this->level = $center->level;
 		$this->source = $center;
 		$this->size = max($size, 0);
 		$this->air = BlockAPI::getItem(AIR, 0, 1);
-		console($this->air);
+		$this->nullPlayer = new PlayerNull();
 	}
 	private function explodeBlocks($send, $source, $block){
 		$server = ServerAPI::request();
@@ -54,8 +55,8 @@ class Explosion{
 			$e = $server->api->entity->add($this->level, ENTITY_OBJECT, OBJECT_PRIMEDTNT, $data);
 			$server->api->entity->spawnToAll($e);
 		}elseif(mt_rand(0, 10000) < ((1/$this->size) * 10000)){
-			foreach($block->getDrops($this->air,new PlayerNull()) as $drop){
-				$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($drop[0], 0));				
+			foreach($block->getDrops($this->air, $this->nullPlayer) as $drop){
+				$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($drop[0], $drop[1],$drop[2])); //id, meta, count			
 			}
 		}
 		$this->level->level->setBlockID($block->x, $block->y, $block->z, 0);
@@ -99,7 +100,6 @@ class Explosion{
 									$index = ($block->x << 15) + ($block->z << 7) +  $block->y;
 									if(!isset($this->affectedBlocks[$index])){
 										$send = $this->explodeBlocks($send, $source,$block);
-										
 									}
 								}
 							}
