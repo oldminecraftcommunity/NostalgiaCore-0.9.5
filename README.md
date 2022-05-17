@@ -8,7 +8,7 @@ Supported version: 0.8.1
 
 (Special thx to GullCraft Network and DartMiner43)
 
-# Why should you NostalgiaCore to run a Minecraft Pocket Edition 0.8.1 server?
+# Why should you use NostalgiaCore to run a Minecraft Pocket Edition 0.8.1 server?
 
 • Items are dropping normally.
 
