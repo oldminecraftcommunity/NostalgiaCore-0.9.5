@@ -58,6 +58,7 @@ class LevelAPI{
 				$this->server->saveEnabled = true;
 				$this->saveAll();
 				$this->server->saveEnabled = $save;
+                                console("[NostalgiaCore] All data is saved.");
 				break;
 			case "save-on":
 				$this->server->saveEnabled = true;
