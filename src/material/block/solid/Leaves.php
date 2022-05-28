@@ -45,21 +45,17 @@ class LeavesBlock extends TransparentBlock{
 		$visited[$index] = true;
 
 		$block = $this->level->getBlock($pos);
-		console($block);
 		if($block instanceof WoodBlock){ //type doesn't matter
-			console("true");
 			return true;
 		}
 
 		if($block->getId() === $this->getId() && $distance <= 4){
 			foreach(array(2,3,4,5) as $side){
 				if($this->findLog($pos->getSide($side), $visited, $distance + 1)){ //recursion i guess?
-					console("true");
 					return true;
 				}
 			}
 		}
-		console("false");
 		return false;
 	}
 	
