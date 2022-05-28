@@ -1819,6 +1819,7 @@ class Player{
 				if($this->spawned === false){
 					break;
 				}
+				$needsBreak = false;
 				$packet->eid = $this->eid;
 				$data = array();
 				$data["target"] = $packet->target;
@@ -1830,9 +1831,34 @@ class Player{
 				if($target instanceof Entity and $this->entity instanceof Entity and $this->gamemode !== VIEW and $this->blocked === false and ($target instanceof Entity) and $this->entity->distance($target) <= 8){
 					$data["targetentity"] = $target;
 					$data["entity"] = $this->entity;
-				if($target->class === ENTITY_PLAYER and ($this->server->api->getProperty("pvp") == false or $this->server->difficulty <= 0 or ($target->player->gamemode & 0x01) === 0x01)){
-					break;
-				}elseif($this->server->handle("player.interact", $data) !== false){
+					if($packet->action === InteractPacket::ACTION_HOLD){
+						switch($target->class){
+							case ENTITY_MOB:
+								$slot = $this->getSlot($this->slot);
+								switch($target->type){
+									case MOB_COW:
+										if($slot->getID() === BUCKET && $slot->getMetadata() === 0){ //Empty Bucket
+											$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true); //remove a bucket
+											$this->addItem(BUCKET, 1, $slot->count, true); //add a milk bucket
+											$needsBreak = true;
+										}
+										break;
+									case MOB_SHEEP:
+										if($slot->getID() === SHEARS && $target->data["Sheared"] === 0){ //not sheared
+											ServerAPI::request()->api->entity->drop(new Position($target->x + 0.5, $target->y, $target->z + 0.5, $target->level), BlockAPI::getItem(WOOL,  $target->data["Color"], mt_rand(1,3)));
+											$target->data["Sheared"] = 1; //i hope it means sheared right?
+											$target->updateMetadata();
+											$needsBreak = true;
+										}
+								}
+						}
+					}
+					if($needsBreak){
+						break;
+					}
+					if($target->class === ENTITY_PLAYER and ($this->server->api->getProperty("pvp") == false or $this->server->difficulty <= 0 or ($target->player->gamemode & 0x01) === 0x01)){
+						break;
+					}elseif($this->server->handle("player.interact", $data) !== false){
 						$slot = $this->getSlot($this->slot);
 						switch($slot->getID()){
 							case WOODEN_SWORD:
