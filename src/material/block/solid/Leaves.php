@@ -34,69 +34,32 @@ class LeavesBlock extends TransparentBlock{
 		$this->name = $names[$this->meta & 0x03];
 		$this->hardness = 1;
 	}
-	
-	private function findLog(Block $pos, array $visited, $distance, &$check, $fromSide = null){
-		++$check;
-		$index = $pos->x.".".$pos->y.".".$pos->z;
+	private function createIndex($x, $y, $z){
+		return $index = $x.".".$y.".".$z;
+	}
+	private function findLog(Block $pos, array $visited, $distance){ //port from newest pocketmine
+		$index = $this->createIndex($pos->x, $pos->y, $pos->z);
 		if(isset($visited[$index])){
 			return false;
 		}
-		if($pos->getID() === WOOD){
+		$visited[$index] = true;
+
+		$block = $this->level->getBlock($pos);
+		console($block);
+		if($block instanceof WoodBlock){ //type doesn't matter
+			console("true");
 			return true;
-		}elseif($pos->getID() === LEAVES and $distance < 3){
-			$visited[$index] = true;
-			$down = $pos->getSide(0)->getID();
-			if($down === WOOD){
-				return true;
-			}
-			if($fromSide === null){
-				for($side = 2; $side <= 5; ++$side){
-					if($this->findLog($pos->getSide($side), $visited, $distance + 1, $check, $side) === true){
-						return true;
-					}
-				}
-			}else{ //No more loops
-				switch($fromSide){
-					case 2:
-						if($this->findLog($pos->getSide(2), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}elseif($this->findLog($pos->getSide(4), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}elseif($this->findLog($pos->getSide(5), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}
-						break;
-					case 3:
-						if($this->findLog($pos->getSide(3), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}elseif($this->findLog($pos->getSide(4), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}elseif($this->findLog($pos->getSide(5), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}
-						break;
-					case 4:
-						if($this->findLog($pos->getSide(2), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}elseif($this->findLog($pos->getSide(3), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}elseif($this->findLog($pos->getSide(4), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}
-						break;
-					case 5:
-						if($this->findLog($pos->getSide(2), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}elseif($this->findLog($pos->getSide(3), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}elseif($this->findLog($pos->getSide(5), $visited, $distance + 1, $check, $fromSide) === true){
-							return true;
-						}
-						break;
+		}
+
+		if($block->getId() === $this->getId() && $distance <= 4){
+			foreach(array(2,3,4,5) as $side){
+				if($this->findLog($pos->getSide($side), $visited, $distance + 1)){ //recursion i guess?
+					console("true");
+					return true;
 				}
 			}
 		}
-
+		console("false");
 		return false;
 	}
 	
@@ -112,8 +75,8 @@ class LeavesBlock extends TransparentBlock{
 				$this->meta &= 0x03;
 				$visited = array();
 				$check = 0;
-				if($this->findLog($this, $visited, 0, $check) === true){
-					$this->level->setBlock($this, $this, false, false, true);
+				if($this->findLog($this, $visited, 0) === true){
+					//$this->level->setBlock($this, $this, false, false, true); why would you set a new block when you dont delete old one? 
 				}else{
 					$this->level->setBlock($this, new AirBlock(), false, false, true);
 					if(mt_rand(1,20) === 1){ //Saplings
