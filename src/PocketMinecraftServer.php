@@ -73,7 +73,7 @@ class PocketMinecraftServer{
 		}
 		console("[INFO] Loading extra.properties...");
         	$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, array(
-			        "version" => "3",
+			        "version" => "4",
 					"enable-explosions" => true,
 					"enable-rail-connection" => false,
             		"save-player-data" => true,
@@ -85,6 +85,7 @@ class PocketMinecraftServer{
         	));
 			Explosion::$enableExplosions = $this->extraprops->get("enable-explosions");
 			RailBlock::$shouldconnectrails = $this->extraprops->get("enable-rail-connection"); //Rail connection in config
+			
 	        if($this->extraprops->get("discord-msg") == true){
 				if($this->extraprops->get("discord-webhook-url") !== "none"){
 					console("[INFO] Discord Logger is enabled.");
@@ -213,6 +214,8 @@ class PocketMinecraftServer{
      * @param string $reason
      */
     public function close($reason = "server stop"){
+		$this->send2Discord('[INFO] Server stopped!');
+		usleep(2);
 		if($this->stop !== true){
 			if(is_int($reason)){
 				$reason = "signal stop";
