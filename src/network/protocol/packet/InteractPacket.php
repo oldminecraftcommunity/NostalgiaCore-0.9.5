@@ -22,7 +22,7 @@
 class InteractPacket extends RakNetDataPacket{
 	const ACTION_HOLD = 1; //HOLD CLICK ON ENTITY
 	const ACTION_ATTACK = 2; //SIMPLE CLICK(ATTACK)
-	
+	const ACTION_VEHICLE_EXIT = 3; //EXIT FROM ENTITY(MINECART)
 	public $action;
 	public $eid;
 	public $target;

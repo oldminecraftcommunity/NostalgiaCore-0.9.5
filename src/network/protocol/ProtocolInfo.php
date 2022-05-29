@@ -78,7 +78,7 @@ abstract class ProtocolInfo{
 	const HURT_ARMOR_PACKET = 0xa6;
 	const SET_ENTITY_DATA_PACKET = 0xa7;
 	const SET_ENTITY_MOTION_PACKET = 0xa8;
-	//const SET_ENTITY_LINK_PACKET = 0xa9;
+	const SET_ENTITY_LINK_PACKET = 0xa9;
 	const SET_HEALTH_PACKET = 0xaa;
 	const SET_SPAWN_POSITION_PACKET = 0xab;
 	const ANIMATE_PACKET = 0xac;
