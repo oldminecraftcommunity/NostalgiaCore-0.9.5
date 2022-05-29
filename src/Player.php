@@ -1833,6 +1833,29 @@ class Player{
 					$data["entity"] = $this->entity;
 					if($packet->action === InteractPacket::ACTION_HOLD){
 						switch($target->class){
+							case ENTITY_OBJECT:
+								switch($target->type){
+									case OBJECT_MINECART:
+										if($target->linkedEntity != null){
+											break;
+										}
+										$players = $this->server->api->player->getAll($this->level);
+										$pk = new SetEntityLinkPacket;
+										$pk->rider = $target->eid;
+										$pk->riding = $this->entity->eid;
+										$pk->type = 2;
+										$this->server->api->player->broadcastPacket([$this], $pk);
+										
+										$target->linkedEntity = $this->entity;
+										$this->entity->isInMinecart = true;
+										$pk = new SetEntityLinkPacket();
+										$pk->rider = $target->eid;
+										$pk->riding = 0;
+										$pk->type = 2;
+										$this->dataPacket($pk);
+										$needsBreak = true;
+										
+								}
 							case ENTITY_MOB:
 								$slot = $this->getSlot($this->slot);
 								switch($target->type){
@@ -1853,6 +1876,27 @@ class Player{
 											}
 											$needsBreak = true;
 										}
+								}
+						}
+					}
+					if($packet->action === InteractPacket::ACTION_VEHICLE_EXIT){
+						switch($target->class){
+							case ENTITY_OBJECT:
+								switch($target->type){
+									case OBJECT_MINECART:
+										$players = $this->server->api->player->getAll($this->level);
+										$pk = new SetEntityLinkPacket();
+										$pk->rider = targetEntity.getId();
+										$pk->riding = this.id;
+										$pk->type = 3;
+										$this->server->api->player->broadcastPacket([$this], $pk);
+										$this->entity->isInMinecart = false;
+										$target->linkedEntity = null;
+										$pk = new SetEntityLinkPacket();
+										$pk->rider = $target->eid;
+										$pk->riding = 0;
+										$pk->type = 3;
+										$this->dataPacket($pk);
 								}
 						}
 					}

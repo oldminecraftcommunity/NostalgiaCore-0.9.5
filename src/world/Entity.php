@@ -50,7 +50,9 @@ class Entity extends Position{
 	private $server;
 	private $isStatic;
 	public $level;
+	public $isInMinecart = false;
 	public $lastUpdate;
+	public $linkedEntity = null;
 	public $check = true;
 	public $size = 1;
 	public $inAction = false;
@@ -144,6 +146,8 @@ class Entity extends Position{
 				}elseif($this->type === (OBJECT_ARROW or OBJECT_SNOWBALL)){
 					$this->server->schedule(1210, array($this, "update")); //Despawn
 					$this->update();
+				}elseif($this->type == OBJECT_MINECART){
+					$this->update();
 				}
 				break;
 		}
@@ -194,6 +198,10 @@ class Entity extends Position{
 				case OBJECT_PAINTING:
 					return array(
 						array(PAINTING, 0, 1),
+					);
+				case OBJECT_MINECART:
+					return array(
+						array(MINECART, 0, 1),
 					);
 			}
 		}elseif($this->class === ENTITY_MOB){
@@ -526,7 +534,7 @@ class Entity extends Position{
 						$this->fallY = $y;
 						$this->fallStart = microtime(true);
 					}elseif($this->class === ENTITY_PLAYER and ($this->fallStart + 5) < microtime(true)){
-						if($this->server->api->getProperty("allow-flight") !== true and $this->server->handle("player.flying", $this->player) !== true){
+						if($this->server->api->getProperty("allow-flight") !== true and $this->server->handle("player.flying", $this->player) !== true and $this->isInMinecart === false){
 							$this->player->close("flying");
 							return;
 						}
@@ -625,7 +633,23 @@ class Entity extends Position{
 			return null;
 		}
 	}
-	
+	/*METADATA VALUES(EXPEREMENTAL)
+		******************
+		Types: Get input type of <value>
+		0 -> Byte
+		1 -> Short
+		2 -> Integer
+		3 -> Float
+		4 -> Length of <value>, Short
+		5 -> array(Short, Byte, Short)
+		6 -> arry(Integer, Integer, Integer)
+		******************
+		0 => array("type" => 0, "value" => $flags) --> Unknown
+		1 => array("type" => 1, "value" => $this->air) --> Entity Air
+		14 => array("type" => 0, "value" => 1) --> isBaby, value: 0 => false, 1 => true
+		16 => array("type" => 0, "value" => 0) --> Unknown
+		17 => array("type" => 6, "value" => array(0, 0, 0)) --> Unknown
+	*/
 	public function getMetadata(){
 		$flags = 0;
 		$flags |= $this->fire > 0 ? 1:0;
@@ -634,10 +658,14 @@ class Entity extends Position{
 		$d = array(
 			0 => array("type" => 0, "value" => $flags),
 			1 => array("type" => 1, "value" => $this->air),
-			//14 => array("type" => 0, "value" => 1), wip
+			14 => array("type" => 0, "value" => 0),
 			16 => array("type" => 0, "value" => 0),
 			17 => array("type" => 6, "value" => array(0, 0, 0)),
 		);
+		if(!isset($this->data["isBaby"])){
+			$this->data["isBaby"] = 0;
+		}
+		$d[14]["value"] = $this->data["isBaby"];
 		if($this->class === ENTITY_MOB and $this->type === MOB_SHEEP){
 			if(!isset($this->data["Sheared"])){
 				$this->data["Sheared"] = 0;
@@ -782,6 +810,24 @@ class Entity extends Position{
 					$pk->speedY = $this->speedY;
 					$pk->speedZ = $this->speedZ;
 					$player->dataPacket($pk);
+				}elseif($this->type === OBJECT_MINECART){
+					$pk = new AddEntityPacket;
+					$pk->eid = $this->eid;
+					$pk->type = $this->type;
+					$pk->x = $this->x;
+					$pk->y = $this->y;
+					$pk->z = $this->z;
+					$pk->yaw = $this->yaw;
+					$pk->pitch = $this->pitch;
+					$player->dataPacket($pk);
+					
+					$pk = new SetEntityMotionPacket;
+					$pk->eid = $this->eid;
+					$pk->speedX = $this->speedX;
+					$pk->speedY = $this->speedY;
+					$pk->speedZ = $this->speedZ;
+					$player->dataPacket($pk);
+					
 				}
 				break;
 			case ENTITY_FALLING:

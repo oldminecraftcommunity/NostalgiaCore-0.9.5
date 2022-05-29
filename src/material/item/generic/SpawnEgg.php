@@ -27,11 +27,13 @@ class SpawnEggItem extends Item{
 	}
 	
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+		$ageable = false;
 		switch($this->meta){
 			case MOB_CHICKEN:
 			case MOB_SHEEP:
 			case MOB_COW:
 			case MOB_PIG:
+				$ageable = true;
 			case MOB_ZOMBIE:
 			case MOB_CREEPER:
 			case MOB_SKELETON:
@@ -41,6 +43,7 @@ class SpawnEggItem extends Item{
 					"x" => $block->x + 0.5,
 					"y" => $block->y,
 					"z" => $block->z + 0.5,
+					"isBaby" => $ageable ? mt_rand(0,20) === 0 ? 1 : 0 : 0,
 				);
 				$e = ServerAPI::request()->api->entity->add($block->level, ENTITY_MOB, $this->meta, $data);
 				ServerAPI::request()->api->entity->spawnToAll($e);
