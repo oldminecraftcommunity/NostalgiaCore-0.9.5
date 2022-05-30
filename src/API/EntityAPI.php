@@ -21,7 +21,7 @@
 
 class EntityAPI{
 	private $server;
-	private $entities;
+	public $entities;
 	private $eCnt = 1;
 
 	function __construct(){
