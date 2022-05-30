@@ -42,6 +42,7 @@ class LevelAPI{
 		$this->server->api->console->register("save-all", "", array($this, "commandHandler"));
 		$this->server->api->console->register("save-on", "", array($this, "commandHandler"));
 		$this->server->api->console->register("save-off", "", array($this, "commandHandler"));
+		$this->server->api->console->register("setwspawn", "Set the spawn position for your current world. ", array($this, "commandHandler"));
 		$this->default = $this->server->api->getProperty("level-name");
 		if($this->loadLevel($this->default) === false){
 			$this->generateLevel($this->default, $this->server->seed);
@@ -50,15 +51,22 @@ class LevelAPI{
 		$this->server->spawn = $this->getDefault()->getSafeSpawn();
 	}
 	
+	
 	public function commandHandler($cmd, $params, $issuer, $alias){
 		$output = "";
 		switch($cmd){
+		    case "setwspawn":
+				if(!($issuer instanceof Player)){return("Please run this command in-game. ");}
+				$issuer->entity->level->setSpawn(new Vector3($issuer->entity->x, $issuer->entity->y, $issuer->entity->z));
+				return("Spawn set!");
+				break;
 			case "save-all":
 				$save = $this->server->saveEnabled;
 				$this->server->saveEnabled = true;
 				$this->saveAll();
 				$this->server->saveEnabled = $save;
-                                $this->server->api->chat->broadcast("[NostalgiaCore] All data is saved.");
+                $this->server->api->chat->broadcast("[NostalgiaCore] All data is saved.");
+            console("[NostalgiaCore] All data is saved.");
 				break;
 			case "save-on":
 				$this->server->saveEnabled = true;
