@@ -32,7 +32,7 @@ class CraftingRecipes{
 		"WOOD:0x1=>WOODEN_PLANKS:0x4",		
 		"WOOD:1x1=>WOODEN_PLANKS:1x4",		
 		"WOOD:2x1=>WOODEN_PLANKS:2x4",		
-		"WOOD:3x1=>WOODEN_PLANKS:3x4",
+		//"WOOD:3x1=>WOODEN_PLANKS:3x4",
 		"WOOL:0x1,DYE:0x1=>WOOL:15x1",
 		"WOOL:0x1,DYE:1x1=>WOOL:14x1",
 		"WOOL:0x1,DYE:2x1=>WOOL:13x1",
@@ -55,7 +55,6 @@ class CraftingRecipes{
 		"IRON_INGOT:?x2=>SHEARS:0x1",		
 		"COAL:0x1,STICK:?x1=>TORCH:0x4",
 		"COAL:1x1,STICK:?x1=>TORCH:0x4",
-		"BEETROOT:?x1=>DYE:1x2",
 		
 		//Food & protection		
 		"MELON_SLICE:?x1=>MELON_SEEDS:0x1",
@@ -70,24 +69,25 @@ class CraftingRecipes{
 		"DIAMOND_BLOCK:?x1=>DIAMOND:0x9",
 		"GOLD_BLOCK:?x1=>GOLD_INGOT:0x9",
 		"IRON_BLOCK:?x1=>IRON_INGOT:0x9",
-		"LAPIS_BLOCK:?x1=>DYE:4x9",
-		"DANDELION:?x1=>DYE:11x2",
-		"BONE:?x1=>DYE:15x3",
-		"DYE:0x1,DYE:14x1=>DYE:3x2",
-		"DYE:0x1,DYE:1x1,DYE:11x1=>DYE:3x3",
-		"DYE:1x1,DYE:15x1=>DYE:9x2",
-		"DYE:1x1,DYE:11x1=>DYE:14x2",
-		"DYE:2x1,DYE:15x1=>DYE:10x2",
-		"DYE:4x1,DYE:15x1=>DYE:12x2",
-		"DYE:2x1,DYE:4x1=>DYE:6x2",
-		"DYE:1x1,DYE:4x1=>DYE:5x2",
-		"DYE:1x1,DYE:4x1,DYE:15x1=>DYE:13x3",		
-		"BEETROOT:?x1=>DYE:1x2",
-		"DYE:15x1,DYE:1x2,DYE:4x1=>DYE:13x4",//
-		"DYE:5x1,DYE:9x1=>DYE:13x2",//		
-		"DYE:0x1,DYE:15x1=>DYE:8x2",//		
-		"DYE:0x1,DYE:15x2=>DYE:7x3",//
-		"DYE:0x1,DYE:8x1=>DYE:7x2",//
+		"LAPIS_BLOCK:?x1=>DYE:4x9",//Lapis Lazuli
+		"DANDELION:?x1=>DYE:11x2",//Dandelion Yellow
+		"BONE:?x1=>DYE:15x3",//Bone Meal
+		"DYE:0x1,DYE:14x1=>DYE:3x2",//Cocoa Beans
+		"DYE:0x1,DYE:1x1,DYE:11x1=>DYE:3x3",//Cocoa Beans
+		"DYE:1x1,DYE:15x1=>DYE:9x2",//Pink Dye
+		"DYE:1x1,DYE:11x1=>DYE:14x2",//Orange Dye
+		"DYE:2x1,DYE:15x1=>DYE:10x2",//Lime Dye
+		"DYE:4x1,DYE:15x1=>DYE:12x2",//Light Blue Dye
+		"DYE:2x1,DYE:4x1=>DYE:6x2",//Cyan Dye
+		"DYE:1x1,DYE:4x1=>DYE:5x2",//Purple Dye
+		"DYE:1x1,DYE:4x1,DYE:15x1=>DYE:13x3",//Magenta Dye
+		"BEETROOT:?x1=>DYE:1x2",//Rose Red
+		"DYE:15x1,DYE:1x2,DYE:4x1=>DYE:13x4",//Magenta Dye
+		"DYE:5x1,DYE:9x1=>DYE:13x2",//Magenta Dye
+		"DYE:0x1,DYE:15x1=>DYE:8x2",//Gray Dye
+		"DYE:0x1,DYE:15x2=>DYE:7x3",//Light Gray Dye
+		"DYE:0x1,DYE:8x1=>DYE:7x2",//Light Gray Dye
+		"WOOL:14x2=>CARPET:14x3",
 	);
 	
 	private static $big = array(//Probably means only craftable on crafting bench. Name it better!
@@ -108,8 +108,8 @@ class CraftingRecipes{
 		"WOODEN_PLANKS:1x3=>WOOD_SLAB:1x6",
 		"WOODEN_PLANKS:2x6=>BIRCH_WOOD_STAIRS:0x4",
 		"WOODEN_PLANKS:2x3=>WOOD_SLAB:2x6",
-		"WOODEN_PLANKS:3x6=>JUNGLE_WOOD_STAIRS:0x4",
-		"WOODEN_PLANKS:3x3=>WOOD_SLAB:3x6",
+		//"WOODEN_PLANKS:3x6=>JUNGLE_WOOD_STAIRS:0x4",
+		//"WOODEN_PLANKS:3x3=>WOOD_SLAB:3x6",
 		
 		//Tools
 		"STICK:?x1,FEATHER:?x1,FLINT:?x1=>ARROW:0x4",
@@ -148,7 +148,7 @@ class CraftingRecipes{
 		
 		//Food & protection
 		"BEETROOT:?x4,BOWL:?x1=>BEETROOT_SOUP:0x1",
-		"WOODEN_PLANKS:?x3=>BOWL:0x1",
+		"WOODEN_PLANKS:?x3=>BOWL:0x4",
 		"WHEAT:?x3=>BREAD:0x1",
 		"WHEAT:?x3,BUCKET:1x3,EGG:?x1,SUGAR:?x2=>CAKE:0x1",
 		"DIAMOND:?x4=>DIAMOND_BOOTS:0x1",
@@ -167,10 +167,10 @@ class CraftingRecipes{
 		"LEATHER:?x8=>LEATHER_TUNIC:0x1",
 		"LEATHER:?x5=>LEATHER_CAP:0x1",
 		"LEATHER:?x7=>LEATHER_PANTS:0x1",
-		"FIRE:?x4=>CHAIN_BOOTS:0x1",
-		"FIRE:?x8=>CHAIN_CHESTPLATE:0x1",
-		"FIRE:?x5=>CHAIN_HELMET:0x1",
-		"FIRE:?x7=>CHAIN_LEGGINGS:0x1",
+		//"FIRE:?x4=>CHAIN_BOOTS:0x1",
+		//"FIRE:?x8=>CHAIN_CHESTPLATE:0x1",
+		//"FIRE:?x5=>CHAIN_HELMET:0x1",
+		//"FIRE:?x7=>CHAIN_LEGGINGS:0x1",
 		
 		//Items
 		"DIAMOND:?x9=>DIAMOND_BLOCK:0x1",
@@ -182,12 +182,12 @@ class CraftingRecipes{
 		"WOODEN_PLANKS:?x6,BOOK:?x3=>BOOKSHELF:0x1",
 		"DYE:4x9=>LAPIS_BLOCK:0x1",
 		"WOOL:?x1,STICK:?x8=>PAINTING:0x1",
-		"SUGARCANE:?x3=>PAPER:0x1",
+		"SUGARCANE:?x3=>PAPER:0x3",
 		"WOODEN_PLANKS:?x6,STICK:?x1=>SIGN:0x1",
 		"IRON_INGOT:?x6=>IRON_BARS:0x16",
 		"COAL:0x9=>COAL_BLOCK:0x1",
 		"COAL_BLOCK:?x1=>COAL:0x9",
-		"MELON_SLICE:?x9=>MELON_BLOCK:?x1",
+		"MELON_SLICE:?x9=>MELON_BLOCK:0x1",
 	);
 	
 	private static $stone = array(
