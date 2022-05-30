@@ -74,6 +74,7 @@ class PocketMinecraftServer{
 		console("[INFO] Loading extra.properties...");
         	$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, array(
 			        "version" => "4",
+					"enable-nether-reactor" => true,
 					"enable-explosions" => true,
 					"enable-rail-connection" => false,
             		"save-player-data" => true,
@@ -85,7 +86,7 @@ class PocketMinecraftServer{
         	));
 			Explosion::$enableExplosions = $this->extraprops->get("enable-explosions");
 			RailBlock::$shouldconnectrails = $this->extraprops->get("enable-rail-connection"); //Rail connection in config
-			
+			NetherReactorBlock::$enableReactor = $this->extraprops->get("enable-nether-reactor");
 	        if($this->extraprops->get("discord-msg") == true){
 				if($this->extraprops->get("discord-webhook-url") !== "none"){
 					console("[INFO] Discord Logger is enabled.");
