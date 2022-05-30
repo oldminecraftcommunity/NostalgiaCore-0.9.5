@@ -12,9 +12,23 @@ cd ../
 rm -r NostalgiaCore
 rm bin.7z
 echo "["$(date +%k:%M)"] Downloading PHP..."
-wget https://owouwu.ru/NC_bin.tar.gz > /dev/null
-tar -xvf NC_bin.tar.gz
-rm NC_bin.tar.gz
+arch=$(uname -m)
+if [[ $arch == x86_64* ]]; then
+    echo "X64 Architecture"
+    wget https://owouwu.ru/NC_bin.tar.gz > /dev/null
+	tar -xvf NC_bin.tar.gz
+	rm NC_bin.tar.gz
+elif [[ $arch == i*86 ]]; then
+    echo "X32 Architecture"
+    wget https://owouwu.ru/NC_bin.tar.gz > /dev/null
+	tar -xvf NC_bin.tar.gz
+	rm NC_bin.tar.gz
+elif  [[ $arch == arm* ]] || [[ $arch = aarch* ]]; then
+    echo "ARM Architecture"
+    wget https://owouwu.ru/NCArm_bin.tar.gz > /dev/null
+	tar -xvf NCArm_bin.tar.gz
+	rm NCArm_bin.tar.gz
+fi
 if [ $(./bin/php5/bin/php -r 'echo "yes";' 2>/dev/null) == "yes" ]; then
     OPCACHE_PATH="$(find $(pwd) -name opcache.so)"
     XDEBUG_PATH="$(find $(pwd) -name xdebug.so)"
