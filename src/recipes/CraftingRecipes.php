@@ -227,7 +227,14 @@ class CraftingRecipes{
 			$id = $id[0];
 			
 			$it = BlockAPI::fromString($id);
-			$recipeItems[$it->getID()] = array($it->getID(), $meta === "?" ? false:intval($meta)&0xFFFF, intval($item[1]));
+			if(!isset($recipeItems[$it->getID()])){
+				$recipeItems[$it->getID()] = array($it->getID(), $meta === "?" ? false:intval($meta)&0xFFFF, intval($item[1]));
+			}else{
+				if($it->getMetadata() !== $recipeItems[$it->getID()][1]){
+					$recipeItems[$it->getID()][1] = false;
+				}
+				$recipeItems[$it->getID()][2] += $it->count;
+			}
 		}
 		ksort($recipeItems);
 		$item = explode("x", $recipe[1]);
@@ -285,7 +292,6 @@ class CraftingRecipes{
 		}
 		$recipeString = substr($recipeString, 0, -1)."=>".$craftItem[0]."x".$craftItem[2];
 		$server = ServerAPI::request();
-
 		$result = $server->query("SELECT id FROM recipes WHERE type == ".$type." AND recipe == '".$recipeString."';");
 		if($result instanceof SQLite3Result){
 			$continue = true;
