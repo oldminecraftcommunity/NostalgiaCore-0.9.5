@@ -1056,11 +1056,15 @@ class Entity extends Position{
 					DIAMOND_LEGGINGS => 6,
 					DIAMOND_BOOTS => 3,
 				);
-				foreach($this->player->armor as $part){
+				foreach($this->player->armor as $slot=>$part){
 					if($part instanceof Item and isset($values[$part->getID()])){
 						$points += $values[$part->getID()];
+						if(is_numeric($cause)){ //check was entity damage by another entity
+							$this->player->damageArmorPart($slot, $part);
+						}
 					}
 				}
+				$this->player->sendArmor($this->player);
 				$dmg = (int) ($dmg - ($dmg * $points * 0.04));
 				$health = $this->health - $dmg;
 			}
