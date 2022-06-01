@@ -379,6 +379,14 @@ class Utils{
 		$lastRandom = hash("sha512", $lastRandom, true);
 		return $raw === false ? bin2hex($output):$output;
 	}
+	
+	public static function randomFloat(){//GameHerobrine's code
+		return rand()/getrandmax();
+	}
+	
+	public static function chance($i){//GameHerobrine's code
+		return randomFloat() < $i / 100;
+	}
 
 	public static function round($number){
 		return round($number, 0, PHP_ROUND_HALF_DOWN);

@@ -633,6 +633,7 @@ class Entity extends Position{
 			return null;
 		}
 	}
+	
 	/*METADATA VALUES(EXPEREMENTAL)
 		******************
 		Types: Get input type of <value>
@@ -650,6 +651,29 @@ class Entity extends Position{
 		16 => array("type" => 0, "value" => 0) --> Unknown
 		17 => array("type" => 6, "value" => array(0, 0, 0)) --> Unknown
 	*/
+	
+	public function sheepColor(){
+		$chance = Utils::randomFloat() * 100;
+		switch($chance){
+			case $chance <= 0.1558:
+				$color = 6;
+				break;
+			case $chance <= 2.85:
+				$color = 12;
+				break;
+			case $chance <= 4.75:
+				$rand = mt_rand(1,3);
+				if($rand == 1) $color = 15;
+				elseif($rand == 2) $color = 7;
+				else $color = 8;
+				break;
+			case $chance <= 100:
+				$color = 0;
+				break;
+		}
+		return $color;
+	}
+	
 	public function getMetadata(){
 		$flags = 0;
 		$flags |= $this->fire > 0 ? 1:0;
@@ -669,7 +693,7 @@ class Entity extends Position{
 		if($this->class === ENTITY_MOB and $this->type === MOB_SHEEP){
 			if(!isset($this->data["Sheared"])){
 				$this->data["Sheared"] = 0;
-				$this->data["Color"] = mt_rand(0,15);
+				$this->data["Color"] = $this->sheepColor();
 			}
 			$d[16]["value"] = (($this->data["Sheared"] == 1 ? 1:0) << 4) | ($this->data["Color"] & 0x0F);
 		}elseif($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT){ //ladder fix 2.0
