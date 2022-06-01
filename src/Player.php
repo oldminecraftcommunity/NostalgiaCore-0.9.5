@@ -439,7 +439,7 @@ class Player{
 		}
 		return true;
 	}
-
+	
 	public function removeItem($type, $damage, $count, $send = true){
 		while($count > 0){
 			$remove = 0;
@@ -2328,7 +2328,14 @@ class Player{
 				break;
 		}
 	}
-
+	public function damageArmorPart($slot, $part){
+		$part->useOn($this->entity, true); //PocketMine is forced to do it =<. Even if PocketMine doesnt want, he have to damage your armor.
+		if($part->getMetadata() >= $part->getMaxDurability()){
+			$this->setArmor($slot, BlockAPI::getItem(AIR, 0, 0), false);
+			return;
+		}
+		$this->setArmor($slot, $part, false);
+	}
     /**
      * @param Player|string|boolean|void $player
      */
