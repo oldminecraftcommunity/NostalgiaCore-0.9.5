@@ -439,6 +439,31 @@ class Player{
 		}
 		return true;
 	}
+	
+	public function removeItem($type, $damage, $count, $send = true){
+		while($count > 0){
+			$remove = 0;
+			foreach($this->inventory as $s => $item){
+				if($item->getID() === $type and $item->getMetadata() === $damage){
+					$remove = min($count, $item->count);
+					if($remove < $item->count){
+						$item->count -= $remove;
+					}else{
+						$this->inventory[$s] = BlockAPI::getItem(AIR, 0, 0);
+					}
+					if($send === true){
+						$this->sendInventorySlot($s);
+					}
+					break;
+				}
+			}
+			if($remove <= 0){
+				return false;
+			}
+			$count -= $remove;
+		}
+		return true;
+	}
 
     /**
      * @param integer $slot
