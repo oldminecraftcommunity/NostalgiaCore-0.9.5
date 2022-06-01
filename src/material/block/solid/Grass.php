@@ -40,13 +40,28 @@ class GrassBlock extends SolidBlock{
 			TallGrassObject::growGrass($this->level, $this, new Random(), 8, 2);
 			return true;
 		}elseif($item->isHoe()){
+			if($this->getSide(1)->isTransparent === false) return false;
 			if(($player->gamemode & 0x01) === 0){
 				$item->useOn($this);
 			}
 			$this->level->setBlock($this, new FarmlandBlock());
+			$this->seedsDrop();
 			return true;
 		}
 		return false;
+	}
+	
+	public function seedsDrop(){
+		$chance = Utils::randomFloat() * 100;
+		if($chance <= 1){
+			ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y+1, $this->z+0.5, $this->level), BlockAPI::getItem(458,0,1));
+			return;
+		}
+		elseif($chance <= 15){
+			ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y+1, $this->z+0.5, $this->level), BlockAPI::getItem(295,0,1));
+			return;
+		}
+		return;
 	}
 
 	public function onUpdate($type){
