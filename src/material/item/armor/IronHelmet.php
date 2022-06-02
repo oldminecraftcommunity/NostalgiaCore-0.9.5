@@ -21,7 +21,7 @@
 
 class IronHelmetItem extends Item{
 	public function __construct($meta = 0, $count = 1){
-		parent::__construct(IRON_HELMET, 0, $count, "Iron Helmet");
+		parent::__construct(IRON_HELMET, $meta, $count, "Iron Helmet");
 	}
 
 }

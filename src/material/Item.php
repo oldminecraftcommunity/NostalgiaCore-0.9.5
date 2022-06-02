@@ -239,6 +239,36 @@ class Item{
 	}
 	
 	final public function getMaxDurability(){
+		$isArmor = $this->isArmor();
+		if($isArmor !== false){
+			$armorDurability = [
+				10 => 56,
+				11 => 81,
+				12 => 76,
+				13 => 66,
+				
+				20 => 166,
+				21 => 241,
+				22 => 226,
+				23 => 196,
+				
+				30 => 166,
+				31 => 241,
+				32 => 226,
+				33 => 196,
+				
+				40 => 364,
+				41 => 529,
+				42 => 496,
+				43 => 430,
+				
+				50 => 78,
+				51 => 113,
+				52 => 106,
+				53 => 92,
+			];
+			return $armorDurability[$isArmor];
+		}
 		if(!$this->isTool() and $this->isHoe() === false and $this->id !== BOW){
 			return false;
 		}
@@ -267,7 +297,57 @@ class Item{
 		}
 		return $levels[$type];
 	}
-	
+	final public function isArmor(){
+		switch($this->id){
+			case LEATHER_CAP:
+				return 10;
+			case LEATHER_TUNIC:
+				return 11;
+			case LEATHER_PANTS:
+				return 12;
+			case LEATHER_BOOTS:
+				return 13;
+				
+			case CHAIN_HELMET:
+				return 20;
+			case CHAIN_CHESTPLATE:
+				return 21;
+			case CHAIN_LEGGINGS:
+				return 22;
+			case CHAIN_BOOTS:
+				return 23;
+				
+			case IRON_HELMET:
+				return 30;
+			case IRON_CHESTPLATE:
+				return 31;
+			case IRON_LEGGINGS:
+				return 32;
+			case IRON_BOOTS:
+				return 33;	
+				
+			case DIAMOND_HELMET:
+				return 40;
+			case DIAMOND_CHESTPLATE:
+				return 41;
+			case DIAMOND_LEGGINGS:
+				return 42;
+			case DIAMOND_BOOTS:
+				return 43;
+				
+			case GOLD_HELMET:
+				return 50;
+			case GOLD_CHESTPLATE:
+				return 51;
+			case GOLD_LEGGINGS:
+				return 52;
+			case GOLD_BOOTS:
+				return 53;
+			default:
+				return false;
+		}
+		
+	}
 	final public function isPickaxe(){ //Returns false or level of the pickaxe
 		switch($this->id){
 			case IRON_PICKAXE:
