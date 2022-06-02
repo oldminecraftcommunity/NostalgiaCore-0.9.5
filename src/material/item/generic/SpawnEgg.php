@@ -21,7 +21,7 @@
 
 class SpawnEggItem extends Item{
 	public function __construct($meta = 0, $count = 1){
-		parent::__construct(SPAWN_EGG, 0, $count, "Spawn Egg");
+		parent::__construct(SPAWN_EGG, $meta, $count, "Spawn Egg");
 		$this->meta = $meta;
 		$this->isActivable = true;
 	}
@@ -43,7 +43,7 @@ class SpawnEggItem extends Item{
 					"x" => $block->x + 0.5,
 					"y" => $block->y,
 					"z" => $block->z + 0.5,
-					"isBaby" => $ageable ? mt_rand(0,20) === 0 ? 1 : 0 : 0,
+					"isBaby" => $ageable ? Utils::chance(5) ? 1 : 0 : 0,
 				);
 				$e = ServerAPI::request()->api->entity->add($block->level, ENTITY_MOB, $this->meta, $data);
 				ServerAPI::request()->api->entity->spawnToAll($e);
