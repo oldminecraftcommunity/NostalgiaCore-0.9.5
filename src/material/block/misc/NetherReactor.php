@@ -56,9 +56,7 @@ class NetherReactorBlock extends SolidBlock{
 		//}
 		
 	}
-	private function randomFloat(){
-		return (rand()/getrandmax());
-	}
+	
 	public function destroy(){
 		$this->level->setBlock(new Vector3($this->x, $this->y, $this->z),new NetherReactorBlock(2));
 		$this->decay($this->x-8, $this->y-3, $this->z-8, 0, 17, 16, 2, 34, 1, 0, 17, 1);
@@ -73,7 +71,7 @@ class NetherReactorBlock extends SolidBlock{
 		for($a = $aOne; $a < $aTwo; $a += $aThree) { //wth those cycles are?
 			for($b = $bOne; $b < $bTwo; $b += $bThree) {
 				for($c = $cOne; $c < $cTwo; $c += $cThree) {
-					if ($this->level->getBlock(new Vector3($x+$a, $y+$b, $z+$c))->getID() === 87 && $this->randomFloat() >0.75){
+					if ($this->level->getBlock(new Vector3($x+$a, $y+$b, $z+$c))->getID() === 87 && Utils::randomFloat() > 0.75){
 						$this->level->setBlock(new Vector3($x+$a, $y+$b, $z+$c), new AirBlock());
 					}
 				}
@@ -102,22 +100,23 @@ class NetherReactorBlock extends SolidBlock{
 		$forceAmount = $data[3];
 		$server = ServerAPI::request();
 		if(!$forceAmount){
-			$spawnNumber = $minAmount + floor($this->randomFloat()*($maxAmount-$minAmount+1));
+			$spawnNumber = $minAmount + floor(Utils::randomFloat()*($maxAmount-$minAmount+1));
 		}
 		else{
 			$spawnNumber = $maxAmount;
 		}
 		for($i = 0; $i < $spawnNumber; $i++) {
-			$randomRange = floor($this->randomFloat()*5+3);
-			$shiftX = cos(floor($this->randomFloat()*360)*(pi()/180));
-			$shiftZ = sin(floor($this->randomFloat()*360)*(pi()/180));
-			$randomId = $this->possibleLoot[array_rand($this->possibleLoot)];
-			$server->api->entity->drop(new Position($x+($shiftX*$randomRange)+0.5, $y-1, $z+($shiftZ*$randomRange)+0.5, $this->level), BlockAPI::getItem($randomId, 0, 1));
+			$randomRange = floor(Utils::randomFloat()*5+3);
+			$shiftX = cos(floor(Utils::randomFloat()*360)*(pi()/180));
+			$shiftZ = sin(floor(Utils::randomFloat()*360)*(pi()/180));
+			if(Utils::chance(5)) $randomID = $this->rarePossibleLoot[array_rand($this->rarePossibleLoot)];
+			else $randomID = $this->possibleLoot[array_rand($this->possibleLoot)];
+			$server->api->entity->drop(new Position($x+($shiftX*$randomRange)+0.5, $y-1, $z+($shiftZ*$randomRange)+0.5, $this->level), BlockAPI::getItem($randomID, 0, 1));
 		}
 		for($i = 0; $i < $pigmen; $i++) {
-			$randomRange = floor($this->randomFloat()*5+3);
-			$shiftX = cos(floor($this->randomFloat()*360)*(pi()/180));
-			$shiftZ = sin(floor($this->randomFloat()*360)*(pi()/180));
+			$randomRange = floor(Utils::randomFloat()*5+3);
+			$shiftX = cos(floor(Utils::randomFloat()*360)*(pi()/180));
+			$shiftZ = sin(floor(Utils::randomFloat()*360)*(pi()/180));
 			$data = array(
 					"x" => $x+($shiftX*$randomRange)+0.5,
 					"y" => $y-1,
@@ -232,9 +231,15 @@ class NetherReactorBlock extends SolidBlock{
 		}
 		return true;
 	}
+	
 	private $possibleLoot = [
-		GLOWSTONE_DUST, QUARTZ, CACTUS, SUGARCANE, BROWN_MUSHROOM, RED_MUSHROOM, BOW, BOWL, PUMPKIN_SEEDS, MELON_SEEDS
+		GLOWSTONE_DUST, QUARTZ, CACTUS, SUGARCANE, BROWN_MUSHROOM, RED_MUSHROOM, PUMPKIN_SEEDS, MELON_SEEDS
 	];
+	
+	private $rarePossibleLoot = [
+		BOW, BED, BOWL, ARROW, WOODEN_DOOR, FEATHER, PAINTING, BONE, DANDELION
+	];
+	
 	private $core = [
 		-1 => ["GCG", "CCC", "GCG"],
 		0 => ["C C", " R ", "C C",],

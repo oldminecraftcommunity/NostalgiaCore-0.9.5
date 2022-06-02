@@ -385,7 +385,7 @@ class Utils{
 	}
 	
 	public static function chance($i){//GameHerobrine's code
-		return self::randomFloat() < $i / 100;
+		return self::randomFloat() <= $i / 100;
 	}
 
 	public static function round($number){

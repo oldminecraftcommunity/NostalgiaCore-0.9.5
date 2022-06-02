@@ -276,6 +276,8 @@ class Entity extends Position{
 				//Monsters
 				case MOB_ZOMBIE:
 					return array(
+						array(CARROT, 0, Utils::chance(0.83) ? 1 : 0),
+						array(POTATO, 0, Utils::chance(0.83) ? 1 : 0),
 						array(FEATHER, 0, mt_rand(0,2)),
 					);
 				case MOB_SPIDER:
