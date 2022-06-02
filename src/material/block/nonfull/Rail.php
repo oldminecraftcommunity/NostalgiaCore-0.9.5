@@ -27,7 +27,9 @@ class RailBlock extends FlowableBlock{
 		$this->isSolid = true;
 		$this->meta = $meta;
 	}
+	
 	public static $shouldconnectrails = false;
+	
 	private function isRailBlock($id){ 
         switch($id){
             case RAIL:
@@ -37,20 +39,21 @@ class RailBlock extends FlowableBlock{
                 return false;
         }
     }
+	
 	private function isValidRailMeta($meta){ 
         return !($meta < 0 || $meta > 10);
     }
+	
 	private function canConnectRail($block) { 
         if(!($block instanceof RailBlock)) return null;
         if($this->distanceSquared($block) > 2) return null;
         $result = $this->checkRail($this);
-        if (count($result) === 2) return null;
+        if(count($result) === 2) return null;
         return $result;
     }
 	
-	
-	private function checkRail($rail) { //fixed
-        if (!($rail instanceof Rail)) return null;
+	private function checkRail($rail){//fixed
+        if(!($rail instanceof Rail)) return null;
         $damage = $rail->meta;
         if ($damage < 0 || $damage > 10) return null;
 		$delta = array(
@@ -66,16 +69,16 @@ class RailBlock extends FlowableBlock{
 			
 			array(array(-1, 0), array(0, -1)),
 			array(array(0, -1), array(1, 0))
-		
 		);
         $deltaY = array(0, 1, -1);
         $blocks = $delta[$damage];
         $connected = array();
+		
         foreach($deltaY as $y){
             $v3 = new Vector3(
-                    $rail->getFloorX() + $blocks[0][0],
-                    $rail->getFloorY() + $y,
-                    $rail->getFloorZ() + $blocks[0][1]
+                $rail->getFloorX() + $blocks[0][0],
+                $rail->getFloorY() + $y,
+                $rail->getFloorZ() + $blocks[0][1]
             );
             $idToConnect = $rail->level->getBlock(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ())->getID();
             $metaToConnect = $rail->level->getBlock(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ())->getMetadata();
@@ -89,9 +92,9 @@ class RailBlock extends FlowableBlock{
         }
         foreach($deltaY as $y){
             $v3 = new Vector3(
-                    $rail.getFloorX() + $blocks[1][0],
-                    $rail.getFloorY() + $y,
-                    $rail.getFloorZ() + $blocks[1][1]
+                $rail.getFloorX() + $blocks[1][0],
+                $rail.getFloorY() + $y,
+                $rail.getFloorZ() + $blocks[1][1]
             );
             $idToConnect = $rail->level->getBlock(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ())->getID();
             $metaToConnect = $rail->level->getBlock(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ())->getMetadata();
@@ -105,6 +108,7 @@ class RailBlock extends FlowableBlock{
         }
         return $connected;
     }
+	
 	private function connectRail($rail){
         $connected = $this->canConnectRail($rail);
         if ($connected === null || count($connected) === 0) return;
@@ -129,11 +133,10 @@ class RailBlock extends FlowableBlock{
         $this->level->setBlock($rail, new RailBlock($this.getDamage()), true, true);
     }
 
-	
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$down = $this->getSide(0);
 		if($down->getID() !== AIR and $down instanceof SolidBlock){
-			/*Rail connection(ported from nukkit)*/
+			//Rail connection(ported from nukkit)
 			if(RailBlock::$shouldconnectrails){
 				$arrayXZ = array(array(1, 0),array(0, 1),array(-1, 0),array(0, -1));
 				$arrayY = array(0, 1, -1);
@@ -173,7 +176,7 @@ class RailBlock extends FlowableBlock{
 					}
 				}
 			}
-			/*End of Logic*/
+			//End of Logic
 			$this->level->setBlock($block, $this, true, false, true);
 			return true;
 		} 
@@ -182,12 +185,11 @@ class RailBlock extends FlowableBlock{
 	
 	public function onUpdate($type){
 		if($type === BLOCK_UPDATE_NORMAL){
-			if($this->getSide(0)->getID() === AIR){ //Replace with common break method
+			if($this->getSide(0)->getID() === AIR){//Replace with common break method
 				ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem($this->id, $this->meta, 1));
 				$this->level->setBlock($this, new AirBlock(), true, false, true);
 				return BLOCK_UPDATE_NORMAL;
-			}
-				
+			}	
 		}
 		return false;
 	}

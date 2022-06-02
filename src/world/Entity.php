@@ -670,7 +670,7 @@ class Entity extends Position{
 				elseif($rand == 2) $color = 7;
 				else $color = 8;
 				break;
-			case $chance <= 100:
+			default:
 				$color = 0;
 				break;
 		}
