@@ -57,7 +57,7 @@ class GrassBlock extends SolidBlock{
 			ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y+1, $this->z+0.5, $this->level), BlockAPI::getItem(458,0,1));
 			return;
 		}
-		elseif($chance <= 15){
+		elseif($chance > 1 and $chance <= 16){
 			ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y+1, $this->z+0.5, $this->level), BlockAPI::getItem(295,0,1));
 			return;
 		}

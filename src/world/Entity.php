@@ -653,15 +653,18 @@ class Entity extends Position{
 	*/
 	
 	public function sheepColor(){
+		$pink = 0.1558;
+		$brown = 2.85;
+		$lightgray_black_gray = 14.25;
 		$chance = Utils::randomFloat() * 100;
 		switch($chance){
-			case $chance <= 0.1558:
+			case($chance <= $pink):
 				$color = 6;
 				break;
-			case $chance <= 2.85:
+			case($chance > $pink and $chance <= ($brown+$pink)):
 				$color = 12;
 				break;
-			case $chance <= 4.75:
+			case($chance > ($brown+$pink) and $chance <= ($lightgray_black_gray+$brown+$pink)):
 				$rand = mt_rand(1,3);
 				if($rand == 1) $color = 15;
 				elseif($rand == 2) $color = 7;
