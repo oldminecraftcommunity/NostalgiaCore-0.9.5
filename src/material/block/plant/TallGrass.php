@@ -45,12 +45,8 @@ class TallGrassBlock extends FlowableBlock{
 	
 	public function getDrops(Item $item, Player $player){
 		$drops = array();
-		if ($item->isShears()){
-			$drops[] = array($this->id, $this->meta & 0x03, 1);
-		}
-		elseif(Utils::chance(15)){
-			$drops[] = array(WHEAT_SEEDS, 0, 1)
-		}
+		if($item->isShears()) $drops[] = array($this->id, $this->meta & 0x03, 1);
+		elseif(Utils::chance(15)) $drops[] = array(WHEAT_SEEDS, 0, 1);
 		return $drops;
 	}
 	
