@@ -21,7 +21,7 @@
 
 class DiamondLeggingsItem extends Item{
 	public function __construct($meta = 0, $count = 1){
-		parent::__construct(DIAMOND_LEGGINGS, 0, $count, "Diamond Leggings");
+		parent::__construct(DIAMOND_LEGGINGS, $meta, $count, "Diamond Leggings");
 	}
 
 }

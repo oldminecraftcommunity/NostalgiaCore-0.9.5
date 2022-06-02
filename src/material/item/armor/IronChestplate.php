@@ -21,7 +21,7 @@
 
 class IronChestplateItem extends Item{
 	public function __construct($meta = 0, $count = 1){
-		parent::__construct(IRON_CHESTPLATE, 0, $count, "Iron Chestplate");
+		parent::__construct(IRON_CHESTPLATE, $meta, $count, "Iron Chestplate");
 	}
 
 }
