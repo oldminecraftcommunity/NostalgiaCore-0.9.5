@@ -617,7 +617,11 @@ class Entity extends Position{
 					if($y < $this->fallY){
 						$d = $this->level->getBlock(new Vector3($x, $y + 1, $z));
 						$d2 = $this->level->getBlock(new Vector3($x, $y + 2, $z));
+						$blockToFallOn = $this->level->getBlock(new Vector3(floor($x), floor($y), floor($z)));
 						$dmg = ($this->fallY - $y) - 3;
+						if($blockToFallOn->getID() === FARMLAND){
+							$this->level->setBlockRaw($blockToFallOn,new DirtBlock());
+						}
 						if($dmg > 0 and !($d instanceof LiquidBlock) and $d->getID() !== LADDER and $d->getID() !== COBWEB and !($d2 instanceof LiquidBlock) and $d2->getID() !== LADDER and $d2->getID() !== COBWEB){
 							$this->harm($dmg, "fall");
 						}

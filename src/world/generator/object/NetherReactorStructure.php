@@ -48,9 +48,9 @@ class NetherReactorStructure{
 			"N               N",
 			"N               N",
 			"N               N",
-			"N               N",
-			"N               N",
-			"N               N",
+			"N      ___      N",
+			"N      ___      N",
+			"N      ___      N",
 			"N               N",
 			"N               N",
 			"N               N",
@@ -67,9 +67,9 @@ class NetherReactorStructure{
 			"N               N",
 			"N               N",
 			"N               N",
-			"N               N",
-			"N               N",
-			"N               N",
+			"N      ___      N",
+			"N      ___      N",
+			"N      ___      N",
 			"N               N",
 			"N               N",
 			"N               N",
@@ -87,9 +87,9 @@ class NetherReactorStructure{
 			"N               N",
 			"N               N",
 			"N               N",
-			"N               N",
-			"N               N",
-			"N               N",
+			"N      ___      N",
+			"N      ___      N",
+			"N      ___      N",
 			"N               N",
 			"N               N",
 			"N               N",
@@ -599,6 +599,13 @@ class NetherReactorStructure{
 					switch($char){
 						case "N": //Netherrack
 							$level->setBlockRaw(new Vector3($x - 8 + $offsetX, $y - 1 + $layerCount, $z - 8 + $offsetZ), new NetherrackBlock());
+							break;
+						case " ":
+							$block = $level->getBlock(new Vector3($x - 8 + $offsetX, $y - 1 + $layerCount, $z - 8 + $offsetZ))->getID();
+							if($block == 0){
+								continue;
+							}
+							$level->setBlockRaw(new Vector3($x - 8 + $offsetX, $y - 1 + $layerCount, $z - 8 + $offsetZ), new AirBlock());
 							break;
 					}
 					++$offsetX;
