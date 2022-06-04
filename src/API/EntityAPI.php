@@ -27,6 +27,48 @@ class EntityAPI{
 	function __construct(){
 		$this->entities = array();
 		$this->server = ServerAPI::request();
+		
+		$this->hp = array(
+			10 => 4,
+			11 => 10,
+			12 => 10,
+			13 => 8,
+
+			32 => 20,
+			33 => 20,
+			34 => 20,
+			35 => 16,
+			36 => 20,
+		);
+		
+		$this->mob = array(
+			"chicken" => 10,
+			"cow" => 11,
+			"pig" => 12,
+			"sheep" => 13,
+
+			"zombie" => 32,
+			"creeper" => 33,
+			"skeleton" => 34,
+			"spider" => 35,
+			"pigman" => 36,
+		);
+		
+		$this->mobName = array(
+			10 => "Chicken",
+			11 => "Cow",
+			12 => "Pig",
+			13 => "Sheep",
+
+			32 => "Zombie",
+			33 => "Creeper",
+			34 => "Skeleton",
+			35 => "Spider",
+			36 => "Pigman",
+		);
+		
+		$this->serverSpawnAnimals = $this->server->api->getProperty("spawn-animals");
+		$this->serverSpawnMobs = $this->server->api->getProperty("spawn-mobs");
 	}
 
 	public function get($eid){
@@ -38,6 +80,115 @@ class EntityAPI{
 	
 	public function init(){
 		$this->server->schedule(25, array($this, "updateEntities"), array(), true);
+		$this->server->api->console->register("summon", "<mob>", array($this, "commandHandler"));
+		$this->server->api->console->register("spawnmob", "<mob>", array($this, "commandHandler"));
+	}
+	
+	public function commandHandler($cmd, $args, $issuer, $alias){
+		$output = "";
+        switch ($cmd){
+			case 'summon':
+			case 'spawnmob':
+			
+			if(!($issuer instanceof Player)){
+				$output .= "Please run this command in-game.";
+				break;
+			}
+			if((count($args) < 1) or (count($args) > 3)){
+				$output .= "Usage: /$cmd <mob> [amount] [baby]";
+				break;
+			}
+			
+			$type = $this->mob[strtolower($args[0])];
+			if($type != (10 or 11 or 12 or 13 or 32 or 33 or 34 or 35 or 36)){
+				$output .= "Unknown mob.";
+				break;
+			}
+			
+			if(count($args) == 1){//summon <mob>
+			
+				$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
+				$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
+				$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
+				$spawnLevel = $issuer->entity->level;
+				
+				$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, array(
+					"x" => $spawnX,
+					"y" => $spawnY,
+					"z" => $spawnZ,
+					"Health" => $this->hp[$type],
+				));
+				$this->spawnToAll($entityit, $level);
+				$output .= $this->mobName[$type]." spawned in ".$spawnX.", ".$spawnY.", ".$spawnZ.".";
+				break;
+			}
+			elseif(is_numeric($args[1])){//summon <mob> [amount]
+				$amount = (int)$args[1];
+				if($amount > 25){
+					$output .= "Cannot spawn > 25 mobs";
+					break;
+				}
+				
+				$isBaby = 0;
+				if(strtolower($args[2]) == 'baby'){//summon <mob> [amount] [baby]
+					if($type > 13){
+						$output .= "Baby can be only animals!";
+						break;
+					}
+					$isBaby = 1;
+				}
+				
+				$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
+				$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
+				$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
+				$spawnLevel = $issuer->entity->level;
+				
+				for($cnt = $amount; $cnt > 0; --$cnt){
+					$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, array(
+						"x" => $spawnX,
+						"y" => $spawnY,
+						"z" => $spawnZ,
+						"Health" => $this->hp[$type],
+						"isBaby" => $isBaby,
+					));
+					$this->spawnToAll($entityit, $level);
+				}
+				
+				if($type == 13 or $amount == 1) $plural = '';
+				else $plural = 's';
+				
+				if($isBaby == 1) $baby = "Baby ";
+				else $baby = '';
+				
+				$output .= $amount." ".$baby.$this->mobName[$type].$plural." spawned in ".$spawnX.", ".$spawnY.", ".$spawnZ.".";
+				
+				break;
+			}
+			elseif(strtolower($args[1]) == 'baby'){//summon <mob> [baby]
+				if($type > 13){
+					$output .= "Baby can be only animals!";
+					break;
+				}
+				else{
+					$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
+					$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
+					$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
+					$spawnLevel = $issuer->entity->level;
+				
+					$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, array(
+						"x" => $spawnX,
+						"y" => $spawnY,
+						"z" => $spawnZ,
+						"Health" => $this->hp[$type],
+						"isBaby" => 1,
+					));
+					$this->spawnToAll($entityit, $level);
+					$output .= "Baby ".$this->mobName[$type]." spawned in ".$spawnX.", ".$spawnY.", ".$spawnZ.".";
+					break;
+				}
+			}
+		}
+	return $output;
 	}
 	
 	public function updateEntities(){
