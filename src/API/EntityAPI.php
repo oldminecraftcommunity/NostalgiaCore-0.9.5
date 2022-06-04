@@ -82,6 +82,7 @@ class EntityAPI{
 		$this->server->schedule(25, array($this, "updateEntities"), array(), true);
 		$this->server->api->console->register("summon", "<mob>", array($this, "commandHandler"));
 		$this->server->api->console->register("spawnmob", "<mob>", array($this, "commandHandler"));
+		$this->server->api->console->register("despawn", "", array($this, "CommandHandler"));
 	}
 	
 	public function commandHandler($cmd, $args, $issuer, $alias){
@@ -163,30 +164,45 @@ class EntityAPI{
 				$output .= $amount." ".$baby.$this->mobName[$type].$plural." spawned in ".$spawnX.", ".$spawnY.", ".$spawnZ.".";
 				
 				break;
-			}
-			elseif(strtolower($args[1]) == 'baby'){//summon <mob> [baby]
-				if($type > 13){
-					$output .= "Baby can be only animals!";
+				}
+				elseif(strtolower($args[1]) == 'baby'){//summon <mob> [baby]
+					if($type > 13){
+						$output .= "Baby can be only animals!";
+						break;
+					}
+					else{
+						$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
+						$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
+						$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
+						$spawnLevel = $issuer->entity->level;
+						
+						$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, array(
+							"x" => $spawnX,
+							"y" => $spawnY,
+							"z" => $spawnZ,
+							"Health" => $this->hp[$type],
+							"isBaby" => 1,
+						));
+						$this->spawnToAll($entityit, $level);
+						$output .= "Baby ".$this->mobName[$type]." spawned in ".$spawnX.", ".$spawnY.", ".$spawnZ.".";
+						break;
+					}
 					break;
 				}
-				else{
-					$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
-					$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
-					$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
-					$spawnLevel = $issuer->entity->level;
-				
-					$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, array(
-						"x" => $spawnX,
-						"y" => $spawnY,
-						"z" => $spawnZ,
-						"Health" => $this->hp[$type],
-						"isBaby" => 1,
-					));
-					$this->spawnToAll($entityit, $level);
-					$output .= "Baby ".$this->mobName[$type]." spawned in ".$spawnX.", ".$spawnY.", ".$spawnZ.".";
-					break;
+			case 'despawn':
+				$cnt = 0;
+				$l = $this->server->query("SELECT EID FROM entities WHERE class = ".ENTITY_MOB.";");
+				if ($l !== false and $l !== true){
+					while(($e = $l->fetchArray(SQLITE3_ASSOC)) !== false){
+						$e = $this->get($e["EID"]);
+						if ($e instanceof Entity){
+							$this->remove($e->eid);
+							$cnt++;
+						}
+					}
 				}
-			}
+				$output .= $cnt." mobs has been despawned!";
+				break;
 		}
 	return $output;
 	}
