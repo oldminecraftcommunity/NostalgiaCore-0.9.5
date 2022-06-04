@@ -73,7 +73,7 @@ class PocketMinecraftServer{
 		}
 		console("[INFO] Loading extra.properties...");
         	$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, array(
-			        "version" => "4",
+			        "version" => "5",
 					"enable-nether-reactor" => true,
 					"enable-explosions" => true,
 					"enable-rail-connection" => false,
@@ -81,6 +81,7 @@ class PocketMinecraftServer{
             		"save-console-data" => true,
 		            "query-plugins" => false,
 					"discord-msg" => false,
+					"discord-ru-smiles" => false,
 					"discord-webhook-url" => "none",
 					"discord-bot-name" => "NostalgiaCore Logger"
         	));
@@ -731,7 +732,7 @@ class PocketMinecraftServer{
 				"url" => $url,
 				"data" => array(
 					"username" => $name,
-					"content" => str_replace("@", "", $msg)
+					"content" => $this->extraprops->get("discord-ru-smiles") ? str_replace("@", " ", str_replace("Ы", "<:ru_cool:960113011383738369>", str_replace("Ь", "<:ru_cry:960112920346390548>", str_replace("Ъ","<:ru_happy:960112868601237504>", $msg)))) : str_replace("@", "", $msg)
 				),
 			), NULL);
 		}
