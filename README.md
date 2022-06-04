@@ -2,7 +2,7 @@
 
 # NostalgiaCore
 
-NostalgiaCore is a fork of Legacy PocketMine-MP 1.3.12, which fixes bugs of Legacy PocketMine-MP, and brings a *new* live into it.
+NostalgiaCore is a fork of Legacy PocketMine-MP 1.3.12, which fixes bugs of Legacy PocketMine-MP, and adds new content
 
 Supported version: 0.8.1
 
@@ -12,7 +12,7 @@ Supported version: 0.8.1
 
 • Items are dropping normally.
 
-• Dupes, that were in pmmp by mistake is fixed.
+• Dupes, that were in PocketMine by mistake is fixed.
 
 • Player hotbar is saved.
 
@@ -25,6 +25,11 @@ Supported version: 0.8.1
 • Players can't join as "RCON" or "CONSOLE".
 
 ...and etc.
+
+# Download Stable NostalgiaCore
+
+https://github.com/kotyaralih/NostalgiaCore/releases/
+
 
 # How to use auto-restart?
 
