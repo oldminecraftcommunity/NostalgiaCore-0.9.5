@@ -37,7 +37,7 @@ class MelonStemBlock extends FlowableBlock{
 
 	public function onUpdate($type){
 		if($type === BLOCK_UPDATE_NORMAL){
-			if($this->getSide(0)->isTransparent === true){ //Replace with common break method
+			if($this->getSide(0)->getID() != 60){
 				ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y, $this->z+0.5, $this->level), BlockAPI::getItem(MELON_SEEDS, 0, mt_rand(0, 2)));
 				$this->level->setBlock($this, new AirBlock(), false, false, true);
 				return BLOCK_UPDATE_NORMAL;
@@ -83,8 +83,16 @@ class MelonStemBlock extends FlowableBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-		return array(
-			array(MELON_SEEDS, 0, mt_rand(0, 2)),
-		);
+		$drops = array();
+		if($this->meta >= 0x07){
+			$drops[] = array(MELON_SEEDS, 0, mt_rand(1, 2));
+		}
+		elseif($this->meta >= 0x01 and $this->meta <= 0x07){
+			$drops[] = array(MELON_SEEDS, 0, 1);
+		}
+		else{
+			$drops[] = array(MELON_SEEDS, 0, 0);
+		}
+		return $drops;
 	}
 }

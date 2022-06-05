@@ -38,17 +38,16 @@ class FarmlandBlock extends TransparentBlock{
 			}
 			return false;
 		}
-		$this->level->scheduleBlockUpdate(new Position($this, 0, 0, $this->level), Utils::getRandomUpdateTicks(), BLOCK_UPDATE_RANDOM);
 		if($type === BLOCK_UPDATE_RANDOM){
 			if($this->checkWater()){
 				$this->level->setBlock($this, BlockAPI::get(FARMLAND, 1), true, false, true);
 				return BLOCK_UPDATE_RANDOM;
 			}
 			else{
+				if($this->getSide(1)->isFlowable) return BLOCK_UPDATE_RANDOM;
 				$this->level->setBlock($this, BlockAPI::get(DIRT, 0), true, false, true);
 				return BLOCK_UPDATE_RANDOM;
 			}
-			
 		}
 		return false;
 	}
