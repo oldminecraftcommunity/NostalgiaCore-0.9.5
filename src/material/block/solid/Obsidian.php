@@ -30,7 +30,7 @@ class ObsidianBlock extends SolidBlock{
 			return 0.20;
 		}
 		if($item->isPickaxe() >= 5){
-			return 9.4;
+			return 3.5;//from wiki
 		}else{
 			return 250;
 		}

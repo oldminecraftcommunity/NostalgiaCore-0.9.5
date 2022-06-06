@@ -20,6 +20,8 @@
 */
 
 class Entity extends Position{
+	const TYPE = -1;
+	const CLASS_TYPE = -1;
 	public $age;
 	public $air;
 	public $spawntime;
@@ -56,7 +58,6 @@ class Entity extends Position{
 	public $check = true;
 	public $size = 1;
 	public $inAction = false;
-
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		$this->level = $level;
 		$this->fallY = false;

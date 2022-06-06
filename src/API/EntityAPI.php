@@ -270,7 +270,14 @@ class EntityAPI{
 
 	public function add(Level $level, $class, $type = 0, $data = array()){
 		$eid = $this->eCnt++;
-		$this->entities[$eid] = new Entity($level, $eid, $class, $type, $data);
+		$efl = EntityRegistry::$entityList->getEntityFromType($type);
+		if($efl instanceof PropertyEntity){
+			$class = $efl->getEntityName();
+			console("yey");
+			$this->entities[$eid] = new $class($level, $eid, $efl->getEntityClass(), $efl->getEntityType(), $data);
+		}else{
+			$this->entities[$eid] = new Entity($level, $eid, $class, $type, $data);
+		}
 		$this->server->handle("entity.add", $this->entities[$eid]);
 		return $this->entities[$eid];
 	}
