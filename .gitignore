@@ -7,7 +7,7 @@ bin/*
 *.log
 *.pmf
 *.txt
-server.properties
+*.properties
 
 
 ############
