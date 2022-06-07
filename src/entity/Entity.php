@@ -49,7 +49,7 @@ class Entity extends Position{
 	public $fallStart;
 	private $tickCounter;
 	private $speedMeasure = array(0, 0, 0, 0, 0, 0, 0);
-	private $server;
+	protected $server;
 	private $isStatic;
 	public $level;
 	public $isInMinecart = false;
@@ -232,7 +232,7 @@ class Entity extends Position{
 					);
 			}
 		}elseif($this->class === ENTITY_MOB){
-			if($this->data["isBaby"]){
+			if($this->data["IsBaby"]){
 				return array(
 					array(AIR, 0, 0),
 				);
@@ -263,26 +263,6 @@ class Entity extends Position{
 					return array(
 						array(ARROW, 0, mt_rand(0,2)),
 						array(BONE, 0, mt_rand(0,2)),
-					);
-					
-				//Animals
-				case MOB_CHICKEN:
-					return array(
-						array(FEATHER, 0, mt_rand(0,2)),
-						array(($this->fire > 0 ? COOKED_CHICKEN:RAW_CHICKEN), 0, 1),
-					);
-				case MOB_COW:
-					return array(
-						array(LEATHER, 0, mt_rand(0,2)),
-						array(($this->fire > 0 ? STEAK:BEEF), 0, 1),
-					);
-				case MOB_PIG:
-					return array(
-						array(($this->fire > 0 ? COOKED_PORKCHOP:RAW_PORKCHOP), 0, 1),
-					);
-				case MOB_SHEEP:
-					return array(
-						array(WOOL, $this->data["Color"] & 0x0F, 1),
 					);
 			}
 		}
@@ -329,15 +309,6 @@ class Entity extends Position{
 		
 		if($this->class === ENTITY_MOB){
 			switch($this->type){
-				case MOB_CHICKEN:
-				case MOB_SHEEP:
-				case MOB_COW:
-				case MOB_PIG:
-					if($this->server->api->getProperty("spawn-animals") !== true){
-						$this->close();
-						return false;
-					}
-					break;
 				case MOB_ZOMBIE:
 				case MOB_CREEPER:
 				case MOB_PIGMAN:
@@ -689,36 +660,10 @@ class Entity extends Position{
 		******************
 		0 => array("type" => 0, "value" => $flags) --> Unknown
 		1 => array("type" => 1, "value" => $this->air) --> Entity Air
-		14 => array("type" => 0, "value" => 1) --> isBaby, value: 0 => false, 1 => true
+		14 => array("type" => 0, "value" => 1) --> IsBaby, value: 0 => false, 1 => true
 		16 => array("type" => 0, "value" => 0) --> Unknown
 		17 => array("type" => 6, "value" => array(0, 0, 0)) --> Unknown
 	*/
-	
-	public function sheepColor(){
-		$pink = 0.1558;
-		$brown = 2.85;
-		$lightgray_black_gray = 14.25;
-		$chance = Utils::randomFloat() * 100;
-		switch($chance){
-			case($chance <= $pink):
-				$color = 6;
-				break;
-			case($chance > $pink and $chance <= ($brown+$pink)):
-				$color = 12;
-				break;
-			case($chance > ($brown+$pink) and $chance <= ($lightgray_black_gray+$brown+$pink)):
-				$rand = mt_rand(1,3);
-				if($rand == 1) $color = 15;
-				elseif($rand == 2) $color = 7;
-				else $color = 8;
-				break;
-			default:
-				$color = 0;
-				break;
-		}
-		return $color;
-	}
-	
 	public function getMetadata(){
 		$flags = 0;
 		$flags |= $this->fire > 0 ? 1:0;
@@ -731,17 +676,11 @@ class Entity extends Position{
 			16 => array("type" => 0, "value" => 0),
 			17 => array("type" => 6, "value" => array(0, 0, 0)),
 		);
-		if(!isset($this->data["isBaby"])){
-			$this->data["isBaby"] = 0;
+		if(!isset($this->data["IsBaby"])){
+			$this->data["IsBaby"] = 0;
 		}
-		$d[14]["value"] = $this->data["isBaby"];
-		if($this->class === ENTITY_MOB and $this->type === MOB_SHEEP){
-			if(!isset($this->data["Sheared"])){
-				$this->data["Sheared"] = 0;
-				$this->data["Color"] = $this->sheepColor();
-			}
-			$d[16]["value"] = (($this->data["Sheared"] == 1 ? 1:0) << 4) | ($this->data["Color"] & 0x0F);
-		}elseif($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT){ //ladder fix 2.0
+		$d[14]["value"] = $this->data["IsBaby"];
+		if($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT){ //ladder fix 2.0
 			$d[16]["value"] = (int) max(0, $this->data["fuse"] - (microtime(true) - $this->spawntime) * 20);
 		}elseif($this->class === ENTITY_PLAYER){
 			if($this->player->isSleeping !== false){
