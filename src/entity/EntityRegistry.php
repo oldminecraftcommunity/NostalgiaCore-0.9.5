@@ -38,6 +38,9 @@ class EntityRegistry{
 	public static function registerEntities(){
 		self::$entityList = new EntityList;
 		self::registerEntity(Pig::class);
+		self::registerEntity(Chicken::class);
+		self::registerEntity(Sheep::class);
+		self::registerEntity(Cow::class);
 	}
 	
 	/*Register an Entity*/

@@ -114,38 +114,6 @@ class Entity extends Position{
 				break;
 			case ENTITY_MOB:
 				switch($this->type){
-					
-					//Animals
-					case MOB_CHICKEN:
-						$this->server->schedule(mt_rand(0,6000) + 6000, array($this, "dropAnEgg"));
-						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:4, "generic");
-						$this->update();
-						//$this->setName('Chicken');
-						if(isset($this->data['isBaby'])) $this->size = 0.35;
-						else $this->size = 0.7;
-						break;
-					case MOB_COW:
-						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:10, "generic");
-						$this->update();
-						//$this->setName('Cow');
-						if(isset($this->data['isBaby'])) $this->size = 0.65;
-						else $this->size = 1.4;
-						break;
-					case MOB_PIG:
-						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:10, "generic");
-						$this->update();
-						//$this->setName('Pig');
-						if(isset($this->data['isBaby'])) $this->size = 0.60; //not original
-						else $this->size = 1.1875;
-						break;
-					case MOB_SHEEP:
-						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:8, "generic");
-						$this->update();
-						//$this->setName('Sheep');
-						if(isset($this->data['isBaby'])) $this->size = 0.65;
-						else $this->size = 1.3;
-						break;
-						
 					//Monsters
 					case MOB_CREEPER:
 						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:20, "generic");
@@ -219,10 +187,7 @@ class Entity extends Position{
 			$this->close();
 		}
 	}
-	public function dropAnEgg(){
-		ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem(EGG,0,1));
-		$this->server->schedule(mt_rand(0,6000) + 6000, array($this, "dropAnEgg"));
-	}
+	
 	public function updateFuse(){
 		if($this->closed === true){
 			return false;
