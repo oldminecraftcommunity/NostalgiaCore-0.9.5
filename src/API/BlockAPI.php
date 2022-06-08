@@ -281,24 +281,92 @@ class BlockAPI{
 
 	public function init(){
 		$this->server->schedule(1, array($this, "blockUpdateTick"), array(), true);
+		$this->server->api->console->register("setblock", "<x> <y> <z> <block[:damage]>", array($this, "commandHandler"));
 		$this->server->api->console->register("give", "<player> <item[:damage]> [amount]", array($this, "commandHandler"));
 	}
 
-	public function commandHandler($cmd, $params, $issuer, $alias){
+	public function commandHandler($cmd, $args, $issuer, $alias){
 		$output = "";
 		switch($cmd){
-			case "give":
-				if(!isset($params[0]) or !isset($params[1])){
-					$output .= "Usage: /give <player> <item[:damage]> [amount]\n";
+			case "setblock":
+				if(!($issuer instanceof Player)){
+					$output .= "Please run this command in-game.\n";
 					break;
 				}
-				$player = $this->server->api->player->get($params[0]);
-				$item = BlockAPI::fromString($params[1]);
 				
-				if(!isset($params[2])){
+				if(count($args) < 4){
+					console('oof');
+					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
+					break;
+				}
+				
+				if($args[0] == '~') $x = $issuer->entity->x;
+				elseif((int)$args[0] < 255) $x = $args[0];
+				else{
+					console('oof1');
+					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
+					break;
+				}
+				
+				if($args[1] == '~') $y = $issuer->entity->y;
+				elseif((int)$args[1] < 255) $y = $args[1];
+				else{
+					console('oof2');
+					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
+					break;
+				}
+				
+				if($args[2] == '~') $z = $issuer->entity->z;
+				elseif((int)$args[2] < 255) $z = $args[2];
+				else{
+					console('oof3');
+					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
+					break;
+				}
+				
+				$pos = new Position($x, $y, $z, $issuer->entity->level);
+				$block = BlockAPI::fromString($args[3])->getBlock();
+				if(!($block instanceof Block)){
+					console('oof4');
+					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
+					break;
+				}
+				else{
+					$issuer->level->setBlock($pos, $block, true, false, true);
+					$output .= "Placed a block in ".$x.", ".$y.", ".$z.", with id ".$args[3];
+				}
+				break;
+			case "give":
+				if(count($args) == 1 and $issuer instanceof Player){
+					$item = BlockAPI::fromString($args[0]);
+					if(($issuer->gamemode & 0x01) === 0x01){
+						$output .= "You are in creative mode.\n";
+						break;
+					}
+					if($item->getID() == 0){
+						$output .= "You cannot give an air block to a player.\n";
+						break;
+					}
+					
+					if(!isset($args[1])){
+					$item->count = $item->getMaxStackSize();
+					}
+					else{
+					$item->count = (int)$args[1];
+					}
+					
+					$issuer->addItem($item->getID(), $item->getMetadata(), $item->count);
+					$output .= "Giving ".$item->count." of ".$item->getName()." (".$item->getID().":".$item->getMetadata().") to ".$issuer->username."\n";
+					break;
+				}
+				
+				$player = $this->server->api->player->get($args[0]);
+				$item = BlockAPI::fromString($args[1]);
+				
+				if(!isset($args[2])){
 					$item->count = $item->getMaxStackSize();
 				}else{
-					$item->count = (int) $params[2];
+					$item->count = (int) $args[2];
 				}
 
 				if($player instanceof Player){
