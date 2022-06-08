@@ -295,31 +295,27 @@ class BlockAPI{
 				}
 				
 				if(count($args) < 4){
-					console('oof');
 					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
 					break;
 				}
 				
-				if($args[0] == '~') $x = $issuer->entity->x;
+				if($args[0] == '~') $x = round($issuer->entity->x, 0);
 				elseif((int)$args[0] < 255) $x = $args[0];
 				else{
-					console('oof1');
 					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
 					break;
 				}
 				
-				if($args[1] == '~') $y = $issuer->entity->y;
+				if($args[1] == '~') $y = round($issuer->entity->y, 0);
 				elseif((int)$args[1] < 255) $y = $args[1];
 				else{
-					console('oof2');
 					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
 					break;
 				}
 				
-				if($args[2] == '~') $z = $issuer->entity->z;
+				if($args[2] == '~') $z = round($issuer->entity->z, 0);
 				elseif((int)$args[2] < 255) $z = $args[2];
 				else{
-					console('oof3');
 					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
 					break;
 				}
@@ -327,13 +323,12 @@ class BlockAPI{
 				$pos = new Position($x, $y, $z, $issuer->entity->level);
 				$block = BlockAPI::fromString($args[3])->getBlock();
 				if(!($block instanceof Block)){
-					console('oof4');
 					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
 					break;
 				}
 				else{
 					$issuer->level->setBlock($pos, $block, true, false, true);
-					$output .= "Placed a block in ".$x.", ".$y.", ".$z.", with id ".$args[3];
+					$output .= "Placed ".$block." in ".$x.", ".$y.", ".$z;
 				}
 				break;
 			case "give":
