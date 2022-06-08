@@ -43,7 +43,7 @@ class SpawnEggItem extends Item{
 					"x" => $block->x + 0.5,
 					"y" => $block->y,
 					"z" => $block->z + 0.5,
-					"isBaby" => $ageable ? Utils::chance(5) ? 1 : 0 : 0,
+					"IsBaby" => $ageable ? Utils::chance(5) ? 1 : 0 : 0,
 				);
 				$e = ServerAPI::request()->api->entity->add($block->level, ENTITY_MOB, $this->meta, $data);
 				ServerAPI::request()->api->entity->spawnToAll($e);

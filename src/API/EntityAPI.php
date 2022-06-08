@@ -133,7 +133,7 @@ class EntityAPI{
 				$isBaby = 0;
 				if(strtolower($args[2]) == 'baby'){//summon <mob> [amount] [baby]
 					if($type > 13){
-						$output .= "Baby can be only animals!";
+						$output .= "This mob cant be baby!";
 						break;
 					}
 					$isBaby = 1;
@@ -150,7 +150,7 @@ class EntityAPI{
 						"y" => $spawnY,
 						"z" => $spawnZ,
 						"Health" => $this->hp[$type],
-						"isBaby" => $isBaby,
+						"IsBaby" => $isBaby,
 					));
 					$this->spawnToAll($entityit, $level);
 				}
@@ -270,7 +270,14 @@ class EntityAPI{
 
 	public function add(Level $level, $class, $type = 0, $data = array()){
 		$eid = $this->eCnt++;
-		$this->entities[$eid] = new Entity($level, $eid, $class, $type, $data);
+		$efl = EntityRegistry::$entityList->getEntityFromType($type);
+		if($efl instanceof PropertyEntity){
+			console(json_encode($data));
+			$class = $efl->getEntityName();
+			$this->entities[$eid] = new $class($level, $eid, $efl->getEntityClass(), $efl->getEntityType(), $data);
+		}else{
+			$this->entities[$eid] = new Entity($level, $eid, $class, $type, $data);
+		}
 		$this->server->handle("entity.add", $this->entities[$eid]);
 		return $this->entities[$eid];
 	}

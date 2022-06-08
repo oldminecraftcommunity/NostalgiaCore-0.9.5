@@ -31,6 +31,7 @@ class PocketMinecraftServer{
 	
 	private function load(){
 		global $dolog;
+		EntityRegistry::registerEntities();
 		$this->version = new VersionString();
 		/*if(defined("DEBUG") and DEBUG >= 0){
 			@cli_set_process_title("NostalgiaCore ".MAJOR_VERSION);
