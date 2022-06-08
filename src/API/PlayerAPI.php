@@ -28,22 +28,25 @@ class PlayerAPI{
     public function init(){
         $this->server->schedule(20 * 15, array($this, "handle"), 1, true, "server.regeneration");
         $this->server->addHandler("player.death", array($this, "handle"), 1);
-        $this->server->api->console->register("list", "", array($this, "commandHandler"));
-        $this->server->api->console->register("kill", "<player>", array($this, "commandHandler"));
-        $this->server->api->console->register("gamemode", "<mode> [player]", array($this, "commandHandler"));
-        $this->server->api->console->register("tp", "[target player] <destination player|w:world> OR /tp [target player] <x> <y> <z>", array($this, "commandHandler"));
-        $this->server->api->console->register("spawnpoint", "[player] [x] [y] [z]", array($this, "commandHandler"));
-        $this->server->api->console->register("spawn", "", array($this, "commandHandler"));
-        $this->server->api->console->register("ping", "", array($this, "commandHandler"));
+        $this->registerCmd("list");
+        $this->registerCmd("kill", "<player>");
+        $this->registerCmd("gamemode", "<mode> [player]", array($this, "commandHandler"));
+        $this->registerCmd("tp", "[target player] <destination player|w:world> OR /tp [target player] <x> <y> <z>");
+        $this->registerCmd("spawnpoint", "[player] [x] [y] [z]");
+        $this->registerCmd("spawn");
+        $this->registerCmd("ping");
         $this->server->api->console->alias("lag", "ping");
         $this->server->api->console->alias("suicide", "kill");
         $this->server->api->console->alias("tppos", "tp");
-		$this->server->api->console->alias("who", "list");
         $this->server->api->ban->cmdWhitelist("list");
         $this->server->api->ban->cmdWhitelist("ping");
         $this->server->api->ban->cmdWhitelist("spawn");
         $this->server->preparedSQL->selectPlayersToHeal = $this->server->database->prepare("SELECT EID FROM entities WHERE class = ".ENTITY_PLAYER." AND health < 20;");
     }
+	
+	public function registerCmd($cmd, $help = ""){
+		$this->server->api->console->register($cmd, $help, array($this, "commandHandler"));
+	}
 
     public function handle($data, $event){
         switch($event){
@@ -116,7 +119,7 @@ class PlayerAPI{
         }
     }
 
-    public function commandHandler($cmd, $params, $issuer, $alias){
+    public function commandHandler($cmd, $args, $issuer, $alias){
         $output = "";
         switch($cmd){
             case "spawnpoint":
@@ -125,8 +128,8 @@ class PlayerAPI{
                     break;
                 }
 
-                if(count($params) === 1 or count($params) === 4){
-                    $target = $this->server->api->player->get(array_shift($params));
+                if(count($args) === 1 or count($args) === 4){
+                    $target = $this->server->api->player->get(array_shift($args));
                 }else{
                     $target = $issuer;
                 }
@@ -136,14 +139,13 @@ class PlayerAPI{
                     break;
                 }
 
-                if(count($params) === 3){
-                    $spawn = new Position(floatval(array_shift($params)), floatval(array_shift($params)), floatval(array_shift($params)), $issuer->level);
+                if(count($args) === 3){
+                    $spawn = new Position(floatval(array_shift($args)), floatval(array_shift($args)), floatval(array_shift($args)), $issuer->level);
                 }else{
                     $spawn = new Position($issuer->entity->x, $issuer->entity->y, $issuer->entity->z, $issuer->entity->level);
                 }
 
                 $target->setSpawn($spawn);
-
                 $output .= "Spawnpoint set correctly!\n";
                 break;
             case "spawn":
@@ -182,13 +184,16 @@ class PlayerAPI{
                 if($issuer instanceof Player){
                     $player = $issuer;
                 }
-                if(isset($params[1])){
-                    if($this->server->api->player->get($params[1]) instanceof Player){
-                        $player = $this->server->api->player->get($params[1]);
-                        $setgm = $params[0];
-                    }elseif($this->server->api->player->get($params[0]) instanceof Player){
-                        $player = $this->server->api->player->get($params[0]);
-                        $setgm = $params[1];
+				if(count($args) == 1){
+					$setgm = $args[0];
+				}
+                elseif(isset($args[1])){
+                    if($this->server->api->player->get($args[1]) instanceof Player){
+                        $player = $this->server->api->player->get($args[1]);
+                        $setgm = $args[0];
+                    }elseif($this->server->api->player->get($args[0]) instanceof Player){
+                        $player = $this->server->api->player->get($args[0]);
+                        $setgm = $args[1];
                     }else{
                         $output .= "Usage: /$cmd <mode> [player] or /$cmd [player] <mode>\n";
                         break;
@@ -203,13 +208,13 @@ class PlayerAPI{
                 }
                 break;
             case "tp":
-                if(count($params) <= 2 or substr($params[0], 0, 2) === "w:" or substr($params[1], 0, 2) === "w:"){
-                    if((!isset($params[1]) or substr($params[0], 0, 2) === "w:") and isset($params[0]) and ($issuer instanceof Player)){
+				if(count($args) <= 2 or substr($args[0], 0, 2) === "w:" or substr($args[1], 0, 2) === "w:"){
+                    if((!isset($args[1]) or substr($args[0], 0, 2) === "w:") and isset($args[0]) and ($issuer instanceof Player)){
                         $name = $issuer->username;
-                        $target = implode(" ", $params);
-                    }elseif(isset($params[1]) and isset($params[0])){
-                        $name = array_shift($params);
-                        $target = implode(" ", $params);
+                        $target = implode(" ", $args);
+                    }elseif(isset($args[1]) and isset($args[0])){
+                        $name = array_shift($args);
+                        $target = implode(" ", $args);
                     }else{
                         $output .= "Usage: /$cmd [target player] <destination player>\n";
                         break;
@@ -220,16 +225,16 @@ class PlayerAPI{
                         $output .= "Couldn't teleport.\n";
                     }
                 }else{
-                    if(!isset($params[3]) and isset($params[2]) and isset($params[1]) and isset($params[0]) and ($issuer instanceof Player)){
+                    if(!isset($args[3]) and isset($args[2]) and isset($args[1]) and isset($args[0]) and ($issuer instanceof Player)){
                         $name = $issuer->username;
-                        $x = $params[0];
-                        $y = $params[1];
-                        $z = $params[2];
-                    }elseif(isset($params[3]) and isset($params[2]) and isset($params[1]) and isset($params[0])){
-                        $name = $params[0];
-                        $x = $params[1];
-                        $y = $params[2];
-                        $z = $params[3];
+                        $x = $args[0];
+                        $y = $args[1];
+                        $z = $args[2];
+                    }elseif(isset($args[3]) and isset($args[2]) and isset($args[1]) and isset($args[0])){
+                        $name = $args[0];
+                        $x = $args[1];
+                        $y = $args[2];
+                        $z = $args[3];
                     }else{
                         $output .= "Usage: /$cmd [player] <x> <y> <z>\n";
                         break;
@@ -243,10 +248,10 @@ class PlayerAPI{
                 break;
             case "kill":
             case "suicide":
-                if(!isset($params[0]) and ($issuer instanceof Player)){
+                if(!isset($args[0]) and ($issuer instanceof Player)){
                     $player = $issuer;
                 }else{
-                    $player = $this->get($params[0]);
+                    $player = $this->get($args[0]);
                 }
                 if($player instanceof Player){
                     $player->entity->harm(PHP_INT_MAX, "console", true);
@@ -298,9 +303,9 @@ class PlayerAPI{
         $player = $this->get($name);
         if(($player instanceof Player) and ($player->entity instanceof Entity)){
             $name = $player->username;
-            $x = $x{0} === "~" ? $player->entity->x + floatval(substr($x, 1)):floatval($x);
-            $y = $y{0} === "~" ? $player->entity->y + floatval(substr($y, 1)):floatval($y);
-            $z = $z{0} === "~" ? $player->entity->z + floatval(substr($z, 1)):floatval($z);
+            $x = $x[0] === "~" ? $player->entity->x + floatval(substr($x, 1)):floatval($x);
+            $y = $y[0] === "~" ? $player->entity->y + floatval(substr($y, 1)):floatval($y);
+            $z = $z[0] === "~" ? $player->entity->z + floatval(substr($z, 1)):floatval($z);
             $player->teleport(new Vector3($x, $y, $z));
             return true;
         }
