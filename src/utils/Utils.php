@@ -265,7 +265,7 @@ class Utils{
 	public static function readDataArray($str, $len = 10, &$offset = null){
 		$data = array();
 		$offset = 0;
-		for($i = 1; $i <= $len and isset($str{$offset}); ++$i){
+		for($i = 1; $i <= $len and isset($str[$offset]); ++$i){
 			$l = Utils::readTriad(substr($str, $offset, 3));
 			$offset += 3;
 			$data[] = substr($str, $offset, $l);
@@ -290,7 +290,7 @@ class Utils{
 		$secureValue = "";
 		$rounds = 0;
 		$drop = 0;
-		while(!isset($output{$length - 1})){
+		while(!isset($output[$length - 1])){
 			//some entropy, but works ^^
 			$weakEntropy = array(
 				is_array($startEntropy) ? implode($startEntropy):$startEntropy,

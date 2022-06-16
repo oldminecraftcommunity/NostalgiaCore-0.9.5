@@ -39,7 +39,7 @@ class AsyncMultipleQueue extends Thread{
 			return $len;
 		}
 		$offset = 0;
-		while(!isset($str{$len - 1})){
+		while(!isset($str[$len - 1])){
 			if(isset($this->input[$offset])){
 				$str .= $this->input[$offset];
 				++$offset;
@@ -51,7 +51,7 @@ class AsyncMultipleQueue extends Thread{
 	
 	public function run(){
 		while($this->stop === false){
-			if(isset($this->input{5})){ //len 6 min
+			if(isset($this->input[5])){ //len 6 min
 				$rID = Utils::readInt($this->get(4));
 				switch(Utils::readShort($this->get(2), false)){
 					case ASYNC_CURL_GET:

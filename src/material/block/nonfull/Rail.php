@@ -92,9 +92,9 @@ class RailBlock extends FlowableBlock{
         }
         foreach($deltaY as $y){
             $v3 = new Vector3(
-                $rail.getFloorX() + $blocks[1][0],
-                $rail.getFloorY() + $y,
-                $rail.getFloorZ() + $blocks[1][1]
+                $rail->getFloorX() + $blocks[1][0],
+                $rail->getFloorY() + $y,
+                $rail->getFloorZ() + $blocks[1][1]
             );
             $idToConnect = $rail->level->getBlock(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ())->getID();
             $metaToConnect = $rail->level->getBlock(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ())->getMetadata();
