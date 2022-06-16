@@ -27,9 +27,9 @@ class Utils{
 	public static $online = true;
 	public static $ip = false;
 	
-	public static function isOnline(){
+	/*public static function isOnline(){
 		return ((@fsockopen("8.8.8.8", 80, $e = null, $n = null, 2) !== false or @fsockopen("www.linux.org", 80, $e = null, $n = null, 2) !== false or @fsockopen("www.php.net", 80, $e = null, $n = null, 2) !== false) ? true:false);
-	}
+	}*/
 	
 	public static function getCallableIdentifier(callable $variable){
 		if(is_array($variable)){
@@ -205,14 +205,14 @@ class Utils{
 	public static function readMetadata($value, $types = false){
 		$offset = 0;
 		$m = array();
-		$b = ord($value{$offset});
+		$b = ord($value[$offset]);
 		++$offset;
-		while($b !== 127 and isset($value{$offset})){
+		while($b !== 127 and isset($value[$offset])){
 			$bottom = $b & 0x1F;
 			$type = $b >> 5;
 			switch($type){
 				case 0:
-					$r = Utils::readByte($value{$offset});
+					$r = Utils::readByte($value[$offset]);
 					++$offset;
 					break;
 				case 1:
@@ -237,7 +237,7 @@ class Utils{
 					$r = array();
 					$r[] = Utils::readLShort(substr($value, $offset, 2));
 					$offset += 2;
-					$r[] = ord($value{$offset});
+					$r[] = ord($value[$offset]);
 					++$offset;
 					$r[] = Utils::readLShort(substr($value, $offset, 2));
 					$offset += 2;
@@ -256,7 +256,7 @@ class Utils{
 			}else{
 				$m[$bottom] = $r;
 			}
-			$b = ord($value{$offset});
+			$b = ord($value[$offset]);
 			++$offset;
 		}
 		return $m;
@@ -309,7 +309,7 @@ class Utils{
 				(string) memory_get_usage().".".memory_get_peak_usage(),
 				php_uname(),
 				phpversion(),
-				extension_loaded("gmp") ? gmp_strval(gmp_random(4)):microtime(),
+				//extension_loaded("gmp") ? gmp_strval(gmp_random(4)):microtime(),
 				zend_version(),
 				(string) getmypid(),
 				(string) getmyuid(),
@@ -353,11 +353,11 @@ class Utils{
 				//Von Neumann randomness extractor, increases entropy
 				$bitcnt = 0;
 				for($j = 0; $j < 64; ++$j){
-					$a = ord($strongEntropy{$j});
+					$a = ord($strongEntropy[$j]);
 					for($i = 0; $i < 8; $i += 2){						
 						$b = ($a & (1 << $i)) > 0 ? 1:0;
 						if($b != (($a & (1 << ($i + 1))) > 0 ? 1:0)){
-							$secureValue |= $b << $bitcnt;
+							$secureValue = $b << $bitcnt;
 							if($bitcnt == 7){
 								$value .= chr($secureValue);
 								$secureValue = 0;
@@ -465,7 +465,7 @@ class Utils{
 	}
 
 	public static function readByte($c, $signed = true){
-		$b = ord($c{0});
+		$b = ord($c[0]);
 		if($signed === true and ($b & 0x80) === 0x80){ //calculate Two's complement
 			$b = -0x80 + ($b & 0x7f);
 		}
@@ -585,7 +585,7 @@ class Utils{
 	public static function readLong($x, $signed = true){
 		$value = "0";
 		if($signed === true){
-			$negative = ((ord($x{0}) & 0x80) === 0x80) ? true:false;
+			$negative = ((ord($x[0]) & 0x80) === 0x80) ? true:false;
 			if($negative){
 				$x = ~$x;
 			}
@@ -595,17 +595,17 @@ class Utils{
 
 		for($i = 0; $i < 8; $i += 4){
 			$value = bcmul($value, "4294967296", 0); //4294967296 == 2^32
-			$value = bcadd($value, 0x1000000 * ord(@$x{$i}) + ((ord(@$x{$i + 1}) << 16) | (ord(@$x{$i + 2}) << 8) | ord(@$x{$i + 3})), 0);
+			$value = bcadd($value, 0x1000000 * ord(@$x[$i]) + ((ord(@$x[$i + 1]) << 16) | (ord(@$x[$i + 2]) << 8) | ord(@$x[$i + 3])), 0);
 		}
 		return ($negative === true ? "-".$value:$value);
 	}
 
 	public static function writeLong($value){
 		$x = "";
-		if($value{0} === "-"){
+		if($value[0] === "-"){
 			$negative = true;
 			$value = bcadd($value, "1");
-			if($value{0} === "-"){
+			if($value[0] === "-"){
 				$value = substr($value, 1);
 			}
 		}else{
@@ -634,6 +634,6 @@ class Utils{
 
 }
 
-if(Utils::isOnline() === false){
-	Utils::$online = false;
-}
+//if(Utils::isOnline() === false){
+	//Utils::$online = false;
+//}

@@ -317,7 +317,7 @@ class PMFLevel extends PMF{
 		$aX = $x - ($X << 4);
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
-		$b = ord($this->chunks[$index][$Y]{(int) ($aY + ($aX << 5) + ($aZ << 9))});
+		$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
 		return $b;		
 	}
 	
@@ -336,7 +336,7 @@ class PMFLevel extends PMF{
 		$aX = $x - ($X << 4);
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
-		$this->chunks[$index][$Y]{(int) ($aY + ($aX << 5) + ($aZ << 9))} = chr($block);
+		$this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))] = chr($block);
 		if(!isset($this->chunkChange[$index][$Y])){
 			$this->chunkChange[$index][$Y] = 1;
 		}else{
@@ -357,7 +357,7 @@ class PMFLevel extends PMF{
 		$aX = $x - ($X << 4);
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
-		$m = ord($this->chunks[$index][$Y]{(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))});
+		$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
 		if(($y & 1) === 0){
 			$m = $m & 0x0F;
 		}else{
@@ -382,7 +382,7 @@ class PMFLevel extends PMF{
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
 		$mindex = (int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9));
-		$old_m = ord($this->chunks[$index][$Y]{$mindex});
+		$old_m = ord($this->chunks[$index][$Y][$mindex]);
 		if(($y & 1) === 0){
 			$m = ($old_m & 0xF0) | $damage;
 		}else{
@@ -390,7 +390,7 @@ class PMFLevel extends PMF{
 		}
 
 		if($old_m != $m){
-			$this->chunks[$index][$Y]{$mindex} = chr($m);
+			$this->chunks[$index][$Y][$mindex] = chr($m);
 			if(!isset($this->chunkChange[$index][$Y])){
 				$this->chunkChange[$index][$Y] = 1;
 			}else{
@@ -420,8 +420,8 @@ class PMFLevel extends PMF{
 		$aX = $x - ($X << 4);
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
-		$b = ord($this->chunks[$index][$Y]{(int) ($aY + ($aX << 5) + ($aZ << 9))});
-		$m = ord($this->chunks[$index][$Y]{(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))});
+		$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
+		$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
 		if(($y & 1) === 0){
 			$m = $m & 0x0F;
 		}else{
@@ -452,8 +452,8 @@ class PMFLevel extends PMF{
 		$aY = $y - ($Y << 4);
 		$bindex = (int) ($aY + ($aX << 5) + ($aZ << 9));
 		$mindex = (int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9));
-		$old_b = ord($this->chunks[$index][$Y]{$bindex});
-		$old_m = ord($this->chunks[$index][$Y]{$mindex});
+		$old_b = ord($this->chunks[$index][$Y][$bindex]);
+		$old_m = ord($this->chunks[$index][$Y][$mindex]);
 		if(($y & 1) === 0){
 			$m = ($old_m & 0xF0) | $meta;
 		}else{
@@ -461,8 +461,8 @@ class PMFLevel extends PMF{
 		}
 
 		if($old_b !== $block or $old_m !== $m){
-			$this->chunks[$index][$Y]{$bindex} = chr($block);
-			$this->chunks[$index][$Y]{$mindex} = chr($m);
+			$this->chunks[$index][$Y][$bindex] = chr($block);
+			$this->chunks[$index][$Y][$mindex] = chr($m);
 			if(!isset($this->chunkChange[$index][$Y])){
 				$this->chunkChange[$index][$Y] = 1;
 			}else{
@@ -475,8 +475,8 @@ class PMFLevel extends PMF{
 				for($side = 0; $side <= 5; ++$side)
 				{
 					$b = $pos->getSide($side);
-					if($b instanceof LavaBlock) { ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL); }
-					else { ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 10, BLOCK_UPDATE_NORMAL); }
+					if($b instanceof LavaBlock) ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
+					else ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 10, BLOCK_UPDATE_NORMAL);
 				}
 			}
 			return true;

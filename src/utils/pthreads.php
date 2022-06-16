@@ -22,23 +22,6 @@
 define("ASYNC_CURL_GET", 1);
 define("ASYNC_CURL_POST", 2);
 
-class StackableArray extends Stackable{
-	public function __construct(){
-		foreach(func_get_args() as $n => $value){
-			if(is_array($value)){
-				$this->{$n} = new StackableArray();
-				call_user_func_array(array($this->{$n}, "__construct"), $value);
-			}else{
-				$this->{$n} = $value;
-			}
-		}
-	}
-	
-	public function __destruct(){}
-	
-	public function run(){}
-}
-
 class AsyncMultipleQueue extends Thread{
 	public $input;
 	public $output;
@@ -57,8 +40,8 @@ class AsyncMultipleQueue extends Thread{
 		}
 		$offset = 0;
 		while(!isset($str{$len - 1})){
-			if(isset($this->input{$offset})){
-				$str .= $this->input{$offset};
+			if(isset($this->input[$offset])){
+				$str .= $this->input[$offset];
 				++$offset;
 			}
 		}
@@ -76,9 +59,9 @@ class AsyncMultipleQueue extends Thread{
 						$timeout = Utils::readShort($this->get(2));
 						
 						$res = (string) Utils::curl_get($url, $timeout);
-						$this->lock();
+						//$this->lock();
 						$this->output .= Utils::writeInt($rID).Utils::writeShort(ASYNC_CURL_GET).Utils::writeInt(strlen($res)).$res;
-						$this->unlock();
+						//$this->unlock();
 						break;
 					case ASYNC_CURL_POST:
 						$url = $this->get(Utils::readShort($this->get(2), false));
@@ -90,9 +73,9 @@ class AsyncMultipleQueue extends Thread{
 							$d[$key] = $this->get(Utils::readInt($this->get(4), false));
 						}
 						$res = (string) Utils::curl_post($url, $d, $timeout);
-						$this->lock();
+						//$this->lock();
 						$this->output .= Utils::writeInt($rID).Utils::writeShort(ASYNC_CURL_POST).Utils::writeInt(strlen($res)).$res;
-						$this->unlock();
+						//$this->unlock();
 						break;
 				}
 			}
@@ -133,3 +116,20 @@ class Async extends Thread{
 		return $this->result;
 	}
 }
+
+/*class StackableArray extends Stackable{
+	public function __construct(){
+		foreach(func_get_args() as $n => $value){
+			if(is_array($value)){
+				$this->{$n} = new StackableArray();
+				call_user_func_array(array($this->{$n}, "__construct"), $value);
+			}else{
+				$this->{$n} = $value;
+			}
+		}
+	}
+	
+	public function __destruct(){}
+	
+	public function run(){}
+}*/

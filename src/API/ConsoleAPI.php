@@ -182,7 +182,7 @@ class ConsoleAPI{
 			if(preg_match_all('#@([@a-z]{1,})#', $params, $matches, PREG_OFFSET_CAPTURE) > 0){
 				$offsetshift = 0;
 				foreach($matches[1] as $selector){
-					if($selector[0]{0} === "@"){ //Escape!
+					if($selector[0][0] === "@"){ //Escape!
 						$params = substr_replace($params, $selector[0], $selector[1] + $offsetshift - 1, strlen($selector[0]) + 1);
 						--$offsetshift;
 						continue;
