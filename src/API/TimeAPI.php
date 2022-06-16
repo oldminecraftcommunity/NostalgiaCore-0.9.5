@@ -35,7 +35,7 @@ class TimeAPI{
 		$this->server->api->console->register("time", "<check|set|add> [time]", array($this, "commandHandler"));
 	}
 
-	public function commandHandler($cmd, $params, $issuer, $alias){
+	public function commandHandler($cmd, $args, $issuer, $alias){
 		$output = "";
 		switch($cmd){
 			case "time":
@@ -43,25 +43,96 @@ class TimeAPI{
 				if($issuer instanceof Player){
 					$level = $issuer->level;
 				}
-				$p = strtolower(array_shift($params));
+				else{
+					$level = $this->server->api->level->getDefault();
+				}
+				$p = strtolower(array_shift($args));
 				switch($p){
 					case "check":
-						$output .= "Time: ".$this->getDate($level).", ".$this->getPhase($level)." (".$this->get(true, $level).")\n";
+						if(substr($args[0], 0, 2) === "w:"){
+							$levelName = preg_replace("/w:/", "", $args[0]);
+							$level = $this->server->api->level->get($levelName);
+							if($level instanceof Level){
+								$world = " in world \"$levelName\"";
+							}
+							else{
+								$output .= "World \"$levelName\" doesn't exist or loaded!";
+								break;
+							}
+						}
+						else $world = " in world \"".$level->getName()."\"";
+						$output .= "Time".$world.": ".$this->getDate($level).", ".$this->getPhase($level)." (".$this->get(true, $level)." ticks)\n";
 						break;
 					case "add":
-						$output .= "Set the time to ".$this->add(array_shift($params), $level)."\n";
+						if(substr($args[1], 0, 2) === "w:"){
+							$levelName = preg_replace("/w:/", "", $args[1]);
+							$level = $this->server->api->level->get($levelName);
+							if($level instanceof Level){
+								$world = " to the time of world \"$levelName\"";
+							}
+							else{
+								$output .= "World \"$levelName\" doesn't exist or loaded!";
+								break;
+							}
+						}
+						else $world = " to the time of world \"".$level->getName()."\"";
+						
+						$addTime = array_shift($args);
+						if(!is_numeric($addTime)){
+							$output .= "Time must be an integer!";
+							break;
+						}
+						$addTime = (int)$addTime;
+						$this->add($addTime, $level);
+						$output .= "Added $addTime ticks".$world."\n";
 						break;
 					case "set":
-						$output .= "Set the time to ".$this->set(array_shift($params), $level)."\n";
+						if(substr($args[1], 0, 2) === "w:"){
+							$levelName = preg_replace("/w:/", "", $args[1]);
+							$level = $this->server->api->level->get($levelName);
+							if($level instanceof Level){
+								$world = " in world \"$levelName\"";
+							}
+							else{
+								$output .= "World \"$levelName\" doesn't exist or loaded!";
+								break;
+							}
+						}
+						else $world = " in world \"".$level->getName()."\"";
+					
+						$setTime = array_shift($args);
+						if(is_numeric($setTime)){
+							$setTime = (int)$setTime;
+						}
+						elseif($setTime == 'sunrise' or $setTime == 'day' or $setTime == 'sunset' or $setTime == 'night');
+						else{
+							$output .= "Wrong time!";
+						}
+						$this->set($setTime, $level);
+						$output .= "Set the time to ".$setTime.$world."\n";
 						break;
 					case "sunrise":
 					case "day":
 					case "sunset":
 					case "night":
-						$output .= "Set the time to ".$this->set($p, $level)."\n";
+						if(substr($args[1], 0, 2) === "w:"){
+							$levelName = preg_replace("/w:/", "", $args[1]);
+							$level = $this->server->api->level->get($levelName);
+							if($level instanceof Level){
+								$world = " in world \"$levelName\"";
+							}
+							else{
+								$output .= "World \"$levelName\" doesn't exist or loaded!";
+								break;
+							}
+						}
+						else $world = " in world \"".$level->getName()."\"";
+						
+						$this->set($p, $level);
+						$output .= "Set the time to ".$p.$world."\n";
 						break;
 					default:
-						$output .= "Usage: /time <check|set|add> [time]\n";
+						$output .= "Usage: /time <check|set|add> [time] [w:world]\n";
 						break;
 				}
 				break;
