@@ -114,38 +114,7 @@ class Entity extends Position{
 				break;
 			case ENTITY_MOB:
 				switch($this->type){
-					//Monsters
-					case MOB_CREEPER:
-						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:20, "generic");
-						$this->update();
-						//$this->setName('Creeper');
-						$this->size = 1.6; //not original
-						break;
-					case MOB_PIGMAN:
-						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:20, "generic");
-						$this->update();
-						//$this->setName('Pigman');
-						$this->size = 1.8; //not original
-						break;
-					case MOB_SKELETON:
-						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:20, "generic");
-						$this->update();
-						//$this->setName('Skeleton');
-						$this->size = 1.9;
-						break;
-					case MOB_SPIDER:
-						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:20, "generic");
-						$this->update();
-						//$this->setName('Spider');
-						$this->size = 0.6; //not original
-						break;
-					case MOB_ZOMBIE:
-						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:20, "generic");
-						$this->update();
-						//$this->setName('Zombie');
-						$this->size = 1.95;
-						break;
-					default: //no break uwu?
+					default:
 						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:1, "generic");
 						$this->update();
 						//$this->setName((isset($mobs[$this->type]) ? $mobs[$this->type]:$this->type));
@@ -237,34 +206,6 @@ class Entity extends Position{
 					array(AIR, 0, 0),
 				);
 			}
-			switch($this->type){
-				
-				//Monsters
-				case MOB_ZOMBIE:
-					return array(
-						array(CARROT, 0, Utils::chance(0.83) ? 1 : 0),
-						array(POTATO, 0, Utils::chance(0.83) ? 1 : 0),
-						array(FEATHER, 0, mt_rand(0,2)),
-					);
-				case MOB_SPIDER:
-					return array(
-						array(STRING, 0, mt_rand(0,2)),
-					);
-				case MOB_PIGMAN:
-					return array(
-						array(COOKED_PORKCHOP, 0, mt_rand(0,2)),
-						array(GOLD_INGOT, 0, mt_rand(0,1)),
-					);
-				case MOB_CREEPER:
-					return array(
-						array(GUNPOWDER, 0, mt_rand(0,2)),
-					);
-				case MOB_SKELETON:
-					return array(
-						array(ARROW, 0, mt_rand(0,2)),
-						array(BONE, 0, mt_rand(0,2)),
-					);
-			}
 		}
 		return array();
 	}
@@ -304,21 +245,6 @@ class Entity extends Position{
 			if(($time - $this->spawntime) >= 60){
 				$this->close(); //Despawn timer
 				return false;
-			}
-		}
-		
-		if($this->class === ENTITY_MOB){
-			switch($this->type){
-				case MOB_ZOMBIE:
-				case MOB_CREEPER:
-				case MOB_PIGMAN:
-				case MOB_SKELETON:
-				case MOB_SPIDER:
-					if($this->server->api->getProperty("spawn-mobs") !== true){
-						$this->close();
-						return false;
-					}
-					break;
 			}
 		}
 	
