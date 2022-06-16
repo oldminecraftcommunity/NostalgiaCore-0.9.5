@@ -41,6 +41,11 @@ class EntityRegistry{
 		self::registerEntity(Chicken::class);
 		self::registerEntity(Sheep::class);
 		self::registerEntity(Cow::class);
+		self::registerEntity(Creeper::class);
+		self::registerEntity(PigZombie::class);
+		self::registerEntity(Skeleton::class);
+		self::registerEntity(Spider::class);
+		self::registerEntity(Zombie::class);
 	}
 	
 	/*Register an Entity*/

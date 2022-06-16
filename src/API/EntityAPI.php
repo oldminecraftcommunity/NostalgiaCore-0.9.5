@@ -272,7 +272,6 @@ class EntityAPI{
 		$eid = $this->eCnt++;
 		$efl = EntityRegistry::$entityList->getEntityFromType($type);
 		if($efl instanceof PropertyEntity){
-			console(json_encode($data));
 			$class = $efl->getEntityName();
 			$this->entities[$eid] = new $class($level, $eid, $efl->getEntityClass(), $efl->getEntityType(), $data);
 		}else{

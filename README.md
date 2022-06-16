@@ -16,13 +16,15 @@ Supported version: 0.8.1
 
 • Player hotbar is saved.
 
-• Advanced cache option.
+• Extra options (Only on NostalgiaCore!)
 
-• Server is starting faster.
+• Server is starting faster (~0.7 sec).
 
 • Vector2 is fixed.
 
 • Players can't join as "RCON" or "CONSOLE".
+
+• New many content such NEW entity system and Worked Nether Reactor!
 
 ...and etc.
 
