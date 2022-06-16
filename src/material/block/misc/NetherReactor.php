@@ -201,26 +201,26 @@ class NetherReactorBlock extends SolidBlock{
 					switch($char){
 						case "G":
 							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === GOLD_BLOCK){
-								continue 2;
+								break;
 							}
 							return false;
 						case "C":
 							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === COBBLESTONE){
-								continue 2;
+								break;
 							}
 							return false;
 						case "R":
 							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === NETHER_REACTOR){
-								continue 2;
+								break;
 							}
 							return false;
 						case " ":
 							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === 0){
-								continue 2;
+								break;
 							}
 							return false;
 						default:
-							continue 2;
+							break;
 					}
 					++$offsetX;
 				}
