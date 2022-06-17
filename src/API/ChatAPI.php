@@ -148,7 +148,7 @@ class ChatAPI{
 			}
 			$message["player"] = "";
 		}
-
-		$this->server->handle("server.chat", new Container($message, $whitelist, $blacklist));
+		$container = new Container($message, $whitelist, $blacklist);
+		$this->server->handle("server.chat", $container);
 	}
 }

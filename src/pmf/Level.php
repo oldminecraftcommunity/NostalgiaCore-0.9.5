@@ -420,6 +420,7 @@ class PMFLevel extends PMF{
 		$aX = $x - ($X << 4);
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
+		#Need to fix. But idk how.
 		$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
 		$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
 		if(($y & 1) === 0){

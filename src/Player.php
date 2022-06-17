@@ -1192,6 +1192,7 @@ class Player{
 				$cnt = $this->send($data);
 				if(isset($this->chunkCount[$count])){
 					unset($this->chunkCount[$count]);
+					if(!is_null($cnt) and !is_null($cnt[0]))
 					$this->chunkCount[$cnt[0]] = true;
 				}
 			}
