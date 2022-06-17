@@ -6,12 +6,14 @@ class Chicken extends Animal{
 		parent::__construct($level, $eid, $class, $type, $data);
 		$server = ServerAPI::request();
 		$server->schedule(mt_rand(0,6000) + 6000, array($this, "dropAnEgg"));
-		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:4, "generic");
+		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 4, "generic");
 		$this->update();
 		//$this->setName('Chicken');
 		$this->size = $this->isBaby() ? 0.35 : 0.7;
 	}
-	
+	public function isFood($id){
+		return $id === PUMPKIN_SEEDS || $id === MELON_SEEDS || $id === BEETROOT_SEEDS || $id === WHEAT_SEEDS;
+	}
 	public function dropAnEgg(){
 		ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem(EGG,0,1));
 		$this->server->schedule(mt_rand(0,6000) + 6000, array($this, "dropAnEgg"));

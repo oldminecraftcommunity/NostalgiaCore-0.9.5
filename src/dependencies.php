@@ -97,6 +97,7 @@ require_once(FILE_PATH."/src/world/Position.php");
 require_once(FILE_PATH."/src/pmf/PMF.php");
 require_once(FILE_PATH."/src/entity/Entity.php");
 require_once(FILE_PATH."/src/entity/Damageable.php");
+require_once(FILE_PATH."/src/entity/Breedable.php");
 require_once(FILE_PATH."/src/entity/Living.php");
 require_once(FILE_PATH."/src/entity/Creature.php");
 require_once(FILE_PATH."/src/entity/Ageable.php");
