@@ -602,10 +602,10 @@ class Utils{
 
 	public static function writeLong($value){
 		$x = "";
-		if(strval($value)[0] === "-"){
+		if(strval($value[0]) === "-"){
 			$negative = true;
 			$value = bcadd($value, "1");
-			if(strval($value)[0] === "-"){
+			if(strval($value[0]) === "-"){
 				$value = substr($value, 1);
 			}
 		}else{
