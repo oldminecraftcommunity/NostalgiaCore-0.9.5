@@ -603,7 +603,7 @@ class NetherReactorStructure{
 						case " ":
 							$block = $level->getBlock(new Vector3($x - 8 + $offsetX, $y - 1 + $layerCount, $z - 8 + $offsetZ))->getID();
 							if($block == 0){
-								continue 2;
+								break;
 							}
 							$level->setBlockRaw(new Vector3($x - 8 + $offsetX, $y - 1 + $layerCount, $z - 8 + $offsetZ), new AirBlock());
 							break;
