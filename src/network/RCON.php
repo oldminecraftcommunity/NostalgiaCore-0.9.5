@@ -168,14 +168,14 @@ class RCONInstance extends Thread{
 					if($this->{"status".$n} !== -1 and $this->stop !== true){
 						if($this->{"status".$n} === 0 and $this->{"timeout".$n} < microtime(true)){ //Timeout
 							$this->{"status".$n} = -1;
-							continue 2;
+							break;
 						}
 						$p = $this->readPacket($client, $size, $requestID, $packetType, $payload);
 						if($p === false){
 							$this->{"status".$n} = -1;
 							continue 2;
 						}elseif($p === null){
-							continue 2;
+							break;
 						}
 
 						switch($packetType){
@@ -200,7 +200,7 @@ class RCONInstance extends Thread{
 							case 2: //Command
 								if($this->{"status".$n} !== 1){
 									$this->{"status".$n} = -1;
-									continue 2;
+									break;
 								}
 								if(strlen($payload) > 0){
 									$this->cmd = ltrim($payload);
