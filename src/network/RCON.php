@@ -173,7 +173,7 @@ class RCONInstance extends Thread{
 						$p = $this->readPacket($client, $size, $requestID, $packetType, $payload);
 						if($p === false){
 							$this->{"status".$n} = -1;
-							continue 2;
+							break;
 						}elseif($p === null){
 							break;
 						}
@@ -182,7 +182,7 @@ class RCONInstance extends Thread{
 							case 3: //Login
 								if($this->{"status".$n} !== 0){
 									$this->{"status".$n} = -1;
-									continue 2;
+									break;
 								}
 								if($payload === $this->password){
 									@socket_getpeername($client, $addr, $port);
@@ -194,7 +194,7 @@ class RCONInstance extends Thread{
 								}else{
 									$this->{"status".$n} = -1;
 									$this->writePacket($client, -1, 2, "");
-									continue 2;
+									break;
 								}
 								break;
 							case 2: //Command
