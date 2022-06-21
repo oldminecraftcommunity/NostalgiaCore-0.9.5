@@ -1330,13 +1330,14 @@ class Player{
 				}
 				$this->loggedIn = true;
 				
-				$u = $this->server->api->player->get($this->iusername, false);
-				if($u !== false){
-					$u->close("logged in from another location");
-				}
 				if(!isset($this->CID) or $this->CID == null){
 					console("[DEBUG] Player ".$this->username." does not have a CID", true, true, 2);
 					$this->CID = Utils::readLong(Utils::getRandomBytes(8, false));
+				}
+				$u = $this->server->api->player->get($this->iusername, false);
+				if($u !== false){
+					$u = $this->server->clients[$this->CID];
+					$u->close("this player already in game");
 				}
 
 				$this->server->api->player->add($this->CID);
