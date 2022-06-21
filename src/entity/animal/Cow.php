@@ -9,7 +9,9 @@ class Cow extends Animal{
 		//$this->setName('Cow');
 		$this->size = $this->isBaby() ? 0.65 : 1.4;
 	}
-	
+	public function isFood($id){
+		return $id === WHEAT;
+	}
 	
 	public function getDrops(){
 		return $this->isBaby() ? array() : 

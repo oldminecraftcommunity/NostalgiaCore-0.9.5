@@ -3,7 +3,7 @@
 TODO:
 move methods
 */
-class Animal extends Creature implements Ageable{
+abstract class Animal extends Creature implements Ageable, Breedable{
 	public function isBaby(){
 		return $this->data["IsBaby"];
 	}

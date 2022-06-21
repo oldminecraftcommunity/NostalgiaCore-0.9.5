@@ -1158,7 +1158,7 @@ class Player{
 									case ProtocolInfo::REQUEST_CHUNK_PACKET:
 									case ProtocolInfo::ANIMATE_PACKET:
 									case ProtocolInfo::SET_HEALTH_PACKET:
-										continue 2;
+										break;
 								}
 							}
 							$this->received[$p->messageIndex] = true;
@@ -1192,6 +1192,7 @@ class Player{
 				$cnt = $this->send($data);
 				if(isset($this->chunkCount[$count])){
 					unset($this->chunkCount[$count]);
+					if(!is_null($cnt) and !is_null($cnt[0]))
 					$this->chunkCount[$cnt[0]] = true;
 				}
 			}

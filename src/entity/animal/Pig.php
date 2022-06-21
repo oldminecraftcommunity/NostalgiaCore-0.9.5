@@ -8,7 +8,9 @@ class Pig extends Animal{
 		//$this->setName('Pig');
 		$this->size = $this->isBaby() ? 0.60 : 1.1875;
 	}
-	
+	public function isFood($id){
+		return $id === POTATO || $id === CARROT || $id === BEETROOT;
+	}
 	public function getDrops(){
 		return $this->isBaby() ? array() : 
 		array(

@@ -56,8 +56,11 @@ class Explosion{
 			$e = $server->api->entity->add($this->level, ENTITY_OBJECT, OBJECT_PRIMEDTNT, $data);
 			$server->api->entity->spawnToAll($e);
 		}elseif(mt_rand(0, 10000) < ((1/$this->size) * 10000)){
-			foreach($block->getDrops($this->air, $this->nullPlayer) as $drop){
-				$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($drop[0], $drop[1],$drop[2])); //id, meta, count			
+			$tmp = $block->getDrops($this->air, $this->nullPlayer);
+			if(is_array($tmp)){
+				foreach($tmp as $drop){
+					$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($drop[0], $drop[1],$drop[2])); //id, meta, count			
+				}
 			}
 		}
 		$this->level->level->setBlockID($block->x, $block->y, $block->z, 0);

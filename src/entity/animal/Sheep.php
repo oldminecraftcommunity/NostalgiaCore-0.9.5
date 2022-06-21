@@ -16,6 +16,11 @@ class Sheep extends Animal{
 			array(WOOL, $this->data["Color"] & 0x0F, 1),
 		);
 	}
+	
+	public function isFood($id){
+		return $id === WHEAT;
+	}
+	
 	public function getMetadata(){
 		$d = parent::getMetadata();
 		if(!isset($this->data["Sheared"])){
