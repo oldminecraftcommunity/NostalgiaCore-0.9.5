@@ -1037,7 +1037,7 @@ class Player{
 			if(($gm & 0x01) === 0x01 and ($gm & 0x02) === 0x02){
 				$inv = array();
 				foreach(BlockAPI::$creative as $item){
-					$inv[] = BlockAPI::getItem(DANDELION, 0, 1);
+					$inv[] = BlockAPI::getItem(0, 0, 1);
 				}
 			}elseif(($gm & 0x01) === 0x01){
 				$inv = array();
@@ -1352,7 +1352,7 @@ class Player{
 					return;
 				}
 				
-				$this->server->send2Discord($this->username . " joined the game");
+				$this->server->send2Discord($this->username." joined the game");
 				
 				$this->auth = true;
 				if(!$this->data->exists("inventory") or ($this->gamemode & 0x01) === 0x01){
@@ -1360,7 +1360,7 @@ class Player{
 						$inv = array();
 						if(($this->gamemode & 0x02) === 0x02){
 							foreach(BlockAPI::$creative as $item){
-								$inv[] = array(DANDELION, 0, 1);
+								$inv[] = array(0, 0, 1);
 							}
 						}else{
 							foreach(BlockAPI::$creative as $item){
