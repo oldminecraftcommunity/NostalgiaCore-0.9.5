@@ -12,7 +12,7 @@ Supported version: 0.8.1
 
 • Items are dropping normally.
 
-• Dupes, that were in PocketMine by mistake is fixed.
+• Dupes, that were in PocketMine by mistake are fixed.
 
 • Player hotbar is saved.
 
@@ -24,7 +24,7 @@ Supported version: 0.8.1
 
 • Players can't join as "RCON" or "CONSOLE".
 
-• New many content such NEW entity system and Worked Nether Reactor!
+• Working Nether Reactor.
 
 ...and etc.
 
