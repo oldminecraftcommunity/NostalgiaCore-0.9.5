@@ -585,17 +585,23 @@ class Entity extends Position{
 		5 -> array(Short, Byte, Short)
 		6 -> arry(Integer, Integer, Integer)
 		******************
-		0 => array("type" => 0, "value" => $flags) --> Unknown
+		0 => array("type" => 0, "value" => $flags) --> DATA_FLAGS
 		1 => array("type" => 1, "value" => $this->air) --> Entity Air
 		14 => array("type" => 0, "value" => 1) --> IsBaby, value: 0 => false, 1 => true
-		16 => array("type" => 0, "value" => 0) --> Unknown
-		17 => array("type" => 6, "value" => array(0, 0, 0)) --> Unknown
+		16 => array("type" => 0, "value" => 0) --> Fuse(TNT), Saddled(Pig)
+		17 => array("type" => 6, "value" => array(0, 0, 0)) --> Bed Position <?>
+		
+		
+		DATA FLAGS IDS
+		0 - fire
+		1 - crouching
+		4 - inAction(ex.: using a bow)
 	*/
 	public function getMetadata(){
 		$flags = 0;
-		$flags |= $this->fire > 0 ? 1:0;
-		$flags |= ($this->crouched === true ? 0b10:0) << 1;
-		$flags |= ($this->inAction === true ? 0b10000:0);
+		$flags |= $this->fire > 0 ? 0b1 : 0;
+		$flags |= ($this->crouched ? 0b1 : 0) << 1;
+		$flags |= ($this->inAction ? 0b1:0) << 4;
 		$d = array(
 			0 => array("type" => 0, "value" => $flags),
 			1 => array("type" => 1, "value" => $this->air),
