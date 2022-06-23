@@ -603,12 +603,13 @@ class Entity extends Position{
 			16 => array("type" => 0, "value" => 0),
 			17 => array("type" => 6, "value" => array(0, 0, 0)),
 		);
-		if(!isset($this->data["IsBaby"])){
-			$this->data["IsBaby"] = 0;
-		}
-		$d[14]["value"] = $this->data["IsBaby"];
-		if($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT){ //ladder fix 2.0
-			$d[16]["value"] = (int) max(0, $this->data["fuse"] - (microtime(true) - $this->spawntime) * 20);
+		if($this->class === ENTITY_OBJECT || $this->class === ENTITY_MOB){ //ladder fix 2.0
+			if($this->type === OBJECT_PRIMEDTNT){
+				$d[16]["value"] = (int) max(0, $this->data["fuse"] - (microtime(true) - $this->spawntime) * 20);
+			}
+			if($this->type === MOB_PIG){ /*Saddled Pig*/
+				$d[16]["value"] = 0;
+			}
 		}elseif($this->class === ENTITY_PLAYER){
 			if($this->player->isSleeping !== false){
 				$d[16]["value"] = 2;
