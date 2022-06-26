@@ -1692,7 +1692,6 @@ class Player{
 					case 5: //Shot arrow
 						if($this->entity->inAction === true){
 							if($this->getSlot($this->slot)->getID() === BOW){
-								console($this->getSlot($this->slot)->getMetadata());
 								if($this->startAction !== false){
 									$time = microtime(true) - $this->startAction;
 									$d = array(
@@ -1706,8 +1705,7 @@ class Player{
 									$e->speedX = -sin(($e->yaw / 180) * M_PI) * cos(($e->pitch / 180) * M_PI);
 									$e->speedZ = cos(($e->yaw / 180) * M_PI) * cos(($e->pitch / 180) * M_PI);
 									$e->speedY = -sin(($e->pitch / 180) * M_PI);
-									$e->shoot($e->speedX, $e->speedY, $e->speedZ, 1.5*2, 1.0);
-									console($e->yaw);
+									$e->shoot($e->speedX, $e->speedY, $e->speedZ, 1.5, 1.0);
 									$this->server->api->entity->spawnToAll($e);
 								}
 							}
