@@ -23,6 +23,8 @@
 //Unsecure, not used for "Real Randomness"
 class Random{
 	private $x, $y, $z, $w;
+	private $haveNextNextGaussian = false;
+	private $nextNextGaussian = 0;
 	public function __construct($seed = false){
 		$this->setSeed($seed);
 	}
@@ -42,7 +44,23 @@ class Random{
 		$this->state = $state;
 		$this->i = $this->j = 0;
 	}
-	
+	public function nextGaussian(){
+		if ($this->haveNextNextGaussian) {
+            $this->haveNextNextGaussian = false;
+			return $this->nextNextGaussian;
+		} else {
+            $v1 =  $v2 =  $s = null;
+            do { 
+                $v1 = 2 * $this->nextFloat() - 1;   // between -1.0 and 1.0
+                $v2 = 2 * $this->nextFloat() - 1;   // between -1.0 and 1.0
+                $s = $v1 * $v1 + $v2 * $v2;
+            } while ($s >= 1 || $s == 0);
+            $multiplier = sqrt(-2 * log($s)/$s);
+            $nextNextGaussian = $v2 * $multiplier;
+            $haveNextNextGaussian = true;
+            return $v1 * $multiplier;
+    }
+	}
 	public function nextInt(){
 		return Utils::readInt($this->nextBytes(4)) & 0x7FFFFFFF;
 	}

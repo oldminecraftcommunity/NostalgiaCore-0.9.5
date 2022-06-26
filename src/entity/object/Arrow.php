@@ -14,9 +14,40 @@ class Arrow extends Projectile{
 		if(($time - $this->spawntime) >= 60){
 			$this->close();
 			return false;
+		}else{
+			/*$f3 = 0.99;
+			$f5 = 0.03;
+			$this->speedX *= $f3;
+			$this->speedY *= $f3;
+			$this->speedZ *= $f3;
+			$this->speedY -= $f5;
+			$this->move(new Vector3($this->speedX, $this->speedY, $this->speedZ), $this->yaw, $this->pitch);
+			$this->updateMovement();
+			return true;*/
+			return false;
 		}
 	}
-	
+	public function shoot($d, $d1, $d2, $f, $f1){ //original name from 0.8.1 IDA decompilation, var names are taken from b1.7.3
+		$random = new Random();
+		console($d." ".$d1." ".$d2." ".$f." ".$f1);
+		$f2 = sqrt($d * $d + $d1 * $d1 + $d2 * $d2);
+        $d /= $f2;
+        $d1 /= $f2;
+        $d2 /= $f2;
+        $d += $random->nextGaussian() * 0.0075 * $f1; //0.0074999998323619366 replaced with 0.0075
+		$d1 += $random->nextGaussian() * 0.0075 * $f1;
+        $d2 += $random->nextGaussian() * 0.0075 * $f1;
+        $d *= $f;
+        $d1 *= $f;
+        $d2 *= $f;
+        $this->speedX = $d;
+        $this->speedY = $d1;
+        $this->speedZ = $d2;
+        $f3 = sqrt($d * $d + $d2 * $d2);
+        $this->yaw = (atan2($d, $d2) * 180) / M_PI;
+        $this->pitch = (atan2($d1, $f3) * 180) / M_PI;
+        //TODO i guess? $ticksInGround = 0;
+	}
 	public function spawn($player){
 		if($this->type === OBJECT_ARROW){
 			$pk = new AddEntityPacket;
