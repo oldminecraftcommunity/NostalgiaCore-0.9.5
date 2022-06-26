@@ -142,7 +142,7 @@ class Entity extends Position{
 					$this->setHealth(10000000, "generic");
 					$this->server->schedule(5, array($this, "updateFuse"), array(), true);
 					$this->update();
-				}elseif($this->type === (OBJECT_ARROW or OBJECT_SNOWBALL)){
+				}elseif($this->type === OBJECT_SNOWBALL){
 					$this->server->schedule(1210, array($this, "update")); //Despawn
 					$this->update();
 				}elseif($this->type == OBJECT_MINECART){
@@ -241,9 +241,9 @@ class Entity extends Position{
 				$this->close(); //Despawn timer
 				return false;
 			}
-		}elseif($this->class === ENTITY_OBJECT and ($this->type === OBJECT_ARROW or OBJECT_SNOWBALL)){
+		}elseif($this->class === ENTITY_OBJECT and $this->type === OBJECT_SNOWBALL){
 			if(($time - $this->spawntime) >= 60){
-				$this->close(); //Despawn timer
+				$this->close();
 				return false;
 			}
 		}
@@ -721,22 +721,6 @@ class Entity extends Position{
 					$pk->title = $this->data["Motive"];
 					$player->dataPacket($pk);
 				}elseif($this->type === OBJECT_PRIMEDTNT){
-					$pk = new AddEntityPacket;
-					$pk->eid = $this->eid;
-					$pk->type = $this->type;
-					$pk->x = $this->x;
-					$pk->y = $this->y;
-					$pk->z = $this->z;
-					$pk->did = 0;		
-					$player->dataPacket($pk);
-					
-					$pk = new SetEntityMotionPacket;
-					$pk->eid = $this->eid;
-					$pk->speedX = $this->speedX;
-					$pk->speedY = $this->speedY;
-					$pk->speedZ = $this->speedZ;
-					$player->dataPacket($pk);
-				}elseif($this->type === OBJECT_ARROW){
 					$pk = new AddEntityPacket;
 					$pk->eid = $this->eid;
 					$pk->type = $this->type;
