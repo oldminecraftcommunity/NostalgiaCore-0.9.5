@@ -387,7 +387,7 @@ class Entity extends Position{
 							$support = true;
 							$isFlying = false;
 							break;
-						}elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL){
+						}elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
 							$isFlying = false;
 						}
 					}
