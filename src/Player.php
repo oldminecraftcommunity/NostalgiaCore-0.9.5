@@ -1033,6 +1033,10 @@ class Player{
 		}
 		
 		$inv =& $this->inventory;
+		if($gm === VIEW){
+			$this->armor = array();
+			$this->sendArmor();
+		}
 		if(($this->gamemode & 0x01) === ($gm & 0x01)){			
 			if(($gm & 0x01) === 0x01 and ($gm & 0x02) === 0x02){
 				$inv = array();
