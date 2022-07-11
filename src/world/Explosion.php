@@ -43,30 +43,7 @@ class Explosion{
 		$this->air = BlockAPI::getItem(AIR, 0, 1);
 		$this->nullPlayer = new PlayerNull();
 	}
-	private function explodeBlocks($send, $source, $block){
-		$server = ServerAPI::request();
-		if($block instanceof TNTBlock){
-			$data = array(
-				"x" => $block->x + 0.5,
-				"y" => $block->y + 0.5,
-				"z" => $block->z + 0.5,
-				"power" => 4,
-				"fuse" => mt_rand(10, 30), //0.5 to 1.5 seconds
-			);
-			$e = $server->api->entity->add($this->level, ENTITY_OBJECT, OBJECT_PRIMEDTNT, $data);
-			$server->api->entity->spawnToAll($e);
-		}elseif(mt_rand(0, 10000) < ((1/$this->size) * 10000)){
-			$tmp = $block->getDrops($this->air, $this->nullPlayer);
-			if(is_array($tmp)){
-				foreach($tmp as $drop){
-					$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($drop[0], $drop[1],$drop[2])); //id, meta, count			
-				}
-			}
-		}
-		$this->level->level->setBlockID($block->x, $block->y, $block->z, 0);
-		$send[] = new Vector3($block->x - $source->x, $block->y - $source->y, $block->z - $source->z);
-		return $send;
-	}
+	
 	public function explode(){
 		if(!Explosion::$enableExplosions){ /*Disable Explosions*/
 			return;
@@ -79,11 +56,7 @@ class Explosion{
 		)) === false){
 			return false;
 		}
-		
-		$send = array();
-		$source = $this->source->floor();
-		$radius = 2 * $this->size;
-		
+
 		$mRays = $this->rays - 1;
 		for($i = 0; $i < $this->rays; ++$i){
 			for($j = 0; $j < $this->rays; ++$j){
@@ -106,7 +79,7 @@ class Explosion{
 								if($blastForce > 0){
 									$index = ($block->x << 15) + ($block->z << 7) +  $block->y;
 									if(!isset($this->affectedBlocks[$index])){
-										$send = $this->explodeBlocks($send, $source,$block);
+										$this->affectedBlocks[$index] = $block;
 									}
 								}
 							}
@@ -116,13 +89,36 @@ class Explosion{
 				}
 			}
 		}
+		
+		$send = array();
+		$source = $this->source->floor();
+		$radius = 2 * $this->size;
 		foreach($server->api->entity->getRadius($this->source, $radius) as $entity){
-			if($entity->type === OBJECT_PRIMEDTNT){
-				continue;
-			}
 			$impact = (1 - $this->source->distance($entity) / $radius) * 0.5; //placeholder, 0.7 should be exposure
 			$damage = (int) (($impact * $impact + $impact) * 8 * $this->size + 1);
 			$entity->harm($damage, "explosion");
+		}
+
+		foreach($this->affectedBlocks as $block){
+
+			if($block instanceof TNTBlock){
+				$data = array(
+					"x" => $block->x + 0.5,
+					"y" => $block->y + 0.5,
+					"z" => $block->z + 0.5,
+					"power" => 4,
+					"fuse" => mt_rand(10, 30), //0.5 to 1.5 seconds
+				);
+				$e = $server->api->entity->add($this->level, ENTITY_OBJECT, OBJECT_PRIMEDTNT, $data);
+				$server->api->entity->spawnToAll($e);
+			}elseif(mt_rand(0, 10000) < ((1/$this->size) * 10000)){
+				foreach($block->getDrops($this->air, $this->nullPlayer) as $drop){
+					$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($drop[0], $drop[1],$drop[2])); //id, meta, count			
+				}
+			}
+			$this->level->level->setBlockID($block->x, $block->y, $block->z, 0);
+			ServerAPI::request()->api->block->blockUpdateAround(new Position($block->x, $block->y, $block->z, $this->level), BLOCK_UPDATE_NORMAL, 5);
+			$send[] = new Vector3($block->x - $source->x, $block->y - $source->y, $block->z - $source->z);
 		}
 		$pk = new ExplodePacket;
 		$pk->x = $this->source->x;

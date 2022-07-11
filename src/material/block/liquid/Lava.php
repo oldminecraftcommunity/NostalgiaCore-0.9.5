@@ -50,14 +50,14 @@ class LavaBlock extends LiquidBlock implements LightingBlock{
 	}
 	
 	public function checkWater(){
-		for($side = 1; $side <= 5; ++$side){
+		for($side = 0; $side <= 5; ++$side){
 			$b = $this->getSide($side);
 			if($b instanceof WaterBlock){
 				$level = $this->meta & 0x06;
 				if($level == 0x00){
-					$this->level->setBlock($this, new ObsidianBlock(), false, false, true);
+					$this->level->setBlock($b, new ObsidianBlock(), false, false, true);
 				}else{
-					$this->level->setBlock($this, new CobblestoneBlock(), false, false, true);
+					$this->level->setBlock($b, new CobblestoneBlock(), false, false, true);
 				}
 			}
 		}
@@ -85,7 +85,7 @@ class LavaBlock extends LiquidBlock implements LightingBlock{
 			return false;
 		}
 		
-		if( $this->checkWater()){
+		if($this->checkWater()){
 			return;
 		}
 		
