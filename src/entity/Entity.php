@@ -960,8 +960,8 @@ class Entity extends Position{
 				);
 				foreach($this->player->armor as $slot=>$part){
 					if($part instanceof Item and isset($values[$part->getID()])){
-						$points += $values[$part->getID()];
 						if(is_numeric($cause)){ //check was entity damage by another entity
+							$points += $values[$part->getID()];
 							$this->player->damageArmorPart($slot, $part);
 						}
 					}

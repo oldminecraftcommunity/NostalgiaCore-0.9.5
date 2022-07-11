@@ -27,8 +27,8 @@ class EntityList{
 		$this->entities[$property->getEntityType()] = $property;
 	}
 	
-	public function getEntityFromType($type){
-		return isset($this->entities[$type]) ? $this->entities[$type] : 0;
+	public function getEntityFromTypeAndClass($type, $class){
+		return isset($this->entities[$type]) && $this->entities[$type]->getEntityClass() === $class ? $this->entities[$type] : 0;
 	}
 	private $entities = [];
 }

@@ -90,92 +90,90 @@ class EntityAPI{
         switch ($cmd){
 			case 'summon':
 			case 'spawnmob':
-			
-			if(!($issuer instanceof Player)){
-				$output .= "Please run this command in-game.";
-				break;
-			}
-			if((count($args) < 1) or (count($args) > 3)){
-				$output .= "Usage: /$cmd <mob> [amount] [baby]";
-				break;
-			}
-			
-			$type = $this->mob[strtolower($args[0])];
-			if($type != (10 or 11 or 12 or 13 or 32 or 33 or 34 or 35 or 36)){
-				$output .= "Unknown mob.";
-				break;
-			}
-			
-			if(count($args) == 1){//summon <mob>
-			
-				$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
-				$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
-				$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
-				$spawnLevel = $issuer->entity->level;
-				
-				$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, array(
-					"x" => $spawnX,
-					"y" => $spawnY,
-					"z" => $spawnZ,
-					"Health" => $this->hp[$type],
-				));
-				$this->spawnToAll($entityit, $level);
-				$output .= $this->mobName[$type]." spawned in ".$spawnX.", ".$spawnY.", ".$spawnZ.".";
-				break;
-			}
-			elseif(is_numeric($args[1])){//summon <mob> [amount]
-				$amount = (int)$args[1];
-				if($amount > 25){
-					$output .= "Cannot spawn > 25 mobs";
+				if(!($issuer instanceof Player)){
+					$output .= "Please run this command in-game.";
+					break;
+				}
+				if((count($args) < 1) or (count($args) > 3)){
+					$output .= "Usage: /$cmd <mob> [amount] [baby]";
 					break;
 				}
 				
-				$isBaby = 0;
-				if(strtolower($args[2]) == 'baby'){//summon <mob> [amount] [baby]
-					if($type > 13){
-						$output .= "This mob cant be baby!";
-						break;
-					}
-					$isBaby = 1;
+				$type = $this->mob[strtolower($args[0])];
+				if($type != (10 or 11 or 12 or 13 or 32 or 33 or 34 or 35 or 36)){
+					$output .= "Unknown mob.";
+					break;
 				}
 				
-				$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
-				$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
-				$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
-				$spawnLevel = $issuer->entity->level;
+				if(count($args) == 1){//summon <mob>
 				
-				for($cnt = $amount; $cnt > 0; --$cnt){
+					$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
+					$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
+					$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
+					$spawnLevel = $issuer->entity->level;
+					
 					$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, array(
 						"x" => $spawnX,
 						"y" => $spawnY,
 						"z" => $spawnZ,
 						"Health" => $this->hp[$type],
-						"IsBaby" => $isBaby,
 					));
 					$this->spawnToAll($entityit, $level);
+					$output .= $this->mobName[$type]." spawned in ".$spawnX.", ".$spawnY.", ".$spawnZ.".";
+					break;
 				}
-				
-				if($type == 13 or $amount == 1) $plural = '';
-				else $plural = 's';
-				
-				if($isBaby == 1) $baby = "Baby ";
-				else $baby = '';
-				
-				$output .= $amount." ".$baby.$this->mobName[$type].$plural." spawned in ".$spawnX.", ".$spawnY.", ".$spawnZ.".";
-				
-				break;
+				elseif(is_numeric($args[1])){//summon <mob> [amount]
+					$amount = (int)$args[1];
+					if($amount > 25){
+						$output .= "Cannot spawn > 25 mobs";
+						break;
+					}
+					
+					$isBaby = 0;
+					if(strtolower($args[2]) == 'baby'){//summon <mob> [amount] [baby]
+						if($type > 13){
+							$output .= "This mob cant be baby!";
+							break;
+						}
+						$isBaby = 1;
+					}
+					
+					$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
+					$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
+					$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
+					$spawnLevel = $issuer->entity->level;
+					
+					for($cnt = $amount; $cnt > 0; --$cnt){
+						$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, array(
+							"x" => $spawnX,
+							"y" => $spawnY,
+							"z" => $spawnZ,
+							"Health" => $this->hp[$type],
+							"IsBaby" => $isBaby,
+						));
+						$this->spawnToAll($entityit, $level);
+					}
+					
+					if($type == 13 or $amount == 1) $plural = '';
+					else $plural = 's';
+					
+					if($isBaby == 1) $baby = "Baby ";
+					else $baby = '';
+					
+					$output .= $amount." ".$baby.$this->mobName[$type].$plural." spawned in ".$spawnX.", ".$spawnY.", ".$spawnZ.".";
+					
+					break;
 				}
 				elseif(strtolower($args[1]) == 'baby'){//summon <mob> [baby]
 					if($type > 13){
-						$output .= "Baby can be only animals!";
+						$output .= "This mob cant be baby!";
 						break;
 					}
 					else{
 						$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
 						$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
 						$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
-						$spawnLevel = $issuer->entity->level;
-						
+						$spawnLevel = $issuer->entity->level;	
 						$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, array(
 							"x" => $spawnX,
 							"y" => $spawnY,
@@ -201,7 +199,7 @@ class EntityAPI{
 						}
 					}
 				}
-				$output .= $cnt." mobs has been despawned!";
+				$output .= $cnt." mobs have been despawned!";
 				break;
 		}
 	return $output;
@@ -270,7 +268,7 @@ class EntityAPI{
 
 	public function add(Level $level, $class, $type = 0, $data = array()){
 		$eid = $this->eCnt++;
-		$efl = EntityRegistry::$entityList->getEntityFromType($type);
+		$efl = EntityRegistry::$entityList->getEntityFromTypeAndClass($type, $class);
 		if($efl instanceof PropertyEntity){
 			$class = $efl->getEntityName();
 			$this->entities[$eid] = new $class($level, $eid, $efl->getEntityClass(), $efl->getEntityType(), $data);
