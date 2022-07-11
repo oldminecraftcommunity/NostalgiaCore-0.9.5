@@ -5,7 +5,7 @@ class Chicken extends Animal{
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		parent::__construct($level, $eid, $class, $type, $data);
 		$server = ServerAPI::request();
-		$server->schedule(1, array($this, "dropAnEgg"));
+		$server->schedule(mt_rand(0,6000) + 6000, array($this, "dropAnEgg"));
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 4, "generic");
 		$this->update();
 		//$this->setName('Chicken');
@@ -19,7 +19,7 @@ class Chicken extends Animal{
 			return;
 		}
 		ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem(EGG,0,1));
-		$this->server->schedule(1, array($this, "dropAnEgg"));
+		$this->server->schedule(mt_rand(0,6000) + 6000, array($this, "dropAnEgg"));
 	}
 	
 	public function getDrops(){
