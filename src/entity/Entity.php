@@ -112,15 +112,6 @@ class Entity extends Position{
 				$this->update();
 				$this->size = 0.75;
 				break;
-			case ENTITY_MOB:
-				switch($this->type){
-					default:
-						$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:1, "generic");
-						$this->update();
-						//$this->setName((isset($mobs[$this->type]) ? $mobs[$this->type]:$this->type));
-						$this->size = 1;
-				}
-				break;
 			case ENTITY_FALLING:
 				$this->setHealth(PHP_INT_MAX, "generic");
 				$this->update();
@@ -135,13 +126,6 @@ class Entity extends Position{
 				$this->size = 1;
 				if($this->type === OBJECT_PAINTING){
 					$this->isStatic = true;
-				}elseif($this->type === OBJECT_PRIMEDTNT){
-					if(!isset($this->data["fuse"])){
-						$this->data["fuse"] = 0;
-					}
-					$this->setHealth(10000000, "generic");
-					$this->server->schedule(5, array($this, "updateFuse"), array(), true);
-					$this->update();
 				}elseif($this->type === OBJECT_SNOWBALL){
 					$this->server->schedule(1210, array($this, "update")); //Despawn
 					$this->update();
@@ -154,20 +138,6 @@ class Entity extends Position{
 		$this->updatePosition();
 		if($this->y < 0 and $this->class !== ENTITY_PLAYER){
 			$this->close();
-		}
-	}
-	
-	public function updateFuse(){
-		if($this->closed === true){
-			return false;
-		}
-		if($this->type === OBJECT_PRIMEDTNT){
-			$this->updateMetadata();
-			if(((microtime(true) - $this->spawntime) * 20) >= $this->data["fuse"]){
-				$this->close();
-				$explosion = new Explosion($this, $this->data["power"]);
-				$explosion->explode();
-			}
 		}
 	}
 	
@@ -199,12 +169,6 @@ class Entity extends Position{
 					return array(
 						array(MINECART, 0, 1),
 					);
-			}
-		}elseif($this->class === ENTITY_MOB){
-			if($this->data["IsBaby"]){
-				return array(
-					array(AIR, 0, 0),
-				);
 			}
 		}
 		return array();
@@ -609,10 +573,7 @@ class Entity extends Position{
 			16 => array("type" => 0, "value" => 0),
 			17 => array("type" => 6, "value" => array(0, 0, 0)),
 		);
-		if($this->class === ENTITY_OBJECT || $this->class === ENTITY_MOB){ //ladder fix 2.0
-			if($this->type === OBJECT_PRIMEDTNT){
-				$d[16]["value"] = (int) max(0, $this->data["fuse"] - (microtime(true) - $this->spawntime) * 20);
-			}
+		if($this->class === ENTITY_MOB){ //ladder fix 2.0
 			if($this->type === MOB_PIG){ /*Saddled Pig*/
 				$d[16]["value"] = 0;
 			}
@@ -719,22 +680,6 @@ class Entity extends Position{
 					$pk->z = (int) $this->z;
 					$pk->direction = $this->getDirection();
 					$pk->title = $this->data["Motive"];
-					$player->dataPacket($pk);
-				}elseif($this->type === OBJECT_PRIMEDTNT){
-					$pk = new AddEntityPacket;
-					$pk->eid = $this->eid;
-					$pk->type = $this->type;
-					$pk->x = $this->x;
-					$pk->y = $this->y;
-					$pk->z = $this->z;
-					$pk->did = 0;		
-					$player->dataPacket($pk);
-					
-					$pk = new SetEntityMotionPacket;
-					$pk->eid = $this->eid;
-					$pk->speedX = $this->speedX;
-					$pk->speedY = $this->speedY;
-					$pk->speedZ = $this->speedZ;
 					$player->dataPacket($pk);
 				}elseif($this->type === OBJECT_MINECART){
 					$pk = new AddEntityPacket;

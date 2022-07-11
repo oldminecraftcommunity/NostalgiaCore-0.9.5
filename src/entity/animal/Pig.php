@@ -12,7 +12,7 @@ class Pig extends Animal{
 		return $id === POTATO || $id === CARROT || $id === BEETROOT;
 	}
 	public function getDrops(){
-		return $this->isBaby() ? array() : 
+		return $this->isBaby() ? parent::getDrops() : 
 		array(
 			array(($this->fire > 0 ? COOKED_PORKCHOP:RAW_PORKCHOP), 0, 1),
 		);

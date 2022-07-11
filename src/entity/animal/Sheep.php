@@ -11,7 +11,7 @@ class Sheep extends Animal{
 	}
 	
 	public function getDrops(){
-		return $this->isBaby() ? array() : 
+		return $this->isBaby() ? parent::getDrops() : 
 		array(
 			array(WOOL, $this->data["Color"] & 0x0F, 1),
 		);

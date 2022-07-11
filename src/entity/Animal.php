@@ -4,6 +4,7 @@ TODO:
 move methods
 */
 abstract class Animal extends Creature implements Ageable, Breedable{
+	
 	public function isBaby(){
 		if(!isset($this->data["IsBaby"])){
 			$this->data["IsBaby"] = false;
@@ -24,5 +25,13 @@ abstract class Animal extends Creature implements Ageable, Breedable{
 			return false;
 		}
 		parent::environmentUpdate();
+	}
+	
+	public function getDrops(){
+		if($this->isBaby()){
+			return array(
+				array(AIR, 0, 0),
+			);
+		}
 	}
 }

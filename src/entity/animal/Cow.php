@@ -14,7 +14,7 @@ class Cow extends Animal{
 	}
 	
 	public function getDrops(){
-		return $this->isBaby() ? array() : 
+		return $this->isBaby() ? parent::getDrops() : 
 		array(	
 			array(LEATHER, 0, mt_rand(0,2)),
 			array(($this->fire > 0 ? STEAK:BEEF), 0, 1),
