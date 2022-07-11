@@ -842,7 +842,7 @@ class Player{
 				}else{
 					$this->setSlot($slot, BlockAPI::getItem($item->getID(), $item->getMetadata(), $s->count + $item->count), false);
 				}
-
+				console($item->getID());
 				switch($item->getID()){
 					case WORKBENCH:
 						AchievementAPI::grantAchievement($this, "buildWorkBench");
@@ -861,6 +861,7 @@ class Player{
 						break;
 					case CAKE:
 						AchievementAPI::grantAchievement($this, "bakeCake");
+						$this->addItem(BUCKET, 0, 3);
 						break;
 					case STONE_PICKAXE:
 					case GOLDEN_PICKAXE:
@@ -873,9 +874,6 @@ class Player{
 						break;
 					case DIAMOND:
 						AchievementAPI::grantAchievement($this, "diamond");
-						break;
-					case CAKE:
-						$this->addItem(BUCKET, 0, 3, false);
 						break;
 						
 				}

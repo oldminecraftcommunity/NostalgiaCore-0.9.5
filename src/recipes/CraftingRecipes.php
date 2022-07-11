@@ -288,6 +288,9 @@ class CraftingRecipes{
 		ksort($recipeItems);
 		$recipeString = "";
 		foreach($recipeItems as $item){
+			if($craftItem[0] === CAKE && $item[0] === BUCKET && $item[1] === 1){ //some dark magic with recipe happened in mcpe, pmmp restores it back to normal
+				$item[2] = 3;
+			}
 			$recipeString .= $item[0]."x".$item[2].",";
 		}
 		$recipeString = substr($recipeString, 0, -1)."=>".$craftItem[0]."x".$craftItem[2];
@@ -304,6 +307,9 @@ class CraftingRecipes{
 						break;
 					}
 					$oitem = $recipeItems[$item[0]];
+					if($craftItem[0] === CAKE && $oitem[0] === BUCKET && $item[1] === 1){ //some dark magic with recipe happened in mcpe, pmmp restores it back to normal x2
+						$oitem[2] = 3;
+					}
 					if(($oitem[1] !== $item[1] and $item[1] !== false) or $oitem[2] !== $item[2]){
 						$continue = false;
 						break;
