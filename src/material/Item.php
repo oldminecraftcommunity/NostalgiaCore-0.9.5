@@ -274,11 +274,11 @@ class Item{
 		}
 		
 		$levels = array(
-			2 => 33,
-			1 => 60,
-			3 => 132,
-			4 => 251,
-			5 => 1562,
+			2 => 40, //GOLD
+			1 => 59, //WOODEN
+			3 => 131, //STONE
+			4 => 250, //IRON
+			5 => 1561, //DIAMOND(called EMERALD in disassembled code)
 			FLINT_STEEL => 65,
 			SHEARS => 239,
 			BOW => 385,
