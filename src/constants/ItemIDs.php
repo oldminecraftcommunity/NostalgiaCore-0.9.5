@@ -101,7 +101,9 @@ define("GOLDEN_APPLE", 322);
 define("SIGN", 323);
 define("WOODEN_DOOR", 324);
 define("BUCKET", 325);
-
+define("WATER_BUCKET", "325:8");
+define("LAVA_BUCKET", "325:10");
+define("MILK_BUCKET", "325:1");
 define("MINECART", 328);
 define("SADDLE", 329);
 define("IRON_DOOR", 330);

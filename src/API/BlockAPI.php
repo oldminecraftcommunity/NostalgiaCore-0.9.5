@@ -240,6 +240,10 @@ class BlockAPI{
 			}
 			
 			if(defined(strtoupper($b[0]))){
+				$explodedString = explode(":", constant(strtoupper($b[0])));
+				if(count($explodedString) == 2){
+					$meta = (int) $explodedString[1];
+				}
 				$item = BlockAPI::getItem(constant(strtoupper($b[0])), $meta);
 				if($item->getID() === AIR and strtoupper($b[0]) !== "AIR"){
 					$item = BlockAPI::getItem(((int) $b[0]) & 0xFFFF, $meta);
