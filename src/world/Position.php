@@ -33,8 +33,8 @@ class Position extends Vector3{
 		$this->level = $level;
 	}
 	
-	public function getSide($side){
-		return new Position(parent::getSide($side), 0, 0, $this->level);
+	public function getSide($side, $step = 1){
+		return new Position(parent::getSide($side, $step), 0, 0, $this->level);
 	}
 	
 	public function distance($x = 0, $y = 0, $z = 0){

@@ -220,8 +220,8 @@ abstract class Block extends Position{
 		return $this->breakTime;
 	}
 	
-	public function getSide($side){
-		$v = parent::getSide($side);
+	public function getSide($side, $step = 1){
+		$v = parent::getSide($side, $step);
 		if($this->level instanceof Level){
 			return $this->level->getBlock($v);
 		}
