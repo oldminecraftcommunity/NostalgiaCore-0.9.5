@@ -124,9 +124,7 @@ class Entity extends Position{
 				$this->setHealth(1, "generic");
 				//$this->setName((isset($objects[$this->type]) ? $objects[$this->type]:$this->type));
 				$this->size = 1;
-				if($this->type === OBJECT_PAINTING){
-					$this->isStatic = true;
-				}elseif($this->type === OBJECT_SNOWBALL){
+				if($this->type === OBJECT_SNOWBALL){
 					$this->server->schedule(1210, array($this, "update")); //Despawn
 					$this->update();
 				}elseif($this->type == OBJECT_MINECART){
@@ -161,10 +159,6 @@ class Entity extends Position{
 			return $inv;
 		}elseif($this->class === ENTITY_OBJECT){
 			switch($this->type){
-				case OBJECT_PAINTING:
-					return array(
-						array(PAINTING, 0, 1),
-					);
 				case OBJECT_MINECART:
 					return array(
 						array(MINECART, 0, 1),
@@ -672,16 +666,7 @@ class Entity extends Position{
 				$player->dataPacket($pk);
 				break;
 			case ENTITY_OBJECT:
-				if($this->type === OBJECT_PAINTING){
-					$pk = new AddPaintingPacket;
-					$pk->eid = $this->eid;
-					$pk->x = (int) $this->x;
-					$pk->y = (int) $this->y;
-					$pk->z = (int) $this->z;
-					$pk->direction = $this->getDirection();
-					$pk->title = $this->data["Motive"];
-					$player->dataPacket($pk);
-				}elseif($this->type === OBJECT_MINECART){
+				if($this->type === OBJECT_MINECART){
 					$pk = new AddEntityPacket;
 					$pk->eid = $this->eid;
 					$pk->type = $this->type;
@@ -698,7 +683,6 @@ class Entity extends Position{
 					$pk->speedY = $this->speedY;
 					$pk->speedZ = $this->speedZ;
 					$player->dataPacket($pk);
-					
 				}
 				break;
 			case ENTITY_FALLING:

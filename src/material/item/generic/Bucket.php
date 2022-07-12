@@ -20,10 +20,17 @@
 */
 
 class BucketItem extends Item{
+	private static $possiblenames = array(
+		0 => "Bucket",
+		1 => "Milk Bucket",
+		8 => "Water Bucket",
+		10 => "Lava Bucket"
+	);
 	public function __construct($meta = 0, $count = 1){
 		parent::__construct(BUCKET, $meta, $count, "Bucket");
 		$this->isActivable = true;
 		$this->maxStackSize = 1;
+		$this->name = BucketItem::$possiblenames[$this->meta];
 	}
 	
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){

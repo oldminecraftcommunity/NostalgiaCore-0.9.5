@@ -48,6 +48,7 @@ class EntityRegistry{
 		self::registerEntity(Zombie::class);
 		self::registerEntity(Arrow::class);
 		self::registerEntity(PrimedTNT::class);
+		self::registerEntity(Painting::class);
 	}
 	
 	/*Register an Entity*/

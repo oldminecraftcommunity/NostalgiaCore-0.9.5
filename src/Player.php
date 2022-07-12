@@ -1520,16 +1520,7 @@ class Player{
 						}
 					}
 					$speed = $this->entity->getSpeedMeasure();
-					if($this->blocked === true or ($this->server->api->getProperty("allow-flight") !== true and (($speed > 9 and ($this->gamemode & 0x01) === 0x00) or $speed > 20 or $this->entity->distance($newPos) > 7)) or $this->server->api->handle("player.move", $this->entity) === false){
-						if($this->lastCorrect instanceof Vector3){
-							$this->teleport($this->lastCorrect, $this->entity->yaw, $this->entity->pitch, false);
-						}
-						if($this->blocked !== true){
-							console("[WARNING] ".$this->username." moved too quickly!");
-						}
-					}else{
-						$this->entity->setPosition($newPos, $packet->yaw, $packet->pitch);
-					}
+					$this->entity->setPosition($newPos, $packet->yaw, $packet->pitch);
 				}
 				break;
 			case ProtocolInfo::PLAYER_EQUIPMENT_PACKET:
