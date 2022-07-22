@@ -28,8 +28,7 @@ class ServerAPI{
 	private $apiList = array();
 	private $asyncCnt = 0;
 	private $rcon;
-	
-	public $query;
+	public $queryAPI;
 
     //TODO: Instead of hard-coding functions, use PHPDoc-compatible methods to load APIs.
 
@@ -174,7 +173,7 @@ class ServerAPI{
 		$this->loadAPI("tile", "TileAPI");
 		$this->loadAPI("player", "PlayerAPI");
 		$this->loadAPI("time", "TimeAPI");
-		
+		$this->loadAPI("queryAPI", "QueryAPI");
 		foreach($this->apiList as $ob){
 			if(is_callable(array($ob, "init"))){
 				$ob->init(); //Fails sometimes!!!
@@ -182,6 +181,7 @@ class ServerAPI{
 		}
 		$this->loadAPI("plugin", "PluginAPI"); //fix :(
 		$this->plugin->init();
+		
 	}
 	
 	public function async(callable $callable, $params = array(), $remove = false){

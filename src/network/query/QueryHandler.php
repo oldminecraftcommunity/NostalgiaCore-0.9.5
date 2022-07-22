@@ -41,7 +41,7 @@ class QueryHandler{
 		Then, the Query class handles itself sending the packets in raw form, because
 		packets can conflict with the MCPE ones.
 		*/
-
+		
 		$this->server->schedule(20 * 30, array($this, "regenerateToken"), array(), true);
 		$this->regenerateToken();
 		$this->lastToken = $this->token;
@@ -62,22 +62,13 @@ class QueryHandler{
 				$plist = substr($plist, 0, -1);
 			}
 		}
-		$KVdata = array(
-			"splitnum" => chr(128),
-			"hostname" => $this->server->name,
-			"gametype" => ($this->server->gamemode & 0x01) === 0 ? "SMP":"CMP",
-			"game_id" => "MINECRAFTPE",
-			"version" => CURRENT_MINECRAFT_VERSION,
-			"server_engine" => "NostalgiaCore ".MAJOR_VERSION,
-			"plugins" => $plist,
-			"map" => $this->server->api->level->getDefault()->getName(),
-			"numplayers" => count($this->server->clients),
-			"maxplayers" => $this->server->maxClients,
-			"whitelist" => $this->server->api->getProperty("white-list") === true ? "on":"off",
-			"hostport" => $this->server->api->getProperty("server-port"),
-			//"hostip" => $this->server->api->getProperty("server-ip", "0.0.0.0")
-			"tps" => $this->server->debugInfo()["tps"],
-		);
+		$this->server->api->queryAPI->updateQueryData("plugins", $plist);
+		$this->server->api->queryAPI->updateQueryData("map", $this->server->api->level->getDefault()->getName());
+		$this->server->api->queryAPI->updateQueryData("numplayers", count($this->server->clients));
+		$this->server->api->queryAPI->updateQueryData("tps", $this->server->debugInfo()["tps"]);
+		$this->server->api->dhandle("query.update", null);
+		$KVdata = $this->server->api->queryAPI->getQueryData();
+		
 		foreach($KVdata as $key => $value){
 			$str .= $key."\x00".$value."\x00";
 		}
