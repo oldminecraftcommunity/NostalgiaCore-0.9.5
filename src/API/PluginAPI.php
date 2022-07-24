@@ -239,12 +239,45 @@ class PluginAPI extends stdClass{
 	
 	public function initAll(){
 		console("[INFO] Starting plugins...");
+		$names = array();
+		$versions = array();
 		foreach($this->plugins as $p){
+			$names[] = $p[1]["name"];
+			$versions[] = $p[1]["version"];
+		}
+		foreach($this->plugins as $p){
+			if($p[0] instanceof OtherPluginRequirement){
+				foreach($p[0]->getRequiredPlugins() as $required){
+					if(in_array($required->pluginName, $names)){
+						console("hm");
+						if(!in_array($required->version, $versions) && $required->version !== false){
+							console("hm2");
+							console("[WARNING] Plugin \"".$required->pluginName."\" needed by \"".$p[1]["name"]."\" is incorrect version.");
+						}
+					}else{
+						console("[ERROR] Plugin \"".$required->pluginName."\" needed by \"".$p[1]["name"]."\" is not found.");
+						ServerAPI::request()->close();
+						
+					}
+				}
+			}
 			$p[0]->init(); //ARGHHH!!! Plugin loading randomly fails!!
 		}
 	}
 }
 
+class RequiredPluginEntry{ //Use this as object of requirements array
+	public $pluginName;
+	public $version;
+	public function __construct($name, $version = false){
+		$this->pluginName = $name;
+		$this->version = $version;
+	}
+}
+
+interface OtherPluginRequirement{
+	public function getRequiredPlugins();
+}
 
 interface Plugin{
 	public function __construct(ServerAPI $api, $server = false);
