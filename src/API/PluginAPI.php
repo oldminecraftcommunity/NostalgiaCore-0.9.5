@@ -249,9 +249,7 @@ class PluginAPI extends stdClass{
 			if($p[0] instanceof OtherPluginRequirement){
 				foreach($p[0]->getRequiredPlugins() as $required){
 					if(in_array($required->pluginName, $names)){
-						console("hm");
 						if(!in_array($required->version, $versions) && $required->version !== false){
-							console("hm2");
 							console("[WARNING] Plugin \"".$required->pluginName."\" needed by \"".$p[1]["name"]."\" is incorrect version.");
 						}
 					}else{
