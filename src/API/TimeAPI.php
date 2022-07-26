@@ -65,7 +65,7 @@ class TimeAPI{
 						$output .= "Added $addTime ticks" . $world . "\n";
 						break;
 					case "set":
-						if(substr($args[1], 0, 2) === "w:"){
+						if(isset($args[1]) and substr($args[1], 0, 2) === "w:"){
 							$levelName = preg_replace("/w:/", "", $args[1]);
 							$level = $this->server->api->level->get($levelName);
 							if($level instanceof Level){
@@ -83,6 +83,7 @@ class TimeAPI{
 							;
 						else{
 							$output .= "Wrong time!";
+							break;
 						}
 						$this->set($setTime, $level);
 						$output .= "Set the time to " . $setTime . $world . "\n";

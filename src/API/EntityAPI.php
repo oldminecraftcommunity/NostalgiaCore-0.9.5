@@ -93,7 +93,7 @@ class EntityAPI{
 						"z" => $spawnZ,
 						"Health" => $this->hp[$type],
 					]);
-					$this->spawnToAll($entityit, $level);
+					$this->spawnToAll($entityit, $spawnLevel);
 					$output .= $this->mobName[$type] . " spawned in " . $spawnX . ", " . $spawnY . ", " . $spawnZ . ".";
 					break;
 				}elseif(is_numeric($args[1])){//summon <mob> [amount]
@@ -104,7 +104,7 @@ class EntityAPI{
 					}
 
 					$isBaby = 0;
-					if(strtolower($args[2]) == 'baby'){//summon <mob> [amount] [baby]
+					if(isset($args[2]) and strtolower($args[2]) == 'baby'){//summon <mob> [amount] [baby]
 						if($type > 13){
 							$output .= "This mob cant be baby!";
 							break;
@@ -125,7 +125,7 @@ class EntityAPI{
 							"Health" => $this->hp[$type],
 							"IsBaby" => $isBaby,
 						]);
-						$this->spawnToAll($entityit, $level);
+						$this->spawnToAll($entityit, $spawnLevel);
 					}
 
 					if($type == 13 or $amount == 1)
@@ -155,7 +155,7 @@ class EntityAPI{
 							"Health" => $this->hp[$type],
 							"isBaby" => 1,
 						]);
-						$this->spawnToAll($entityit, $level);
+						$this->spawnToAll($entityit, $spawnLevel);
 						$output .= "Baby " . $this->mobName[$type] . " spawned in " . $spawnX . ", " . $spawnY . ", " . $spawnZ . ".";
 						break;
 					}
@@ -262,11 +262,11 @@ class EntityAPI{
 		return $entities;
 	}
 
-	public function heal($eid, $heal = 1, $cause){
+	public function heal($eid, $heal, $cause){
 		$this->harm($eid, -$heal, $cause);
 	}
 
-	public function harm($eid, $attack = 1, $cause, $force = false){
+	public function harm($eid, $attack, $cause, $force = false){
 		$e = $this->get($eid);
 		if($e === false or $e->dead === true){
 			return false;

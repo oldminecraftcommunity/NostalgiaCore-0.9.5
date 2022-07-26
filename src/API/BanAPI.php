@@ -126,6 +126,10 @@ class BanAPI{
 			case "sudo":
 				$target = strtolower(array_shift($params));
 				$player = $this->server->api->player->get($target);
+				if(!isset($params[0])){
+					$output .= "Usage: /sudo <player>\n";
+					break;
+				}
 				if(!($player instanceof Player)){
 					$output .= "Player not connected.\n";
 					break;
@@ -134,11 +138,11 @@ class BanAPI{
 				$output .= "Command ran as " . $player->username . ".\n";
 				break;
 			case "op":
-				$user = strtolower($params[0]);
-				if($user == null){
+				if(!isset($params[0])){
 					$output .= "Usage: /op <player>\n";
 					break;
 				}
+				$user = strtolower($params[0]);
 				$player = $this->server->api->player->get($user);
 				if(!($player instanceof Player)){
 					$this->ops->set($user);
@@ -152,6 +156,10 @@ class BanAPI{
 				$this->server->api->chat->sendTo(false, "You are now op.", $player->iusername);
 				break;
 			case "deop":
+				if(!isset($params[0])){
+					$output .= "Usage: /deop <player>\n";
+					break;
+				}
 				$user = strtolower($params[0]);
 				$player = $this->server->api->player->get($user);
 				if(!($player instanceof Player)){

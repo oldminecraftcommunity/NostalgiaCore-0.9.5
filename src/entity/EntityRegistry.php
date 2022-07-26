@@ -58,7 +58,7 @@ class EntityRegistry{
 			//self::$entityList[$className::TYPE] = $className;
 			self::$entityList->addEntity(new PropertyEntity($className::CLASS_TYPE, $className::TYPE, $className));
 			//self::$shortNames[$className] = $class->getShortName(); what is this even supposed to do?
-			console("Registered a ".$className);
+			console("[INFO] Registered a ".$className);
 			return true;
 		}
 

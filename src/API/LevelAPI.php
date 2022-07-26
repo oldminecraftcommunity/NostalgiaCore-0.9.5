@@ -147,11 +147,12 @@ class LevelAPI{
 				return ("Spawn set!");
 				break;
 			case "save-all":
+				$output .= "Saving...\n";
 				$save = $this->server->saveEnabled;
 				$this->server->saveEnabled = true;
 				$this->saveAll();
 				$this->server->saveEnabled = $save;
-				$this->server->api->chat->broadcast("[NostalgiaCore] All files are saved.");
+				$output .= "Saved the world";
 				break;
 			case "save-on":
 				$this->server->saveEnabled = true;

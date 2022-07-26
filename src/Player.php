@@ -2332,7 +2332,6 @@ class Player{
 				}else{
 					$this->setSlot($slot, BlockAPI::getItem($item->getID(), $item->getMetadata(), $s->count + $item->count), false);
 				}
-				console($item->getID());
 				switch($item->getID()){
 					case WORKBENCH:
 						AchievementAPI::grantAchievement($this, "buildWorkBench");

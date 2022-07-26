@@ -19,7 +19,6 @@ class PlayerActionPacket extends RakNetDataPacket{
 		$this->z = $this->getInt();
 		$this->face = $this->getInt();
 		$this->eid = $this->getInt();
-		console($this->getInt());
 	}
 	
 	public function encode(){

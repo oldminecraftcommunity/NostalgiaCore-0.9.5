@@ -191,7 +191,7 @@ class ConsoleAPI{
 					"spectator" => VIEW,
 					"v" => VIEW,
 				];
-				if(!isset($gms[strtolower($params[0])])){
+				if(!isset($params[0]) or !isset($gms[strtolower($params[0])])){
 					$output .= "Usage: /$cmd <mode>\n";
 					break;
 				}
@@ -204,9 +204,6 @@ class ConsoleAPI{
 				}
 				$info = $this->server->debugInfo();
 				$output .= "TPS: " . $info["tps"] . ", Memory usage: " . $info["memory_usage"] . " (Peak " . $info["memory_peak_usage"] . ")\n";
-				break;
-			case "update-done":
-				$this->server->api->setProperty("last-update", time());
 				break;
 			case "stop":
 				$this->loop->stop = true;
