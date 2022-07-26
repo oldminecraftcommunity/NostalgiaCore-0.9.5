@@ -1,146 +1,101 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 class AchievementAPI{
-	public static $achievements = array(
+
+	public static $achievements = [
 		/*"openInventory" => array(
 			"name" => "Taking Inventory",
 			"requires" => array(),
 		),*/
-		"mineWood" => array(
+		"mineWood" => [
 			"name" => "Getting Wood",
-			"requires" => array(
+			"requires" => [
 				//"openInventory",
-			),
-		),
-		"buildWorkBench" => array(
+			],
+		],
+		"buildWorkBench" => [
 			"name" => "Benchmarking",
-			"requires" => array(
+			"requires" => [
 				"mineWood",
-			),
-		),
-		"buildPickaxe" => array(
+			],
+		],
+		"buildPickaxe" => [
 			"name" => "Time to Mine!",
-			"requires" => array(
+			"requires" => [
 				"buildWorkBench",
-			),
-		),
-		"buildFurnace" => array(
+			],
+		],
+		"buildFurnace" => [
 			"name" => "Hot Topic",
-			"requires" => array(
+			"requires" => [
 				"buildPickaxe",
-			),
-		),
-		"acquireIron" => array(
+			],
+		],
+		"acquireIron" => [
 			"name" => "Acquire hardware",
-			"requires" => array(
+			"requires" => [
 				"buildFurnace",
-			),
-		),
-		"buildHoe" => array(
+			],
+		],
+		"buildHoe" => [
 			"name" => "Time to Farm!",
-			"requires" => array(
+			"requires" => [
 				"buildWorkBench",
-			),
-		),
-		"makeBread" => array(
+			],
+		],
+		"makeBread" => [
 			"name" => "Bake Bread",
-			"requires" => array(
+			"requires" => [
 				"buildHoe",
-			),
-		),
-		"bakeCake" => array(
+			],
+		],
+		"bakeCake" => [
 			"name" => "The Lie",
-			"requires" => array(
+			"requires" => [
 				"buildHoe",
-			),
-		),
-		"buildBetterPickaxe" => array(
+			],
+		],
+		"buildBetterPickaxe" => [
 			"name" => "Getting an Upgrade",
-			"requires" => array(
+			"requires" => [
 				"buildPickaxe",
-			),
-		),
-		"buildSword" => array(
+			],
+		],
+		"buildSword" => [
 			"name" => "Time to Strike!",
-			"requires" => array(
+			"requires" => [
 				"buildWorkBench",
-			),
-		),
-		"diamonds" => array(
+			],
+		],
+		"diamonds" => [
 			"name" => "DIAMONDS!",
-			"requires" => array(
+			"requires" => [
 				"acquireIron",
-			),
-		),
-		"leather" => array(
+			],
+		],
+		"leather" => [
 			"name" => "Cow Tipper",
-			"requires" => array(
+			"requires" => [
 				"buildSword",
-			),
-		),
-		
-	);
+			],
+		],
+
+	];
 
 	function __construct(){
 	}
-	
-	public static function broadcastAchievement(Player $player, $achievementId){
-		if(isset(self::$achievements[$achievementId])){
-			$result = ServerAPI::request()->api->dhandle("achievement.broadcast", array("player" => $player, "achievementId" => $achievementId));
-			if($result !== false and $result !== true){
-				if(ServerAPI::request()->api->getProperty("announce-player-achievements") == true){
-					ServerAPI::request()->api->chat->broadcast($player->username." has just earned the achievement [".self::$achievements[$achievementId]["name"]."]");
-				}else{
-				$player->sendChat("You have just earned the achievement [".self::$achievements[$achievementId]["name"]."]");
-				}			
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	public static function addAchievement($achievementId, $achievementName, array $requires = array()){
+
+	public static function addAchievement($achievementId, $achievementName, array $requires = []){
 		if(!isset(self::$achievements[$achievementId])){
-			self::$achievements[$achievementId] = array(
+			self::$achievements[$achievementId] = [
 				"name" => $achievementName,
 				"requires" => $requires,
-			);
+			];
 			return true;
 		}
 		return false;
 	}
-	
-	public static function hasAchievement(Player $player, $achievementId){
-		if(!isset(self::$achievements[$achievementId]) or !isset($player->achievements)){
-			$player->achievements = array();
-			return false;
-		}
-		
-		if(!isset($player->achievements[$achievementId]) or $player->achievements[$achievementId] == false){
-			return false;
-		}
-		return true;
-	}
-	
+
 	public static function grantAchievement(Player $player, $achievementId){
 		if(isset(self::$achievements[$achievementId]) and !self::hasAchievement($player, $achievementId)){
 			foreach(self::$achievements[$achievementId]["requires"] as $requerimentId){
@@ -148,7 +103,7 @@ class AchievementAPI{
 					return false;
 				}
 			}
-			if(ServerAPI::request()->api->dhandle("achievement.grant", array("player" => $player, "achievementId" => $achievementId)) !== false){
+			if(ServerAPI::request()->api->dhandle("achievement.grant", ["player" => $player, "achievementId" => $achievementId]) !== false){
 				$player->achievements[$achievementId] = true;
 				self::broadcastAchievement($player, $achievementId);
 				return true;
@@ -158,13 +113,40 @@ class AchievementAPI{
 		}
 		return false;
 	}
-	
+
+	public static function hasAchievement(Player $player, $achievementId){
+		if(!isset(self::$achievements[$achievementId]) or !isset($player->achievements)){
+			$player->achievements = [];
+			return false;
+		}
+
+		if(!isset($player->achievements[$achievementId]) or $player->achievements[$achievementId] == false){
+			return false;
+		}
+		return true;
+	}
+
+	public static function broadcastAchievement(Player $player, $achievementId){
+		if(isset(self::$achievements[$achievementId])){
+			$result = ServerAPI::request()->api->dhandle("achievement.broadcast", ["player" => $player, "achievementId" => $achievementId]);
+			if($result !== false and $result !== true){
+				if(ServerAPI::request()->api->getProperty("announce-player-achievements") == true){
+					ServerAPI::request()->api->chat->broadcast($player->username . " has just earned the achievement [" . self::$achievements[$achievementId]["name"] . "]");
+				}else{
+					$player->sendChat("You have just earned the achievement [" . self::$achievements[$achievementId]["name"] . "]");
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public static function removeAchievement(Player $player, $achievementId){
 		if(self::hasAchievement($player, $achievementId)){
 			$player->achievements[$achievementId] = false;
 		}
 	}
-	
+
 	public function init(){
 	}
 }

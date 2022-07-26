@@ -1,42 +1,21 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 /***REM_START***/
-require_once(FILE_PATH."/src/pmf/PMF.php");
+require_once(FILE_PATH . "/src/pmf/PMF.php");
 /***REM_END***/
 
 define("PMF_CURRENT_PLUGIN_VERSION", 0x02);
 
 class PMFPlugin extends PMF{
-	private $pluginData = array();
+
+	private $pluginData = [];
+
 	public function __construct($file){
 		$this->load($file);
 		$this->parseInfo();
 		$this->parsePlugin();
 	}
-	
-	public function getPluginInfo(){
-		return $this->pluginData;
-	}
-	
+
 	protected function parsePlugin(){
 		if($this->getType() !== 0x01){
 			return false;
@@ -58,7 +37,7 @@ class PMFPlugin extends PMF{
 		$this->pluginData["identifier"] = $this->read(Utils::readShort($this->read(2), false)); //Will be used to check for updates
 		if($this->pluginData["fversion"] >= 0x02){
 			$data = explode(";", gzinflate($this->read(Utils::readInt($this->read(4)))));
-			$this->pluginData["extra"] = array();
+			$this->pluginData["extra"] = [];
 			foreach($data as $v){
 				$v = trim($v);
 				if($v != ""){
@@ -67,7 +46,7 @@ class PMFPlugin extends PMF{
 					$this->pluginData["extra"][substr($v, 0, $kl)] = substr($v, $kl + 1);
 				}
 			}
-			
+
 		}else{
 			$this->pluginData["extra"] = gzinflate($this->read(Utils::readShort($this->read(2), false)));
 		}
@@ -76,6 +55,10 @@ class PMFPlugin extends PMF{
 			$this->pluginData["code"] .= $this->read(4096);
 		}
 		$this->pluginData["code"] = gzinflate($this->pluginData["code"]);
+	}
+
+	public function getPluginInfo(){
+		return $this->pluginData;
 	}
 
 }

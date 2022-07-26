@@ -1,5 +1,7 @@
 <?php
+
 class NetherReactorStructure{
+
 	/*pretty long =D*/
 	private static $structure = [
 		-2 => [
@@ -174,23 +176,23 @@ class NetherReactorStructure{
 			"NNNNNNNNNNNNNNNNN",
 		],
 		7 => [ //spaces are required
-			"NNNNNNNNNNNNNNNNN",
-			"N               N",
-			"N               N",
-			"N  NNNNNNNNNNN  N",
-			"N  N         N  N",
-			"N  N         N  N",
-			"N  N         N  N",
-			"N  N         N  N",
-			"N  N         N  N",
-			"N  N         N  N",
-			"N  N         N  N",
-			"N  N         N  N",
-			"N  N         N  N",
-			"N  NNNNNNNNNNN  N",
-			"N              NN",
-			"N             NNN",
-			"NNNNNNNNNNNNNNNN ",
+			   "NNNNNNNNNNNNNNNNN",
+			   "N               N",
+			   "N               N",
+			   "N  NNNNNNNNNNN  N",
+			   "N  N         N  N",
+			   "N  N         N  N",
+			   "N  N         N  N",
+			   "N  N         N  N",
+			   "N  N         N  N",
+			   "N  N         N  N",
+			   "N  N         N  N",
+			   "N  N         N  N",
+			   "N  N         N  N",
+			   "N  NNNNNNNNNNN  N",
+			   "N              NN",
+			   "N             NNN",
+			   "NNNNNNNNNNNNNNNN ",
 		],
 		8 => [
 			"NNNNNNNNNNNNNNNNN",
@@ -589,6 +591,7 @@ class NetherReactorStructure{
 			"     N           ",
 		],
 	];
+
 	public static function buildReactor($level, $x, $y, $z){ /*use CENTER positions*/
 		$offsetX = 0;
 		$offsetZ = 0;

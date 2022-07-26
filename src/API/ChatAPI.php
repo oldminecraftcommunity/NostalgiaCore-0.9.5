@@ -1,48 +1,31 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 class ChatAPI{
+
 	private $server;
+
 	function __construct(){
 		$this->server = ServerAPI::request();
 	}
-	
+
 	public function init(){
-		$this->server->api->console->register("tell", "<player> <private message ...>", array($this, "commandHandler"));
-		$this->server->api->console->register("me", "<action ...>", array($this, "commandHandler"));
-		$this->server->api->console->register("say", "<message ...>", array($this, "commandHandler"));
+		$this->server->api->console->register("tell", "<player> <private message ...>", [$this, "commandHandler"]);
+		$this->server->api->console->register("me", "<action ...>", [$this, "commandHandler"]);
+		$this->server->api->console->register("say", "<message ...>", [$this, "commandHandler"]);
 		$this->server->api->ban->cmdWhitelist("tell");
 		$this->server->api->ban->cmdWhitelist("me");
 		$this->server->api->console->alias("msg", "tell");
 	}
 
-    /**
-     * @param string $cmd
-     * @param array $params
-     * @param string $issuer
-     * @param string $alias
-     *
-     * @return string
-     */
-    public function commandHandler($cmd, $params, $issuer, $alias){
+	/**
+	 * @param string $cmd
+	 * @param array $params
+	 * @param string $issuer
+	 * @param string $alias
+	 *
+	 * @return string
+	 */
+	public function commandHandler($cmd, $params, $issuer, $alias){
 		$output = "";
 		switch($cmd){
 			case "say":
@@ -51,8 +34,8 @@ class ChatAPI{
 					$output .= "Usage: /say <message>\n";
 					break;
 				}
-				$sender = ($issuer instanceof Player) ? "Server":ucfirst($issuer);
-				$this->server->api->chat->broadcast("[$sender] ".$s);
+				$sender = ($issuer instanceof Player) ? "Server" : ucfirst($issuer);
+				$this->server->api->chat->broadcast("[$sender] " . $s);
 				break;
 			case "me":
 				$s = implode(" ", $params);
@@ -69,7 +52,7 @@ class ChatAPI{
 				}else{
 					$sender = $issuer->username;
 				}
-				$this->broadcast("* $sender ".implode(" ", $params));
+				$this->broadcast("* $sender " . implode(" ", $params));
 				break;
 			case "tell":
 				if(!isset($params[0]) or !isset($params[1])){
@@ -92,54 +75,45 @@ class ChatAPI{
 					}
 				}
 				$mes = implode(" ", $params);
-				$output .= "You're whispering to ".$target.": ".$mes."\n";
+				$output .= "You're whispering to " . $target . ": " . $mes . "\n";
 				if($target !== "Console" and $target !== "Rcon"){
-					$this->sendTo(false, $sender." whispers to you: ".$mes, $target);
+					$this->sendTo(false, $sender . " whispers to you: " . $mes, $target);
 				}
 				if($target === "Console" or $sender === "Console"){
-					console("[INFO] ".$sender." whispers to ".$target.": ".$mes);
+					console("[INFO] " . $sender . " whispers to " . $target . ": " . $mes);
 				}
 				break;
 		}
 		return $output;
 	}
 
-    /**
-     * @param string $message
-     */
-    public function broadcast($message){
+	/**
+	 * @param string $message
+	 */
+	public function broadcast($message){
 		$this->send(false, $message);
 		$this->server->send2Discord($message);
 	}
 
-    /**
-     * @param string $owner
-     * @param string $text
-     * @param mixed $player Can be either Player object or string username. Boolean false for broadcast.
-     */
-    public function sendTo($owner, $text, $player){
-		$this->send($owner, $text, array($player));
-	}
-
-    /**
-     * @param mixed $owner Can be either Player object or string username. Boolean false for broadcast.
-     * @param string $text
-     * @param $whitelist
-     * @param $blacklist
-     */
-    public function send($owner, $text, $whitelist = false, $blacklist = false){
-		$message = array(
+	/**
+	 * @param mixed $owner Can be either Player object or string username. Boolean false for broadcast.
+	 * @param string $text
+	 * @param $whitelist
+	 * @param $blacklist
+	 */
+	public function send($owner, $text, $whitelist = false, $blacklist = false){
+		$message = [
 			"player" => $owner,
 			"message" => $text,
-		);
+		];
 		if($owner !== false){
 			if($owner instanceof Player){
 				if($whitelist === false){
-					console("[INFO] <".$owner->username."> ".$text);
+					console("[INFO] <" . $owner->username . "> " . $text);
 				}
 			}else{
 				if($whitelist === false){
-					console("[INFO] <".$owner."> ".$text);
+					console("[INFO] <" . $owner . "> " . $text);
 				}
 			}
 		}else{
@@ -150,5 +124,14 @@ class ChatAPI{
 		}
 		$container = new Container($message, $whitelist, $blacklist);
 		$this->server->handle("server.chat", $container);
+	}
+
+	/**
+	 * @param string $owner
+	 * @param string $text
+	 * @param mixed $player Can be either Player object or string username. Boolean false for broadcast.
+	 */
+	public function sendTo($owner, $text, $player){
+		$this->send($owner, $text, [$player]);
 	}
 }
