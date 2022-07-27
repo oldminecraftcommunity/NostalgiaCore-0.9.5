@@ -188,9 +188,9 @@ class BanAPI{
 						$this->server->schedule(60, [$player, "close"], "You have been kicked: " . $reason); //Forces a kick
 						$player->blocked = true;
 						if($issuer instanceof Player){
-							$this->server->api->chat->broadcast($player->username . " has been kicked by " . $issuer->username . ": $reason\n");
+							$this->server->api->chat->broadcast($player->username . " has been kicked by " . $issuer->username . ": $reason");
 						}else{
-							$this->server->api->chat->broadcast($player->username . " has been kicked: $reason\n");
+							$this->server->api->chat->broadcast($player->username . " has been kicked: $reason");
 						}
 					}
 				}
