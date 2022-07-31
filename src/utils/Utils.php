@@ -235,7 +235,7 @@ class Utils{
 			return;
 		}
 
-		[, $unpacked] = unpack("n", $str);
+		list(, $unpacked) = unpack("n", $str);
 		if($unpacked > 0x7fff and $signed === true){
 			$unpacked -= 0x10000; // Convert unsigned short to signed short
 		}
@@ -312,7 +312,7 @@ class Utils{
 	}
 
 	public static function readLShort($str, $signed = true){
-		[, $unpacked] = @unpack("v", $str);
+		list(, $unpacked) = @unpack("v", $str);
 		if($unpacked > 0x7fff and $signed === true){
 			$unpacked -= 0x10000; // Convert unsigned short to signed short
 		}
@@ -320,7 +320,7 @@ class Utils{
 	}
 
 	public static function readLInt($str){
-		[, $unpacked] = @unpack("V", $str);
+		list(, $unpacked) = @unpack("V", $str);
 		if($unpacked >= 2147483648){
 			$unpacked -= 4294967296;
 		}
@@ -328,7 +328,7 @@ class Utils{
 	}
 
 	public static function readLFloat($str){
-		[, $value] = ENDIANNESS === BIG_ENDIAN ? @unpack("f", strrev($str)) : @unpack("f", $str);
+		list(, $value) = ENDIANNESS === BIG_ENDIAN ? @unpack("f", strrev($str)) : @unpack("f", $str);
 		return $value;
 	}
 
@@ -345,7 +345,7 @@ class Utils{
 	}
 
 	public static function readTriad($str){
-		[, $unpacked] = @unpack("N", "\x00" . $str);
+		list(, $unpacked) = @unpack("N", "\x00" . $str);
 		return $unpacked;
 	}
 
@@ -528,7 +528,7 @@ class Utils{
 			return;
 		}
 
-		[, $unpacked] = unpack("N", $str);
+		list(, $unpacked) = unpack("N", $str);
 		if($unpacked >= 2147483648){
 			$unpacked -= 4294967296;
 		}
@@ -544,7 +544,7 @@ class Utils{
 	}
 
 	public static function readFloat($str){
-		[, $value] = ENDIANNESS === BIG_ENDIAN ? @unpack("f", $str) : @unpack("f", strrev($str));
+		list(, $value) = ENDIANNESS === BIG_ENDIAN ? @unpack("f", $str) : @unpack("f", strrev($str));
 		return $value;
 	}
 
@@ -557,7 +557,7 @@ class Utils{
 	}
 
 	public static function readDouble($str){
-		[, $value] = ENDIANNESS === BIG_ENDIAN ? @unpack("d", $str) : @unpack("d", strrev($str));
+		list(, $value) = ENDIANNESS === BIG_ENDIAN ? @unpack("d", $str) : @unpack("d", strrev($str));
 		return $value;
 	}
 
@@ -566,7 +566,7 @@ class Utils{
 	}
 
 	public static function readLDouble($str){
-		[, $value] = ENDIANNESS === BIG_ENDIAN ? @unpack("d", strrev($str)) : @unpack("d", $str);
+		list(, $value) = ENDIANNESS === BIG_ENDIAN ? @unpack("d", strrev($str)) : @unpack("d", $str);
 		return $value;
 	}
 
@@ -602,7 +602,7 @@ class Utils{
 
 	public static function writeLong($value){
 		$x = "";
-		if(strval($value[0] ?? '') === "-"){
+		if(strval($value[0] == null ? '' : $value[0]) === "-"){
 			$negative = true;
 			$value = bcadd($value, "1");
 			if(strval($value[0]) === "-"){
