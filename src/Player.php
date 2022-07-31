@@ -457,7 +457,7 @@ class Player{
 		}
 
 		$c = key($this->chunksOrder);
-		$d = $this->chunksOrder[$c]; //not sure why was ?? placed here
+		$d = $c != null ? $this->chunksOrder[$c] : null; //not sure why was ?? placed here
 		if($c === null or $d === null){
 			$this->server->schedule(40, [$this, "getNextChunk"]);
 			return false;
