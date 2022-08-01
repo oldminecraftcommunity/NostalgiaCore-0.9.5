@@ -10,13 +10,13 @@ class Arrow extends Projectile{
 		$f3 = 0.99;
 		$f5 = 0.03;
 		$this->move(new Vector3($this->speedX, $this->speedY, $this->speedZ));
-		$this->updateMovement();
 		$this->speedX *= $f3;
 		$this->speedZ *= $f3;
 		$this->speedY -= $f5;
 		$this->server->api->handle("entity.move", $this);
+		$this->server->api->handle("entity.motion", $this);
 		$this->handleUpdate();
-		$this->server->schedule(1, array($this, "update"));
+		$this->server->schedule(0, array($this, "update"));
 	}
 	public function handleUpdate(){
 		$players = $this->server->api->player->getAll($this->level);
@@ -37,14 +37,6 @@ class Arrow extends Projectile{
 			return false;
 		}
 		return true;
-	}
-	public function setMotion(){
-		$pk = new SetEntityMotionPacket;
-		$pk->eid = $this->eid;
-		$pk->speedX = $this->speedX;
-		$pk->speedY = $this->speedY;
-		$pk->speedZ = $this->speedZ;
-		$this->server->api->player->broadcastPacket($this->level->players, $pk);
 	}
 	public function shoot($d, $d1, $d2, $f, $f1){ //original name from 0.8.1 IDA decompilation, var names are taken from b1.7.3
 		$random = new Random();
@@ -75,9 +67,12 @@ class Arrow extends Projectile{
 			$pk->x = $this->x;
 			$pk->y = $this->y;
 			$pk->z = $this->z;
-			$pk->did = 0;		
+			$pk->did = 1;		
+			$pk->speedX = $this->speedX;
+			$pk->speedY = $this->speedY;
+			$pk->speedZ = $this->speedZ;
 			$player->dataPacket($pk);
-					
+			
 			$pk = new SetEntityMotionPacket;
 			$pk->eid = $this->eid;
 			$pk->speedX = $this->speedX;
