@@ -36,6 +36,7 @@ class EntityRegistry{
 	public static $entityList;
 	/*Register all entities*/
 	public static function registerEntities(){
+		console("[INFO] Registering entities...");
 		self::$entityList = new EntityList;
 		self::registerEntity(Pig::class);
 		self::registerEntity(Chicken::class);
@@ -49,6 +50,7 @@ class EntityRegistry{
 		self::registerEntity(Arrow::class);
 		self::registerEntity(PrimedTNT::class);
 		self::registerEntity(Painting::class);
+		self::registerEntity(Minecart::class);
 	}
 	
 	/*Register an Entity*/
@@ -58,7 +60,7 @@ class EntityRegistry{
 			//self::$entityList[$className::TYPE] = $className;
 			self::$entityList->addEntity(new PropertyEntity($className::CLASS_TYPE, $className::TYPE, $className));
 			//self::$shortNames[$className] = $class->getShortName(); what is this even supposed to do?
-			console("[INFO] Registered a ".$className);
+			//console("[INFO] Registered a ".$className);
 			return true;
 		}
 

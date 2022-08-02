@@ -59,7 +59,8 @@ class EntityAPI{
 		$this->server->api->console->register("spawnmob", "<mob>", [$this, "commandHandler"]);
 		$this->server->api->console->register("despawn", "", [$this, "CommandHandler"]);
 	}
-
+	
+	
 	public function commandHandler($cmd, $args, $issuer, $alias){
 		$output = "";
 		switch($cmd){

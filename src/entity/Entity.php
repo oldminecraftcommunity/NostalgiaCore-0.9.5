@@ -108,8 +108,6 @@ class Entity extends Position{
 				if($this->type === OBJECT_SNOWBALL){
 					$this->server->schedule(1210, array($this, "update")); //Despawn
 					$this->update();
-				}elseif($this->type == OBJECT_MINECART){
-					$this->update();
 				}
 				break;
 		}
@@ -118,6 +116,22 @@ class Entity extends Position{
 		if($this->y < 0 and $this->class !== ENTITY_PLAYER){
 			$this->close();
 		}
+	}
+	
+	public function lookOn($entity){
+		$horizontal = sqrt(pow(($target->entity->x - $entity->x), 2) + pow(($target->entity->z - $entity->z) , 2));
+		$vertical = $target->entity->y - ($entity->y + -0.5); /*0.5 = $entity->getEyeHeight()*/
+		$pitch = -atan2($vertical, $horizontal) / M_PI * 180; //negative is up, positive is down
+	
+		$xDist = $target->entity->x - $entity->x;
+		$zDist = $target->entity->z - $entity->z;
+	
+		$yaw = atan2($zDist, $xDist) / M_PI * 180 - 90;
+		if($yaw < 0){
+			$yaw += 360.0;
+		}
+		$this->yaw = $yaw;
+		$this->pitch = $pitch;
 	}
 	
 	public function getDrops(){
@@ -138,13 +152,6 @@ class Entity extends Position{
 				}
 			}
 			return $inv;
-		}elseif($this->class === ENTITY_OBJECT){
-			switch($this->type){
-				case OBJECT_MINECART:
-					return array(
-						array(MINECART, 0, 1),
-					);
-			}
 		}
 		return array();
 	}
@@ -645,26 +652,6 @@ class Entity extends Position{
 				$pk->speedY = $this->speedY;
 				$pk->speedZ = $this->speedZ;
 				$player->dataPacket($pk);
-				break;
-			case ENTITY_OBJECT:
-				if($this->type === OBJECT_MINECART){
-					$pk = new AddEntityPacket;
-					$pk->eid = $this->eid;
-					$pk->type = $this->type;
-					$pk->x = $this->x;
-					$pk->y = $this->y;
-					$pk->z = $this->z;
-					$pk->yaw = $this->yaw;
-					$pk->pitch = $this->pitch;
-					$player->dataPacket($pk);
-					
-					$pk = new SetEntityMotionPacket;
-					$pk->eid = $this->eid;
-					$pk->speedX = $this->speedX;
-					$pk->speedY = $this->speedY;
-					$pk->speedZ = $this->speedZ;
-					$player->dataPacket($pk);
-				}
 				break;
 			case ENTITY_FALLING:
 				$pk = new AddEntityPacket;

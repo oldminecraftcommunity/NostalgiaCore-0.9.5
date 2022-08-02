@@ -13,6 +13,32 @@ class Utils{
 		return ((@fsockopen("8.8.8.8", 80, $e = null, $n = null, 2) !== false or @fsockopen("www.linux.org", 80, $e = null, $n = null, 2) !== false or @fsockopen("www.php.net", 80, $e = null, $n = null, 2) !== false) ? true:false);
 	}*/
 
+	public static function getEntityTypeByID($id){
+		switch($id){
+			case 10:
+			case 11:
+			case 12:
+			case 13:
+			case 32:
+			case 33:
+			case 34:
+			case 35:
+			case 36:
+				return ENTITY_MOB;
+			case 62:
+			case 65:
+			case 80:
+			case 81:
+			case 82:
+			case 83:
+			case 84:
+				return ENTITY_OBJECT;
+			case 66:
+				return FALLING_SAND;
+		}
+		return $id;
+	}
+	
 	public static function getCallableIdentifier(callable $variable){
 		if(is_array($variable)){
 			return sha1(strtolower(get_class($variable[0])) . "::" . strtolower($variable[1]));
