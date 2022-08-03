@@ -19,6 +19,7 @@ class PlayerAPI{
 		$this->registerCmd("spawn");
 		$this->registerCmd("ping");
 		$this->server->api->console->alias("lag", "ping");
+		$this->server->api->console->alias("who", "list");
 		$this->server->api->console->alias("suicide", "kill");
 		$this->server->api->console->alias("tppos", "tp");
 		$this->server->api->ban->cmdWhitelist("list");
