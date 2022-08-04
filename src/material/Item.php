@@ -1,4 +1,4 @@
-<?php
+`<?php
 
 class Item{
 	public static $class = array(
@@ -220,35 +220,9 @@ class Item{
 	}
 	
 	final public function getMaxDurability(){
-		$isArmor = $this->isArmor();
+		$isArmor = $this->getArmorMaterialDurability(); //can be used any of new methods, both return false if item is not armor
 		if($isArmor !== false){
-			$armorDurability = [
-				10 => 56,
-				11 => 81,
-				12 => 76,
-				13 => 66,
-				
-				20 => 166,
-				21 => 241,
-				22 => 226,
-				23 => 196,
-				
-				30 => 166,
-				31 => 241,
-				32 => 226,
-				33 => 196,
-				
-				40 => 364,
-				41 => 529,
-				42 => 496,
-				43 => 430,
-				
-				50 => 78,
-				51 => 113,
-				52 => 106,
-				53 => 92,
-			];
-			return $armorDurability[$isArmor];
+			return $this->getArmorMaterialDurability() * $this->getHealthPerArmorSlot();
 		}
 		if(!$this->isTool() and $this->isHoe() === false and $this->id !== BOW){
 			return false;
@@ -278,57 +252,74 @@ class Item{
 		}
 		return $levels[$type];
 	}
-	final public function isArmor(){
+	
+	public function getArmorMaterialDurability(){
 		switch($this->id){
 			case LEATHER_CAP:
-				return 10;
 			case LEATHER_TUNIC:
-				return 11;
 			case LEATHER_PANTS:
-				return 12;
 			case LEATHER_BOOTS:
-				return 13;
+				return 5;
 				
 			case CHAIN_HELMET:
-				return 20;
 			case CHAIN_CHESTPLATE:
-				return 21;
 			case CHAIN_LEGGINGS:
-				return 22;
 			case CHAIN_BOOTS:
-				return 23;
+				return 15;
 				
 			case IRON_HELMET:
-				return 30;
 			case IRON_CHESTPLATE:
-				return 31;
 			case IRON_LEGGINGS:
-				return 32;
 			case IRON_BOOTS:
-				return 33;	
+				return 15;	
 				
 			case DIAMOND_HELMET:
-				return 40;
 			case DIAMOND_CHESTPLATE:
-				return 41;
 			case DIAMOND_LEGGINGS:
-				return 42;
 			case DIAMOND_BOOTS:
-				return 43;
+				return 33;
 				
 			case GOLD_HELMET:
-				return 50;
 			case GOLD_CHESTPLATE:
-				return 51;
 			case GOLD_LEGGINGS:
-				return 52;
 			case GOLD_BOOTS:
-				return 53;
+				return 7;
 			default:
 				return false;
 		}
-		
 	}
+	
+	public function getHealthPerArmorSlot(){
+		switch($this->id){
+			case LEATHER_CAP:
+			case CHAIN_HELMET:
+			case IRON_HELMET:
+			case DIAMOND_HELMET:
+			case GOLD_HELMET:
+				return 11;
+			case LEATHER_TUNIC:
+			case CHAIN_CHESTPLATE:
+			case IRON_CHESTPLATE:
+			case DIAMOND_CHESTPLATE:
+			case GOLD_CHESTPLATE:
+				return 16;
+			case LEATHER_PANTS:
+			case CHAIN_LEGGINGS:
+			case IRON_LEGGINGS:
+			case DIAMOND_LEGGINGS:
+			case GOLD_LEGGINGS:
+				return 15;
+			case LEATHER_BOOTS:
+			case CHAIN_BOOTS:
+			case IRON_BOOTS:
+			case DIAMOND_BOOTS:
+			case GOLD_BOOTS:
+				return 13;
+			default:
+				return false;
+		}
+	}
+
 	final public function isPickaxe(){ //Returns false or level of the pickaxe
 		switch($this->id){
 			case IRON_PICKAXE:

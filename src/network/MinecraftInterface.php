@@ -33,6 +33,7 @@ class MinecraftInterface{
 			return false;
 		}
 		$this->bandwidth[0] += $len;
+		ServerAPI::request()->api->dhandle("mcinterface.read", ["buffer" => $buf, "source" => $source, "port" => $port]);
 		return $this->parsePacket($buf, $source, $port);
 	}
 
