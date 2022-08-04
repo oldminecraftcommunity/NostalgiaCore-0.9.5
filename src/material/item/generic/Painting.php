@@ -69,7 +69,6 @@ class PaintingItem extends Item{
                 }
 			}
 			$motive = $validMotives[array_rand($validMotives)];
-			console(json_encode($motive));
 			$data = array(
 				"x" => $target->x,
 				"y" => $target->y,
