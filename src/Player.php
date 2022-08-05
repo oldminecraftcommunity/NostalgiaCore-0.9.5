@@ -1425,8 +1425,7 @@ class Player{
 						$pk = new SetTimePacket;
 						$pk->time = $this->level->getTime();
 						$this->dataPacket($pk);
-
-						$pos = new Position($this->data->get("position")["x"], $this->data->get("position")["y"], $this->data->get("position")["z"], $this->level);
+						$pos = new Position(floor($this->data->get("position")["x"]), floor($this->data->get("position")["y"]), floor($this->data->get("position")["z"]), $this->level);
 						$pos = $this->level->getSafeSpawn($pos);
 						$this->teleport($pos);
 						$this->server->schedule(10, [$this, "teleport"], $pos);

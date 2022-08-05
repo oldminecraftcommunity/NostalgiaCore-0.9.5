@@ -419,6 +419,9 @@ class Level{
 			$x = (int) round($spawn->x);
 			$y = (int) round($spawn->y);
 			$z = (int) round($spawn->z);
+			if($x < 0 || $x > 255 || $z < 0 || $z > 255){
+				return new Position($x, 128, $z, $this);
+			}
 			for(; $y > 0; --$y){
 				$v = new Vector3($x, $y, $z);
 				$b = $this->getBlock($v->getSide(0));
