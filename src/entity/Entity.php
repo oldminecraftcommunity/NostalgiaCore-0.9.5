@@ -64,12 +64,12 @@ class Entity extends Position{
 		$this->name = "";
 		$this->tickCounter = 0;
 		$this->server->query("INSERT OR REPLACE INTO entities (EID, level, type, class, health, hasUpdate) VALUES (".$this->eid.", '".$this->level->getName()."', ".$this->type.", ".$this->class.", ".$this->health.", 0);");
-		$this->x = isset($this->data["x"]) ? (float) $this->data["x"]:0;
-		$this->y = isset($this->data["y"]) ? (float) $this->data["y"]:0;
-		$this->z = isset($this->data["z"]) ? (float) $this->data["z"]:0;
-		$this->speedX = isset($this->data["speedX"]) ? (float) $this->data["speedX"]:0;
-		$this->speedY = isset($this->data["speedY"]) ? (float) $this->data["speedY"]:0;
-		$this->speedZ = isset($this->data["speedZ"]) ? (float) $this->data["speedZ"]:0;
+		$this->x = isset($this->data["x"]) ? (float) $this->data["x"] : 0;
+		$this->y = isset($this->data["y"]) ? (float) $this->data["y"] : 0;
+		$this->z = isset($this->data["z"]) ? (float) $this->data["z"] : 0;
+		$this->speedX = isset($this->data["speedX"]) ? (float) $this->data["speedX"] : 0;
+		$this->speedY = isset($this->data["speedY"]) ? (float) $this->data["speedY"] : 0;
+		$this->speedZ = isset($this->data["speedZ"]) ? (float) $this->data["speedZ"] : 0;
 		$this->speed = 0;
 		$this->yaw = isset($this->data["yaw"]) ? (float) $this->data["yaw"]:0;
 		$this->pitch = isset($this->data["pitch"]) ? (float) $this->data["pitch"]:0;
@@ -624,25 +624,6 @@ class Entity extends Position{
 				$pk->pitch = $this->pitch;
 				$pk->roll = 0;
 				$pk->item = BlockAPI::getItem($this->type, $this->meta, $this->stack);
-				$pk->metadata = $this->getMetadata();				
-				$player->dataPacket($pk);
-				
-				$pk = new SetEntityMotionPacket;
-				$pk->eid = $this->eid;
-				$pk->speedX = $this->speedX;
-				$pk->speedY = $this->speedY;
-				$pk->speedZ = $this->speedZ;
-				$player->dataPacket($pk);
-				break;
-			case ENTITY_MOB:
-				$pk = new AddMobPacket;
-				$pk->eid = $this->eid;
-				$pk->type = $this->type;
-				$pk->x = $this->x;
-				$pk->y = $this->y;
-				$pk->z = $this->z;
-				$pk->yaw = $this->yaw;
-				$pk->pitch = $this->pitch;
 				$pk->metadata = $this->getMetadata();				
 				$player->dataPacket($pk);
 				

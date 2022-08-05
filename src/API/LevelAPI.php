@@ -48,6 +48,13 @@ class LevelAPI{
 			if(!isset($entity["id"])){
 				break;
 			}
+			
+			$entity["x"] = $entity["Pos"][0];
+			$entity["y"] = $entity["Pos"][1];
+			$entity["z"] = $entity["Pos"][2];
+			$entity["yaw"] = $entity["Rotation"][0];
+			$entity["pitch"] = $entity["Rotation"][1];
+			
 			if($entity["id"] === 64){ //Item Drop
 				$e = $this->server->api->entity->add($this->levels[$name], ENTITY_ITEM, $entity["Item"]["id"], [
 					"meta" => $entity["Item"]["Damage"],
@@ -60,15 +67,15 @@ class LevelAPI{
 				]);
 			}elseif($entity["id"] === FALLING_SAND){
 				$e = $this->server->api->entity->add($this->levels[$name], ENTITY_FALLING, $entity["id"], $entity);
-				$e->setPosition(new Vector3($entity["Pos"][0], $entity["Pos"][1], $entity["Pos"][2]), $entity["Rotation"][0], $entity["Rotation"][1]);
+				//$e->setPosition(new Vector3($entity["Pos"][0], $entity["Pos"][1], $entity["Pos"][2]), $entity["Rotation"][0], $entity["Rotation"][1]);
 				$e->setHealth($entity["Health"]);
 			}elseif(Utils::getEntityTypeByID($entity["id"]) === ENTITY_OBJECT){ //Object
 				$e = $this->server->api->entity->add($this->levels[$name], ENTITY_OBJECT, $entity["id"], $entity);
-				$e->setPosition(new Vector3($entity["Pos"][0], $entity["Pos"][1], $entity["Pos"][2]), $entity["Rotation"][0], $entity["Rotation"][1]);
+				//$e->setPosition(new Vector3($entity["Pos"][0], $entity["Pos"][1], $entity["Pos"][2]), $entity["Rotation"][0], $entity["Rotation"][1]);
 				$e->setHealth(1);
 			}else{
 				$e = $this->server->api->entity->add($this->levels[$name], ENTITY_MOB, $entity["id"], $entity);
-				$e->setPosition(new Vector3($entity["Pos"][0], $entity["Pos"][1], $entity["Pos"][2]), $entity["Rotation"][0], $entity["Rotation"][1]);
+				//$e->setPosition(new Vector3($entity["Pos"][0], $entity["Pos"][1], $entity["Pos"][2]), $entity["Rotation"][0], $entity["Rotation"][1]);
 				$e->setHealth($entity["Health"]);
 			}
 		}

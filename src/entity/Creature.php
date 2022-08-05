@@ -12,4 +12,31 @@ abstract class Creature extends Living{
 		//$this->setName((isset($mobs[$this->type]) ? $mobs[$this->type]:$this->type));
 		$this->size = 1;
 	}
+	
+	public function spawn($player){
+		if(!($player instanceof Player)){
+			$player = $this->server->api->player->get($player);
+		}
+		if($player->eid === $this->eid or $this->closed !== false or ($player->level !== $this->level and $this->class !== ENTITY_PLAYER)){
+			return false;
+		}
+		$pk = new AddMobPacket;
+		$pk->eid = $this->eid;
+		$pk->type = $this->type;
+		$pk->x = $this->x;
+		$pk->y = $this->y;
+		$pk->z = $this->z;
+		$pk->yaw = $this->yaw;
+		$pk->pitch = $this->pitch;
+		$pk->metadata = $this->getMetadata();				
+		$player->dataPacket($pk);
+				
+		$pk = new SetEntityMotionPacket;
+		$pk->eid = $this->eid;
+		$pk->speedX = $this->speedX;
+		$pk->speedY = $this->speedY;
+		$pk->speedZ = $this->speedZ;
+		$player->dataPacket($pk);
+	}
+	
 }

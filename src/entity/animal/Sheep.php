@@ -2,6 +2,8 @@
 
 class Sheep extends Animal{
 	const TYPE = MOB_SHEEP;
+	const NOT_SHEARED = 0;
+	const SHEARED = 1;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 8, "generic");
@@ -24,10 +26,12 @@ class Sheep extends Animal{
 	public function getMetadata(){
 		$d = parent::getMetadata();
 		if(!isset($this->data["Sheared"])){
-			$this->data["Sheared"] = 0;
+			$this->data["Sheared"] = NOT_SHEARED;
+		}
+		if(!isset($this->data["Color"])){ //Make a new random color if it is not in data
 			$this->data["Color"] = $this->sheepColor();
 		}
-		$d[16]["value"] = (($this->data["Sheared"] == 1 ? 1:0) << 4) | ($this->data["Color"] & 0x0F); //dark manipulations are happening here...
+		$d[16]["value"] = (($this->data["Sheared"] == 1 ? Sheep::SHEARED : Sheep::NOT_SHEARED) << 4) | ($this->data["Color"] & 0x0F); //dark manipulations are happening here...
 		return $d;
 	}
 	public function sheepColor(){
