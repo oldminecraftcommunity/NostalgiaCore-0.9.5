@@ -127,14 +127,28 @@ class Utils{
 		return Utils::$ip;
 
 	}
-
-	public static function curl_get($page, $timeout = 10){
+	
+	public static function makeHeaders($json){
+		$arr = json_decode($json);
+		$rarr = [];
+		foreach ($arr as $key => $value){
+			$rarr[] = $key.": ".$value;
+		}
+		return $rarr;
+	}
+	
+	public static function curl_get($page, $timeout = 10, $headers = " "){
 		if(Utils::$online === false){
 			return false;
 		}
-
+		
+		if($headers != " "){
+			$headers = Utils::makeHeaders($headers);
+		}else{
+			$headers = ["User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0 PocketMine-MP"];
+		}
 		$ch = curl_init($page);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, ["User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0 PocketMine-MP"]);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_AUTOREFERER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);

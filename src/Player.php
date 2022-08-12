@@ -1754,7 +1754,7 @@ class Player{
 										$this->entity->isInMinecart = true;
 										$pk = new SetEntityLinkPacket();
 										$pk->rider = $target->eid;
-										$pk->riding = 0;
+										$pk->riding = $this->entity->eid;
 										$pk->type = 2;
 										$this->dataPacket($pk);
 										$needsBreak = true;

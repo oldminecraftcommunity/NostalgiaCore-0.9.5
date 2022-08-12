@@ -541,13 +541,14 @@ class Entity extends Position{
 		DATA FLAGS IDS
 		0 - fire
 		1 - crouching
+		2 - riding <?> - no idea why doesnt it work
 		4 - inAction(ex.: using a bow)
 	*/
 	public function getMetadata(){
 		$flags = 0;
-		$flags |= $this->fire > 0 ? 0b1 : 0;
-		$flags |= ($this->crouched ? 0b1 : 0) << 1;
-		$flags |= ($this->inAction ? 0b1:0) << 4;
+		$flags ^= $this->fire > 0 ? 0b1 : 0;
+		$flags ^= ($this->crouched ? 0b1 : 0) << 1;
+		$flags ^= ($this->inAction ? 0b1 : 0) << 4;
 		$d = array(
 			0 => array("type" => 0, "value" => $flags),
 			1 => array("type" => 1, "value" => $this->air),

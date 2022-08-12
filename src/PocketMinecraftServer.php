@@ -21,15 +21,17 @@ class PocketMinecraftServer{
 		$this->serverip = $serverip;
 		$this->load();
 	}
-
 	private function load(){
 		global $dolog;
-		EntityRegistry::registerEntities();
+		
 		$this->version = new VersionString();
 		/*if(defined("DEBUG") and DEBUG >= 0){
 			@cli_set_process_title("NostalgiaCore ".MAJOR_VERSION);
 		}*/
 		console("[INFO] Starting Minecraft PE server on " . ($this->serverip === "0.0.0.0" ? "*" : $this->serverip) . ":" . $this->port);
+			
+		EntityRegistry::registerEntities();
+		
 		define("BOOTUP_RANDOM", Utils::getRandomBytes(16));
 		$this->serverID = $this->serverID === false ? Utils::readLong(substr(Utils::getUniqueID(true, $this->serverip . $this->port), 8)) : $this->serverID;
 		$this->seed = $this->seed === false ? Utils::readInt(Utils::getRandomBytes(4, false)) : $this->seed;
@@ -95,7 +97,14 @@ class PocketMinecraftServer{
 		}
 		$dolog = $this->extraprops->get("save-console-data");
 	}
-
+	public function onShutdown(){
+		console("Saving...");
+		$save = $this->saveEnabled;
+		$this->saveEnabled = true;
+		$this->api->level->saveAll();
+		$this->saveEnabled = $save;
+		console("Shutting Down...");
+	}
 	public function startDatabase(){
 		$this->preparedSQL = new stdClass();
 		$this->preparedSQL->entity = new stdClass();
@@ -205,7 +214,7 @@ class PocketMinecraftServer{
 			], null);
 		}
 	}
-
+	
 	public function asyncOperation($type, array $data, callable $callable = null){
 		if(defined("NO_THREADS")){
 			return false;
@@ -214,7 +223,10 @@ class PocketMinecraftServer{
 		$type = (int) $type;
 		switch($type){
 			case ASYNC_CURL_GET:
-				$d .= Utils::writeShort(strlen($data["url"])) . $data["url"] . (isset($data["timeout"]) ? Utils::writeShort($data["timeout"]) : Utils::writeShort(10));
+				if(isset($data["headers"])){
+					$jsstr = json_encode($data["headers"]);
+				}
+				$d .= Utils::writeShort(strlen($data["url"])) . $data["url"] . (isset($data["timeout"]) ? Utils::writeShort($data["timeout"]) : Utils::writeShort(10)) . (isset($data["headers"]) ? Utils::writeShort(strlen($jsstr)) . $jsstr : Utils::writeShort(1) . " ");
 				break;
 			case ASYNC_CURL_POST:
 				$d .= Utils::writeShort(strlen($data["url"])) . $data["url"] . (isset($data["timeout"]) ? Utils::writeShort($data["timeout"]) : Utils::writeShort(10));
@@ -286,6 +298,7 @@ class PocketMinecraftServer{
 					$len = Utils::readInt(substr($this->asyncThread->output, $offset, 4));
 					$offset += 4;
 					$data["result"] = substr($this->asyncThread->output, $offset, $len);
+					$this->dhandle("async.curl.get", ["response" => $data["result"]]);
 					$offset += $len;
 					break;
 			}
