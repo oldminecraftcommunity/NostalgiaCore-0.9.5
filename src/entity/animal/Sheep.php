@@ -26,7 +26,7 @@ class Sheep extends Animal{
 	public function getMetadata(){
 		$d = parent::getMetadata();
 		if(!isset($this->data["Sheared"])){
-			$this->data["Sheared"] = NOT_SHEARED;
+			$this->data["Sheared"] = Sheep::NOT_SHEARED;
 		}
 		if(!isset($this->data["Color"])){ //Make a new random color if it is not in data
 			$this->data["Color"] = $this->sheepColor();

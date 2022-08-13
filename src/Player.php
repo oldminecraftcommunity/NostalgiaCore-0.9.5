@@ -238,7 +238,7 @@ class Player{
 			$this->entity->calculateVelocity();
 			if($terrain === true){
 				$this->orderChunks();
-				$this->getNextChunk();
+				//$this->getNextChunk();
 			}
 			$this->entity->check = true;
 			if($force === true){
@@ -428,7 +428,27 @@ class Player{
 		}
 		asort($this->chunksOrder);
 	}
+	
+	public function useChunk($X, $Z){
+		$Yndex = 0;
+		for($iY = 0; $iY < 8; ++$iY){
+			if(isset($this->chunksOrder["$X:$iY:$Z"])){
+				unset($this->chunksOrder["$X:$iY:$Z"]);
+				$this->chunksLoaded["$X:$iY:$Z"] = true;
+				$Yndex |= 1 << $iY;
+			}
+		}
+		$pk = new ChunkDataPacket;
+		$pk->chunkX = $X;
+		$pk->chunkZ = $Z;
+		$pk->data = $this->level->getOrderedChunk($X, $Z, $Yndex);
+		$cnt = $this->dataPacket($pk);
+		if($cnt === false){
+			return false;
+		}
 
+	}
+	
 	public function getNextChunk(){
 		if($this->connected === false){
 			return false;
@@ -457,7 +477,7 @@ class Player{
 		}
 
 		$c = key($this->chunksOrder);
-		$d = $c != null ? $this->chunksOrder[$c] : null; //not sure why was ?? placed here
+		$d = $c != null ? $this->chunksOrder[$c] : null;
 		if($c === null or $d === null){
 			$this->server->schedule(40, [$this, "getNextChunk"]);
 			return false;
@@ -1538,6 +1558,7 @@ class Player{
 				}
 				break;
 			case ProtocolInfo::REQUEST_CHUNK_PACKET:
+				$this->useChunk($packet->chunkX, $packet->chunkZ);
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
 				if(!($this->entity instanceof Entity)){
