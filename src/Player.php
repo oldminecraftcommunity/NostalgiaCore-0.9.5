@@ -140,7 +140,7 @@ class Player{
 	 *
 	 * @return boolean
 	 */
-	public function teleport(Vector3 $pos, $yaw = false, $pitch = false, $terrain = true, $force = true){
+	public function teleport(Vector3 $pos, $yaw = false, $pitch = false, $terrain = true, $force = true, $spawn = false){
 		if($this->entity instanceof Entity and $this->level instanceof Level){
 			$this->entity->check = false;
 			if($yaw === false){
@@ -198,7 +198,6 @@ class Player{
 				$pk->time = $this->level->getTime();
 				$this->dataPacket($pk);
 				$terrain = true;
-
 				foreach($this->server->api->player->getAll($this->level) as $player){
 					if($player !== $this and $player->entity instanceof Entity){
 						$pk = new MoveEntityPacket_PosRot;
@@ -238,7 +237,7 @@ class Player{
 			$this->entity->calculateVelocity();
 			if($terrain === true){
 				$this->orderChunks();
-				//$this->getNextChunk();
+				if(!$spawn) $this->getNextChunk();
 			}
 			$this->entity->check = true;
 			if($force === true){
@@ -429,6 +428,14 @@ class Player{
 		asort($this->chunksOrder);
 	}
 	
+	public function loaddAllChunks(){
+		for($x = 0; $x < 16; $x++){
+			for($z = 0; $z < 16; $z++){
+				$this->useChunk($x, $z);
+			}
+		}
+	}
+	
 	public function useChunk($X, $Z){
 		$Yndex = 0;
 		for($iY = 0; $iY < 8; ++$iY){
@@ -438,6 +445,18 @@ class Player{
 				$Yndex |= 1 << $iY;
 			}
 		}
+		
+		$tiles = $this->server->query("SELECT ID FROM tiles WHERE spawnable = 1 AND level = '" . $this->level->getName() . "' AND x >= " . (($X << 4) - 1) . " AND x < " . (($X << 4) + 17) . " AND z >= " . (($Z << 4) - 1) . " AND z < " . (($Z << 4) + 17) . ";");
+		$this->lastChunk = false;
+		if($tiles !== false and $tiles !== true){
+			while(($tile = $tiles->fetchArray(SQLITE3_ASSOC)) !== false){
+				$tile = $this->server->api->tile->getByID($tile["ID"]);
+				if($tile instanceof Tile){
+					$tile->spawn($this);
+				}
+			}
+		}
+		
 		$pk = new ChunkDataPacket;
 		$pk->chunkX = $X;
 		$pk->chunkZ = $Z;
@@ -1447,7 +1466,8 @@ class Player{
 						$this->dataPacket($pk);
 						$pos = new Position(floor($this->data->get("position")["x"]), floor($this->data->get("position")["y"]), floor($this->data->get("position")["z"]), $this->level);
 						$pos = $this->level->getSafeSpawn($pos);
-						$this->teleport($pos);
+						$this->teleport($pos, false, false, true, true, true);
+						
 						$this->server->schedule(10, [$this, "teleport"], $pos);
 						$this->server->schedule(20, [$this, "teleport"], $pos);
 						$this->server->schedule(30, [$this, "teleport"], $pos);
