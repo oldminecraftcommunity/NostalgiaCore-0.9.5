@@ -67,7 +67,7 @@ class AchievementAPI{
 				"buildWorkBench",
 			],
 		],
-		"diamonds" => [
+		"diamond" => [
 			"name" => "DIAMONDS!",
 			"requires" => [
 				"acquireIron",
