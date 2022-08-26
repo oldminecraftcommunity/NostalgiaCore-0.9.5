@@ -14,7 +14,7 @@ class Pig extends Animal{
 	public function getDrops(){
 		return $this->isBaby() ? parent::getDrops() : 
 		array(
-			array(($this->fire > 0 ? COOKED_PORKCHOP:RAW_PORKCHOP), 0, 1),
+			array(($this->fire > 0 ? COOKED_PORKCHOP:RAW_PORKCHOP), 0, mt_rand(0,2)),
 		);
 	}
 
