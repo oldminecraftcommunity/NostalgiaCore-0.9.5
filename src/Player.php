@@ -2042,6 +2042,10 @@ class Player{
 						$this->server->api->console->run(substr($message, 1), $this);
 					}else{
 						$data = ["player" => $this, "message" => $message];
+						if(Utils::hasEmoji($data["message"])){
+							$this->sendChat("Your message contains illegal characters");
+							break;
+						}
 						if($this->server->api->handle("player.chat", $data) !== false){
 							$this->server->send2Discord("<" . $this->username . "> " . $message);
 							if(isset($data["message"])){
