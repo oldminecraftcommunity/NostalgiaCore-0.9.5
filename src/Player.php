@@ -140,7 +140,7 @@ class Player{
 	 *
 	 * @return boolean
 	 */
-	public function teleport(Vector3 $pos, $yaw = false, $pitch = false, $terrain = true, $force = true, $spawn = false){
+	public function teleport(Vector3 $pos, $yaw = false, $pitch = false, $terrain = true, $force = true){
 		if($this->entity instanceof Entity and $this->level instanceof Level){
 			$this->entity->check = false;
 			if($yaw === false){
@@ -237,7 +237,7 @@ class Player{
 			$this->entity->calculateVelocity();
 			if($terrain === true){
 				$this->orderChunks();
-				if(!$spawn) $this->getNextChunk();
+				$this->getNextChunk();
 			}
 			$this->entity->check = true;
 			if($force === true){
@@ -1466,7 +1466,7 @@ class Player{
 						$this->dataPacket($pk);
 						$pos = new Position(floor($this->data->get("position")["x"]), floor($this->data->get("position")["y"]), floor($this->data->get("position")["z"]), $this->level);
 						$pos = $this->level->getSafeSpawn($pos);
-						$this->teleport($pos, false, false, true, true, true);
+						$this->teleport($pos, false, false, true, true);
 						
 						$this->server->schedule(10, [$this, "teleport"], $pos);
 						$this->server->schedule(20, [$this, "teleport"], $pos);
@@ -1578,7 +1578,7 @@ class Player{
 				}
 				break;
 			case ProtocolInfo::REQUEST_CHUNK_PACKET:
-				$this->useChunk($packet->chunkX, $packet->chunkZ);
+				//$this->useChunk($packet->chunkX, $packet->chunkZ);
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
 				if(!($this->entity instanceof Entity)){
