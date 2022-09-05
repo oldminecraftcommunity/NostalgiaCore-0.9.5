@@ -1,8 +1,16 @@
 <?php
 
-class DiamondLeggingsItem extends Item{
+class DiamondLeggingsItem extends ArmorItem{
 
 	public function __construct($meta = 0, $count = 1){
 		parent::__construct(DIAMOND_LEGGINGS, $meta, $count, "Diamond Leggings");
+	}
+	
+	public function getMaterialDurability(){
+		return Material::DIAMOND;
+	}
+	
+	public function getBaseDurability(){
+		return 15;
 	}
 }

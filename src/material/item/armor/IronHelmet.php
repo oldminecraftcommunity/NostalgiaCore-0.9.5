@@ -1,8 +1,16 @@
 <?php
 
-class IronHelmetItem extends Item{
+class IronHelmetItem extends ArmorItem{
 
 	public function __construct($meta = 0, $count = 1){
 		parent::__construct(IRON_HELMET, $meta, $count, "Iron Helmet");
+	}
+	
+	public function getMaterialDurability(){
+		return Material::IRON;
+	}
+	
+	public function getBaseDurability(){
+		return 11;
 	}
 }

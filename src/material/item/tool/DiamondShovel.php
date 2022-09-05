@@ -5,4 +5,7 @@ class DiamondShovelItem extends Item{
 		parent::__construct(DIAMOND_SHOVEL, $meta, $count, "Diamond Shovel");
 	}
 	
+	public function isTool(){
+		return true;
+	}
 }

@@ -5,4 +5,7 @@ class DiamondPickaxeItem extends Item{
 		parent::__construct(DIAMOND_PICKAXE, $meta, $count, "Diamond Pickaxe");
 	}
 	
+	public function isTool(){
+		return true;
+	}
 }

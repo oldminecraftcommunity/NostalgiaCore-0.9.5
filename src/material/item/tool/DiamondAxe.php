@@ -5,4 +5,7 @@ class DiamondAxeItem extends Item{
 		parent::__construct(DIAMOND_AXE, $meta, $count, "Diamond Axe");
 	}
 	
+	public function isTool(){
+		return true;
+	}
 }

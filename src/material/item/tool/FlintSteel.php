@@ -19,4 +19,8 @@ class FlintSteelItem extends Item{
 		}
 		return false;
 	}
+	
+	public function isTool(){
+		return true;
+	}
 }
