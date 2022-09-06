@@ -56,9 +56,12 @@ class CarrotBlock extends FlowableBlock{
 	public function getDrops(Item $item, Player $player){
 		$drops = array();
 		if($this->meta >= 0x07){
-			$drops[] = array(CARROT, 0, mt_rand(1, 4));
-		}else{
-			$drops[] = array(CARROT, 0, 1);
+			$drops[] = array(CARROT, 0, mt_rand(1));
+		}
+		for($i = 0; $i < 3; ++$i){
+		   if(mt_rand(0,15) <= $this->meta){ //a way from 1.4.7
+		      $drops[] = array(CARROT, 0, 1);
+		   }
 		}
 		return $drops;
 	}

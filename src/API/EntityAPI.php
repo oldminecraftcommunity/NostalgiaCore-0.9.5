@@ -154,7 +154,7 @@ class EntityAPI{
 							"y" => $spawnY,
 							"z" => $spawnZ,
 							"Health" => $this->hp[$type],
-							"isBaby" => 1,
+							"IsBaby" => 1,
 						]);
 						$this->spawnToAll($entityit, $spawnLevel);
 						$output .= "Baby " . $this->mobName[$type] . " spawned in " . $spawnX . ", " . $spawnY . ", " . $spawnZ . ".";

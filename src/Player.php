@@ -1812,7 +1812,7 @@ class Player{
 										}
 										break;
 									case MOB_SHEEP:
-										if($slot->getID() === SHEARS && $target->data["Sheared"] === 0){ //not sheared
+									    if($slot->getID() === SHEARS && $target->data["Sheared"] === 0 && !$target->isBaby()){ //not sheared
 											ServerAPI::request()->api->entity->drop(new Position($target->x + 0.5, $target->y, $target->z + 0.5, $target->level), BlockAPI::getItem(WOOL, $target->data["Color"], mt_rand(1, 3)));
 											$target->data["Sheared"] = 1; //i hope it means sheared right?
 											$target->updateMetadata();
