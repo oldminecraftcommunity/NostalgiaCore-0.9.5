@@ -50,7 +50,7 @@ class StairBlock extends TransparentBlock{
      * @return array
      */
     public function getDrops(Item $item, Player $player){
-		if($item->isPickaxe() >= 1){
+		if($item->getPickaxeLevel() >= 1){
 			return array(
 				array($this->id, 0, 1),
 			);

@@ -10,7 +10,7 @@ class ObsidianBlock extends SolidBlock{
 		if(($player->gamemode & 0x01) === 0x01){
 			return 0.20;
 		}
-		if($item->isPickaxe() >= 5){
+		if($item->getPickaxeLevel() >= 5){
 			return 3.5;//from wiki
 		}else{
 			return 250;
@@ -18,7 +18,7 @@ class ObsidianBlock extends SolidBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-		if($item->isPickaxe() >= 5){
+		if($item->getPickaxeLevel() >= 5){
 			return array(
 				array(OBSIDIAN, 0, 1),
 			);

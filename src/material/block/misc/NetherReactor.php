@@ -48,6 +48,15 @@ class NetherReactorBlock extends SolidBlock{
 		$this->decay($this->x-8, $this->y-3, $this->z-8, 6, 11, 1, 14, 34, 1, 5, 12, 16);	
 	}
 	
+	public function getDrops(Item $item, Player $player){
+	    if($item->getPickaxeLevel() >= 1){
+	        return array(
+	            [DIAMOND, 0, 3],
+	            [IRON_INGOT, 0, 6],
+	        );
+	    }
+	}
+	
 	private function decay($x,$y,$z,$aOne,$aTwo,$aThree,$bOne,$bTwo,$bThree,$cOne,$cTwo,$cThree) {
 		for($a = $aOne; $a < $aTwo; $a += $aThree) { //wth those cycles are?
 			for($b = $bOne; $b < $bTwo; $b += $bThree) {

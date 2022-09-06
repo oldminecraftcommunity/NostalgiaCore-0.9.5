@@ -55,7 +55,7 @@ class BurningFurnaceBlock extends SolidBlock implements LightingBlock{
 		if(($player->gamemode & 0x01) === 0x01){
 			return 0.20;
 		}		
-		switch($item->isPickaxe()){
+		switch($item->getPickaxeLevel()){
 			case 5:
 				return 0.7;
 			case 4:
@@ -73,7 +73,7 @@ class BurningFurnaceBlock extends SolidBlock implements LightingBlock{
 	
 	public function getDrops(Item $item, Player $player){
 		$drops = array();
-		if($item->isPickaxe() >= 1){
+		if($item->getPickaxeLevel() >= 1){
 			$drops[] = array(FURNACE, 0, 1);
 		}
 		$t = ServerAPI::request()->api->tile->get($this);

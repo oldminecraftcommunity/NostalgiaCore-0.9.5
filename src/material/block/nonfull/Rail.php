@@ -34,7 +34,7 @@ class RailBlock extends FlowableBlock{
     }
 	
 	private function checkRail($rail){//fixed
-        if(!($rail instanceof Rail)) return null;
+        if(!($rail instanceof RailBlock)) return null;
         $damage = $rail->meta;
         if ($damage < 0 || $damage > 10) return null;
 		$delta = array(

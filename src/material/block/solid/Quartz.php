@@ -16,7 +16,7 @@ class QuartzBlock extends SolidBlock{
 		if(($player->gamemode & 0x01) === 0x01){
 			return 0.20;
 		}		
-		switch($item->isPickaxe()){
+		switch($item->getPickaxeLevel()){
 			case 5:
 				return 0.15;
 			case 4:
@@ -33,7 +33,7 @@ class QuartzBlock extends SolidBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-		if($item->isPickaxe() >= 1){
+		if($item->getPickaxeLevel() >= 1){
 			return array(
 				array(QUARTZ_BLOCK, $this->meta & 0x03, 1),
 			);

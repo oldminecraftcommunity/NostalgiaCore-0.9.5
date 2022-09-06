@@ -10,7 +10,7 @@ class MineshaftPopulator extends Populator{
 
 	public function populate(Level $level, $chunkX, $chunkZ, Random $random){
 		if($random->nextRange(0, MineshaftPopulator::$ODD) === 0){
-			$mineshaft = new Mineshaft($random);
+			//$mineshaft = new Mineshaft($random);
 		}
 	}
 

@@ -10,7 +10,7 @@ class IronOreBlock extends SolidBlock{
 		if(($player->gamemode & 0x01) === 0x01){
 			return 0.20;
 		}		
-		switch($item->isPickaxe()){
+		switch($item->getPickaxeLevel()){
 			case 5:
 				return 0.6;
 			case 4:
@@ -23,7 +23,7 @@ class IronOreBlock extends SolidBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-		if($item->isPickaxe() >= 3){
+		if($item->getPickaxeLevel() >= 3){
 			return array(
 				array(IRON_ORE, 0, 1),
 			);

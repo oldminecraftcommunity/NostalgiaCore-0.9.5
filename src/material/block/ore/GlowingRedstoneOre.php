@@ -23,7 +23,7 @@ class GlowingRedstoneOreBlock extends SolidBlock implements LightingBlock{
 		if(($player->gamemode & 0x01) === 0x01){
 			return 0.20;
 		}		
-		switch($item->isPickaxe()){
+		switch($item->getPickaxeLevel()){
 			case 5:
 				return 0.6;
 			case 4:
@@ -34,7 +34,7 @@ class GlowingRedstoneOreBlock extends SolidBlock implements LightingBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-		if($item->isPickaxe() >= 4){
+		if($item->getPickaxeLevel() >= 4){
 			return array(
 				array(REDSTONE_DUST, 0, mt_rand(4, 5)),
 			);

@@ -17,7 +17,7 @@ class StoneBricksBlock extends SolidBlock{
 		if(($player->gamemode & 0x01) === 0x01){
 			return 0.20;
 		}		
-		switch($item->isPickaxe()){
+		switch($item->getPickaxeLevel()){
 			case 5:
 				return 0.4;
 			case 4:
@@ -34,7 +34,7 @@ class StoneBricksBlock extends SolidBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-		if($item->isPickaxe() >= 1){
+		if($item->getPickaxeLevel() >= 1){
 			return array(
 				array(STONE_BRICKS, $this->meta & 0x03, 1),
 			);

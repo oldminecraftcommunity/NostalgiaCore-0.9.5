@@ -245,7 +245,7 @@ class Item{
 			BOW => 385 //x3
 		);
 
-		if(($type = $this->isPickaxe()) === false){			
+		if(($type = $this->getPickaxeLevel()) === false){			
 			if(($type = $this->isAxe()) === false){			
 				if(($type = $this->isSword()) === false){				
 					if(($type = $this->isShovel()) === false){					
@@ -259,7 +259,7 @@ class Item{
 		return $levels[$type];
 	}
 
-	public function isPickaxe(){ //Returns false or level of the pickaxe
+	public function getPickaxeLevel(){ //Returns false or level of the pickaxe
 		switch($this->id){
 			case IRON_PICKAXE:
 				return 4;

@@ -4,6 +4,7 @@ class MinecartItem extends Item{
 	public function __construct($meta = 0, $count = 1){
 		parent::__construct(MINECART, 0, $count, "Minecart");
 		$this->isActivable = true;
+		$this->maxStackSize = 1;
 	}
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		if($target->getID() !== 66 and $target->getID() !== 27){
