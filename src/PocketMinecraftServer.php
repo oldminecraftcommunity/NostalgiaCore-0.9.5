@@ -183,6 +183,7 @@ class PocketMinecraftServer{
 	public function close($reason = "server stop"){
 		$this->send2Discord('[INFO] Server stopped!');
 		usleep(2);
+		$this->onShutdown();
 		if($this->stop !== true){
 			if(is_int($reason)){
 				$reason = "signal stop";
