@@ -38,8 +38,10 @@ class Entity extends Position{
 	public $linkedEntity = null;
 	public $check = true;
 	public $size = 1;
+	public $random;
 	public $inAction = false;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
+	    $this->random = new Random();
 		$this->level = $level;
 		$this->fallY = false;
 		$this->fallStart = false;
@@ -806,13 +808,47 @@ class Entity extends Position{
 	public function heal($health, $cause = "generic"){
 		return $this->setHealth(min(20, $this->getHealth() + ((int) $health)), $cause);
 	}
-
+    
+	public function sendMotion(){
+	    $pk = new SetEntityMotionPacket;
+	    $pk->eid = $this->eid;
+	    $pk->speedX = $this->speedX;
+	    $pk->speedY = $this->speedY;
+	    $pk->speedZ = $this->speedZ;
+	    $this->server->api->player->broadcastPacket($this->level->players, $pk);
+	}
+	
+	public function sendMoveUpdate(){
+	    $pk = new MoveEntityPacket_PosRot;
+	    $pk->eid = $this->eid;
+	    $pk->x = $this->x;
+	    $pk->y = $this->y;
+	    $pk->z = $this->z;
+	    $pk->yaw = $this->yaw;
+	    $pk->pitch = $this->pitch;
+	    $this->server->api->player->broadcastPacket($this->level->players, $pk);
+	}
+	
 	public function setHealth($health, $cause = "generic", $force = false){
 		$health = (int) $health;
 		$harm = false;
 		if($health < $this->health){
 			$harm = true;
 			$dmg = $this->health - $health;
+			if(is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false && !($this->player instanceof Player)){
+			    $d = $entity->x - $this->x;
+			    for($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01)
+			    {
+			        $d = (Utils::randomFloat() - Utils::randomFloat()) * 0.01;
+			    }
+			    
+			    //attackedAtYaw = (float)((Math.atan2(d1, d) * 180D) / 3.1415927410125732D) - rotationYaw;
+			    
+			    $this->knockBack($d, $d1);
+			    $this->sendMotion();
+			    $this->move(new Vector3($this->speedX, $this->speedY, $this->speedZ));
+			    $this->sendMoveUpdate();
+			}
 			if($this->class === ENTITY_PLAYER and ($this->player instanceof Player)){
 				$points = 0;
 				$values = array(
@@ -906,7 +942,25 @@ class Entity extends Position{
 		}
 		return false;
 	}
-
+    
+	
+	   
+	public function knockBack($d, $d1)
+	{
+	    $f = sqrt($d * $d + $d1 * $d1);
+	    $f1 = 0.4;
+	    $this->speedX /= 2;
+	    $this->speedZ /= 2;
+	    $this->speedX -= ($d / (double)$f) * (double)$f1;
+	    $this->speedY += 0.40000000596046448;
+	    $this->speedZ -= ($d1 / (double)$f) * (double)$f1;
+	    if($this->speedY > 0.40000000596046448)
+	    {
+	        $this->speedY = 0.40000000596046448;
+	    }
+	    $this->speedY /= 2;
+	}
+	
 	public function getHealth(){
 		return $this->health;
 	}

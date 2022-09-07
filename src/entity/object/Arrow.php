@@ -19,7 +19,6 @@ class Arrow extends Projectile{
 		$this->server->schedule(0, array($this, "update"));
 	}
 	public function handleUpdate(){
-		$players = $this->server->api->player->getAll($this->level);
 		$pk = new MoveEntityPacket_PosRot;
 		$pk->eid = $this->eid;
 		$pk->x = $this->x;
@@ -27,7 +26,7 @@ class Arrow extends Projectile{
 		$pk->z = $this->z;
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
-		$this->server->api->player->broadcastPacket($players, $pk);
+		$this->server->api->player->broadcastPacket($this->level->players, $pk);
 	}
 	public function environmentUpdate(){
 		parent::environmentUpdate();
@@ -39,14 +38,14 @@ class Arrow extends Projectile{
 		return true;
 	}
 	public function shoot($d, $d1, $d2, $f, $f1){ //original name from 0.8.1 IDA decompilation, var names are taken from b1.7.3
-		$random = new Random();
+		
 		$f2 = sqrt($d * $d + $d1 * $d1 + $d2 * $d2);
         $d /= $f2;
         $d1 /= $f2;
         $d2 /= $f2;
-        $d += $random->nextGaussian() * 0.0075 * $f1; //0.0074999998323619366 replaced with 0.0075
-		$d1 += $random->nextGaussian() * 0.0075 * $f1;
-        $d2 += $random->nextGaussian() * 0.0075 * $f1;
+        $d += $this->random->nextGaussian() * 0.0075 * $f1; //0.0074999998323619366 replaced with 0.0075
+        $d1 += $this->random->nextGaussian() * 0.0075 * $f1;
+        $d2 += $this->random->nextGaussian() * 0.0075 * $f1;
         $d *= $f;
         $d1 *= $f;
         $d2 *= $f;
