@@ -39,8 +39,8 @@ class Random{
 				$s = $v1 * $v1 + $v2 * $v2;
 			}while($s >= 1 || $s == 0);
 			$multiplier = sqrt(-2 * log($s) / $s);
-			$nextNextGaussian = $v2 * $multiplier;
-			$haveNextNextGaussian = true;
+			$this->nextNextGaussian = $v2 * $multiplier;
+			$this->haveNextNextGaussian = true;
 			return $v1 * $multiplier;
 		}
 	}

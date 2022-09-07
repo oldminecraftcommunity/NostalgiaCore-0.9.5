@@ -76,7 +76,13 @@ abstract class ProtocolInfo{
 	//const PLAYER_INPUT_PACKET = 0xb9;
 
 }
-
+/*Unused:
+ * 0xb5
+ * 0xb9
+ * 0x96
+ * 0x17
+ * 0x14
+ */
 /***REM_START***/
 require_once(FILE_PATH . "src/network/raknet/RakNetDataPacket.php");
 /***REM_END***/

@@ -733,7 +733,7 @@ class Entity extends Position{
 	
 	public function inBlock(Vector3 $block, $radius = 0.8){
 		$me = new Vector3($this->x - 0.5, $this->y, $this->z - 0.5);
-		if(($block->y == ((int) $this->y) or $block->y == (((int) $this->y) + 1)) and $block->maxPlainDistance($me) < $radius){
+		if(($block->y == (ceil($this->y)) or $block->y == (ceil($this->y) + 1)) and $block->maxPlainDistance($me) < $radius){
 			return true;
 		}
 		return false;

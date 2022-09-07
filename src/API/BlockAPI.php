@@ -437,7 +437,7 @@ class BlockAPI{
 		$item = $player->getSlot($player->slot);
 
 		if($target->getID() === AIR and $this->server->api->dhandle("player.block.place.invalid", ["player" => $player, "block" => $block, "target" => $target, "item" => $item]) !== true){ //If no block exists or not allowed in CREATIVE
-			if($this->server->api->dhandle("player.block.place.bypass", ["player" => $player, "block" => $block, "target" => $target, "item" => $item]) !== true){
+		    if($this->server->api->dhandle("player.block.place.bypass", ["player" => $player, "block" => $block, "target" => $target, "item" => $item]) !== true){
 				$this->cancelAction($target, $player);
 				return $this->cancelAction($block, $player);
 			}
@@ -445,7 +445,7 @@ class BlockAPI{
 
 		if($this->server->api->dhandle("player.block.touch", ["type" => "place", "player" => $player, "block" => $block, "target" => $target, "item" => $item]) === false){
 			if($this->server->api->dhandle("player.block.place.bypass", ["player" => $player, "block" => $block, "target" => $target, "item" => $item]) !== true){
-				return $this->cancelAction($block, $player);
+			    return $this->cancelAction($block, $player);
 			}
 		}
 		$this->blockUpdate($target, BLOCK_UPDATE_TOUCH);
