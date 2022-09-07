@@ -20,18 +20,16 @@ class DirtBlock extends SolidBlock{
 	}
 
 	public function onUpdate($type){
-		$this->level->scheduleBlockUpdate(new Position($this, 0, 0, $this->level), Utils::getRandomUpdateTicks(), BLOCK_UPDATE_RANDOM);
 		if($type === BLOCK_UPDATE_RANDOM){
 			if(mt_rand(0, 3) == 0){
 				$up = $this->getSide(1);
 				if(($up->isTransparent === false) or ($up->isLiquid) or ($up->getID() == 60)) return false;
 				if($this->getGrassInRadius()){
 					$this->level->setBlock($this, BlockAPI::get(GRASS, 0), true, false, true);
-					return BLOCK_UPDATE_RANDOM;
 				}
 			}
 		}
-		return false;
+		return BLOCK_UPDATE_RANDOM;
 	}
 
 	public function getBlockID($x, $y, $z){
@@ -42,7 +40,7 @@ class DirtBlock extends SolidBlock{
 		$x = $this->x;
 		$y = $this->y;
 		$z = $this->z;
-
+        
 		if($this->getBlockID($x+1, $y, $z+1) == 2) return true;
 		if($this->getBlockID($x+1, $y, $z) == 2) return true;
 		if($this->getBlockID($x+1, $y, $z-1) == 2) return true;

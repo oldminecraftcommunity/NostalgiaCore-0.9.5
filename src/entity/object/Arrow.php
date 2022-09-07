@@ -4,9 +4,14 @@ class Arrow extends Projectile{
 	const TYPE = OBJECT_ARROW;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		parent::__construct($level, $eid, $class, $type, $data);
-		$this->server->schedule(1210, array($this, "update")); //Despawn
+		//$this->server->schedule(1210, array($this, "update")); //Despawn
 	}
 	public function update(){
+	    $now = microtime(true);
+	    if(($now - $this->spawntime) >= 60){
+	        $this->close();
+	        return false;
+	    }
 		$f3 = 0.99;
 		$f5 = 0.03;
 		$this->move(new Vector3($this->speedX, $this->speedY, $this->speedZ));
@@ -16,7 +21,8 @@ class Arrow extends Projectile{
 		$this->server->api->handle("entity.move", $this);
 		$this->server->api->handle("entity.motion", $this);
 		$this->handleUpdate();
-		$this->server->schedule(0, array($this, "update"));
+		$this->server->schedule(1, array($this, "update"), false);
+		$this->lastUpdate = $now;
 	}
 	public function handleUpdate(){
 		$pk = new MoveEntityPacket_PosRot;
@@ -27,15 +33,6 @@ class Arrow extends Projectile{
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
 		$this->server->api->player->broadcastPacket($this->level->players, $pk);
-	}
-	public function environmentUpdate(){
-		parent::environmentUpdate();
-		$time = microtime(true);
-		if(($time - $this->spawntime) >= 60){
-			$this->close();
-			return false;
-		}
-		return true;
 	}
 	public function shoot($d, $d1, $d2, $f, $f1){ //original name from 0.8.1 IDA decompilation, var names are taken from b1.7.3
 		

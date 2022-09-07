@@ -46,16 +46,10 @@ class GrassBlock extends SolidBlock{
 	}
 
 	public function onUpdate($type){
-		$this->level->scheduleBlockUpdate(new Position($this, 0, 0, $this->level), Utils::getRandomUpdateTicks(), BLOCK_UPDATE_RANDOM);
-		if($type === BLOCK_UPDATE_RANDOM){
-			if(mt_rand(0, 2) == 1){
-				if($this->getSide(1)->isTransparent === false){
-					$this->level->setBlock($this, BlockAPI::get(DIRT, 0), true, false, true);
-					return BLOCK_UPDATE_RANDOM;
-				}
-			}
-			return false;
+		if($type === BLOCK_UPDATE_RANDOM && !$this->getSide(1)->isTransparent && mt_rand(0, 2) == 1){
+			$this->level->setBlock($this, BlockAPI::get(DIRT, 0), true, false, true);
 		}
+		return BLOCK_UPDATE_RANDOM;
 	}
 
 }

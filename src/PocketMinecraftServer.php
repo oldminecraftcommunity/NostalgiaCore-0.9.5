@@ -425,7 +425,6 @@ class PocketMinecraftServer{
 		if(!is_callable($callback)){
 			return false;
 		}
-
 		$chcnt = $this->scheduleCnt++;
 		$this->schedule[$chcnt] = [$callback, $data, $eventName];
 		$this->query("INSERT INTO actions (ID, interval, last, repeat) VALUES(" . $chcnt . ", " . ($ticks / 20) . ", " . microtime(true) . ", " . (((bool) $repeat) === true ? 1 : 0) . ");");
