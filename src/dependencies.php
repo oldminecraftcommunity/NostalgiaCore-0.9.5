@@ -79,8 +79,9 @@ require_once(FILE_PATH . "/src/pmf/PMF.php");
 
 require_once(FILE_PATH . "/src/utils/pathfinder/PathNode.php");
 require_once(FILE_PATH . "/src/utils/pathfinder/Path.php");
-require_once(FILE_PATH . "/src/utils/pathfinder/PathFinder.php");
 
+require_once(FILE_PATH . "/src/entity/Rideable.php");
+require_once(FILE_PATH . "/src/entity/Attachable.php");
 require_once(FILE_PATH . "/src/entity/Damageable.php");
 require_once(FILE_PATH . "/src/entity/Breedable.php");
 require_once(FILE_PATH . "/src/entity/Damageable.php");
@@ -90,6 +91,11 @@ require_once(FILE_PATH . "/src/entity/Living.php");
 require_once(FILE_PATH . "/src/entity/Creature.php");
 require_once(FILE_PATH . "/src/entity/Ageable.php");
 require_once(FILE_PATH . "/src/entity/Animal.php");
+
+require_once(FILE_PATH . "/src/material/Item.php");
+
+require_once(FILE_PATH . "/src/material/item/armor/ArmorItem.php");
+
 
 require_all(FILE_PATH . "src/");
 
