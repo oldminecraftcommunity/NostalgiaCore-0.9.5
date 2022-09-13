@@ -1784,19 +1784,12 @@ class Player{
 										if($target->linkedEntity != null){
 											break;
 										}
-										$players = $this->server->api->player->getAll($this->level);
-										$pk = new SetEntityLinkPacket;
-										$pk->rider = $target->eid;
-										$pk->riding = $this->entity->eid;
-										$pk->type = 2;
-										$this->server->api->player->broadcastPacket([$this], $pk);
-
 										$target->linkedEntity = $this->entity;
 										$this->entity->isInMinecart = true;
 										$pk = new SetEntityLinkPacket();
 										$pk->rider = $target->eid;
 										$pk->riding = $this->entity->eid;
-										$pk->type = 2;
+										$pk->type = 1;
 										$this->dataPacket($pk);
 										$needsBreak = true;
 
@@ -2272,6 +2265,8 @@ class Player{
 					}
 				}
 				break;
+			case ProtocolInfo::PLAYER_INPUT_PACKET:
+			    break; //TODO player input-
 			default:
 				console("[DEBUG] Unhandled 0x" . dechex($packet->pid()) . " data packet for " . $this->username . " (" . $this->clientID . "): " . print_r($packet, true), true, true, 2);
 				break;

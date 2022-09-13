@@ -2,23 +2,16 @@
 
 class RailBlock extends FlowableBlock{
 	public function __construct($meta = 0){
-		parent::__construct(RAIL, 0, "Rail");
+	    parent::__construct(RAIL, $meta, "Rail");
 		$this->hardness = 0.7;
 		$this->isFullBlock = false;		
-		$this->isSolid = true;
-		$this->meta = $meta;
+		$this->isSolid = false;
 	}
 	
 	public static $shouldconnectrails = false;
 	
 	private function isRailBlock($id){ 
-        switch($id){
-            case RAIL:
-            case POWERED_RAIL:
-                return true;
-            default:
-                return false;
-        }
+	    return $id === RAIL || $id === POWERED_RAIL;
     }
 	
 	private function isValidRailMeta($meta){ 
@@ -61,14 +54,15 @@ class RailBlock extends FlowableBlock{
                 $rail->getFloorY() + $y,
                 $rail->getFloorZ() + $blocks[0][1]
             );
-            $idToConnect = $rail->level->getBlock(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ())->getID();
-            $metaToConnect = $rail->level->getBlock(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ())->getMetadata();
+            $railBlock = $rail->level->getBlock($v3);
+            $idToConnect = $railBlock->getID();
+            $metaToConnect = $railBlock->getMetadata();
             if (!$this->isRailBlock($idToConnect) || !$this->isValidRailMeta($metaToConnect)) continue;
-            $xDiff = $damage - $v3->getFloorX();
-            $zDiff = $damage - $v3->getFloorZ();
+            $xDiff = $this->getFloorX() - $v3->getFloorX();
+            $zDiff = $this->getFloorZ() - $v3->getFloorZ();
             foreach($blocks as $xz) {
-                if($xz[0] !== xDiff || $xz[1] !== zDiff) continue;
-                array_push($connected[], $v3);
+                if($xz[0] !== $xDiff || $xz[1] !== $zDiff) continue;
+                $connected[] = $v3;
             }
         }
         foreach($deltaY as $y){
@@ -77,14 +71,15 @@ class RailBlock extends FlowableBlock{
                 $rail->getFloorY() + $y,
                 $rail->getFloorZ() + $blocks[1][1]
             );
-            $idToConnect = $rail->level->getBlock(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ())->getID();
-            $metaToConnect = $rail->level->getBlock(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ())->getMetadata();
+            $railBlock = $rail->level->getBlock($v3);
+            $idToConnect = $railBlock->getID();
+            $metaToConnect = $railBlock->getMetadata();
             if(!$this->isRailBlock($idToConnect) || !$this->isValidRailMeta($metaToConnect)) continue;
-            $xDiff = $damage - $v3.getFloorX();
-            $zDiff = $damage - $v3.getFloorZ();
+            $xDiff = $this->getFloorX() - $v3->getFloorX();
+            $zDiff = $this->getFloorZ() - $v3->getFloorZ();
             foreach($blocks as $xz){
                 if ($xz[0] !== $xDiff || $xz[1] !== $zDiff) continue;
-                array_push($connected[], $v3);
+                $connected[] = $v3;
             }
         }
         return $connected;
@@ -111,7 +106,7 @@ class RailBlock extends FlowableBlock{
                 $this->meta = $subtract[0]->x === 0 ? 0 : 1;
             }
         }
-        $this->level->setBlock($rail, new RailBlock($this.getDamage()), true, true);
+        $this->level->setBlock($rail, new RailBlock($this->meta), true, true);
     }
 
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){

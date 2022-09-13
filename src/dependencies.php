@@ -96,7 +96,6 @@ require_once(FILE_PATH . "/src/material/Item.php");
 
 require_once(FILE_PATH . "/src/material/item/armor/ArmorItem.php");
 
-
 require_all(FILE_PATH . "src/");
 
 $inc = get_included_files();
