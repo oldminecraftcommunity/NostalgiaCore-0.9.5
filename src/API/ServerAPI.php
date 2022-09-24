@@ -89,7 +89,6 @@ class ServerAPI{
 
 		$version = new VersionString();
 		console("[INFO] Starting Minecraft PE server version " . FORMAT_AQUA . CURRENT_MINECRAFT_VERSION);
-		$this->server->send2Discord("[INFO] Starting Minecraft PE server version " . CURRENT_MINECRAFT_VERSION);
 
 		console("[INFO] Loading properties...");
 		$this->config = new Config(DATA_PATH . "server.properties", CONFIG_PROPERTIES, [
@@ -140,6 +139,7 @@ class ServerAPI{
 		$this->server = new PocketMinecraftServer($this->getProperty("server-name"), $this->getProperty("gamemode"), ($seed = $this->getProperty("level-seed")) != "" ? (int) $seed : false, $this->getProperty("server-port"), ($ip = $this->getProperty("server-ip")) != "" ? $ip : "0.0.0.0");
 		$this->server->api = $this;
 		self::$serverRequest = $this->server;
+		$this->server->send2Discord("[INFO] Starting Minecraft PE server version " . CURRENT_MINECRAFT_VERSION);
 		console("[INFO] This server is running NostalgiaCore version " . ($version->isDev() ? FORMAT_YELLOW : "") . MAJOR_VERSION . FORMAT_RESET . " \"" . CODENAME . "\" (MCPE: " . CURRENT_MINECRAFT_VERSION . ") (API " . CURRENT_API_VERSION . ") (PHP " . PHP_VERSION . ")", true, true, 0);
 		console("[INFO] NostalgiaCore is distributed under the LGPL License", true, true, 0);
 
