@@ -21,6 +21,7 @@ class PocketMinecraftServer{
 		$this->serverip = $serverip;
 		$this->load();
 	}
+	
 	private function load(){
 		global $dolog;
 		
@@ -94,18 +95,20 @@ class PocketMinecraftServer{
 			}
 		}elseif($this->extraprops->get("version") == null){
 			console("[WARNING] Your extra.properties file is corrupted!");
-			console("To fix it - just remove it! Server will generate it again automatically.");
+			console("[WARNING] To fix it - just remove it! Server will generate it again automatically.");
 		}
 		$dolog = $this->extraprops->get("save-console-data");
 	}
+
 	public function onShutdown(){
-		console("Saving...");
+		console("[INFO] Saving...");
 		$save = $this->saveEnabled;
 		$this->saveEnabled = true;
 		$this->api->level->saveAll();
 		$this->saveEnabled = $save;
-		console("Shutting Down...");
+		$this->send2Discord('[INFO] Server stopped!');
 	}
+
 	public function startDatabase(){
 		$this->preparedSQL = new stdClass();
 		$this->preparedSQL->entity = new stdClass();
@@ -146,12 +149,11 @@ class PocketMinecraftServer{
 				$this->serverType = "MCCPP;MINECON;";
 				break;
 		}
-
 	}
 
 	public function titleTick(){
 		$time = microtime(true);
-		if(defined("DEBUG") and DEBUG >= 0 and ENABLE_ANSI === true){
+		if(defined("DEBUG") and DEBUG >= 0){
 			echo "\x1b]0;NostalgiaCore " . MAJOR_VERSION . " | Online " . count($this->clients) . "/" . $this->maxClients . " | RAM " . round((memory_get_usage() / 1024) / 1024, 2) . "MB | U " . round(($this->interface->bandwidth[1] / max(1, $time - $this->interface->bandwidth[2])) / 1024, 2) . " D " . round(($this->interface->bandwidth[0] / max(1, $time - $this->interface->bandwidth[2])) / 1024, 2) . " kB/s | TPS " . $this->getTPS() . "\x07";
 		}
 
@@ -181,7 +183,6 @@ class PocketMinecraftServer{
 	 * @param string $reason
 	 */
 	public function close($reason = "server stop"){
-		$this->send2Discord('[INFO] Server stopped!');
 		usleep(2);
 		$this->onShutdown();
 		if($this->stop !== true){

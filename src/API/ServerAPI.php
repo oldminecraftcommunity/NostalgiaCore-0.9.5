@@ -145,7 +145,6 @@ class ServerAPI{
 
 		$this->loadProperties();
 
-
 		$this->loadAPI("console", "ConsoleAPI");
 		$this->loadAPI("level", "LevelAPI");
 		$this->loadAPI("block", "BlockAPI");

@@ -644,27 +644,28 @@ class Utils{
 
 	public static function writeLong($value){
 		$x = "";
-		if(strval($value[0] == null ? '' : $value[0]) === "-"){
-			$negative = true;
-			$value = bcadd($value, "1");
-			if(strval($value[0]) === "-"){
-				$value = substr($value, 1);
-			}
-		}else{
-			$negative = false;
-		}
-		while(bccomp($value, "0", 0) > 0){
-			$temp = bcmod($value, "16777216");
-			$x = chr($temp >> 16) . chr($temp >> 8) . chr($temp) . $x;
-			$value = bcdiv($value, "16777216", 0);
-		}
-		$x = str_pad(substr($x, 0, 8), 8, "\x00", STR_PAD_LEFT);
-		if($negative === true){
-			$x = ~$x;
-		}
-		return $x;
+		if(!is_float($value)){
+			if(strval($value[0] == null ? '' : $value[0]) === "-"){
+				$negative = true;
+			    $value = bcadd($value, "1");
+			    if(strval($value[0]) === "-"){
+				    $value = substr($value, 1);
+			    }
+		    }else{
+			    $negative = false;
+		    }
+		    while(bccomp($value, "0", 0) > 0){
+			    $temp = bcmod($value, "16777216");
+			    $x = chr($temp >> 16) . chr($temp >> 8) . chr($temp) . $x;
+			    $value = bcdiv($value, "16777216", 0);
+		    }
+		    $x = str_pad(substr($x, 0, 8), 8, "\x00", STR_PAD_LEFT);
+		    if($negative === true){
+			    $x = ~$x;
+		    }
+		    return $x;
+	    }
 	}
-	
 }
 
 //if(Utils::isOnline() === false){
