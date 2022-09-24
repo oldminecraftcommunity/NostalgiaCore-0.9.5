@@ -6,7 +6,7 @@ class Spider extends Monster{
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:20, "generic");
 		$this->update();
-		//$this->setName('Spider');
+		$this->setName('Spider');
 		$this->size = 0.6; //not original
 	}
 	

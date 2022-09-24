@@ -5,7 +5,7 @@ class PigZombie extends Monster{
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 20, "generic");
 		$this->update();
-		//$this->setName('Pigman');
+		$this->setName('Pigman');
 		$this->size = 1.8; //not original
 	}
 	

@@ -9,7 +9,7 @@ class Pig extends Animal{
 		$this->update();
 		$this->server = ServerAPI::request();
 		//$this->server->schedule(60, array($this, "testMovement"));
-		//$this->setName('Pig');
+		$this->setName('Pig');
 		$this->size = $this->isBaby() ? 0.60 : 1.1875;
 	}
 	public function isFood($id){
