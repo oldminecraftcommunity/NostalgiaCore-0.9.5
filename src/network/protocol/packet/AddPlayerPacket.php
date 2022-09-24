@@ -9,8 +9,19 @@ class AddPlayerPacket extends RakNetDataPacket{
 	public $z;
 	public $pitch;
 	public $yaw;
+	public $itemID;
+	public $itemAuxValue;
+	/**
+	 *@deprecated use $itemID instead
+	 */
 	public $unknown1;
+	/**
+	 *@deprecated use $itemAuxValue instead
+	 */
 	public $unknown2;
+	/**
+	 *@var array
+	 */
 	public $metadata;
 	
 	public function pid(){
@@ -31,8 +42,8 @@ class AddPlayerPacket extends RakNetDataPacket{
 		$this->putFloat($this->z);
 		$this->putByte($this->yaw);
 		$this->putByte($this->pitch);
-		$this->putShort($this->unknown1);
-		$this->putShort($this->unknown2);
+		$this->putShort($this->itemID);
+		$this->putShort($this->itemAuxValue); //Example: bow shooting power
 		$this->put(Utils::writeMetadata($this->metadata));
 	}
 

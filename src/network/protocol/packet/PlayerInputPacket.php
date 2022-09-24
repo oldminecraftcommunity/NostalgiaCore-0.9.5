@@ -17,7 +17,6 @@ class PlayerInputPacket extends RakNetDataPacket{
         $this->unk2 = $this->getFloat();
         $this->unk3 = $this->getByte();
         $this->unk4 = $this->getByte();
-        console("values: {$this->unk1}, {$this->unk2}, {$this->unk3}, {$this->unk4}");
     }
     
 }

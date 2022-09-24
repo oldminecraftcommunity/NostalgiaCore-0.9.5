@@ -25,6 +25,9 @@ class Entity extends Position{
 	public $class;
 	public $attach;
 	public $closed;
+	/**
+	 * @var Player
+	 */
 	public $player;
 	public $fallY;
 	public $fallStart;
@@ -599,8 +602,8 @@ class Entity extends Position{
 				$pk->z = $this->z;
 				$pk->yaw = 0;
 				$pk->pitch = 0;
-				$pk->unknown1 = 0;
-				$pk->unknown2 = 0;
+				$pk->itemID = 0;
+				$pk->itemAuxValue = 0;
 				$pk->metadata = $this->getMetadata();				
 				$player->dataPacket($pk);
 				
@@ -821,6 +824,10 @@ class Entity extends Position{
 	}
 	
 	public function sendMoveUpdate(){
+	    if($this->class === ENTITY_PLAYER){
+	        $this->player->teleport(new Vector3($this->x, $this->y, $this->z));
+	        return;
+	    }
 	    $pk = new MoveEntityPacket_PosRot;
 	    $pk->eid = $this->eid;
 	    $pk->x = $this->x;
@@ -837,7 +844,7 @@ class Entity extends Position{
 		if($health < $this->health){
 			$harm = true;
 			$dmg = $this->health - $health;
-			if(is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false && !($this->player instanceof Player)){
+			if(is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false){
 			    $d = $entity->x - $this->x;
 			    for($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01)
 			    {
