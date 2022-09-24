@@ -890,7 +890,16 @@ class Player{
 			}
 		}
 	}
-
+	public function makeInvisibleForOnePlayer(Player $player){
+	    $pk = new RemoveEntityPacket;
+	    $pk->eid = $this->entity->eid;
+	    $player->dataPacket($pk);
+	}
+	public function makeInvisibleForAllPlayers(){
+	    $pk = new RemoveEntityPacket;
+	    $pk->eid = $this->entity->eid;
+	    $this->server->api->player->broadcastPacket($this->server->api->player->getAll($this->level), $pk);
+	}
 	public function getGamemode(){
 		switch($this->gamemode){
 			case SURVIVAL:
@@ -941,6 +950,14 @@ class Player{
 			$this->sendChat("Your gamemode has been changed to " . $this->getGamemode() . ", you've to do a forced reconnect.\n");
 			$this->server->schedule(30, [$this, "close"], "gamemode change"); //Forces a kick
 		}
+		
+		if($this->gamemode === SPECTATOR){
+		    $this->makeInvisibleForAllPlayers();
+		}
+		if($this->gamemode === CREATIVE){
+		    $this->server->api->player->spawnToAllPlayers($this);
+		}
+		
 		$this->inventory = $inv;
 		$this->sendSettings();
 		$this->sendInventory();

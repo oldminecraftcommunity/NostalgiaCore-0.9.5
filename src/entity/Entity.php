@@ -587,7 +587,9 @@ class Entity extends Position{
 				if($this->player->connected !== true or $this->player->spawned === false){
 					return false;
 				}
-				
+				if($this->player->gamemode === SPECTATOR){
+				    break;
+				}
 				$pk = new AddPlayerPacket;
 				$pk->clientID = 0; //$this->player->clientID;
 				$pk->username = $this->player->username;
