@@ -6,7 +6,7 @@ class Skeleton extends Monster{
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 20, "generic");
 		$this->update();
-		//$this->setName('Skeleton');
+		$this->setName('Skeleton');
 		$this->size = 1.9;
 	}
 	

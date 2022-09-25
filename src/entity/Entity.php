@@ -123,6 +123,29 @@ class Entity extends Position{
 		}
 	}
 	
+	
+	/**
+	 * @param mixed $e Entity instance or EID
+	 */
+	public static function getNameOf($e){
+	    if($e instanceof Entity){
+	        return $e->getName();
+	    }elseif(($ent = ServerAPI::request()->api->entity->get($e)) != false){
+	        return $ent->getName();
+	    }
+	}
+	public static function getSizeOf($e){
+	    if($e instanceof Entity){
+	        return $e->getSize();
+	    }elseif(($ent = ServerAPI::request()->api->entity->get($e)) != false){
+	        return $ent->getSize();
+	    }
+	}
+	
+	public function getSize(){
+	    return $this->size;
+	}
+	
 	public function lookOn($entity){
 		$horizontal = sqrt(pow(($target->entity->x - $entity->x), 2) + pow(($target->entity->z - $entity->z) , 2));
 		$vertical = $target->entity->y - ($entity->y + -0.5); /*0.5 = $entity->getEyeHeight()*/
@@ -683,7 +706,7 @@ class Entity extends Position{
 
 	public function setName($name){
 		$this->name = $name;
-		$this->server->query("UPDATE entities SET name = '".str_replace("'", "", $this->name)."' WHERE EID = ".$this->eid.";");
+		//$this->server->query("UPDATE entities SET name = '".str_replace("'", "", $this->name)."' WHERE EID = ".$this->eid.";"); is this neccessary for database?
 	}
 
 	public function look($pos2){

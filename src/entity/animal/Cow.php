@@ -6,7 +6,7 @@ class Cow extends Animal{
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:10, "generic");
 		$this->update();
-		//$this->setName('Cow');
+		$this->setName('Cow');
 		$this->size = $this->isBaby() ? 0.65 : 1.4;
 	}
 	public function isFood($id){

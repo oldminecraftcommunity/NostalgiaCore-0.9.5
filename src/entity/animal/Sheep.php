@@ -8,7 +8,7 @@ class Sheep extends Animal{
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 8, "generic");
 		$this->update();
-		//$this->setName('Sheep');
+		$this->setName('Sheep');
 		$this->size = $this->isBaby() ? 0.65 : 1.3;
 	}
 	
