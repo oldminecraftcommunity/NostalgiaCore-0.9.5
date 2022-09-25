@@ -63,16 +63,23 @@ class BanAPI{
 				}
 				break;
 			case "player.block.break":
+			    if(!$this->isOp($data["player"]->iusername)){
+			        $t = new Vector2($data["target"]->x, $data["target"]->z);
+			        $s = new Vector2($this->server->spawn->x, $this->server->spawn->z);
+			        if($t->distance($s) <= $this->server->api->getProperty("spawn-protection") and $this->server->api->dhandle($event . ".spawn", $data) !== true){
+			            return false;
+			        }
+			    }
+			    return;
 			case "player.block.place"://Spawn protection detection. Allows OPs to place/break blocks in the spawn area.
 				if(!$this->isOp($data["player"]->iusername)){
-					$t = new Vector2($data["target"]->x, $data["target"]->z);
+					$t = new Vector2($data["block"]->x, $data["block"]->z);
 					$s = new Vector2($this->server->spawn->x, $this->server->spawn->z);
 					if($t->distance($s) <= $this->server->api->getProperty("spawn-protection") and $this->server->api->dhandle($event . ".spawn", $data) !== true){
 						return false;
 					}
 				}
 				return;
-				break;
 			case "console.command"://Checks if a command is allowed with the current user permissions.
 				if(isset($this->cmdWhitelist[$data["cmd"]])){
 					return;
