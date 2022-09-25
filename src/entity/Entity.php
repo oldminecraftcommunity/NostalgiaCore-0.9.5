@@ -346,7 +346,8 @@ class Entity extends Position{
 		if($this->isStatic === false){
 			$startX = floor($this->x - 0.5 - $this->size - 1);
 			//prefix for flying when player on fence
-			$y = (int) floor($this->y - 1);
+			$y = floor($this->y - 1);
+			$yC = ceil($this->y - 1);
 			$startZ = floor($this->z - 0.5 - $this->size - 1);
 			$endX = ceil($this->x - 0.5 + $this->size + 1);
 			$endZ = ceil($this->z - 0.5 + $this->size + 1);
@@ -355,8 +356,9 @@ class Entity extends Position{
 			for($z = $startZ; $z <= $endZ; ++$z){
 				for($x = $startX; $x <= $endX; ++$x){
 					$v = new Vector3($x, $y, $z);
+					$v1 = new Vector3($x, $yC, $z);
 					if($this->isSupport($v, $this->size)){
-						$b = $this->level->getBlock($v);
+					    $b = $this->level->getBlock($v);
 						if($b->isSolid === true){
 							$support = true;
 							$isFlying = false;
@@ -364,6 +366,15 @@ class Entity extends Position{
 						}elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
 							$isFlying = false;
 						}
+					}elseif($this->isSupport($v1, $this->size)){
+					    $b = $this->level->getBlock($v1);
+					    if($b->isSolid === true){
+					        $support = true;
+					        $isFlying = false;
+					        break;
+					    }elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
+					        $isFlying = false;
+					    }
 					}
 				}
 				if($support === true){

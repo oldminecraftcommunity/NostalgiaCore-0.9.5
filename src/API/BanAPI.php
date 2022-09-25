@@ -93,7 +93,6 @@ class BanAPI{
 					return;
 				}
 				return false;
-				break;
 		}
 	}
 
