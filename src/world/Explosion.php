@@ -53,9 +53,9 @@ class Explosion{
 						for($blastForce = $this->size * (mt_rand(700, 1300) / 1000); $blastForce > 0; $blastForce -= $this->stepLen * 0.75){
 							$vBlock = $pointer->floor();
 							$blockID = $this->level->level->getBlockID($vBlock->x, $vBlock->y, $vBlock->z);
-
+							$blockMeta = $this->level->level->getBlockDamage($vBlock->x, $vBlock->y, $vBlock->z);
 							if($blockID > 0){
-								$block = BlockAPI::get($blockID, 0);
+							    $block = BlockAPI::get($blockID, $blockMeta);
 								$block->x = $vBlock->x;
 								$block->y = $vBlock->y;
 								$block->z = $vBlock->z;
