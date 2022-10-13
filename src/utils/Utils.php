@@ -38,6 +38,8 @@ class Utils{
 		}
 		return $id;
 	}
+	
+	
 	public static function hasEmoji($s){
 		return preg_match(Utils::emojiRegex, $s, $matches);
 	}

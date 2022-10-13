@@ -1471,11 +1471,7 @@ class Player{
 						$this->server->schedule(5, [$this->entity, "update"], [], true);
 						$this->server->schedule(2, [$this->entity, "updateMovement"], [], true);
 						$this->sendArmor();
-						$array = explode("@n", (string)$this->server->motd);
-						foreach($array as $msg){
-							$this->sendChat($msg."\n");
-						}
-
+						$this->sendChat($this->server->motd . "\n");
 
 						$this->sendInventory();
 						$this->sendSettings();

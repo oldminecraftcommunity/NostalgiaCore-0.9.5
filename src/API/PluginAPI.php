@@ -11,13 +11,13 @@ interface Plugin{
 
 	public function init();
 
-	public function __destruct();
+	//public function __destruct(); useless
 }
 
 class PluginAPI extends stdClass{
 
 	private $server;
-	private $plugins = [];
+	public $plugins = []; //specially for DevTools
 	private $randomNonce;
 
 	public function __construct(){
@@ -138,8 +138,42 @@ class PluginAPI extends stdClass{
 		while(false !== ($file = $dir->read())){
 			if($file[0] !== "."){
 				$ext = strtolower(substr($file, -3));
+				$ext2 = strtolower(substr($file, -4));
 				if($ext === "php" or $ext === "pmf"){
 					$this->load($dir->path . $file);
+				}
+				if($ext2 === "phar"){
+					$pluginInfo = []; //TODO: A PluginInfo class?
+					$filePath = $this->pluginsPath().$file;
+					$p = new Phar($this->pluginsPath().$file, 0);
+					foreach (new RecursiveIteratorIterator($p) as $file) {
+						$name = $file->getFileName();
+						$content = file_get_contents($file->getPathName());
+						if($name === "plugin.cfg"){
+							$pluginInfo = PharUtils::readMainConfig($content);
+							break;
+						}
+					}
+					console("[INFO] Loading {$pluginInfo["name"]} by {$pluginInfo["author"]}...");
+					console("[WARNING] PHAR Plugin format is experemental and might cause bugs.");
+					
+					$phr = "phar://$filePath/";
+					include($phr."/src/".$pluginInfo["classLoader"]);
+					$class = $pluginInfo["CLClass"];
+					$loader = new $class();
+					$loader->loadAll($phr);
+					
+					$pluginName = PharUtils::getNameSpaceClass($pluginInfo["mainFile"]);
+					include($phr."/src/".$pluginInfo["mainFile"]);
+					$plugin = new $pluginName($this->server->api, false);
+					if(!($plugin instanceof Plugin)){
+						console("[ERROR] Plugin \"" . $pluginInfo["name"] . "\" doesn't use the Plugin Interface");
+						$plugin->__destruct();
+						unset($plugin);
+						continue;
+					}
+					$identifier = $this->getIdentifier($pluginInfo["name"], $pluginInfo["author"]);
+					$this->plugins[$identifier] = [$plugin, $pluginInfo];
 				}
 			}
 		}

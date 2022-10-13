@@ -9,7 +9,13 @@ class Vector3{
 		$this->y = $y;
 		$this->z = $z;
 	}
-
+	
+	public function setXYZ($x, $y, $z){
+		$this->x = $x;
+		$this->y = $y;
+		$this->z = $z;
+	}
+	
 	public function getFloorX(){
 		return (int) $this->x;
 	}
