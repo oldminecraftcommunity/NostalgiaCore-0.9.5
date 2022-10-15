@@ -157,6 +157,11 @@ class PluginAPI extends stdClass{
 					console("[INFO] Loading {$pluginInfo["name"]} by {$pluginInfo["author"]}...");
 					console("[WARNING] PHAR Plugin format is experemental and might cause bugs.");
 					
+					$aver = CURRENT_API_VERSION;
+					if($pluginInfo["api"] != $aver){
+					    console("[WARNING] API is not the same as Core, might cause bugs({$pluginInfo["api"]} != {$aver})");
+					}
+					
 					$phr = "phar://$filePath/";
 					include($phr."/src/".$pluginInfo["classLoader"]);
 					$class = $pluginInfo["CLClass"];
@@ -267,6 +272,7 @@ class PluginAPI extends stdClass{
 			$names[] = $p[1]["name"];
 			$versions[] = $p[1]["version"];
 		}
+		
 		foreach($this->plugins as $p){
 			if($p[0] instanceof OtherPluginRequirement){
 				foreach($p[0]->getRequiredPlugins() as $required){
