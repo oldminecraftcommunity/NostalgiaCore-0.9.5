@@ -24,7 +24,7 @@ abstract class Animal extends Creature implements Ageable, Breedable{
 			$this->close();
 			return false;
 		}
-		parent::environmentUpdate();
+		return parent::environmentUpdate();
 	}
 	
 	public function getDrops(){
