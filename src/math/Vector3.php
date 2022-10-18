@@ -170,7 +170,11 @@ class Vector3{
 			$this->x * $v->y - $this->y * $v->x
 		);
 	}
-
+    
+	public static function fromArray($arr){
+	    return new Vector3($arr[0], $arr[1], $arr[2]);
+	}
+	
 	public function __toString(){
 		return "Vector3(x=" . $this->x . ",y=" . $this->y . ",z=" . $this->z . ")";
 	}

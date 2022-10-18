@@ -4,8 +4,12 @@ class Entity extends Position{
 	const TYPE = -1;
 	const CLASS_TYPE = -1;
 	
+	public $isCollidable;
 	public $canBeAttacked;
-	
+	/**
+	 * @var AxisAlignedBB
+	 */
+	public $boundingBox;
 	public $age;
 	public $air;
 	public $spawntime;
@@ -43,7 +47,8 @@ class Entity extends Position{
 	public $lastUpdate;
 	public $linkedEntity = null;
 	public $check = true;
-	public $size = 1;
+	public $width = 1;
+	public $height = 1;
 	public $random;
 	public $inAction = false;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
@@ -83,11 +88,13 @@ class Entity extends Position{
 		$this->yaw = isset($this->data["yaw"]) ? (float) $this->data["yaw"]:0;
 		$this->pitch = isset($this->data["pitch"]) ? (float) $this->data["pitch"]:0;
 		$this->position = array("level" => $this->level, "x" => &$this->x, "y" => &$this->y, "z" => &$this->z, "yaw" => &$this->yaw, "pitch" => &$this->pitch);
+		$this->height = 0.98;
 		switch($this->class){
 			case ENTITY_PLAYER:
 				$this->player = $this->data["player"];
 				$this->setHealth($this->health, "generic");
-				$this->size = 1.2;
+				$this->width = 1.2;
+				$this->height = 1.9;
 				$this->canBeAttacked = true;
 				break;
 			case ENTITY_ITEM:
@@ -100,13 +107,13 @@ class Entity extends Position{
 				}
 				$this->setHealth(5, "generic");
 				$this->server->schedule(6010, array($this, "update")); //Despawn
-				$this->update();
-				$this->size = 0.75;
+				$this->height = 0.75;
+				$this->width = 0.75;
 				break;
 			case ENTITY_FALLING:
 				$this->setHealth(PHP_INT_MAX, "generic");
-				$this->update();
-				$this->size = 0.98;
+				$this->height = 0.98;
+				$this->width = 0.98;
 				break;
 			case ENTITY_OBJECT:
 				$this->x = isset($this->data["TileX"]) ? $this->data["TileX"]:$this->x;
@@ -114,13 +121,17 @@ class Entity extends Position{
 				$this->z = isset($this->data["TileZ"]) ? $this->data["TileZ"]:$this->z;
 				$this->setHealth(1, "generic");
 				//$this->setName((isset($objects[$this->type]) ? $objects[$this->type]:$this->type));
-				$this->size = 1;
+				$this->width = 1;
+				$this->height = 1;
 				if($this->type === OBJECT_SNOWBALL){
 					$this->server->schedule(1210, array($this, "update")); //Despawn
-					$this->update();
+					//$this->update();
 				}
 				break;
 		}
+		$this->radius = &$this->width / 2;
+		$this->boundingBox = new AxisAlignedBB($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
+		$this->update();
 		$this->updateLast();
 		$this->updatePosition();
 		if($this->y < 0 and $this->class !== ENTITY_PLAYER){
@@ -131,24 +142,59 @@ class Entity extends Position{
 	
 	/**
 	 * @param mixed $e Entity instance or EID
+	 * @return string|false if failed
 	 */
 	public static function getNameOf($e){
 	    if($e instanceof Entity){
 	        return $e->getName();
-	    }elseif(($ent = ServerAPI::request()->api->entity->get($e)) != false){
-	        return $ent->getName();
+	    }elseif(($e = ServerAPI::request()->api->entity->get($e)) != false){
+	        return $e->getName();
 	    }
-	}
-	public static function getSizeOf($e){
-	    if($e instanceof Entity){
-	        return $e->getSize();
-	    }elseif(($ent = ServerAPI::request()->api->entity->get($e)) != false){
-	        return $ent->getSize();
-	    }
+	    return false;
 	}
 	
-	public function getSize(){
-	    return $this->size;
+	/**
+	 * @param mixed $e Entity instance or EID
+	 * @return number|false if failed
+	 */
+	
+	public static function getHeightOf($e){
+	    if($e instanceof Entity){
+	        return $e->getHeight();
+	    }elseif(($e = ServerAPI::request()->api->entity->get($e)) != false){
+	        return $e->getHeight();
+	    }
+	    return false;
+	}
+	
+	/**
+	 * @param mixed $e Entity instance or EID
+	 * @return number|false if failed
+	 */
+	
+	public static function getWidthOf($e){
+	    if($e instanceof Entity){
+	        return $e->getWidth();
+	    }elseif(($e = ServerAPI::request()->api->entity->get($e)) != false){
+	        return $e->getWidth();
+	    }
+	    return false;
+	}
+	
+	/**
+	 * Get an entity height
+	 * @return number
+	 */
+	public function getHeight($a){
+	    return $this->height;
+	}
+	
+	/**
+	 * Get an entity width
+	 * @return number
+	 */
+	public function getWidth(){
+	    return $this->width;
 	}
 	
 	public function lookOn($target){
@@ -349,20 +395,20 @@ class Entity extends Position{
 		}
 		
 		if($this->isStatic === false){
-			$startX = floor($this->x - 0.5 - $this->size - 1);
+			$startX = floor($this->x - 0.5 - $this->width - 1);
 			//prefix for flying when player on fence
 			$y = floor($this->y - 1);
 			$yC = ceil($this->y - 1);
-			$startZ = floor($this->z - 0.5 - $this->size - 1);
-			$endX = ceil($this->x - 0.5 + $this->size + 1);
-			$endZ = ceil($this->z - 0.5 + $this->size + 1);
+			$startZ = floor($this->z - 0.5 - $this->width - 1);
+			$endX = ceil($this->x - 0.5 + $this->width + 1);
+			$endZ = ceil($this->z - 0.5 + $this->width + 1);
 			$support = false;
 			$isFlying = true;
 			for($z = $startZ; $z <= $endZ; ++$z){
 				for($x = $startX; $x <= $endX; ++$x){
 					$v = new Vector3($x, $y, $z);
 					$v1 = new Vector3($x, $yC, $z);
-					if($this->isSupport($v, $this->size)){
+					if($this->isSupport($v, $this->width)){
 					    $b = $this->level->getBlock($v);
 						if($b->isSolid === true){
 							$support = true;
@@ -371,7 +417,7 @@ class Entity extends Position{
 						}elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
 							$isFlying = false;
 						}
-					}elseif($this->isSupport($v1, $this->size)){
+					}elseif($this->isSupport($v1, $this->width)){
 					    $b = $this->level->getBlock($v1);
 					    if($b->isSolid === true){
 					        $support = true;
@@ -390,6 +436,14 @@ class Entity extends Position{
 				$update = false;
 				if(($this->class !== ENTITY_OBJECT and $this->type !== OBJECT_PRIMEDTNT) or $support === false){
 					$drag = 0.2;
+					$blocks = $this->level->getCubes($this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ));
+				    
+				    foreach($blocks as $b){
+				        $this->speedX = $b->calculateXOffset($this->boundingBox, $this->speedX);
+				        $this->speedY = $b->calculateYOffset($this->boundingBox, $this->speedY);
+				        $this->speedZ = $b->calculateZOffset($this->boundingBox, $this->speedZ);
+				    }
+				    
 					if($this->speedX != 0){
 						$this->speedX -= $this->speedX * $drag;
 						$this->x += $this->speedX;
@@ -430,10 +484,13 @@ class Entity extends Position{
 						$this->y = $ny;
 						$update = true;
 					}
+					
+					
 				}
 				
 				if($support === false){
-					$this->speedY -= 0.8;
+					$this->speedY -= 0.08;
+					
 					$update = true;
 				}else{
 					//$this->speedX = 0;
@@ -742,13 +799,18 @@ class Entity extends Position{
 		$this->pitch += $pitch;
 		$this->pitch %= 90;
 		$this->server->query("UPDATE entities SET x = ".$this->x.", y = ".$this->y.", z = ".$this->z.", pitch = ".$this->pitch.", yaw = ".$this->yaw." WHERE EID = ".$this->eid.";");
+		$this->updateAABB();
+	}
+	
+	public function updateAABB(){
+	    $this->boundingBox = new AxisAlignedBB($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
 	}
 	
 	public function updatePosition(){
 		$this->server->query("UPDATE entities SET level = '".$this->level->getName()."', x = ".$this->x.", y = ".$this->y.", z = ".$this->z.", pitch = ".$this->pitch.", yaw = ".$this->yaw." WHERE EID = ".$this->eid.";");
 		$this->sendMoveUpdate();
 		$this->sendMotion();
-		
+		$this->updateAABB();
 	}
 
 	public function setPosition(Vector3 $pos, $yaw = false, $pitch = false){
@@ -900,8 +962,6 @@ class Entity extends Position{
 			    
 			    $this->knockBack($d, $d1);
 			    $this->sendMotion();
-			    //$this->move(new Vector3($this->speedX, $this->speedY, $this->speedZ));
-			    //$this->sendMoveUpdate();
 			}
 			if($this->class === ENTITY_PLAYER and ($this->player instanceof Player)){
 				$points = 0;
@@ -997,7 +1057,10 @@ class Entity extends Position{
 		return false;
 	}
     
-	
+	public function setSize($w, $h){
+	    $this->width = $w;
+	    $this->height = $h;
+	}
 	   
 	public function knockBack($d, $d1)
 	{
@@ -1022,5 +1085,27 @@ class Entity extends Position{
 	public function __toString(){
 		return "Entity(x={$this->x},y={$this->y},z={$this->z},level=".$this->level->getName().",class={$this->class},type={$this->type})";
 	}
+	
+	
+	/*
+	 * Deprecated methods.
+	 * Those methods were left only for compability with older plugins
+	 */
+	/**
+	 * @deprecated Use {@link getHeightOf} or {@link getWidthOf} instead
+	 * @throws Exception
+	 */
+	public static function getSizeOf($e){
+	    throw new Exception("Use getHeightOf or getWidthOf method instead of this.");
+	}
+	
+	/**
+	 * @deprecated Use {@link getHeight} or {@link getWidth} instead
+	 * @throws Exception
+	 */
+	public function getSize(){
+	    throw new Exception("Use getHeight or getWidth method instead of this.");
+	}
+	
 
 }

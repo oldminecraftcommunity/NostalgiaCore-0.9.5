@@ -4,10 +4,10 @@ class Zombie extends Monster{
 	
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		parent::__construct($level, $eid, $class, $type, $data);
-		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 20, "generic");
-		$this->update();
+		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 12, "generic");
 		$this->setName('Zombie');
-		$this->size = 1.95;
+		$this->setSize(0.6, 1.95);
+		$this->update();
 	}
 	
 	public function getDrops(){

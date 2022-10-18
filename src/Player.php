@@ -1867,17 +1867,17 @@ class Player{
 						$slot = $this->getSlot($this->slot);
 						switch($slot->getID()){
 							case WOODEN_SWORD:
-							case GOLDEN_SWORD:
-								$damage = 5;
+							case GOLDEN_SWORD: //damage is correct
+								$damage = 4;
 								break;
 							case STONE_SWORD:
-								$damage = 6;
+								$damage = 5;
 								break;
 							case IRON_SWORD:
-								$damage = 8;
+								$damage = 6;
 								break;
 							case DIAMOND_SWORD:
-								$damage = 10;
+								$damage = 7;
 								break;
 
 							case WOODEN_AXE:

@@ -2,7 +2,12 @@
 
 class Level{
 
-	public $entities, $tiles, $blockUpdates, $nextSave, $players = [], $level;
+	/**
+	 * List of entities in this world
+	 * @var array
+	 */
+    public $entities;
+	public $tiles, $blockUpdates, $nextSave, $players = [], $level;
 	private $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
 
 	public function __construct(PMFLevel $level, Config $entities, Config $tiles, Config $blockUpdates, $name){
@@ -27,7 +32,35 @@ class Level{
 	public function close(){
 		$this->__destruct();
 	}
-
+	
+	public function getCubes(AxisAlignedBB $aABB) {
+	    $aABBs = [];
+	    $x0 = (int)$aABB->minX;
+	    $x1 = (int)($aABB->maxX + 1.0);
+	    $y0 = (int)$aABB->minY;
+	    $y1 = (int)($aABB->maxY + 1.0);
+	    $z0 = (int)$aABB->minZ;
+	    $z1 = (int)($aABB->maxZ + 1.0);
+	    $x0 = $x0 < 0 ? 0 : $x0;
+	    $y0 = $y0 < 0 ? 0 : $y0;
+	    $z0 = $z0 < 0 ? 0 : $z0;
+	    $x1 = $x1 > 256 ? 256 : $x1;
+	    $y1 = $y1 > 128 ? 128 : $y1;
+	    $z1 = $z1 > 256 ? 256 : $z1;
+	    
+	    for($x = $x0; $x < $x1; ++$x) {
+	        for($y = $y0; $y < $y1; ++$y) {
+	            for($z = $z0; $z < $z1; ++$z) {
+	                $b = $this->getBlockWithoutVector($x, $y, $z);
+	                if($b != false && $b->isSolid) {
+	                    $aABBs[] = $b->boundingBox;
+	                }
+	            }
+	        }
+	    }
+	    
+	    return $aABBs;
+	}
 	public function __destruct(){
 		if(isset($this->level)){
 			$this->save(false, false);
@@ -35,7 +68,7 @@ class Level{
 			unset($this->level);
 		}
 	}
-
+    
 	public function save($force = false, $extra = true){
 		if(!isset($this->level)){
 			return false;
@@ -187,14 +220,29 @@ class Level{
 	public function freeChunk($X, $Z, Player $player){
 		unset($this->usedChunks[$X . "." . $Z][$player->CID]);
 	}
-
+    
+	public function checkCollisionsFor(Entity $e){
+	    if($e->level->getName() != $this->getName()){
+	        return false; //not the same world
+	    }
+	    foreach($this->entities as $e1){
+	        if($e->boundingBox->intersectsWith($e1->boundingBox) && $e1->isCollidable){
+	            $e->onCollideWith($e1);
+	            $e1->onCollideWith($e);
+	        }
+	    }
+	}
+	public function isObstructed($e){
+	    
+	}
+	
 	public function checkThings(){
 		if(!isset($this->level)){
 			return false;
 		}
 		$now = microtime(true);
 		$this->players = $this->server->api->player->getAll($this);
-
+		
 		if(count($this->changedCount) > 0){
 			arsort($this->changedCount);
 			$resendChunks = [];
@@ -452,13 +500,29 @@ class Level{
 		}
 		return new Position($this->level->getData("spawnX"), $this->level->getData("spawnY"), $this->level->getData("spawnZ"), $this);
 	}
-
+    
+	/**
+	 * @param number $x
+	 * @param number $y
+	 * @param number $z
+	 * @return GenericBlock | false if failed
+	 */
+	
+	public function getBlockWithoutVector($x, $y, $z){
+	    $b = $this->level->getBlock($x, $y, $z);
+	    return BlockAPI::get($b[0], $b[1], new Position($x, $y, $z, $this));
+	}
+	
+	/**
+	 * Recommended to use {@link getBlockWithoutVector()} if you dont have the vector
+	 * @param Vector3 $pos
+	 * @return Block|false if failed
+	 */
 	public function getBlock(Vector3 $pos){
 		if(!isset($this->level) or ($pos instanceof Position) and $pos->level !== $this){
 			return false;
 		}
-		$b = $this->level->getBlock($pos->x, $pos->y, $pos->z);
-		return BlockAPI::get($b[0], $b[1], new Position($pos->x, $pos->y, $pos->z, $this));
+		return $this->getBlockWithoutVector($pos->x, $pos->y, $pos->z);
 	}
 
 	public function setSpawn(Vector3 $pos){

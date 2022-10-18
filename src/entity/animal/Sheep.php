@@ -7,9 +7,9 @@ class Sheep extends Animal{
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 8, "generic");
-		$this->update();
 		$this->setName('Sheep');
-		$this->size = $this->isBaby() ? 0.65 : 1.3;
+		$this->setSize($this->isBaby() ? 0.45 : 0.9, $this->isBaby() ? 0.675 : 1.3);
+		$this->update();
 	}
 	
 	public function getDrops(){

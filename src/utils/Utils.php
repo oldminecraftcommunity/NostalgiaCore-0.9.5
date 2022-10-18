@@ -38,8 +38,6 @@ class Utils{
 		}
 		return $id;
 	}
-	
-	
 	public static function hasEmoji($s){
 		return preg_match(Utils::emojiRegex, $s, $matches);
 	}
@@ -50,7 +48,25 @@ class Utils{
 			return sha1(strtolower($variable));
 		}
 	}
-
+	public function xrange($start, $limit, $step = 1) {
+	    if ($start <= $limit) {
+	        if ($step <= 0) {
+	            throw new LogicException('Step must be positive');
+	        }
+	        
+	        for ($i = $start; $i <= $limit; $i += $step) {
+	            yield $i;
+	        }
+	    } else {
+	        if ($step >= 0) {
+	            throw new LogicException('Step must be negative');
+	        }
+	        
+	        for ($i = $start; $i >= $limit; $i += $step) {
+	            yield $i;
+	        }
+	    }
+	}
 	public static function getUniqueID($raw = false, $extra = ""){
 		$machine = php_uname("a");
 		$machine .= file_exists("/proc/cpuinfo") ? file_get_contents("/proc/cpuinfo") : "";

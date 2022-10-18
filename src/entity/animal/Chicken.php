@@ -7,9 +7,9 @@ class Chicken extends Animal{
 		$server = ServerAPI::request();
 		$server->schedule(mt_rand(0,6000) + 6000, array($this, "dropAnEgg"));
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 4, "generic");
-		$this->update();
 		$this->setName('Chicken');
-		$this->size = $this->isBaby() ? 0.35 : 0.7;
+		$this->setSize($this->isBaby() ? 0.2 : 0.4, $this->isBaby() ? 0.35 : 0.7);
+		$this->update();
 	}
 	public function isFood($id){
 		return $id === PUMPKIN_SEEDS || $id === MELON_SEEDS || $id === BEETROOT_SEEDS || $id === WHEAT_SEEDS;

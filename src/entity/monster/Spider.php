@@ -4,10 +4,10 @@ class Spider extends Monster{
 	
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		parent::__construct($level, $eid, $class, $type, $data);
-		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:20, "generic");
-		$this->update();
+		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 8, "generic");
 		$this->setName('Spider');
-		$this->size = 0.6; //not original
+		$this->setSize(1.4, 0.9);
+		$this->update();
 	}
 	
 	public function getDrops(){

@@ -10,7 +10,7 @@ abstract class Creature extends Living{
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:1, "generic");
 		$this->update();
 		//$this->setName((isset($mobs[$this->type]) ? $mobs[$this->type]:$this->type));
-		$this->size = 1;
+		$this->width = 1;
 	}
 	
 	public function spawn($player){

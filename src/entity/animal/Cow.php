@@ -4,10 +4,10 @@ class Cow extends Animal{
 	const TYPE = MOB_COW;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		parent::__construct($level, $eid, $class, $type, $data);
-		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:10, "generic");
-		$this->update();
+		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 10, "generic");
+		$this->setSize($this->isBaby() ? 0.45 : 0.9 , $this->isBaby() ? 0.7 : 1.4);
 		$this->setName('Cow');
-		$this->size = $this->isBaby() ? 0.65 : 1.4;
+		$this->update();
 	}
 	public function isFood($id){
 		return $id === WHEAT;

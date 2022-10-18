@@ -137,6 +137,7 @@ abstract class Block extends Position{
 	protected $meta;
 	protected $name;
 	protected $breakTime;
+	public $boundingBox;
 	protected $hardness;
 	public $isActivable = false;
 	public $breakable = true;
@@ -159,6 +160,7 @@ abstract class Block extends Position{
 		$this->name = $name;
 		$this->breakTime = 0.20;
 		$this->hardness = 10;
+		$this->boundingBox = new AxisAlignedBB($this->x, $this->y, $this->z, $this->x + 1, $this->y + 1, $this->z + 1);
 	}
 	
 	final public function getHardness(){
@@ -184,6 +186,7 @@ abstract class Block extends Position{
 		$this->x = (int) $v->x;
 		$this->y = (int) $v->y;
 		$this->z = (int) $v->z;
+		$this->boundingBox->setBounds($this->x, $this->y, $this->z, $this->x + 1, $this->y + 1, $this->z + 1);
 	}
 	
 	public function getDrops(Item $item, Player $player){
