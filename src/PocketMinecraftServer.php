@@ -474,8 +474,10 @@ class PocketMinecraftServer{
 				}
 			}
 			$this->tick();
-			foreach($this->api->level->levels as $l){
-			    $l->onTick($this);
+			if($this->ticks % 2 === 0){
+    			foreach($this->api->level->levels as $l){
+    			    $l->onTick($this);
+    			}
 			}
 		}
 	}

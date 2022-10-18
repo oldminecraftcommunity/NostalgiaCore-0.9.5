@@ -244,7 +244,7 @@ class Entity extends Position{
 	}
 	
 	public function environmentUpdate(){
-	    $hasUpdate = $this->class === ENTITY_MOB; //force true for mobs
+	    $hasUpdate = Entity::$updateOnTick ? $this->class === ENTITY_MOB : false; //force true for mobs
 		$time = microtime(true);
 		if($this->class === ENTITY_PLAYER and ($this->player instanceof Player) and $this->player->spawned === true and $this->player->blocked !== true && !$this->dead){
 			foreach($this->server->api->entity->getRadius($this, 1.5, ENTITY_ITEM) as $item){
@@ -438,13 +438,15 @@ class Entity extends Position{
 				$update = false;
 				if((($this->class !== ENTITY_OBJECT and $this->type !== OBJECT_PRIMEDTNT) or $support === false)){
 					$drag = 0.2;
-					$blocks = $this->level->getCubes($this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ));
-				    foreach($blocks as $b){
-				        $this->speedX = $b->calculateXOffset($this->boundingBox, $this->speedX);
-				        $this->speedY = $b->calculateYOffset($this->boundingBox, $this->speedY);
-				        $this->speedZ = $b->calculateZOffset($this->boundingBox, $this->speedZ);
-				    }
-				    
+					if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM){
+    					$blocks = $this->level->getCubes($this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ));
+    				    foreach($blocks as $b){
+    				        $this->speedX = $b->calculateXOffset($this->boundingBox, $this->speedX);
+    				        $this->speedY = $b->calculateYOffset($this->boundingBox, $this->speedY);
+    				        $this->speedZ = $b->calculateZOffset($this->boundingBox, $this->speedZ);
+    				    }
+					}
+					
 					if($this->speedX != 0){
 						$this->speedX -= $this->speedX * $drag;
 						$this->x += $this->speedX;
@@ -463,7 +465,7 @@ class Entity extends Position{
 							$z = (int) ($this->z - 0.5);
 							$lim = (int) floor($ny);
 							for($y = (int) ceil($this->y) - 1; $y >= $lim; --$y){
-								if($this->level->getBlock(new Vector3($x, $y, $z))->isSolid === true){
+								if($this->level->getBlockWithoutVector($x, $y, $z)->isSolid === true){
 									$support = true;
 									if($this->class === ENTITY_FALLING){
 										$this->y = $ny;
@@ -490,8 +492,7 @@ class Entity extends Position{
 				}
 				
 				if($support === false){
-					$this->speedY -= 0.08;
-					
+					$this->speedY -= $this->class === ENTITY_FALLING ? 0.08 : 1.6;
 					$update = true;
 				}else{
 					//$this->speedX = 0;
@@ -551,10 +552,7 @@ class Entity extends Position{
 		if($this->class !== ENTITY_PLAYER){
 			$this->updateMovement();
 		}
-		if(self::$updateOnTick && $this->class === ENTITY_MOB){
-		  $this->needsUpdate = $hasUpdate;
-		}
-		
+		$this->needsUpdate = $hasUpdate;
 		$this->lastUpdate = $now;
 	}
 	
