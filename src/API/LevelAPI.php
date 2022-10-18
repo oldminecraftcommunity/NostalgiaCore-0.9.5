@@ -1,8 +1,8 @@
 <?php
 
 class LevelAPI{
-
-	private $server, $levels, $default;
+    public $levels;
+	private $server, $default;
 
 	public function __construct(){
 		$this->server = ServerAPI::request();

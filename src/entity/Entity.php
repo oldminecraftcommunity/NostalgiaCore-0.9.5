@@ -3,9 +3,11 @@
 class Entity extends Position{
 	const TYPE = -1;
 	const CLASS_TYPE = -1;
-	
+	public static $updateOnTick;
 	public $isCollidable;
 	public $canBeAttacked;
+	
+	public $needsUpdate;
 	/**
 	 * @var AxisAlignedBB
 	 */
@@ -434,10 +436,9 @@ class Entity extends Position{
 			}
 			if($this->class !== ENTITY_PLAYER){
 				$update = false;
-				if(($this->class !== ENTITY_OBJECT and $this->type !== OBJECT_PRIMEDTNT) or $support === false){
+				if((($this->class !== ENTITY_OBJECT and $this->type !== OBJECT_PRIMEDTNT) or $support === false)){
 					$drag = 0.2;
 					$blocks = $this->level->getCubes($this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ));
-				    
 				    foreach($blocks as $b){
 				        $this->speedX = $b->calculateXOffset($this->boundingBox, $this->speedX);
 				        $this->speedY = $b->calculateYOffset($this->boundingBox, $this->speedY);
@@ -549,10 +550,11 @@ class Entity extends Position{
 		
 		if($this->class !== ENTITY_PLAYER){
 			$this->updateMovement();
-			if($hasUpdate === true){
-				$this->server->schedule(1, array($this, "update"));
-			}
 		}
+		if(self::$updateOnTick && $this->class === ENTITY_MOB){
+		  $this->needsUpdate = $hasUpdate;
+		}
+		
 		$this->lastUpdate = $now;
 	}
 	
@@ -803,7 +805,7 @@ class Entity extends Position{
 	}
 	
 	public function updateAABB(){
-	    $this->boundingBox = new AxisAlignedBB($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
+	    $this->boundingBox->setBounds($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
 	}
 	
 	public function updatePosition(){

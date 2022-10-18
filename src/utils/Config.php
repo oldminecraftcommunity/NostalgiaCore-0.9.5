@@ -11,7 +11,6 @@ define("CONFIG_LIST", 5); // .txt, .list
 
 /**
  * Class Config
- *
  * Config Class for simple config manipulation of multiple formats.
  */
 class Config{
@@ -124,7 +123,6 @@ class Config{
 		}
 		return true;
 	}
-
 	/**
 	 * @return boolean
 	 */

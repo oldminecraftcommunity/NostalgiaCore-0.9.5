@@ -329,7 +329,16 @@ class Level{
 		}
 		return $ret;
 	}
-
+    
+	public function onTick(PocketMinecraftServer $server){
+	    $ents = $server->api->entity->getAll($this);
+	    foreach($ents as $e){
+	        if($e->needsUpdate){
+	            $e->update();
+	        }
+	    }
+	}
+	
 	public function setBlock(Vector3 $pos, Block $block, $update = true, $tiles = false, $direct = false){
 		if(!isset($this->level) or (($pos instanceof Position) and $pos->level !== $this) or $pos->x < 0 or $pos->y < 0 or $pos->z < 0){
 			return false;

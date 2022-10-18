@@ -71,6 +71,7 @@ class PocketMinecraftServer{
 		console("[INFO] Loading extra.properties...");
 		$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, [
 			"version" => "5",
+		    "update-mobs-on-every-tick" => false,
 			"enable-nether-reactor" => true,
 			"enable-explosions" => true,
 			"enable-rail-connection" => false,
@@ -82,6 +83,10 @@ class PocketMinecraftServer{
 			"discord-webhook-url" => "none",
 			"discord-bot-name" => "NostalgiaCore Logger"
 		]);
+		Entity::$updateOnTick = $this->extraprops->get("update-mobs-on-every-tick");
+		if(Entity::$updateOnTick){
+		    console("[WARNING] Mobs will update every tick. Might cause lags with a huge amount of entities.");
+		}
 		Explosion::$enableExplosions = $this->extraprops->get("enable-explosions");
 		RailBlock::$shouldconnectrails = $this->extraprops->get("enable-rail-connection"); //Rail connection in config
 		NetherReactorBlock::$enableReactor = $this->extraprops->get("enable-nether-reactor");
@@ -469,6 +474,9 @@ class PocketMinecraftServer{
 				}
 			}
 			$this->tick();
+			foreach($this->api->level->levels as $l){
+			    $l->onTick($this);
+			}
 		}
 	}
 
