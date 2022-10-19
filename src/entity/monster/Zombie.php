@@ -6,7 +6,7 @@ class Zombie extends Monster{
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 12, "generic");
 		$this->setName('Zombie');
-		$this->setSize(0.6, 1.95);
+		$this->setSize(0.6, 1.85);
 		$this->update();
 	}
 	
