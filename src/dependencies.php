@@ -77,8 +77,8 @@ require_once(FILE_PATH . "/src/math/Vector3.php");
 require_once(FILE_PATH . "/src/world/Position.php");
 require_once(FILE_PATH . "/src/pmf/PMF.php");
 
-require_once(FILE_PATH . "/src/utils/pathfinder/PathNode.php");
-require_once(FILE_PATH . "/src/utils/pathfinder/Path.php");
+require_once(FILE_PATH . "/src/utils/pathfinder/astar/Node.php");
+require_once(FILE_PATH . "/src/utils/pathfinder/astar/AStar.php");
 
 require_once(FILE_PATH . "/src/entity/Rideable.php");
 require_once(FILE_PATH . "/src/entity/Attachable.php");

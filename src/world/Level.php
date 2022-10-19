@@ -35,12 +35,12 @@ class Level{
 	
 	public function getCubes(AxisAlignedBB $aABB) {
 	    $aABBs = [];
-	    $x0 = (int)$aABB->minX;
-	    $x1 = (int)($aABB->maxX + 1.0);
-	    $y0 = (int)$aABB->minY;
-	    $y1 = (int)($aABB->maxY + 1.0);
-	    $z0 = (int)$aABB->minZ;
-	    $z1 = (int)($aABB->maxZ + 1.0);
+	    $x0 = floor($aABB->minX);
+	    $x1 = ceil($aABB->maxX + 1.0);
+	    $y0 = floor($aABB->minY);
+	    $y1 = ceil($aABB->maxY + 1.0);
+	    $z0 = floor($aABB->minZ);
+	    $z1 = ceil($aABB->maxZ + 1.0);
 	    $x0 = $x0 < 0 ? 0 : $x0;
 	    $y0 = $y0 < 0 ? 0 : $y0;
 	    $z0 = $z0 < 0 ? 0 : $z0;

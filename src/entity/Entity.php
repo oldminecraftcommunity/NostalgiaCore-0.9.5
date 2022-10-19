@@ -141,6 +141,11 @@ class Entity extends Position{
 		}
 	}
 	
+	public function setVelocity($vX, $vY, $vZ){
+	    $this->motionX = $vX;
+	    $this->motionY = $vY;
+	    $this->motionZ = $vZ;
+	}
 	
 	/**
 	 * @param mixed $e Entity instance or EID
@@ -492,7 +497,7 @@ class Entity extends Position{
 				}
 				
 				if($support === false){
-					$this->speedY -= $this->class === ENTITY_FALLING ? 0.08 : 1.6;
+					$this->speedY -= $this->class === ENTITY_FALLING ? 0.08 : 0.04; //TODO: replace with $gravity
 					$update = true;
 				}else{
 					//$this->speedX = 0;
