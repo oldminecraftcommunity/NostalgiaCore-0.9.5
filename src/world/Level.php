@@ -32,7 +32,10 @@ class Level{
 	public function close(){
 		$this->__destruct();
 	}
-	
+	/**
+	 * @param AxisAlignedBB $aABB
+	 * @return AxisAlignedBB[]
+	 */
 	public function getCubes(AxisAlignedBB $aABB) {
 	    $aABBs = [];
 	    $x0 = floor($aABB->minX);
@@ -61,6 +64,7 @@ class Level{
 	    
 	    return $aABBs;
 	}
+	
 	public function __destruct(){
 		if(isset($this->level)){
 			$this->save(false, false);

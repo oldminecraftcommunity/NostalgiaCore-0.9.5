@@ -5,7 +5,7 @@ class TaskLookAround extends TaskBase
     private $finYaw = 0;
     public function shouldBeExecuted(EntityAI $ai)
     {
-        return !$ai->entity->isMoving() && $ai->entity->lookTime <= 0 && mt_rand(0,30) == 1  && $ai->entity->idleTime <= 0;
+        return !$ai->entity->isMoving() && $ai->entity->lookTime <= 0 && mt_rand(0,30) == 1  && $ai->entity->idleTime <= 0 && !($ai->lastTask instanceof TaskLookAround);
     }
     
     public function wasExecuted(EntityAI $ai){
