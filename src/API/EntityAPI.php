@@ -84,10 +84,11 @@ class EntityAPI{
                     }
                     
                     for($cnt = $amount; $cnt > 0; --$cnt){
+                        
                         $this->summon($pos, ENTITY_MOB, $type, $isBaby === 1 ? ["IsBaby" => 1] : []);
                     }
                     
-                    $output .= "$amount".($isBaby === 1 ? " Baby" : "")." $mobName".(($type !== 13 || $amount > 1) ? "s" : "")." spawned in $x, $y, $z.";
+                    $output .= "$amount ".($isBaby === 1 ? "Baby" : "")." $mobName".(($type !== 13 || $amount > 1) ? "s" : "")." spawned in $x, $y, $z.";
                     break;
                 }
                 elseif(strtolower($args[1]) == 'baby'){//summon <mob> [baby]
