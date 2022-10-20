@@ -48,6 +48,11 @@ class Utils{
 			return sha1(strtolower($variable));
 		}
 	}
+	
+	public static function in_range($num, $min, $max){
+	   return $num >= $min && $num <= $max;
+	}
+	
 	public function xrange($start, $limit, $step = 1) {
 	    if ($start <= $limit) {
 	        if ($step <= 0) {

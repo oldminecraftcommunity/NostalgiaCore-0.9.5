@@ -6,7 +6,7 @@ class Entity extends Position{
 	public static $updateOnTick;
 	public $isCollidable;
 	public $canBeAttacked;
-	public $moveTime;
+	public $moveTime, $lookTime, $idleTime;
 	public $needsUpdate;
 	/**
 	 * @var AxisAlignedBB
@@ -93,6 +93,7 @@ class Entity extends Position{
 		$this->position = array("level" => $this->level, "x" => &$this->x, "y" => &$this->y, "z" => &$this->z, "yaw" => &$this->yaw, "pitch" => &$this->pitch);
 		$this->height = 0.98;
 		$this->moveTime = 0;
+		$this->lookTime = 0;
 		switch($this->class){
 			case ENTITY_PLAYER:
 				$this->player = $this->data["player"];
@@ -150,8 +151,9 @@ class Entity extends Position{
 	    $this->speedY += $vY;
 	    $this->speedZ += $vZ;
 	}
+	
 	public function isMoving(){
-	    return ($this->speedX > 0.01 || $this->speedX < -0.01)  || ($this->speedY > 0.01 || $this->speedY < -0.01) || ($this->speedZ > 0.01 || $this->speedZ < -0.01);
+	    return $this->moveTime > 0 || ($this->speedX > 0.01 || $this->speedX < -0.01)  || ($this->speedY > 0.01 || $this->speedY < -0.01) || ($this->speedZ > 0.01 || $this->speedZ < -0.01);
 	}
 	public function setVelocity($vX, $vY = 0, $vZ = 0){
 	    if($vX instanceof Vector3){
@@ -520,6 +522,13 @@ class Entity extends Position{
 					if($this->moveTime > 0){
 					    --$this->moveTime;
 					}
+					if($this->lookTime > 0){
+					    --$this->lookTime;
+					}
+					if($this->idleTime > 0){
+					    --$this->idleTime;
+					}
+					    
 					
 				}
 				
@@ -627,7 +636,6 @@ class Entity extends Position{
 					}
 				}
 			}else{
-				
 				$this->updatePosition($this->x, $this->y, $this->z, $this->yaw, $this->pitch);
 			}
 		}
