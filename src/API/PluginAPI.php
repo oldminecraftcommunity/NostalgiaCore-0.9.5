@@ -62,9 +62,9 @@ class PluginAPI extends stdClass{
 
 	public function __destruct(){
 		foreach($this->plugins as $p){
-			$p[0]->__destruct();
+		    if(method_exists($p[0], "__destruct")){$p[0]->__destruct();};
 		}
-		unset($plugins);
+		unset($this->plugins);
 	}
 
 	public function getAll(){
@@ -163,6 +163,7 @@ class PluginAPI extends stdClass{
 					}
 					
 					$phr = "phar://$filePath/";
+					console("loader:".$pluginInfo["classLoader"]);
 					include($phr."/src/".$pluginInfo["classLoader"]);
 					$class = $pluginInfo["CLClass"];
 					$loader = new $class();

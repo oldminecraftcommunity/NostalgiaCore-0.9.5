@@ -44,7 +44,7 @@ class MinecraftNode extends Node
             for($z = -1; $z <= 1; $z++){
                 $node = new MinecraftNode($x + $this->x, $this->y, $z + $this->z);
                 if(!$node->canMoveHere($pf)){
-                    console("[DEBUG] Obstacle at $node");
+                    //console("[DEBUG] Obstacle at $node");
                     continue;
                 }
                 $this->nodes[] = $node;

@@ -14,19 +14,19 @@ class PharUtils{
 			$content[$line[0]] = $line[1];
 		}
 		
-		$pluginData["name"] = $content["name"];
-		$pluginData["description"] = $content["description"];
-		$pluginData["version"] = $content["version"];
-		$pluginData["author"] = $content["author"];
-		$pluginData["mainFile"] = $content["mainFile"];
-		$pluginData["api"] = $content["api"];
-		$pluginData["classLoader"] = $content["classLoader"];
+		$pluginData["name"] = trim($content["name"]);
+		$pluginData["description"] = trim($content["description"]);
+		$pluginData["version"] = trim($content["version"]);
+		$pluginData["author"] = trim($content["author"]);
+		$pluginData["mainFile"] = trim($content["mainFile"]);
+		$pluginData["api"] = trim($content["api"]);
+		$pluginData["classLoader"] = trim($content["classLoader"]);
 		$pluginData["CLClass"] = self::getNameSpaceClass($pluginData["classLoader"]);
 		return $pluginData;
 	}
 	
 	public static function getNameSpaceClass($content){
-		return substr(str_replace("/", "\\", $content), 0, -4);
+	    return trim(substr(str_replace("/", "\\", $content), 0, -4));
 	}
 	
 	

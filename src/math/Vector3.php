@@ -62,9 +62,9 @@ class Vector3{
 
 	public function subtract($x = 0, $y = 0, $z = 0){
 		if(($x instanceof Vector3) === true){
-			return $this->add(-$x->x, -$x->y, -$x->z);
+			return $this->subtract($x->x, $x->y, $x->z);
 		}else{
-			return $this->add(-$x, -$y, -$z);
+		    return new Vector3($this->x - $x, $this->y - $y, $this->z - $z);
 		}
 	}
 

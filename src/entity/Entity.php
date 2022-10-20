@@ -6,7 +6,7 @@ class Entity extends Position{
 	public static $updateOnTick;
 	public $isCollidable;
 	public $canBeAttacked;
-	
+	public $moveTime;
 	public $needsUpdate;
 	/**
 	 * @var AxisAlignedBB
@@ -52,6 +52,7 @@ class Entity extends Position{
 	public $width = 1;
 	public $height = 1;
 	public $random;
+	public $radius;
 	public $inAction = false;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 	    $this->random = new Random();
@@ -91,6 +92,7 @@ class Entity extends Position{
 		$this->pitch = isset($this->data["pitch"]) ? (float) $this->data["pitch"]:0;
 		$this->position = array("level" => $this->level, "x" => &$this->x, "y" => &$this->y, "z" => &$this->z, "yaw" => &$this->yaw, "pitch" => &$this->pitch);
 		$this->height = 0.98;
+		$this->moveTime = 0;
 		switch($this->class){
 			case ENTITY_PLAYER:
 				$this->player = $this->data["player"];
@@ -131,7 +133,6 @@ class Entity extends Position{
 				}
 				break;
 		}
-		$this->radius = &$this->width / 2;
 		$this->boundingBox = new AxisAlignedBB($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
 		$this->update();
 		$this->updateLast();
@@ -141,10 +142,24 @@ class Entity extends Position{
 		}
 	}
 	
-	public function setVelocity($vX, $vY, $vZ){
-	    $this->motionX = $vX;
-	    $this->motionY = $vY;
-	    $this->motionZ = $vZ;
+	public function addVelocity($vX, $vY = 0, $vZ = 0){
+	    if($vX instanceof Vector3){
+	        return $this->addVelocity($vX->x, $vX->y, $vX->z);
+	    }
+	    $this->speedX += $vX;
+	    $this->speedY += $vY;
+	    $this->speedZ += $vZ;
+	}
+	public function isMoving(){
+	    return ($this->speedX > 0.01 || $this->speedX < -0.01)  || ($this->speedY > 0.01 || $this->speedY < -0.01) || ($this->speedZ > 0.01 || $this->speedZ < -0.01);
+	}
+	public function setVelocity($vX, $vY = 0, $vZ = 0){
+	    if($vX instanceof Vector3){
+	        return $this->setVelocity($vX->x, $vX->y, $vX->z);
+	    }
+	    $this->speedX = $vX;
+	    $this->speedY = $vY;
+	    $this->speedZ = $vZ;
 	}
 	
 	/**
@@ -204,10 +219,10 @@ class Entity extends Position{
 	    return $this->width;
 	}
 	
-	public function lookOn($target){
-	    $horizontal = sqrt(pow(($target->entity->x - $this->x), 2) + pow(($target->z - $this->z) , 2));
+	public function lookOn(Vector3 $target){
+	    $horizontal = sqrt(pow(($target->x - $this->x), 2) + pow(($target->z - $this->z) , 2));
 	    $vertical = $target->y - ($this->y + -0.5); /*0.5 = $entity->getEyeHeight()*/
-		$pitch = -atan2($vertical, $horizontal) / M_PI * 180; //negative is up, positive is down
+		$pitch = -asin($horizontal) / M_PI * 180; //negative is up, positive is down
 	
 		$xDist = $target->x - $this->x;
 		$zDist = $target->z - $this->z;
@@ -218,6 +233,7 @@ class Entity extends Position{
 		}
 		$this->yaw = $yaw;
 		$this->pitch = $pitch;
+		$this->server->query("UPDATE entities SET pitch = ".$this->pitch.", yaw = ".$this->yaw." WHERE EID = ".$this->eid.";");
 	}
 	
 	public function getDrops(){
@@ -443,6 +459,16 @@ class Entity extends Position{
 				$update = false;
 				if((($this->class !== ENTITY_OBJECT and $this->type !== OBJECT_PRIMEDTNT) or $support === false)){
 					$drag = 0.2;
+					if($this->speedX < 0.01 && $this->speedX > -0.01){
+					    $this->speedX = 0;
+					}
+					if($this->speedZ < 0.01 && $this->speedZ > -0.01){
+					    $this->speedZ = 0;
+					}
+					if($this->speedY < 0.001 && $this->speedY > -0.001){
+					    $this->speedY = 0;
+					}
+					
 					if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM){
     					$blocks = $this->level->getCubes($this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ));
     				    foreach($blocks as $b){
@@ -451,19 +477,17 @@ class Entity extends Position{
     				        $this->speedZ = $b->calculateZOffset($this->boundingBox, $this->speedZ);
     				    }
 					}
-					
 					if($this->speedX != 0){
-						$this->speedX -= $this->speedX * $drag;
 						$this->x += $this->speedX;
+						$this->speedX -= $this->speedX * $drag;
 						$update = true;
 					}
 					if($this->speedZ != 0){
-						$this->speedZ -= $this->speedZ * $drag;
 						$this->z += $this->speedZ;
+						$this->speedZ -= $this->speedZ * $drag;
 						$update = true;
 					}
 					if($this->speedY != 0){
-						$this->speedY -= $this->speedY * $drag;
 						$ny = $this->y + $this->speedY;
 						if($ny <= $this->y){
 							$x = (int) ($this->x - 0.5);
@@ -490,14 +514,17 @@ class Entity extends Position{
 							}
 						}
 						$this->y = $ny;
+						$this->speedY -= $this->speedY * $drag;
 						$update = true;
 					}
-					
+					if($this->moveTime > 0){
+					    --$this->moveTime;
+					}
 					
 				}
 				
 				if($support === false){
-					$this->speedY -= $this->class === ENTITY_FALLING ? 0.08 : 0.04; //TODO: replace with $gravity
+					$this->speedY -= $this->class === ENTITY_FALLING ? 0.04 : 0.08; //TODO: replace with $gravity
 					$update = true;
 				}else{
 					//$this->speedX = 0;
@@ -875,9 +902,9 @@ class Entity extends Position{
 	public function resetSpeed(){
 		$this->speedMeasure = array(0, 0, 0, 0, 0, 0, 0);	
 	}
-
+    
 	public function getSpeed(){
-		return $this->speed;		
+		return $this->speed;
 	}
 	
 	public function getSpeedMeasure(){
@@ -963,7 +990,7 @@ class Entity extends Position{
 			        $d = (Utils::randomFloat() - Utils::randomFloat()) * 0.01;
 			    }
 			    
-			    //attackedAtYaw = (float)((Math.atan2(d1, d) * 180D) / 3.1415927410125732D) - rotationYaw;
+			    //attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) - rotationYaw;
 			    
 			    $this->knockBack($d, $d1);
 			    $this->sendMotion();
@@ -1065,6 +1092,7 @@ class Entity extends Position{
 	public function setSize($w, $h){
 	    $this->width = $w;
 	    $this->height = $h;
+	    $this->radius = $w / 2;
 	}
 	   
 	public function knockBack($d, $d1)

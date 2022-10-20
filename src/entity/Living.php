@@ -1,4 +1,5 @@
 <?php
+
 abstract class Living extends Entity implements Damageable, Pathfindable{
     
     public function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
