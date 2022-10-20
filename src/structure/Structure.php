@@ -30,23 +30,24 @@ abstract class Structure{
 	}
 	
 	protected function placeBlock($level, $sym, &$tv){
-		console("@@@");
+		//console("@@@");
 		if($level instanceof Level){
 			$idm = $this->getMappingFor($sym);
-			var_dump($idm);
+			if(!isset($idm[1])) $idm[1] = 0;
+			//var_dump($idm);
 			if($idm === Structure::MAP_NO_KEY){
-				console("Failed to receive id");
+				//console("Failed to receive id");
 				return false;
 			}
 			$block = $this->api->block->get($idm[0], $idm[1], $tv); //TODO: meta
-			console($block);
+			//console($block);
 			$level->setBlock($tv, $block, true, false, true);
 		}
 		
 	}
 	
 	public function build($level, $centerX, $centerY, $centerZ){
-		console("b");
+		//console("b");
 		$tempVector = new Vector3(0,0,0);
 		$x = $centerX - $this->radius;
 		$z = $centerZ - $this->radius;
@@ -54,7 +55,7 @@ abstract class Structure{
 			foreach($blocksXZ as $blocks){
 				foreach(str_split($blocks) as $block){
 					$tempVector->setXYZ($x, $centerY + $offsetY, $z);
-					console("6#&_+7$:373-");
+					//console("6#&_+7$:373-");
 					$this->placeBlock($level, $block, $tempVector);
 					++$x;
 				}

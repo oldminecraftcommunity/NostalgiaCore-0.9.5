@@ -1,14 +1,14 @@
-![](http://185.117.153.152/nc_favicon.png)
+![](http://owouwu.ru/favicon.png)
 
 # NostalgiaCore
 
 NostalgiaCore is a fork of Legacy PocketMine-MP 1.3.12, which fixes bugs of Legacy PocketMine-MP, and adds new content
 
-Supported version: 0.8.1
+Supported MCPE versions: 0.8.0, 0.8.1 (maybe 0.8.2)
 
 (Special thx to GullCraft Network and DartMiner43)
 
-# Why should you use NostalgiaCore to run a Minecraft Pocket Edition 0.8.1 server?
+<h2> Why should you use NostalgiaCore to run a Minecraft Pocket Edition 0.8.1 server?</h2>
 
 • Items are dropping normally.
 
@@ -16,35 +16,38 @@ Supported version: 0.8.1
 
 • Player hotbar is saved.
 
-• Extra options (Only on NostalgiaCore!)
-
-• Server is starting faster (~0.7 sec).
+• Extra options (like in-game messages to discord)
 
 • Vector2 is fixed.
 
-• Players can't join as "RCON" or "CONSOLE".
-
 • Working Nether Reactor.
+
+• Mob AI
+
+• PHAR plugins support
 
 ...and etc.
 
-# Download Stable NostalgiaCore
+<h3> Download Stable NostalgiaCore</h3>
 
 https://github.com/kotyaralih/NostalgiaCore/releases/
 
+<h3> PHP binaries download</h3>
 
-# How to use auto-restart?
+https://sourceforge.net/projects/pocketmine/files/builds/
+
+<h3> How to use auto-restart?</h3>
 
 Simply start your server using ./start.sh -l
 
-# Our discord server
+<h3> Our discord server</h3>
 
 https://discord.gg/uSHEWe6NC3
 
-## Want to contribute?
+<h4> Want to contribute?</h4>
 ​* Check the [Contributing Guidelines](CONTRIBUTING.md)
 
-## Third-party Libraries/Protocols Used
+<h4> Third-party Libraries/Protocols Used</h4>
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
 * __[PHP SQLite3](http://php.net/manual/en/book.sqlite3.php)__
 * __[PHP BCMath](http://php.net/manual/en/book.bc.php)__

@@ -134,6 +134,7 @@ class PluginAPI extends stdClass{
 	}
 
 	private function loadAll(){
+		$pharCnt = 0;
 		$dir = dir($this->pluginsPath());
 		while(false !== ($file = $dir->read())){
 			if($file[0] !== "."){
@@ -143,6 +144,7 @@ class PluginAPI extends stdClass{
 					$this->load($dir->path . $file);
 				}
 				if($ext2 === "phar"){
+					++$pharCnt;
 					$pluginInfo = []; //TODO: A PluginInfo class?
 					$filePath = $this->pluginsPath().$file;
 					$p = new Phar($this->pluginsPath().$file, 0);
@@ -154,8 +156,7 @@ class PluginAPI extends stdClass{
 							break;
 						}
 					}
-					console("[INFO] Loading {$pluginInfo["name"]} by {$pluginInfo["author"]}...");
-					console("[WARNING] PHAR Plugin format is experemental and might cause bugs.");
+					console("[INFO] Loading PHAR plugin \"".FORMAT_GREEN.$pluginInfo["name"].FORMAT_RESET."\" ".FORMAT_AQUA.$pluginInfo["version"].FORMAT_RESET." by ".FORMAT_AQUA.$pluginInfo["author"].FORMAT_RESET);
 					
 					$aver = CURRENT_API_VERSION;
 					if($pluginInfo["api"] != $aver){
@@ -181,6 +182,9 @@ class PluginAPI extends stdClass{
 					$this->plugins[$identifier] = [$plugin, $pluginInfo];
 				}
 			}
+		}
+		if($pharCnt > 0){
+			console("[WARNING] PHAR Plugin format is experemental and might cause bugs.");
 		}
 	}
 
