@@ -10,45 +10,6 @@ class EntityAPI{
 		$this->entities = [];
 		$this->server = ServerAPI::request();
 
-		$this->hp = [
-			10 => 4,
-			11 => 10,
-			12 => 10,
-			13 => 8,
-
-			32 => 20,
-			33 => 20,
-			34 => 20,
-			35 => 16,
-			36 => 20,
-		];
-
-		$this->mob = [
-			"chicken" => 10,
-			"cow" => 11,
-			"pig" => 12,
-			"sheep" => 13,
-
-			"zombie" => 32,
-			"creeper" => 33,
-			"skeleton" => 34,
-			"spider" => 35,
-			"pigman" => 36,
-		];
-
-		$this->mobName = [
-			10 => "Chicken",
-			11 => "Cow",
-			12 => "Pig",
-			13 => "Sheep",
-
-			32 => "Zombie",
-			33 => "Creeper",
-			34 => "Skeleton",
-			35 => "Spider",
-			36 => "Pigman",
-		];
-
 		$this->serverSpawnAnimals = $this->server->api->getProperty("spawn-animals");
 		$this->serverSpawnMobs = $this->server->api->getProperty("spawn-mobs");
 	}
@@ -62,6 +23,18 @@ class EntityAPI{
 	
 	
 	public function commandHandler($cmd, $args, $issuer, $alias){
+		$mob = [
+			"chicken" => 10,
+			"cow" => 11,
+			"pig" => 12,
+			"sheep" => 13,
+
+			"zombie" => 32,
+			"creeper" => 33,
+			"skeleton" => 34,
+			"spider" => 35,
+			"pigman" => 36
+		];
 		$output = "";
 		switch($cmd){
 			case 'summon':
@@ -75,93 +48,55 @@ class EntityAPI{
 					break;
 				}
 
-				$type = $this->mob[strtolower($args[0])];
+				if(is_int($args[0])) $type = $args[0];
+				else $type = $mob[strtolower($args[0])];
 				if($type != (10 or 11 or 12 or 13 or 32 or 33 or 34 or 35 or 36)){
 					$output .= "Unknown mob.";
 					break;
 				}
-
-				if(count($args) == 1){//summon <mob>
-
-					$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
-					$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
-					$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
-					$spawnLevel = $issuer->entity->level;
-
-					$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, [
-						"x" => $spawnX,
-						"y" => $spawnY,
-						"z" => $spawnZ,
-						"Health" => $this->hp[$type],
-					]);
-					$this->spawnToAll($entityit, $spawnLevel);
-					$output .= $this->mobName[$type] . " spawned in " . $spawnX . ", " . $spawnY . ", " . $spawnZ . ".";
+				$mobName = ucfirst(array_flip($mob)[$type]);
+				
+				if(strtolower($args[1] === "baby") or strtolower($args[2] === "baby") and $type > 13){
+					$output .= "$mobName cannot be a baby!";
 					break;
-				}elseif(is_numeric($args[1])){//summon <mob> [amount]
+				}
+				
+				$x = round($issuer->entity->x, 2, PHP_ROUND_HALF_UP);
+				$y = round($issuer->entity->y, 2, PHP_ROUND_HALF_UP);
+				$z = round($issuer->entity->z, 2, PHP_ROUND_HALF_UP);
+				$level = $issuer->entity->level;
+				$pos = new Position($x, $y, $z, $level);
+
+				if(count($args) === 1){//summon <mob>
+					$this->summon($pos, ENTITY_MOB, $type);
+					$output .= "$mobName spawned in $x, $y, $z.";
+					break;
+				}
+				elseif(is_numeric($args[1])){//summon <mob> [amount]
 					$amount = (int) $args[1];
 					if($amount > 25){
 						$output .= "Cannot spawn > 25 mobs";
 						break;
 					}
-
-					$isBaby = 0;
-					if(isset($args[2]) and strtolower($args[2]) == 'baby'){//summon <mob> [amount] [baby]
-						if($type > 13){
-							$output .= "This mob cant be baby!";
-							break;
-						}
+					
+					if(isset($args[2]) and strtolower($args[2]) === 'baby'){//summon <mob> [amount] [baby]
 						$isBaby = 1;
 					}
 
-					$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
-					$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
-					$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
-					$spawnLevel = $issuer->entity->level;
-
 					for($cnt = $amount; $cnt > 0; --$cnt){
-						$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, [
-							"x" => $spawnX,
-							"y" => $spawnY,
-							"z" => $spawnZ,
-							"Health" => $this->hp[$type],
-							"IsBaby" => $isBaby,
-						]);
-						$this->spawnToAll($entityit, $spawnLevel);
+						
+						$this->summon($pos, ENTITY_MOB, $type, $isBaby === 1 ? ["IsBaby" => 1] : []);
 					}
 
-					if($type == 13 or $amount == 1)
-						$plural = '';
-					else $plural = 's';
-
-					if($isBaby == 1)
-						$baby = "Baby ";
-					else $baby = '';
-
-					$output .= $amount . " " . $baby . $this->mobName[$type] . $plural . " spawned in " . $spawnX . ", " . $spawnY . ", " . $spawnZ . ".";
-
-					break;
-				}elseif(strtolower($args[1]) == 'baby'){//summon <mob> [baby]
-					if($type > 13){
-						$output .= "This mob cant be baby!";
-						break;
-					}else{
-						$spawnX = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
-						$spawnY = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
-						$spawnZ = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
-						$spawnLevel = $issuer->entity->level;
-						$entityit = $this->add($spawnLevel, ENTITY_MOB, $type, [
-							"x" => $spawnX,
-							"y" => $spawnY,
-							"z" => $spawnZ,
-							"Health" => $this->hp[$type],
-							"IsBaby" => 1,
-						]);
-						$this->spawnToAll($entityit, $spawnLevel);
-						$output .= "Baby " . $this->mobName[$type] . " spawned in " . $spawnX . ", " . $spawnY . ", " . $spawnZ . ".";
-						break;
-					}
+					$output .= "$amount ".($isBaby === 1 ? "Baby" : "")." $mobName".(($type !== 13 || $amount > 1) ? "s" : "")." spawned in $x, $y, $z.";
 					break;
 				}
+				elseif(strtolower($args[1]) == 'baby'){//summon <mob> [baby]
+					$this->summon($pos, ENTITY_MOB, $type, ["IsBaby" => 1]);
+					$output .= "Baby $mobName spawned in $x, $y, $z.";
+					break;
+				}
+				break;
 			case 'despawn':
 				$cnt = 0;
 				$l = $this->server->query("SELECT EID FROM entities WHERE class = " . ENTITY_MOB . ";");
@@ -174,10 +109,19 @@ class EntityAPI{
 						}
 					}
 				}
-				$output .= $cnt . " mobs have been despawned!";
+				$output .= "$cnt mobs have been despawned!";
 				break;
 		}
 		return $output;
+	}
+	
+	public function summon(Position $pos, $class, $type, Array $data = []){
+		$entity = $this->add($pos->level, $class, $type, [
+			"x" => $pos->x,
+			"y" => $pos->y,
+			"z" => $pos->z
+		] + $data);
+		$this->spawnToAll($entity, $pos->level);
 	}
 
 	public function add(Level $level, $class, $type = 0, $data = []){
