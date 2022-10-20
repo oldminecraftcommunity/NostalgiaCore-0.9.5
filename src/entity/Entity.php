@@ -42,7 +42,7 @@ class Entity extends Position{
 	public $fallStart;
 	private $tickCounter;
 	private $speedMeasure = array(0, 0, 0, 0, 0, 0, 0);
-	protected $server;
+	public $server;
 	private $isStatic;
 	public $level;
 	public $isInMinecart = false;
@@ -94,6 +94,7 @@ class Entity extends Position{
 		$this->height = 0.98;
 		$this->moveTime = 0;
 		$this->lookTime = 0;
+		$this->onGround = false;
 		switch($this->class){
 			case ENTITY_PLAYER:
 				$this->player = $this->data["player"];
@@ -153,7 +154,7 @@ class Entity extends Position{
 	}
 	
 	public function isMoving(){
-	    return $this->moveTime > 0 || ($this->speedX > 0.01 || $this->speedX < -0.01)  || ($this->speedY > 0.01 || $this->speedY < -0.01) || ($this->speedZ > 0.01 || $this->speedZ < -0.01);
+	    return ($this->speedX > 0.01 || $this->speedX < -0.01)  || ($this->speedY > 0.01 || $this->speedY < -0.01) || ($this->speedZ > 0.01 || $this->speedZ < -0.01);
 	}
 	public function setVelocity($vX, $vY = 0, $vZ = 0){
 	    if($vX instanceof Vector3){
@@ -395,7 +396,14 @@ class Entity extends Position{
 		}
 		return $hasUpdate;
 	}
-
+	
+	protected function checkGroundState($movX, $movY, $movZ, $dx, $dy, $dz){
+	    //$this->isCollidedVertically = $movY != $dy;
+	    //$this->isCollidedHorizontally = ($movX != $dx or $movZ != $dz);
+	    //$this->isCollided = ($this->isCollidedHorizontally or $this->isCollidedVertically);
+	    $this->onGround = ($movY != $dy and $movY < 0);
+	}
+	
 	public function update(){
 		if($this->closed === true){
 			return false;
@@ -459,19 +467,18 @@ class Entity extends Position{
 			}
 			if($this->class !== ENTITY_PLAYER){
 				$update = false;
-				if((($this->class !== ENTITY_OBJECT and $this->type !== OBJECT_PRIMEDTNT) or $support === false)){
+				if(true){
 					$drag = 0.2;
-					if($this->speedX < 0.01 && $this->speedX > -0.01){
+					if(Utils::in_range($this->speedX, -0.01, 0.01)){
 					    $this->speedX = 0;
 					}
-					if($this->speedZ < 0.01 && $this->speedZ > -0.01){
+					if(Utils::in_range($this->speedZ, -0.01, 0.01)){
 					    $this->speedZ = 0;
 					}
-					if($this->speedY < 0.001 && $this->speedY > -0.001){
+					if(Utils::in_range($this->speedY, -0.001, 0.001)){
 					    $this->speedY = 0;
 					}
-					
-					if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM){
+					if(($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM) && ($this->speedX != 0 || $this->speedY != 0 || $this->speedZ != 0)){
     					$blocks = $this->level->getCubes($this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ));
     				    foreach($blocks as $b){
     				        $this->speedX = $b->calculateXOffset($this->boundingBox, $this->speedX);
@@ -991,18 +998,6 @@ class Entity extends Position{
 		if($health < $this->health){
 			$harm = true;
 			$dmg = $this->health - $health;
-			if(is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false){
-			    $d = $entity->x - $this->x;
-			    for($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01)
-			    {
-			        $d = (Utils::randomFloat() - Utils::randomFloat()) * 0.01;
-			    }
-			    
-			    //attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) - rotationYaw;
-			    
-			    $this->knockBack($d, $d1);
-			    $this->sendMotion();
-			}
 			if($this->class === ENTITY_PLAYER and ($this->player instanceof Player)){
 				$points = 0;
 				$values = array(
@@ -1091,6 +1086,18 @@ class Entity extends Position{
 				}
 			}elseif($this->health > 0){
 				$this->dead = false;
+			}
+			if(is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false){
+			    $d = $entity->x - $this->x;
+			    for($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01)
+			    {
+			        $d = (Utils::randomFloat() - Utils::randomFloat()) * 0.01;
+			    }
+			    
+			    //attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) - rotationYaw;
+			    
+			    $this->knockBack($d, $d1);
+			    $this->sendMotion();
 			}
 			return true;
 		}

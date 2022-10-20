@@ -535,12 +535,23 @@ class Utils{
 	public static function round($number){
 		return round($number, 0, PHP_ROUND_HALF_DOWN);
 	}
-
 	public static function distance($pos1, $pos2){
+	    if($pos1 instanceof Vector3){
+	        $pos1 = $pos1->toArray();
+	    }
+	    if($pos2 instanceof Vector3){
+	        $pos2 = $pos2->toArray();
+	    }
 		return sqrt(pow($pos1["x"] - $pos2["x"], 2) + pow($pos1["y"] - $pos2["y"], 2) + pow($pos1["z"] - $pos2["z"], 2));
 	}
-
+    
 	public static function angle3D($pos1, $pos2){
+	    if($pos1 instanceof Vector3){
+	        $pos1 = $pos1->toArray();
+	    }
+	    if($pos2 instanceof Vector3){
+	        $pos2 = $pos2->toArray();
+	    }
 		$X = $pos1["x"] - $pos2["x"];
 		$Z = $pos1["z"] - $pos2["z"];
 		$dXZ = sqrt(pow($X, 2) + pow($Z, 2));

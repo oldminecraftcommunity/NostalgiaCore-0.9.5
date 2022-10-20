@@ -16,6 +16,10 @@ class Vector3{
 		$this->z = $z;
 	}
 	
+	public function toArray(){
+	    return ["x" => $this->x, "y" => $this->y, "z" => $this->z];
+	}
+	
 	public function getFloorX(){
 		return (int) $this->x;
 	}

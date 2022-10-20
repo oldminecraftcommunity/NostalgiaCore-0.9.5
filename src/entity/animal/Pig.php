@@ -8,7 +8,6 @@ class Pig extends Animal{
 		$this->server = ServerAPI::request();
 		$this->setSize($this->isBaby() ? 0.45 : 0.9, $this->isBaby() ? 0.45 : 0.9);
 		$this->setName('Pig');
-		$this->ai->addTask(new TaskLookAround()); 
 		$this->update();
 	}
 	public function isFood($id){

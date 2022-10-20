@@ -4,8 +4,7 @@ class Chicken extends Animal{
 	const TYPE = MOB_CHICKEN;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		parent::__construct($level, $eid, $class, $type, $data);
-		$server = ServerAPI::request();
-		$server->schedule(mt_rand(0,6000) + 6000, array($this, "dropAnEgg"));
+		$this->server->schedule(mt_rand(0,6000) + 6000, array($this, "dropAnEgg"));
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 4, "generic");
 		$this->setName('Chicken');
 		$this->setSize($this->isBaby() ? 0.2 : 0.4, $this->isBaby() ? 0.35 : 0.7);
