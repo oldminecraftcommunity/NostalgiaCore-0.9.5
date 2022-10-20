@@ -163,7 +163,6 @@ class PluginAPI extends stdClass{
 					}
 					
 					$phr = "phar://$filePath/";
-					console("loader:".$pluginInfo["classLoader"]);
 					include($phr."/src/".$pluginInfo["classLoader"]);
 					$class = $pluginInfo["CLClass"];
 					$loader = new $class();
