@@ -22,8 +22,6 @@ Supported MCPE versions: 0.8.0, 0.8.1 (maybe 0.8.2)
 
 • Working Nether Reactor.
 
-• Mob AI
-
 • PHAR plugins support
 
 ...and etc.
