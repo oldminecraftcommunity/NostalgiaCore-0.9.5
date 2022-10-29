@@ -168,11 +168,6 @@ class BlockAPI{
 		[SPAWN_EGG, MOB_COW],
 		[SPAWN_EGG, MOB_PIG],
 		[SPAWN_EGG, MOB_SHEEP],
-		[SPAWN_EGG, MOB_ZOMBIE],
-		[SPAWN_EGG, MOB_CREEPER],
-		[SPAWN_EGG, MOB_SKELETON],
-		[SPAWN_EGG, MOB_SPIDER],
-		[SPAWN_EGG, MOB_PIGMAN],
 
 		//Seeds
 		[SUGARCANE, 0],
@@ -199,7 +194,7 @@ class BlockAPI{
 		[DYE, 11],
 		[DYE, 10],
 		[DYE, 9],
-		[DYE, 8],
+		[DYE, 8]
 
 	];
 	private $server;
@@ -234,61 +229,90 @@ class BlockAPI{
 		switch($cmd){
 			case "setblock":
 				if(!($issuer instanceof Player)){
-					$output .= "Please run this command in-game.\n";
+					if(count($args) < 5){
+						$output .= "Usage: /setblock <x> <y> <z> <level> <block[:damage]>";
+						break;
+					}else{
+						if(!is_numeric($args[0]) or !is_numeric($args[1]) or !is_numeric($args[2])){
+							$output .= "You need to use a numeric coords!";
+							break;
+						}
+						$level = $this->server->api->level->get($args[3]);
+						if($level === false){
+							$output .= "Unknown level";
+							break;
+						}
+						$block = self::fromString($args[4])->getBlock();
+					}
+				}else{
+					if(count($args) < 4){
+						$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>";
+						break;
+					}
+					
+					$level = $issuer->entity->level;
+					$block = self::fromString($args[3])->getBlock();
+				}
+
+				$coords = [];
+				for($i = 0; $i < 3; $i++){
+					if($args[$i] === '~'){
+						if($i === 0) $coord = $issuer->entity->x;
+						elseif($i === 1) $coord = $issuer->entity->y;
+						else $coord = $issuer->entity->z;
+						$coords[$i] = round($coord, 0);
+					}
+					elseif(is_numeric($args[$i])){
+						if($args[$i] > 0 and $args[$i] < 255){
+							$coords[$i] = $args[$i];
+						}
+					}
+				}
+				if(!isset($coords[2])){
+					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>";
 					break;
 				}
 
-				if(count($args) < 4){
-					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
-					break;
-				}
-
-				if($args[0] == '~')
-					$x = round($issuer->entity->x, 0);
-				elseif((int) $args[0] < 255)
-					$x = $args[0];
-				else{
-					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
-					break;
-				}
-
-				if($args[1] == '~')
-					$y = round($issuer->entity->y, 0);
-				elseif((int) $args[1] < 255)
-					$y = $args[1];
-				else{
-					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
-					break;
-				}
-
-				if($args[2] == '~')
-					$z = round($issuer->entity->z, 0);
-				elseif((int) $args[2] < 255)
-					$z = $args[2];
-				else{
-					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
-					break;
-				}
-
-				$pos = new Position($x, $y, $z, $issuer->entity->level);
-				$block = BlockAPI::fromString($args[3])->getBlock();
+				$pos = new Position($coords[0], $coords[1], $coords[2], $level);
 				if(!($block instanceof Block)){
-					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>\n";
+					$output .= "Usage: /setblock <x> <y> <z> <block[:damage]>";
 					break;
 				}else{
-					$issuer->level->setBlock($pos, $block, true, false, true);
-					$output .= "Placed " . $block . " in " . $x . ", " . $y . ", " . $z;
+					$level->setBlock($pos, $block, true, false, true);
+					$output .= "Placed $block in ".implode(", ", $coords).", w:".$level->getName();
 				}
 				break;
 			case "give":
-				if(count($args) == 1 and $issuer instanceof Player){
-					$item = BlockAPI::fromString($args[0]);
-					if(($issuer->gamemode & 0x01) === 0x01){
-						$output .= "You are in creative mode.\n";
+				$player = $this->server->api->player->get($args[0]);
+				
+				if($player instanceof Player){			
+					$item = self::fromString($args[1]);
+					if(($player->gamemode & 0x01) === 0x01){
+						$output .= "Player is in creative mode.";
 						break;
 					}
-					if($item->getID() == 0){
-						$output .= "You cannot give an air block to a player.\n";
+					if($item->getID() === 0){
+						$output .= "You cannot give an air block to a player.";
+						break;
+					}
+					
+					if(!isset($args[2])){
+						$item->count = $item->getMaxStackSize();
+					}else{
+						$item->count = (int) $args[2];
+					}
+					
+					$player->addItem($item->getID(), $item->getMetadata(), $item->count);
+					$output .= "Giving ".$item->count." of ".$item->getName()." (".$item->getID().":".$item->getMetadata().") to ".$player->username;
+					break;
+				}else{
+					$item = self::fromString($args[0]);		
+					if(($issuer->gamemode & 0x01) === 0x01){
+						$output .= "You are in creative mode.";
+						break;
+					}
+					if($item->getID() === 0){
+						$output .= "You cannot give an air block to a player.";
 						break;
 					}
 
@@ -299,34 +323,9 @@ class BlockAPI{
 					}
 
 					$issuer->addItem($item->getID(), $item->getMetadata(), $item->count);
-					$output .= "Giving " . $item->count . " of " . $item->getName() . " (" . $item->getID() . ":" . $item->getMetadata() . ") to " . $issuer->username . "\n";
+					$output .= "Giving ".$item->count." of ".$item->getName()." (".$item->getID().":".$item->getMetadata().") to ".$issuer->username;
 					break;
 				}
-
-				$player = $this->server->api->player->get($args[0]);
-				$item = BlockAPI::fromString($args[1]);
-
-				if(!isset($args[2])){
-					$item->count = $item->getMaxStackSize();
-				}else{
-					$item->count = (int) $args[2];
-				}
-
-				if($player instanceof Player){
-					if(($player->gamemode & 0x01) === 0x01){
-						$output .= "Player is in creative mode.\n";
-						break;
-					}
-					if($item->getID() == 0){
-						$output .= "You cannot give an air block to a player.\n";
-						break;
-					}
-					$player->addItem($item->getID(), $item->getMetadata(), $item->count);
-					$output .= "Giving " . $item->count . " of " . $item->getName() . " (" . $item->getID() . ":" . $item->getMetadata() . ") to " . $player->username . "\n";
-				}else{
-					$output .= "Unknown player.\n";
-				}
-
 				break;
 		}
 		return $output;
@@ -349,7 +348,7 @@ class BlockAPI{
 
 			if(defined(strtoupper($b[0]))){
 				$explodedString = explode(":", constant(strtoupper($b[0])));
-				if(count($explodedString) == 2){
+				if(count($explodedString) === 2){
 					$meta = (int) $explodedString[1];
 				}
 				$item = BlockAPI::getItem(constant(strtoupper($b[0])), $meta);
@@ -375,7 +374,6 @@ class BlockAPI{
 	}
 
 	public function playerBlockBreak(Player $player, Vector3 $vector){
-
 		$target = $player->level->getBlock($vector);
 		$item = $player->getSlot($player->slot);
 
@@ -617,5 +615,4 @@ class BlockAPI{
 			}
 		}
 	}
-
 }
