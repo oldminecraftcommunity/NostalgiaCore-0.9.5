@@ -2,10 +2,11 @@
 
 class Arrow extends Projectile{
 	const TYPE = OBJECT_ARROW;
-	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
+	function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 		parent::__construct($level, $eid, $class, $type, $data);
 		//$this->server->schedule(1210, array($this, "update")); //Despawn
 	}
+	
 	public function handleUpdate(){
 		$pk = new MoveEntityPacket_PosRot;
 		$pk->eid = $this->eid;
@@ -16,8 +17,8 @@ class Arrow extends Projectile{
 		$pk->pitch = $this->pitch;
 		$this->server->api->player->broadcastPacket($this->level->players, $pk);
 	}
+	
 	public function shoot($d, $d1, $d2, $f, $f1){ //original name from 0.8.1 IDA decompilation, var names are taken from b1.7.3
-		
 		$f2 = sqrt($d * $d + $d1 * $d1 + $d2 * $d2);
         $d /= $f2;
         $d1 /= $f2;
@@ -37,6 +38,7 @@ class Arrow extends Projectile{
 		$this->update();
         //TODO i guess? $ticksInGround = 0;
 	}
+	
 	public function spawn($player){
 		if($this->type === OBJECT_ARROW){
 			$pk = new AddEntityPacket;

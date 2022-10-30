@@ -2,7 +2,7 @@
 
 class Painting extends Hanging{
 	const TYPE = OBJECT_PAINTING;
-	public function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
+	public function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->x = isset($this->data["TileX"]) ? $this->data["TileX"]:$this->x;
 		$this->y = isset($this->data["TileY"]) ? $this->data["TileY"]:$this->y;
@@ -13,7 +13,9 @@ class Painting extends Hanging{
 	}
 	
 	public function getDrops(){
-		return array(array(PAINTING, 0, 1));
+		return [
+			[PAINTING, 0, 1]
+		];
 	}
 	public function spawn($player){
 		$pk = new AddPaintingPacket;

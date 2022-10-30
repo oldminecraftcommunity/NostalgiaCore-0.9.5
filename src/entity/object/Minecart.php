@@ -2,14 +2,12 @@
 
 class Minecart extends Vehicle{
 	const TYPE = OBJECT_MINECART;
-	
 	private $moveVector = [];
 	const STATE_INITIAL = 0;
 	const STATE_ON_RAIL = 1;
 	const STATE_OFF_RAIL = 2;
 	
-	
-	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
+	function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->x = isset($this->data["TileX"]) ? $this->data["TileX"]:$this->x;
 		$this->y = isset($this->data["TileY"]) ? $this->data["TileY"]:$this->y;
@@ -25,9 +23,9 @@ class Minecart extends Vehicle{
 	}
 	
 	public function getDrops(){
-		return array(
-			array(MINECART, 0, 1),
-		);
+		return [
+			[MINECART, 0, 1]
+		];
 	}
 	
 	public function spawn($player){

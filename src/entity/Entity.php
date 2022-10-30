@@ -676,14 +676,14 @@ class Entity extends Position{
 		2 -> Integer
 		3 -> Float
 		4 -> Length of <value>, Short
-		5 -> array(Short, Byte, Short)
-		6 -> arry(Integer, Integer, Integer)
+		5 -> [Short, Byte, Short]
+		6 -> [Integer, Integer, Integer]
 		******************
-		0 => array("type" => 0, "value" => $flags) --> DATA_FLAGS
-		1 => array("type" => 1, "value" => $this->air) --> Entity Air
-		14 => array("type" => 0, "value" => 1) --> IsBaby, value: 0 => false, 1 => true
-		16 => array("type" => 0, "value" => 0) --> Fuse(TNT), Saddled(Pig)
-		17 => array("type" => 6, "value" => array(0, 0, 0)) --> Bed Position <?>
+		0 => ["type" => 0, "value" => $flags] --> DATA_FLAGS
+		1 => ["type" => 1, "value" => $this->air] --> Entity Air
+		14 => ["type" => 0, "value" => 1] --> IsBaby, value: 0 => false, 1 => true
+		16 => ["type" => 0, "value" => 0] --> Fuse(TNT), Saddled(Pig)
+		17 => ["type" => 6, "value" => [0, 0, 0]] --> Bed Position <?>
 		
 		
 		DATA FLAGS IDS
@@ -697,21 +697,21 @@ class Entity extends Position{
 		$flags ^= $this->fire > 0 ? 0b1 : 0;
 		$flags ^= ($this->crouched ? 0b1 : 0) << 1;
 		$flags ^= ($this->inAction ? 0b1 : 0) << 4;
-		$d = array(
-			0 => array("type" => 0, "value" => $flags),
-			1 => array("type" => 1, "value" => $this->air),
-			14 => array("type" => 0, "value" => 0),
-			16 => array("type" => 0, "value" => 0),
-			17 => array("type" => 6, "value" => array(0, 0, 0)),
-		);
+		$d = [
+			0 => ["type" => 0, "value" => $flags],
+			1 => ["type" => 1, "value" => $this->air],
+			14 => ["type" => 0, "value" => 0],
+			16 => ["type" => 0, "value" => 0],
+			17 => ["type" => 6, "value" => [0, 0, 0]]
+		];
 		if($this->class === ENTITY_MOB){ //ladder fix 2.0
-			if($this->type === MOB_PIG){ /*Saddled Pig*/
-				$d[16]["value"] = 0;
-			}
+			//if($this->type === MOB_PIG){ /*Saddled Pig*/
+				//$d[16]["value"] = 0;
+			//}
 		}elseif($this->class === ENTITY_PLAYER){
 			if($this->player->isSleeping !== false){
 				$d[16]["value"] = 2;
-				$d[17]["value"] = array($this->player->isSleeping->x, $this->player->isSleeping->y, $this->player->isSleeping->z);
+				$d[17]["value"] = [$this->player->isSleeping->x, $this->player->isSleeping->y, $this->player->isSleeping->z];
 			}
 		}
 		return $d;

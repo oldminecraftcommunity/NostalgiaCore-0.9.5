@@ -145,7 +145,7 @@ class Item{
 			$this->block = BlockAPI::get($this->id, $this->meta);
 			$this->name = $this->block->getName();
 		}
-		if($this->isTool() || $this->isArmor()){
+		if($this->isTool() || $this->isArmor() || $this->getID() === SADDLE){
 			$this->maxStackSize = 1;
 		}
 	}
@@ -209,7 +209,7 @@ class Item{
 		
 	}
 	
-	public function useOn($object, $force = false){ //move shearing & milking code here?
+	public function useOn($object, $force = false){
 		if($this->isTool() or $force === true){
 			if(($object instanceof Entity) and !$this->isSword()){
 				$this->meta += 2;
@@ -221,6 +221,10 @@ class Item{
 			if(($object instanceof Block) and ($object->getID() === GRASS or $object->getID() === DIRT)){
 				$this->meta++;
 			}
+		}elseif(($object instanceof Crepper) and $this->id === FLINT_STEEL){
+			$this->meta++;
+		}elseif(($object instanceof Sheep) and $this->id === SHEARS){
+			$this->meta++;
 		}
 		return false;
 	}
@@ -234,7 +238,7 @@ class Item{
 			return false;
 		}
 		
-		$levels = array(
+		$levels = [
 			2 => 40, //GOLD
 			1 => 59, //WOODEN
 			3 => 131, //STONE
@@ -243,7 +247,7 @@ class Item{
 			FLINT_STEEL => 65, //lets assume it is correct
 			SHEARS => 239, //x2
 			BOW => 385 //x3
-		);
+		];
 
 		if(($type = $this->getPickaxeLevel()) === false){			
 			if(($type = $this->isAxe()) === false){			
@@ -261,16 +265,16 @@ class Item{
 
 	public function getPickaxeLevel(){ //Returns false or level of the pickaxe
 		switch($this->id){
-			case IRON_PICKAXE:
-				return 4;
 			case WOODEN_PICKAXE:
 				return 1;
-			case STONE_PICKAXE:
-				return 3;
-			case DIAMOND_PICKAXE:
-				return 5;
 			case GOLDEN_PICKAXE:
 				return 2;
+			case STONE_PICKAXE:
+				return 3;
+			case IRON_PICKAXE:
+				return 4;
+			case DIAMOND_PICKAXE:
+				return 5;
 			default:
 				return false;
 		}
@@ -278,16 +282,16 @@ class Item{
 	
 	public function isAxe(){
 		switch($this->id){
-			case IRON_AXE:
-				return 4;
 			case WOODEN_AXE:
 				return 1;
-			case STONE_AXE:
-				return 3;
-			case DIAMOND_AXE:
-				return 5;
 			case GOLDEN_AXE:
 				return 2;
+			case STONE_AXE:
+				return 3;
+			case IRON_AXE:
+				return 4;
+			case DIAMOND_AXE:
+				return 5;
 			default:
 				return false;
 		}
@@ -295,16 +299,16 @@ class Item{
 
 	public function isSword(){
 		switch($this->id){
-			case IRON_SWORD:
-				return 4;
 			case WOODEN_SWORD:
 				return 1;
-			case STONE_SWORD:
-				return 3;
-			case DIAMOND_SWORD:
-				return 5;
 			case GOLDEN_SWORD:
 				return 2;
+			case STONE_SWORD:
+				return 3;
+			case IRON_SWORD:
+				return 4;
+			case DIAMOND_SWORD:
+				return 5;
 			default:
 				return false;
 		}
@@ -312,16 +316,16 @@ class Item{
 	
 	public function isShovel(){
 		switch($this->id){
-			case IRON_SHOVEL:
-				return 4;
 			case WOODEN_SHOVEL:
 				return 1;
-			case STONE_SHOVEL:
-				return 3;
-			case DIAMOND_SHOVEL:
-				return 5;
 			case GOLDEN_SHOVEL:
 				return 2;
+			case STONE_SHOVEL:
+				return 3;
+			case IRON_SHOVEL:
+				return 4;
+			case DIAMOND_SHOVEL:
+				return 5;
 			default:
 				return false;
 		}
@@ -329,11 +333,11 @@ class Item{
 	
 	public function isHoe(){
 		switch($this->id){
-			case IRON_HOE:
 			case WOODEN_HOE:
-			case STONE_HOE:
-			case DIAMOND_HOE:
 			case GOLDEN_HOE:
+			case STONE_HOE:
+			case IRON_HOE:
+			case DIAMOND_HOE:
 				return true;
 			default:
 				return false;

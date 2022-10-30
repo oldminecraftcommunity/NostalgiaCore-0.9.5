@@ -1798,8 +1798,10 @@ class Player{
 					$data["entity"] = $this->entity;
 					if($packet->action === InteractPacket::ACTION_HOLD){
 						switch($target->class){
+							case ENTITY_MOB:
 							case ENTITY_OBJECT:
 								switch($target->type){
+									case MOB_PIG:
 									case OBJECT_MINECART:
 										if($target->linkedEntity != null){
 											break;
@@ -1812,26 +1814,42 @@ class Player{
 										$pk->type = 1;
 										$this->dataPacket($pk);
 										$needsBreak = true;
-
 								}
 							case ENTITY_MOB:
 								$slot = $this->getSlot($this->slot);
 								switch($target->type){
 									case MOB_COW:
-										if($slot->getID() === BUCKET && $slot->getMetadata() === 0){ //Empty Bucket
-											$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true); //remove a bucket
-											$this->addItem(BUCKET, 1, $slot->count, true); //add a milk bucket
+										if($slot->getID() === BUCKET && $slot->getMetadata() === 0){
+											$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
+											$this->addItem(BUCKET, 1, $slot->count, true);
 											$needsBreak = true;
 										}
 										break;
 									case MOB_SHEEP:
 									    if($slot->getID() === SHEARS && $target->data["Sheared"] === 0 && !$target->isBaby()){ //not sheared
 											ServerAPI::request()->api->entity->drop(new Position($target->x + 0.5, $target->y, $target->z + 0.5, $target->level), BlockAPI::getItem(WOOL, $target->data["Color"], mt_rand(1, 3)));
-											$target->data["Sheared"] = 1; //i hope it means sheared right?
+											$target->data["Sheared"] = 1;
 											$target->updateMetadata();
 											if($slot->getMetadata() >= $slot->getMaxDurability()){
 												$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
 											}
+											$needsBreak = true;
+										}
+									case MOB_CREEPER:
+										if($slot->getID() === FLINT_AND_STEEL and $target->data["Saddled"] === 0){ //:troll~1:
+											if($slot->useOn($target) and $slot->getMetadata() >= $slot->getMaxDurability()){
+												$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
+											}
+											$target->data["Saddled"] = 1;
+											$target->updateMetadata();
+											$this->server->schedule(30, [$target, "updateFuse"], []); //unknown ticks
+											$needsBreak = true;
+										}
+									case MOB_PIG:
+										if($slot->getID() === SADDLE and $target->data["Saddled"] === 0){
+											$this->removeItem($slot->getID(), 0, 1);
+											$target->data["Saddled"] = 1;
+											$target->updateMetadata();
 											$needsBreak = true;
 										}
 								}
@@ -1839,8 +1857,10 @@ class Player{
 					}
 					if($packet->action === InteractPacket::ACTION_VEHICLE_EXIT){
 						switch($target->class){
+							case ENTITY_MOB:
 							case ENTITY_OBJECT:
 								switch($target->type){
+									case MOB_PIG:
 									case OBJECT_MINECART:
 										$players = $this->server->api->player->getAll($this->level);
 										$pk = new SetEntityLinkPacket();
@@ -1866,60 +1886,45 @@ class Player{
 					}elseif($this->server->handle("player.interact", $data) !== false){
 						$slot = $this->getSlot($this->slot);
 						switch($slot->getID()){
-							case WOODEN_SWORD:
-							case GOLDEN_SWORD: //damage is correct
-								$damage = 4;
-								break;
-							case STONE_SWORD:
-								$damage = 5;
-								break;
-							case IRON_SWORD:
-								$damage = 6;
-								break;
-							case DIAMOND_SWORD:
-								$damage = 7;
-								break;
-
-							case WOODEN_AXE:
-							case GOLDEN_AXE:
-								$damage = 3;
-								break;
-							case STONE_AXE:
-								$damage = 4;
-								break;
-							case IRON_AXE:
-								$damage = 5;
-								break;
-							case DIAMOND_AXE:
-								$damage = 6;
-								break;
-
-							case WOODEN_PICKAXE:
-							case GOLDEN_PICKAXE:
-								$damage = 2;
-								break;
-							case STONE_PICKAXE:
-								$damage = 3;
-								break;
-							case IRON_PICKAXE:
-								$damage = 4;
-								break;
-							case DIAMOND_PICKAXE:
-								$damage = 5;
-								break;
-
 							case WOODEN_SHOVEL:
 							case GOLDEN_SHOVEL:
 								$damage = 1;
 								break;
+							
+							case WOODEN_PICKAXE:
+							case GOLDEN_PICKAXE:
 							case STONE_SHOVEL:
 								$damage = 2;
 								break;
+								
+							case WOODEN_AXE:
+							case GOLDEN_AXE:
+							case STONE_PICKAXE:
 							case IRON_SHOVEL:
 								$damage = 3;
 								break;
+							
+							case WOODEN_SWORD:
+							case GOLDEN_SWORD:
+							case STONE_AXE:
+							case IRON_PICKAXE:
 							case DIAMOND_SHOVEL:
 								$damage = 4;
+								break;
+							
+							case STONE_SWORD:
+							case IRON_AXE:
+							case DIAMOND_PICKAXE:
+								$damage = 5;
+								break;
+								
+							case IRON_SWORD:
+							case DIAMOND_AXE:
+								$damage = 6;
+								break;
+								
+							case DIAMOND_SWORD:
+								$damage = 7;
 								break;
 
 							default:
@@ -1995,7 +2000,7 @@ class Player{
 							PUMPKIN_PIE => 8,
 							CARROT => 4,
 							POTATO => 1,
-							BAKED_POTATO => 6,
+							BAKED_POTATO => 6
 						];
 						$slot = $this->getSlot($this->slot);
 						if($this->entity->getHealth() < 20 and isset($items[$slot->getID()])){

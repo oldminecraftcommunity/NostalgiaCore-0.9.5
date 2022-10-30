@@ -89,6 +89,7 @@ class Level{
 						"id" => $entity->type,
 						"Color" => @$entity->data["Color"],
 						"Sheared" => @$entity->data["Sheared"],
+						"Saddled" => @$entity->data["Saddled"],
 						"IsBaby" => @$entity->data["IsBaby"],
 						"Health" => $entity->health,
 						"Pos" => [
