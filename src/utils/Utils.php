@@ -523,7 +523,7 @@ class Utils{
 		$lastRandom = hash("sha512", $lastRandom, true);
 		return $raw === false ? bin2hex($output) : $output;
 	}
-
+	
 	public static function chance($i){//GameHerobrine's code
 		return self::randomFloat() <= $i / 100;
 	}

@@ -6,6 +6,7 @@ class Skeleton extends Monster{
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 10, "generic");
 		$this->setName("Skeleton");
 		$this->setSize(0.6, 1.99);
+		$this->setSpeed(0.25);
 		$this->update();
 	}
 	

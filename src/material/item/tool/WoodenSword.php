@@ -1,10 +1,10 @@
 <?php
 
-class WoodenSwordItem extends Item{
+class WoodenSwordItem extends ItemSword{
 	public function __construct($meta = 0, $count = 1){
 		parent::__construct(WOODEN_SWORD, $meta, $count, "Wooden Sword");
 	}
-	public function isTool(){
-		return true;
+	public function getDamageAgainstOf($e){
+		return 4;
 	}
 }

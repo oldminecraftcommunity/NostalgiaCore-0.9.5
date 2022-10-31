@@ -2,13 +2,13 @@
 
 class PocketMinecraftServer{
 
-	public $tCnt;
+    public $tCnt, $ticks;
 	public $extraprops, $serverID, $interface, $database, $version, $invisible, $tickMeasure, $preparedSQL, $seed, $gamemode, $name, $maxClients, $clients, $eidCnt, $custom, $description, $motd, $port, $saveEnabled;
 	/**
 	 * @var ServerAPI
 	 */
 	public $api;
-	private $serverip, $evCnt, $handCnt, $events, $eventsID, $handlers, $serverType, $lastTick, $ticks, $memoryStats, $async = [], $asyncID = 0;
+	private $serverip, $evCnt, $handCnt, $events, $eventsID, $handlers, $serverType, $lastTick, $memoryStats, $async = [], $asyncID = 0;
 
 	function __construct($name, $gamemode = SURVIVAL, $seed = false, $port = 19132, $serverip = "0.0.0.0"){
 		$this->port = (int) $port;
@@ -452,35 +452,31 @@ class PocketMinecraftServer{
 		}
 	}
 
-	public function process(){
-		$lastLoop = 0;
-		while($this->stop === false){
-			$packet = $this->interface->readPacket();
-			if($packet instanceof Packet){
-				$this->packetHandler($packet);
-				$lastLoop = 0;
-			}elseif($this->tick() > 0){
-				$lastLoop = 0;
-			}else{
-				++$lastLoop;
-				if($lastLoop < 16){
-					usleep(1);
-				}elseif($lastLoop < 128){
-					usleep(100);
-				}elseif($lastLoop < 256){
-					usleep(512);
-				}else{
-					usleep(10000);
-				}
-			}
-			$this->tick();
-			if($this->ticks % 2 === 0){
-    			foreach($this->api->level->levels as $l){
-    			    $l->onTick($this);
-    			}
-			}
-		}
-	}
+    public function process()
+    {
+        $lastLoop = 0;
+        while($this->stop === false){
+            $packet = $this->interface->readPacket();
+            if($packet instanceof Packet){
+                $this->packetHandler($packet);
+                $lastLoop = 0;
+            } elseif($this->tick() > 0){
+                $lastLoop = 0;
+            } else{
+                ++ $lastLoop;
+                if($lastLoop < 16){
+                    usleep(1);
+                } elseif($lastLoop < 128){
+                    usleep(100);
+                } elseif($lastLoop < 256){
+                    usleep(512);
+                } else{
+                    usleep(10000);
+                }
+            }
+            $this->tick();
+        }
+    }
 
 	public function packetHandler(Packet $packet){
 		$data =& $packet;
@@ -572,6 +568,9 @@ class PocketMinecraftServer{
 			$this->tickMeasure[] = $this->lastTick = $time;
 			unset($this->tickMeasure[key($this->tickMeasure)]);
 			++$this->ticks;
+			foreach($this->api->level->levels as $l){
+			    $l->onTick($this);
+			}
 			return $this->tickerFunction($time);
 		}
 		return 0;

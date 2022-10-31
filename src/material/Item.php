@@ -7,6 +7,8 @@ class Item{
 	const TOOL_SHOVEL = 3;
 	const TOOL_HOE = 4;	
 	
+	const DEF_DAMAGE = 1;
+	
 	public static $class = array(
 	
 		//armor
@@ -150,6 +152,10 @@ class Item{
 		}
 	}
 	
+	public function isPickaxe(){
+	    return false;
+	}
+	
 	public function getName(){
 		return $this->name;
 	}
@@ -210,21 +216,13 @@ class Item{
 	}
 	
 	public function useOn($object, $force = false){
-		if($this->isTool() or $force === true){
-			if(($object instanceof Entity) and !$this->isSword()){
-				$this->meta += 2;
-			}else{
-				$this->meta++;
-			}
+		if($force){
+		    if(($object instanceof Entity) and !$this->isSword()){
+		        $this->meta += 2;
+		    }else{
+		        $this->meta++;
+		    }
 			return true;
-		}elseif($this->isHoe()){
-			if(($object instanceof Block) and ($object->getID() === GRASS or $object->getID() === DIRT)){
-				$this->meta++;
-			}
-		}elseif(($object instanceof Crepper) and $this->id === FLINT_STEEL){
-			$this->meta++;
-		}elseif(($object instanceof Sheep) and $this->id === SHEARS){
-			$this->meta++;
 		}
 		return false;
 	}
@@ -281,67 +279,19 @@ class Item{
 	}
 	
 	public function isAxe(){
-		switch($this->id){
-			case WOODEN_AXE:
-				return 1;
-			case GOLDEN_AXE:
-				return 2;
-			case STONE_AXE:
-				return 3;
-			case IRON_AXE:
-				return 4;
-			case DIAMOND_AXE:
-				return 5;
-			default:
-				return false;
-		}
+		return false;
 	}
 
 	public function isSword(){
-		switch($this->id){
-			case WOODEN_SWORD:
-				return 1;
-			case GOLDEN_SWORD:
-				return 2;
-			case STONE_SWORD:
-				return 3;
-			case IRON_SWORD:
-				return 4;
-			case DIAMOND_SWORD:
-				return 5;
-			default:
-				return false;
-		}
+		return false;
 	}
 	
 	public function isShovel(){
-		switch($this->id){
-			case WOODEN_SHOVEL:
-				return 1;
-			case GOLDEN_SHOVEL:
-				return 2;
-			case STONE_SHOVEL:
-				return 3;
-			case IRON_SHOVEL:
-				return 4;
-			case DIAMOND_SHOVEL:
-				return 5;
-			default:
-				return false;
-		}
+		return false;
 	}
 	
 	public function isHoe(){
-		switch($this->id){
-			case WOODEN_HOE:
-			case GOLDEN_HOE:
-			case STONE_HOE:
-			case IRON_HOE:
-			case DIAMOND_HOE:
-				return true;
-			default:
-				return false;
-		}
+		return false;
 	}
 
 	public function isShears(){
@@ -350,6 +300,10 @@ class Item{
 	
 	public function __toString(){
 		return "Item ". $this->name ." (".$this->id.":".$this->meta.")";
+	}
+	
+	public function getDamageAgainstOf($e){
+	    return Item::DEF_DAMAGE;
 	}
 	
 	public function getDestroySpeed(Block $block, Player $player){

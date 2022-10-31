@@ -1,11 +1,7 @@
 <?php
 
-class StoneHoeItem extends Item{
+class StoneHoeItem extends ItemHoe{
 	public function __construct($meta = 0, $count = 1){
 		parent::__construct(STONE_HOE, $meta, $count, "Stone Hoe");
-	}
-	
-	public function isTool(){
-		return true;
 	}
 }

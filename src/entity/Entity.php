@@ -8,6 +8,7 @@ class Entity extends Position{
 	public $canBeAttacked;
 	public $moveTime, $lookTime, $idleTime;
 	public $needsUpdate;
+	public $speedModifer;
 	/**
 	 * @var AxisAlignedBB
 	 */
@@ -40,12 +41,13 @@ class Entity extends Position{
 	public $player;
 	public $fallY;
 	public $fallStart;
+	private $state;
 	private $tickCounter;
 	private $speedMeasure = array(0, 0, 0, 0, 0, 0, 0);
 	public $server;
 	private $isStatic;
 	public $level;
-	public $isInMinecart = false;
+	public $isRiding = false;
 	public $lastUpdate;
 	public $linkedEntity = null;
 	public $check = true;
@@ -54,10 +56,12 @@ class Entity extends Position{
 	public $random;
 	public $radius;
 	public $inAction = false;
+	
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 	    $this->random = new Random();
 	    $this->canBeAttacked = false;
 		$this->level = $level;
+		$this->speedModifer = 0.7;
 		$this->fallY = false;
 		$this->fallStart = false;
 		$this->server = ServerAPI::request();
@@ -79,6 +83,7 @@ class Entity extends Position{
 		$this->closed = false;
 		$this->isStatic = false;
 		$this->name = "";
+		$this->state = $this->data["State"] = isset($this->data["State"]) ? $this->data["State"] : 0;
 		$this->tickCounter = 0;
 		$this->server->query("INSERT OR REPLACE INTO entities (EID, level, type, class, health, hasUpdate) VALUES (".$this->eid.", '".$this->level->getName()."', ".$this->type.", ".$this->class.", ".$this->health.", 0);");
 		$this->x = isset($this->data["x"]) ? (float) $this->data["x"] : 0;
@@ -99,6 +104,7 @@ class Entity extends Position{
 			case ENTITY_PLAYER:
 				$this->player = $this->data["player"];
 				$this->setHealth($this->health, "generic");
+				$this->speedModifer = 1;
 				$this->width = 1.2;
 				$this->height = 1.9;
 				$this->canBeAttacked = true;
@@ -341,19 +347,20 @@ class Entity extends Position{
 		for($y = $startY; $y <= $endY; ++$y){
 			for($x = $startX; $x <= $endX; ++$x){
 				for($z = $startZ; $z <= $endZ; ++$z){
-					$b = $this->level->getBlock(new Vector3($x, $y, $z));
+				    $pos = new Vector3($x, $y, $z);
+					$b = $this->level->getBlock($pos);
 					switch($b->getID()){
 						case WATER:
 						case STILL_WATER: //Drowing
-							if($this->fire > 0 and $this->inBlock(new Vector3($x, $y, $z))){
+							if($this->fire > 0 and $this->inBlock($pos)){
 								$this->fire = 0;
 								$this->updateMetadata();
 							}
 							if($this->air <= 0){
 								$this->harm(2, "water");
 								$hasUpdate = true;
-							}elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and $waterDone === false){
-								$this->air -= 10;
+							}elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and !$waterDone){
+								$this->air -= 1;
 								$waterDone = true;
 								$this->updateMetadata();
 								$hasUpdate = true;
@@ -361,7 +368,7 @@ class Entity extends Position{
 							break;
 						case LAVA: //Lava damage
 						case STILL_LAVA:
-							if($this->inBlock(new Vector3($x, $y, $z))){
+						    if($this->inBlock($pos)){
 								$this->harm(5, "lava");
 								$this->fire = 300;
 								$this->updateMetadata();
@@ -369,7 +376,7 @@ class Entity extends Position{
 							}
 							break;
 						case FIRE: //Fire block damage
-							if($this->inBlock(new Vector3($x, $y, $z))){
+						    if($this->inBlock($pos)){
 								$this->harm(1, "fire");
 								$this->fire = 300;
 								$this->updateMetadata();
@@ -377,13 +384,13 @@ class Entity extends Position{
 							}
 							break;
 						case CACTUS: //Cactus damage
-							if($this->touchingBlock(new Vector3($x, $y, $z))){
+						    if($this->touchingBlock($pos)){
 								$this->harm(1, "cactus");
 								$hasUpdate = true;
 							}
 							break;
 						default:
-							if($this->inBlock(new Vector3($x, $y, $z), 0.7) and $y == $endY and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)){
+						    if($this->inBlock($pos, 0.7) and $y == $endY and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)){
 								$this->harm(1, "suffocation"); //Suffocation
 								$hasUpdate = true;
 							}elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1)){
@@ -395,13 +402,6 @@ class Entity extends Position{
 			}		
 		}
 		return $hasUpdate;
-	}
-	
-	protected function checkGroundState($movX, $movY, $movZ, $dx, $dy, $dz){
-	    //$this->isCollidedVertically = $movY != $dy;
-	    //$this->isCollidedHorizontally = ($movX != $dx or $movZ != $dz);
-	    //$this->isCollided = ($this->isCollidedHorizontally or $this->isCollidedVertically);
-	    $this->onGround = ($movY != $dy and $movY < 0);
 	}
 	
 	public function update(){
@@ -525,32 +525,22 @@ class Entity extends Position{
 						$this->y = $ny;
 						$this->speedY -= $this->speedY * $drag;
 						$update = true;
-					}
-					if($this->moveTime > 0){
-					    --$this->moveTime;
-					}
-					if($this->lookTime > 0){
-					    --$this->lookTime;
-					}
-					if($this->idleTime > 0){
-					    --$this->idleTime;
-					}
-					    
+					} 
 					
 				}
 				
 				if($support === false){
-					$this->speedY -= $this->class === ENTITY_FALLING ? 0.04 : 0.08; //TODO: replace with $gravity
+				    $this->speedY -= $this->class === ENTITY_FALLING ? 0.04 : 0.08; //TODO: replace with $gravity
 					$update = true;
 				}else{
 					//$this->speedX = 0;
 					//$this->speedY = 0;
 					//$this->speedZ = 0;
 					$this->server->api->handle("entity.move", $this);
-					if(($this->class === ENTITY_OBJECT and $this->type !== OBJECT_PRIMEDTNT) or $this->speedY <= 0.1){
-						$update = false;						
+					if(($this->class === ENTITY_OBJECT and $this->type !== OBJECT_PRIMEDTNT) or $this->speedY <= 0.1){					
 						$this->server->api->handle("entity.motion", $this);
 					}
+					$update = true;
 				}
 				
 				if($update === true){
@@ -564,7 +554,7 @@ class Entity extends Position{
 						$this->fallY = $y;
 						$this->fallStart = microtime(true);
 					}elseif($this->class === ENTITY_PLAYER and ($this->fallStart + 5) < microtime(true)){
-						if($this->server->api->getProperty("allow-flight") !== true and $this->server->handle("player.flying", $this->player) !== true and $this->isInMinecart === false){
+						if($this->server->api->getProperty("allow-flight") !== true and $this->server->handle("player.flying", $this->player) !== true and $this->isRiding === false){
 							$this->player->close("flying");
 							return;
 						}
@@ -595,9 +585,17 @@ class Entity extends Position{
 				}
 			}
 		}
+		if($this->moveTime > 0){
+			--$this->moveTime;
+		}
+		if($this->lookTime > 0){
+			--$this->lookTime;
+		}
+		if($this->idleTime > 0){
+			--$this->idleTime;
+		}
 		
-		
-		if($this->class !== ENTITY_PLAYER){
+		if($this->class !== ENTITY_PLAYER && $update){
 			$this->updateMovement();
 		}
 		$this->needsUpdate = $hasUpdate;
@@ -649,7 +647,27 @@ class Entity extends Position{
 		
 		$this->lastUpdate = $now;
 	}
-
+    
+	public function interactWith(Entity $e, $action){
+	    if($this->class === ENTITY_PLAYER and ($this->server->api->getProperty("pvp") == false or $this->server->difficulty <= 0 or ($e->player->gamemode & 0x01) === 0x01)){
+	        return false;
+	    }
+	    $data["targetentity"] = $this;
+	    $data["entity"] = $e;
+	    if($this->server->handle("player.interact", $data) !== false && $action === InteractPacket::ACTION_ATTACK && $e->isPlayer()){
+	        $slot = $e->player->getHeldItem();
+	        $damage = $slot->getDamageAgainstOf($e);
+	        $this->harm($damage, $e->eid);
+	        if($slot->isTool() === true and ($e->player->gamemode & 0x01) === 0){
+	            if($slot->useOn($e) and $slot->getMetadata() >= $slot->getMaxDurability()){
+	                $e->player->removeItem($slot->getID(), $slot->getMetadata(), 1, true);
+	            }
+	        }
+	        return true;
+	    }
+	    return false;
+	}
+	
 	public function getDirection(){
 		$rotation = ($this->yaw - 90) % 360;
 		if($rotation < 0) {
@@ -682,7 +700,7 @@ class Entity extends Position{
 		0 => ["type" => 0, "value" => $flags] --> DATA_FLAGS
 		1 => ["type" => 1, "value" => $this->air] --> Entity Air
 		14 => ["type" => 0, "value" => 1] --> IsBaby, value: 0 => false, 1 => true
-		16 => ["type" => 0, "value" => 0] --> Fuse(TNT), Saddled(Pig)
+		16 => ["type" => 0, "value" => 0] --> Fuse(TNT), Saddled(Pig), Creeper(29 ticks before explosion)
 		17 => ["type" => 6, "value" => [0, 0, 0]] --> Bed Position <?>
 		
 		
@@ -704,11 +722,8 @@ class Entity extends Position{
 			16 => ["type" => 0, "value" => 0],
 			17 => ["type" => 6, "value" => [0, 0, 0]]
 		];
-		if($this->class === ENTITY_MOB){ //ladder fix 2.0
-			//if($this->type === MOB_PIG){ /*Saddled Pig*/
-				//$d[16]["value"] = 0;
-			//}
-		}elseif($this->class === ENTITY_PLAYER){
+		$d[16]["value"] = $this->data["State"];
+		if($this->class === ENTITY_PLAYER){
 			if($this->player->isSleeping !== false){
 				$d[16]["value"] = 2;
 				$d[17]["value"] = [$this->player->isSleeping->x, $this->player->isSleeping->y, $this->player->isSleeping->z];
@@ -856,7 +871,7 @@ class Entity extends Position{
 	public function updatePosition(){
 		$this->server->query("UPDATE entities SET level = '".$this->level->getName()."', x = ".$this->x.", y = ".$this->y.", z = ".$this->z.", pitch = ".$this->pitch.", yaw = ".$this->yaw." WHERE EID = ".$this->eid.";");
 		$this->sendMoveUpdate();
-		$this->sendMotion();
+		//$this->sendMotion();
 		$this->updateAABB();
 	}
 
@@ -960,7 +975,17 @@ class Entity extends Position{
 	public function harm($dmg, $cause = "generic", $force = false){
 		return $this->setHealth(max(-128, $this->getHealth() - ((int) $dmg)), $cause, $force);
 	}
-
+    
+	public function setState($v){
+	    $this->state = $v;
+	    $this->data["State"] = $v;
+	    $this->updateMetadata();
+	}
+	
+	public function getState(){
+	    return $this->state;
+	}
+	
 	public function heal($health, $cause = "generic"){
 		return $this->setHealth(min(20, $this->getHealth() + ((int) $health)), $cause);
 	}
@@ -972,6 +997,21 @@ class Entity extends Position{
 	    $pk->speedY = $this->speedY;
 	    $pk->speedZ = $this->speedZ;
 	    $this->server->api->player->broadcastPacket($this->level->players, $pk);
+	}
+	
+	public function linkEntity(Entity $e, $type){
+	    if($e->isPlayer()){
+    	    $pk = new SetEntityLinkPacket();
+    	    $pk->rider = $this->eid;
+    	    $pk->riding = $type === SetEntityLinkPacket::TYPE_REMOVE ? 0 : $e->eid;
+    	    $pk->type = $type;
+	        $e->player->dataPacket($pk);
+	    }
+	    
+	}
+	
+	public function isPlayer(){
+	    return $this->player instanceof Player;
 	}
 	
 	public function sendMoveUpdate(){
@@ -987,6 +1027,17 @@ class Entity extends Position{
 	    $pk->yaw = $this->yaw;
 	    $pk->pitch = $this->pitch;
 	    $this->server->api->player->broadcastPacket($this->level->players, $pk);
+	}
+	
+	public function moveEntityWithOffset($oX, $oY, $oZ){
+	    $oX = $oX === 0 ? $this->speedX : $this->getSpeedModifer() * $oX * $this->getSpeed();
+	    $oY = $oY === 0 ? $this->speedY : $this->getSpeedModifer() * $oY * $this->getSpeed();
+	    $oZ = $oZ === 0 ? $this->speedZ : $this->getSpeedModifer() * $oZ * $this->getSpeed();
+	    $this->setVelocity($oX, $oY, $oZ);
+	}
+	
+	public function getSpeedModifer(){
+	    return $this->speedModifer;
 	}
 	
 	public function setHealth($health, $cause = "generic", $force = false){
@@ -1109,7 +1160,11 @@ class Entity extends Position{
 	    $this->height = $h;
 	    $this->radius = $w / 2;
 	}
-	   
+	
+	public function setSpeed($s){
+	    $this->speed = $s;
+	}
+	
 	public function knockBack($d, $d1)
 	{
 	    $f = sqrt($d * $d + $d1 * $d1);

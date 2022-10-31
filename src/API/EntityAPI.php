@@ -234,27 +234,27 @@ class EntityAPI{
                     break;
                     
         }while($i < 200);
-        if($i == 200)
-            $i = 0;
-            $data = [
-                "x" => $pos->x + mt_rand(-10, 10) / 50,
-                "y" => $pos->y + 0.19 - $i + 1,
-                "z" => $pos->z + mt_rand(-10, 10) / 50,
-                "level" => $pos->level,
-                //"speedX" => mt_rand(-3, 3) / 8,
-                "speedY" => mt_rand(5, 8) / 2,
-                //"speedZ" => mt_rand(-3, 3) / 8,
-                "item" => $item,
-            ];
-            if($this->server->api->handle("item.drop", $data) !== false){
-                for($count = $item->count; $count > 0;){
-                    $item->count = min($item->getMaxStackSize(), $count);
-                    $count -= $item->count;
-                    $e = $this->add($pos->level, ENTITY_ITEM, $item->getID(), $data);
-                    $this->spawnToAll($e);
-                    $this->server->api->handle("entity.motion", $e);
-                }
+        $i %= 200; //if i >= 200, set to 0..1..2..199
+
+        $data = [
+        	"x" => $pos->x + mt_rand(-10, 10) / 50,
+            "y" => $pos->y + 0.19 + 1 - $i,
+            "z" => $pos->z + mt_rand(-10, 10) / 50,
+            "level" => $pos->level,
+            //"speedX" => mt_rand(-3, 3) / 8,
+            //"speedY" => mt_rand(5, 8) / 2, speed is handled differently now
+            //"speedZ" => mt_rand(-3, 3) / 8,
+            "item" => $item,
+		];
+        if($this->server->api->handle("item.drop", $data) !== false){
+        	for($count = $item->count; $count > 0;){
+            	$item->count = min($item->getMaxStackSize(), $count);
+                $count -= $item->count;
+                $e = $this->add($pos->level, ENTITY_ITEM, $item->getID(), $data);
+                $this->spawnToAll($e);
+                $this->server->api->handle("entity.motion", $e);
             }
+    	}
     }
     
     public function spawnAll(Player $player){

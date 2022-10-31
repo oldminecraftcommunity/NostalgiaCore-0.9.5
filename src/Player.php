@@ -760,6 +760,9 @@ class Player{
 				if($data->eid === $this->eid or $data->level !== $this->level){
 					break;
 				}
+				if($data->speedX === 0 && $data->speedY === 0 && $data->speedZ === 0){ //causer of packet flood is eliminated.
+					break;
+				}
 				$pk = new SetEntityMotionPacket;
 				$pk->eid = $data->eid;
 				$pk->speedX = $data->speedX;
@@ -1784,7 +1787,6 @@ class Player{
 				if($this->spawned === false){
 					break;
 				}
-				$needsBreak = false;
 				$packet->eid = $this->eid;
 				$data = [];
 				$data["target"] = $packet->target;
@@ -1794,149 +1796,7 @@ class Player{
 				$this->toCraft = [];
 				$target = $this->server->api->entity->get($packet->target);
 				if($target instanceof Entity and $this->entity instanceof Entity and $this->gamemode !== VIEW and $this->blocked === false and ($target instanceof Entity) and $this->entity->distance($target) <= 8){
-					$data["targetentity"] = $target;
-					$data["entity"] = $this->entity;
-					if($packet->action === InteractPacket::ACTION_HOLD){
-						switch($target->class){
-							case ENTITY_MOB:
-							case ENTITY_OBJECT:
-								switch($target->type){
-									case MOB_PIG:
-									case OBJECT_MINECART:
-										if($target->linkedEntity != null){
-											break;
-										}
-										$target->linkedEntity = $this->entity;
-										$this->entity->isInMinecart = true;
-										$pk = new SetEntityLinkPacket();
-										$pk->rider = $target->eid;
-										$pk->riding = $this->entity->eid;
-										$pk->type = 1;
-										$this->dataPacket($pk);
-										$needsBreak = true;
-								}
-							case ENTITY_MOB:
-								$slot = $this->getSlot($this->slot);
-								switch($target->type){
-									case MOB_COW:
-										if($slot->getID() === BUCKET && $slot->getMetadata() === 0){
-											$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
-											$this->addItem(BUCKET, 1, $slot->count, true);
-											$needsBreak = true;
-										}
-										break;
-									case MOB_SHEEP:
-									    if($slot->getID() === SHEARS && $target->data["Sheared"] === 0 && !$target->isBaby()){ //not sheared
-											ServerAPI::request()->api->entity->drop(new Position($target->x + 0.5, $target->y, $target->z + 0.5, $target->level), BlockAPI::getItem(WOOL, $target->data["Color"], mt_rand(1, 3)));
-											$target->data["Sheared"] = 1;
-											$target->updateMetadata();
-											if($slot->getMetadata() >= $slot->getMaxDurability()){
-												$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
-											}
-											$needsBreak = true;
-										}
-									case MOB_CREEPER:
-										if($slot->getID() === FLINT_AND_STEEL and $target->data["Saddled"] === 0){ //:troll~1:
-											if($slot->useOn($target) and $slot->getMetadata() >= $slot->getMaxDurability()){
-												$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
-											}
-											$target->data["Saddled"] = 1;
-											$target->updateMetadata();
-											$this->server->schedule(30, [$target, "updateFuse"], []); //unknown ticks
-											$needsBreak = true;
-										}
-									case MOB_PIG:
-										if($slot->getID() === SADDLE and $target->data["Saddled"] === 0){
-											$this->removeItem($slot->getID(), 0, 1);
-											$target->data["Saddled"] = 1;
-											$target->updateMetadata();
-											$needsBreak = true;
-										}
-								}
-						}
-					}
-					if($packet->action === InteractPacket::ACTION_VEHICLE_EXIT){
-						switch($target->class){
-							case ENTITY_MOB:
-							case ENTITY_OBJECT:
-								switch($target->type){
-									case MOB_PIG:
-									case OBJECT_MINECART:
-										$players = $this->server->api->player->getAll($this->level);
-										$pk = new SetEntityLinkPacket();
-										$pk->rider = targetEntity . getId();
-										$pk->riding = this . id;
-										$pk->type = 3;
-										$this->server->api->player->broadcastPacket([$this], $pk);
-										$this->entity->isInMinecart = false;
-										$target->linkedEntity = null;
-										$pk = new SetEntityLinkPacket();
-										$pk->rider = $target->eid;
-										$pk->riding = 0;
-										$pk->type = 3;
-										$this->dataPacket($pk);
-								}
-						}
-					}
-					if($needsBreak){
-						break;
-					}
-					if($target->class === ENTITY_PLAYER and ($this->server->api->getProperty("pvp") == false or $this->server->difficulty <= 0 or ($target->player->gamemode & 0x01) === 0x01)){
-						break;
-					}elseif($this->server->handle("player.interact", $data) !== false){
-						$slot = $this->getSlot($this->slot);
-						switch($slot->getID()){
-							case WOODEN_SHOVEL:
-							case GOLDEN_SHOVEL:
-								$damage = 1;
-								break;
-							
-							case WOODEN_PICKAXE:
-							case GOLDEN_PICKAXE:
-							case STONE_SHOVEL:
-								$damage = 2;
-								break;
-								
-							case WOODEN_AXE:
-							case GOLDEN_AXE:
-							case STONE_PICKAXE:
-							case IRON_SHOVEL:
-								$damage = 3;
-								break;
-							
-							case WOODEN_SWORD:
-							case GOLDEN_SWORD:
-							case STONE_AXE:
-							case IRON_PICKAXE:
-							case DIAMOND_SHOVEL:
-								$damage = 4;
-								break;
-							
-							case STONE_SWORD:
-							case IRON_AXE:
-							case DIAMOND_PICKAXE:
-								$damage = 5;
-								break;
-								
-							case IRON_SWORD:
-							case DIAMOND_AXE:
-								$damage = 6;
-								break;
-								
-							case DIAMOND_SWORD:
-								$damage = 7;
-								break;
-
-							default:
-								$damage = 1;//$this->server->difficulty;
-						}
-						$target->harm($damage, $this->eid);
-						if($slot->isTool() === true and ($this->gamemode & 0x01) === 0){
-							if($slot->useOn($target) and $slot->getMetadata() >= $slot->getMaxDurability()){
-								$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
-							}
-						}
-					}
+					$target->interactWith($this->entity, $packet->action);
 				}
 
 				break;
@@ -2297,7 +2157,16 @@ class Player{
 				break;
 		}
 	}
-
+    
+	/**
+	 * Get an Item which is currently held by player
+	 * @return Item
+	 */
+	
+	public function getHeldItem(){
+	    return $this->getSlot($this->slot);
+	}
+	
 	public function stopSleep(){
 		$this->isSleeping = false;
 		if($this->entity instanceof Entity){

@@ -12,7 +12,7 @@ class Minecart extends Vehicle{
 		$this->x = isset($this->data["TileX"]) ? $this->data["TileX"]:$this->x;
 		$this->y = isset($this->data["TileY"]) ? $this->data["TileY"]:$this->y;
 		$this->z = isset($this->data["TileZ"]) ? $this->data["TileZ"]:$this->z;
-		$this->setHealth(1, "generic");
+		$this->setHealth(3, "generic");
 		//$this->setName((isset($objects[$this->type]) ? $objects[$this->type]:$this->type));
 		$this->width = 1;
 		/*$this->moveVector[Entity::NORTH] = new Vector3(-1, 0, 0);
@@ -46,4 +46,25 @@ class Minecart extends Vehicle{
 		$pk->speedZ = $this->speedZ;
 		$player->dataPacket($pk);
 	}
+	
+	public function interactWith(Entity $e, $action){
+	    if($action === InteractPacket::ACTION_HOLD && $e->isPlayer() && $this->canRide($e)){
+	        $this->linkedEntity = $e;
+	        $e->isRiding = true;
+	        $this->linkEntity($e, SetEntityLinkPacket::TYPE_RIDE);
+	        return true;
+	    }
+	    if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
+	        $this->linkEntity($e, SetEntityLinkPacket::TYPE_REMOVE);
+	        $this->linkedEntity = 0;
+	        $e->isRiding = false;
+	        return true;
+	    }
+	}
+	
+    public function canRide($e)
+    {
+       return !($this->linkedEntity instanceof Entity) && !$e->isRiding;
+    }
+
 }

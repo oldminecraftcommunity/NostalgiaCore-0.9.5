@@ -1,6 +1,6 @@
 <?php
 
-class FlintSteelItem extends Item{
+class FlintSteelItem extends ItemTool{
 	public function __construct($meta = 0, $count = 1){
 		parent::__construct(FLINT_STEEL, $meta, $count, "Flint and Steel");
 		$this->isActivable = true;
@@ -20,7 +20,12 @@ class FlintSteelItem extends Item{
 		return false;
 	}
 	
-	public function isTool(){
-		return true;
+	public function useOn($object, $force = false){
+	    if(($object instanceof Creeper) and $this->id === FLINT_STEEL){
+	        $this->meta++;
+	        return true;
+	    }else{
+	        return parent::useOn($object, $force);
+	    }
 	}
 }

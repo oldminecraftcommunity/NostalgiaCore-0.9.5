@@ -8,6 +8,7 @@ class Chicken extends Animal{
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 4, "generic");
 		$this->setName('Chicken');
 		$this->setSize($this->isBaby() ? 0.2 : 0.4, $this->isBaby() ? 0.35 : 0.7);
+		$this->setSpeed(0.25);
 		$this->update();
 	}
 	public function isFood($id){

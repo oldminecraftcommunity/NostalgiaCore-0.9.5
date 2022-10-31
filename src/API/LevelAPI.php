@@ -1,6 +1,9 @@
 <?php
 
 class LevelAPI{
+    /**
+     * @var Level[]
+     */
     public $levels;
 	private $server, $default;
 

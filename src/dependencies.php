@@ -94,7 +94,12 @@ require_once(FILE_PATH . "/src/entity/Ageable.php");
 require_once(FILE_PATH . "/src/entity/Animal.php");
 
 require_once(FILE_PATH . "/src/material/Item.php");
-
+require_once(FILE_PATH . "/src/material/item/base/ItemTool.php");
+require_once(FILE_PATH . "/src/material/item/base/ItemHoe.php");
+require_once(FILE_PATH . "/src/material/item/base/ItemPickaxe.php");
+require_once(FILE_PATH . "/src/material/item/base/ItemAxe.php");
+require_once(FILE_PATH . "/src/material/item/base/ItemShovel.php");
+require_once(FILE_PATH . "/src/material/item/base/ItemSword.php");
 require_once(FILE_PATH . "/src/material/item/armor/ArmorItem.php");
 
 require_once(FILE_PATH . "/src/structure/Structure.php");

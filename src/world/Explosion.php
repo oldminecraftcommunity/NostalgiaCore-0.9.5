@@ -100,9 +100,8 @@ class Explosion{
 					$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($drop[0], $drop[1], $drop[2])); //id, meta, count
 				}
 			}
-			$this->level->level->setBlockID($block->x, $block->y, $block->z, 0);
-			ServerAPI::request()->api->block->blockUpdateAround(new Position($block->x, $block->y, $block->z, $this->level), BLOCK_UPDATE_NORMAL, 5);
-			$send[] = new Vector3($block->x - $source->x, $block->y - $source->y, $block->z - $source->z);
+			$this->level->setBlock($block, new AirBlock(), true, false, true);
+			$send[] = $block->subtract($source);
 		}
 		$pk = new ExplodePacket;
 		$pk->x = $this->source->x;
