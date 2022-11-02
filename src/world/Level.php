@@ -17,6 +17,7 @@ class Level{
 		$this->server = ServerAPI::request();
 		$this->level = $level;
 		$this->level->level = $this;
+		$this->entityList = [];
 		$this->entities = $entities;
 		$this->tiles = $tiles;
 		$this->blockUpdates = $blockUpdates;
