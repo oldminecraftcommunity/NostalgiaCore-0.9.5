@@ -1,7 +1,6 @@
 <?php
 
 class EntityAPI{
-    
     public $entities;
     private $server;
     private $eCnt = 1;
@@ -37,8 +36,8 @@ class EntityAPI{
         ];
         $output = "";
         switch($cmd){
-            case 'summon':
-            case 'spawnmob':
+            case "summon":
+            case "spawnmob":
                 if(!($issuer instanceof Player)){
                     $output .= "Please run this command in-game.";
                     break;
@@ -90,18 +89,35 @@ class EntityAPI{
                     $output .= "$amount ".($isBaby === 1 ? "Baby" : "")." $mobName".(($type !== 13 || $amount > 1) ? "s" : "")." spawned in $x, $y, $z.";
                     break;
                 }
-                elseif(strtolower($args[1]) == 'baby'){//summon <mob> [baby]
+                elseif(strtolower($args[1]) == "baby"){//summon <mob> [baby]
                     $this->summon($pos, ENTITY_MOB, $type, ["IsBaby" => 1]);
                     $output .= "Baby $mobName spawned in $x, $y, $z.";
                     break;
                 }
                 break;
-            case 'despawn':
+            case "despawn":
                 $cnt = 0;
-				if($args[0] === "items"){
-					$l = $this->server->query("SELECT EID FROM entities WHERE class = ".ENTITY_ITEM.";");
+				if(!isset($args[0])){
+					$output .= "/despawn <all or (mobs,objects,items,fallings)>";
+					break;
 				}else{
-					$l = $this->server->query("SELECT EID FROM entities WHERE class = ".ENTITY_MOB.";");
+					if($args[0] === "all"){
+						$l = $this->server->query("SELECT EID FROM entities WHERE class = 2 and 3 and 4 and 5;");
+					}else{
+						$array = explode(",", strtolower($args[0]));
+						if(count($array) > 4){
+							$output .= "Many arguments!";
+							break;
+						}
+						//terrible code
+						$list = "";
+						$temp = ["mobs" => "2", "objects" => "3", "items" => "4", "fallings" => "5"];
+						foreach($array as $value){
+							$list .= $temp[$value]." and ";
+						}
+						$despawning = substr($list, 0, -5);
+						$l = $this->server->query("SELECT EID FROM entities WHERE class = ".$despawning.";");
+					}
 				}
                 if($l !== false and $l !== true){
                     while(($e = $l->fetchArray(SQLITE3_ASSOC)) !== false){
