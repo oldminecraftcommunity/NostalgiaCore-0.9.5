@@ -1203,14 +1203,16 @@ class Player{
 			$this->data->set("position", [
 				"level" => $this->entity->level->getName(),
 				"x" => (float) $this->entity->x,
-				"y" => $this->entity->y,
+				"y" => (float) $this->entity->y,
 				"z" => (float) $this->entity->z,
+				"yaw" => (float) $this->entity->yaw,
+				"pitch" => (float) $this->entity->pitch
 			]);
 			$this->data->set("spawn", [
 				"level" => $this->spawnPosition->level->getName(),
 				"x" => $this->spawnPosition->x,
 				"y" => $this->spawnPosition->y,
-				"z" => $this->spawnPosition->z,
+				"z" => $this->spawnPosition->z
 			]);
 			$inv = [];
 			foreach($this->inventory as $slot => $item){
@@ -1464,6 +1466,8 @@ class Player{
 						if($this->spawned !== false){
 							break;
 						}
+						$pos = new Position($this->entity->x, $this->entity->y, $this->entity->z, $this->level);
+						$this->teleport($pos, $this->data->get("position")["yaw"], $this->data->get("position")["pitch"], true, true);
 						$this->entity->setHealth($this->data->get("health"), "spawn", true);
 						$this->spawned = true;
 						$this->server->api->player->spawnAllPlayers($this);
@@ -1487,13 +1491,6 @@ class Player{
 						$pk = new SetTimePacket;
 						$pk->time = $this->level->getTime();
 						$this->dataPacket($pk);
-						$pos = new Position(floor($this->data->get("position")["x"]), floor($this->data->get("position")["y"]), floor($this->data->get("position")["z"]), $this->level);
-						$pos = $this->level->getSafeSpawn($pos);
-						$this->teleport($pos, false, false, true, true);
-						
-						$this->server->schedule(10, [$this, "teleport"], $pos);
-						$this->server->schedule(20, [$this, "teleport"], $pos);
-						$this->server->schedule(30, [$this, "teleport"], $pos);
 						$this->server->handle("player.spawn", $this);
 						break;
 					case 2://Chunk loaded?
@@ -1864,7 +1861,6 @@ class Player{
 						];
 						$slot = $this->getSlot($this->slot);
 						if($this->entity->getHealth() < 20 and isset($items[$slot->getID()])){
-
 							$pk = new EntityEventPacket;
 							$pk->eid = 0;
 							$pk->event = 9;
@@ -2051,7 +2047,7 @@ class Player{
 							"offset" => $offset,
 							"slotdata" => $slot,
 							"itemdata" => $item,
-							"player" => $this,
+							"player" => $this
 						]) === false){
 						$pk = new ContainerSetSlotPacket;
 						$pk->windowid = $packet->windowid;

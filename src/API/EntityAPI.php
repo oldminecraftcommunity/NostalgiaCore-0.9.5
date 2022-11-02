@@ -102,7 +102,7 @@ class EntityAPI{
 					break;
 				}else{
 					if($args[0] === "all"){
-						$l = $this->server->query("SELECT EID FROM entities WHERE class = 2 and 3 and 4 and 5;");
+						$l = $this->server->query("SELECT EID FROM entities WHERE class = 2 or 3 or 4 or 5;");
 					}else{
 						$array = explode(",", strtolower($args[0]));
 						if(count($array) > 4){
@@ -113,9 +113,9 @@ class EntityAPI{
 						$list = "";
 						$temp = ["mobs" => "2", "objects" => "3", "items" => "4", "fallings" => "5"];
 						foreach($array as $value){
-							$list .= $temp[$value]." and ";
+							$list .= $temp[$value]." or ";
 						}
-						$despawning = substr($list, 0, -5);
+						$despawning = substr($list, 0, -4);
 						$l = $this->server->query("SELECT EID FROM entities WHERE class = ".$despawning.";");
 					}
 				}
