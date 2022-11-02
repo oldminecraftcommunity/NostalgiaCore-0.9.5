@@ -5,13 +5,14 @@ move methods
 */
 abstract class Creature extends Living{
 	const CLASS_TYPE = ENTITY_MOB;
-	public function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
+	public function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 		parent::__construct($level, $eid, $class, $type, $data);
-		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:1, "generic");
+		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 1, "generic");
 		//$this->setName((isset($mobs[$this->type]) ? $mobs[$this->type]:$this->type));
-		$this->ai->addTask(new TaskLookAround());
-		$this->ai->addTask(new TaskRandomWalk()); 
-
+		if(Entity::$updateOnTick){
+			$this->ai->addTask(new TaskLookAround());
+			$this->ai->addTask(new TaskRandomWalk()); 
+		}
 	}
 	
 	public function spawn($player){

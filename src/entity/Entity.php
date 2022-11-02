@@ -27,7 +27,7 @@ class Entity extends Position{
 	public $speedY;
 	public $speedZ;
 	public $speed;
-	public $last = array(0, 0, 0, 0, 0, 0);
+	public $last = [0, 0, 0, 0, 0, 0];
 	public $yaw;
 	public $pitch;
 	public $dead;
@@ -43,7 +43,7 @@ class Entity extends Position{
 	public $fallStart;
 	private $state;
 	private $tickCounter;
-	private $speedMeasure = array(0, 0, 0, 0, 0, 0, 0);
+	private $speedMeasure = [0, 0, 0, 0, 0, 0, 0];
 	public $server;
 	private $isStatic;
 	public $level;
@@ -57,7 +57,7 @@ class Entity extends Position{
 	public $radius;
 	public $inAction = false;
 	
-	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
+	function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 	    $this->random = new Random();
 	    $this->canBeAttacked = false;
 		$this->level = $level;
@@ -73,7 +73,7 @@ class Entity extends Position{
 		$this->data = $data;
 		$this->status = 0;
 		$this->health = 20;
-		$this->dmgcounter = array(0, 0, 0);
+		$this->dmgcounter = [0, 0, 0];
 		$this->air = 300;
 		$this->fire = 0;
 		$this->crouched = false;
@@ -95,7 +95,7 @@ class Entity extends Position{
 		$this->speed = 0;
 		$this->yaw = isset($this->data["yaw"]) ? (float) $this->data["yaw"]:0;
 		$this->pitch = isset($this->data["pitch"]) ? (float) $this->data["pitch"]:0;
-		$this->position = array("level" => $this->level, "x" => &$this->x, "y" => &$this->y, "z" => &$this->z, "yaw" => &$this->yaw, "pitch" => &$this->pitch);
+		$this->position = ["level" => $this->level, "x" => &$this->x, "y" => &$this->y, "z" => &$this->z, "yaw" => &$this->yaw, "pitch" => &$this->pitch];
 		$this->height = 0.98;
 		$this->moveTime = 0;
 		$this->lookTime = 0;
@@ -118,7 +118,7 @@ class Entity extends Position{
 					$this->stack = (int) $this->data["stack"];
 				}
 				$this->setHealth(5, "generic");
-				$this->server->schedule(6010, array($this, "update")); //Despawn
+				$this->server->schedule(6010, [$this, "update"]); //Despawn
 				$this->height = 0.75;
 				$this->width = 0.75;
 				break;
@@ -136,7 +136,7 @@ class Entity extends Position{
 				$this->width = 1;
 				$this->height = 1;
 				if($this->type === OBJECT_SNOWBALL){
-					$this->server->schedule(1210, array($this, "update")); //Despawn
+					$this->server->schedule(1210, [$this, "update"]); //Despawn
 					//$this->update();
 				}
 				break;
@@ -160,7 +160,7 @@ class Entity extends Position{
 	}
 	
 	public function isMoving(){
-	    return ($this->speedX > 0.01 || $this->speedX < -0.01)  || ($this->speedY > 0.01 || $this->speedY < -0.01) || ($this->speedZ > 0.01 || $this->speedZ < -0.01);
+	    return ($this->speedX > 0.01 or $this->speedX < -0.01)  or ($this->speedY > 0.01 or $this->speedY < -0.01) or ($this->speedZ > 0.01 or $this->speedZ < -0.01);
 	}
 	public function setVelocity($vX, $vY = 0, $vZ = 0){
 	    if($vX instanceof Vector3){
@@ -247,24 +247,24 @@ class Entity extends Position{
 	
 	public function getDrops(){
 		if($this->class === ENTITY_PLAYER and $this->player instanceof Player and ($this->player->gamemode & 0x01) === 0){
-			$inv = array();
+			$inv = [];
 			for($i = 0; $i < PLAYER_SURVIVAL_SLOTS; ++$i){
 				$slot = $this->player->getSlot($i);
 				$this->player->setSlot($i, BlockAPI::getItem(AIR, 0, 0));
 				if($slot->getID() !== AIR and $slot->count > 0){
-					$inv[] = array($slot->getID(), $slot->getMetadata(), $slot->count);
+					$inv[] = [$slot->getID(), $slot->getMetadata(), $slot->count];
 				}
 			}
 			for($re = 0; $re < 4; $re++){
 				$slot = $this->player->getArmor($re);
 				$this->player->setArmor($re, BlockAPI::getItem(AIR, 0, 0));
 				if($slot->getID() !== AIR and $slot->count > 0){
-					$inv[] = array($slot->getID(), $slot->getMetadata(), $slot->count);
+					$inv[] = [$slot->getID(), $slot->getMetadata(), $slot->count];
 				}
 			}
 			return $inv;
 		}
-		return array();
+		return [];
 	}
 	
 	private function spawnDrops(){
@@ -274,22 +274,22 @@ class Entity extends Position{
 	}
 	
 	public function environmentUpdate(){
-	    $hasUpdate = Entity::$updateOnTick ? $this->class === ENTITY_MOB : false; //force true for mobs
+	    $hasUpdate = self::$updateOnTick ? $this->class === ENTITY_MOB : false; //force true for mobs
 		$time = microtime(true);
-		if($this->class === ENTITY_PLAYER and ($this->player instanceof Player) and $this->player->spawned === true and $this->player->blocked !== true && !$this->dead){
+		if($this->class === ENTITY_PLAYER and ($this->player instanceof Player) and $this->player->spawned === true and $this->player->blocked !== true and !$this->dead){
 			foreach($this->server->api->entity->getRadius($this, 1.5, ENTITY_ITEM) as $item){
-				if(!$item->closed && $item->spawntime > 0 && ($time - $item->spawntime) >= 0.6){
-					if((($this->player->gamemode & 0x01) === 1 ||  $this->player->hasSpace($item->type, $item->meta, $item->stack) === true) && $this->server->api->dhandle("player.pickup", array(
+				if(!$item->closed and $item->spawntime > 0 and ($time - $item->spawntime) >= 0.6){
+					if((($this->player->gamemode & 0x01) === 1 or $this->player->hasSpace($item->type, $item->meta, $item->stack) === true) and $this->server->api->dhandle("player.pickup", [
 						"eid" => $this->player->eid,
 						"player" => $this->player,
 						"entity" => $item,
 						"block" => $item->type,
 						"meta" => $item->meta,
 						"target" => $item->eid
-					)) !== false){
+					]) !== false){
 						$item->close();
 						//$item->spawntime = 0;
-						//$this->server->schedule(15, array($item, "close"));
+						//$this->server->schedule(15, [$item, "close"]);
 					}
 				}
 			}
@@ -305,7 +305,7 @@ class Entity extends Position{
 			}
 		}
 	
-		if($this->class !== ENTITY_PLAYER and ($this->x <= 0 or $this->z <= 0 or $this->x >= 256 or $this->z >= 256 or $this->y >= 128 or $this->y <= 0)){
+		if($this->class !== ENTITY_PLAYER and ($this->x <= 0 or $this->z  <= 0 or $this->x >= 256 or $this->z >= 256 or $this->y >= 128 or $this->y <= 0)){
 			$this->close();
 			return false;
 		}
@@ -322,7 +322,7 @@ class Entity extends Position{
 		}
 		
 		if($this->fire > 0){
-			if(($this->fire % 20) === 0){
+			if(($this->fire % 20) === 0 and $this->type !== 36){
 				$this->harm(1, "burning");
 			}
 			$this->fire -= 10;
@@ -368,7 +368,7 @@ class Entity extends Position{
 							break;
 						case LAVA: //Lava damage
 						case STILL_LAVA:
-						    if($this->inBlock($pos)){
+						    if($this->inBlock($pos) and $this->type !== 36){
 								$this->harm(5, "lava");
 								$this->fire = 300;
 								$this->updateMetadata();
@@ -376,7 +376,7 @@ class Entity extends Position{
 							}
 							break;
 						case FIRE: //Fire block damage
-						    if($this->inBlock($pos)){
+						    if($this->inBlock($pos) and $this->type !== 36){
 								$this->harm(1, "fire");
 								$this->fire = 300;
 								$this->updateMetadata();
@@ -478,7 +478,7 @@ class Entity extends Position{
 					if(Utils::in_range($this->speedY, -0.001, 0.001)){
 					    $this->speedY = 0;
 					}
-					if(($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM) && ($this->speedX != 0 || $this->speedY != 0 || $this->speedZ != 0)){
+					if(($this->class === ENTITY_MOB or $this->class === ENTITY_ITEM) and ($this->speedX != 0 or $this->speedY != 0 or $this->speedZ != 0)){
     					$blocks = $this->level->getCubes($this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ));
     				    foreach($blocks as $b){
     				        $this->speedX = $b->calculateXOffset($this->boundingBox, $this->speedX);
@@ -595,7 +595,7 @@ class Entity extends Position{
 			--$this->idleTime;
 		}
 		
-		if($this->class !== ENTITY_PLAYER && $update){
+		if($this->class !== ENTITY_PLAYER and $update){
 			$this->updateMovement();
 		}
 		$this->needsUpdate = $hasUpdate;
@@ -654,7 +654,7 @@ class Entity extends Position{
 	    }
 	    $data["targetentity"] = $this;
 	    $data["entity"] = $e;
-	    if($this->server->handle("player.interact", $data) !== false && $action === InteractPacket::ACTION_ATTACK && $e->isPlayer()){
+	    if($this->server->handle("player.interact", $data) !== false and $action === InteractPacket::ACTION_ATTACK and $e->isPlayer()){
 	        $slot = $e->player->getHeldItem();
 	        $damage = $slot->getDamageAgainstOf($e);
 	        $this->harm($damage, $e->eid);
@@ -930,7 +930,7 @@ class Entity extends Position{
 	}
 
 	public function resetSpeed(){
-		$this->speedMeasure = array(0, 0, 0, 0, 0, 0, 0);	
+		$this->speedMeasure = [0, 0, 0, 0, 0, 0, 0];	
 	}
     
 	public function getSpeed(){
@@ -1051,7 +1051,7 @@ class Entity extends Position{
 			$dmg = $this->health - $health;
 			if($this->class === ENTITY_PLAYER and ($this->player instanceof Player)){
 				$points = 0;
-				$values = array(
+				$values = [
 					LEATHER_CAP => 1,
 					LEATHER_TUNIC => 3,
 					LEATHER_PANTS => 2,
@@ -1071,8 +1071,8 @@ class Entity extends Position{
 					DIAMOND_HELMET => 3,
 					DIAMOND_CHESTPLATE => 8,
 					DIAMOND_LEGGINGS => 6,
-					DIAMOND_BOOTS => 3,
-				);
+					DIAMOND_BOOTS => 3
+				];
 				foreach($this->player->armor as $slot=>$part){
 					if($part instanceof Item and isset($values[$part->getID()])){
 						if(is_numeric($cause)){ //check was entity damage by another entity
@@ -1094,11 +1094,11 @@ class Entity extends Position{
 		}elseif($health === $this->health and !$this->dead){
 			return false;
 		}
-		if($this->server->api->dhandle("entity.health.change", array("entity" => $this, "eid" => $this->eid, "health" => $health, "cause" => $cause)) !== false or $force === true){
+		if($this->server->api->dhandle("entity.health.change", ["entity" => $this, "eid" => $this->eid, "health" => $health, "cause" => $cause]) !== false or $force === true){
 			$this->health = min(127, max(-127, $health));
 			$this->server->query("UPDATE entities SET health = ".$this->health." WHERE EID = ".$this->eid.";");
 			if($harm === true){
-				$this->server->api->dhandle("entity.event", array("entity" => $this, "event" => 2)); //Ouch! sound
+				$this->server->api->dhandle("entity.event", ["entity" => $this, "event" => 2]); //Ouch! sound
 			}
 			if($this->player instanceof Player){
 				$pk = new SetHealthPacket;
@@ -1124,11 +1124,11 @@ class Entity extends Position{
 					$pk->pitch = 0;
 					$this->server->api->player->broadcastPacket($this->level->players, $pk);
 				}else{
-					$this->server->api->dhandle("entity.event", array("entity" => $this, "event" => 3)); //Entity dead
+					$this->server->api->dhandle("entity.event", ["entity" => $this, "event" => 3]); //Entity dead
 				}
 				if($this->player instanceof Player){
 					$this->player->blocked = true;
-					$this->server->api->dhandle("player.death", array("player" => $this->player, "cause" => $cause));
+					$this->server->api->dhandle("player.death", ["player" => $this->player, "cause" => $cause]);
 					if($this->server->api->getProperty("hardcore") == 1){
 						$this->server->api->ban->ban($this->player->username);
 					}
@@ -1138,7 +1138,7 @@ class Entity extends Position{
 			}elseif($this->health > 0){
 				$this->dead = false;
 			}
-			if(is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false){
+			if(is_numeric($cause) and ($entity = $this->server->api->entity->get($cause)) != false){
 			    $d = $entity->x - $this->x;
 			    for($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01)
 			    {
