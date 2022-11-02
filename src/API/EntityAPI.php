@@ -84,7 +84,6 @@ class EntityAPI{
                     }
                     
                     for($cnt = $amount; $cnt > 0; --$cnt){
-                        
                         $this->summon($pos, ENTITY_MOB, $type, $isBaby === 1 ? ["IsBaby" => 1] : []);
                     }
                     
@@ -99,7 +98,11 @@ class EntityAPI{
                 break;
             case 'despawn':
                 $cnt = 0;
-                $l = $this->server->query("SELECT EID FROM entities WHERE class = " . ENTITY_MOB . ";");
+				if($args[0] === "items"){
+					$l = $this->server->query("SELECT EID FROM entities WHERE class = ".ENTITY_ITEM.";");
+				}else{
+					$l = $this->server->query("SELECT EID FROM entities WHERE class = ".ENTITY_MOB.";");
+				}
                 if($l !== false and $l !== true){
                     while(($e = $l->fetchArray(SQLITE3_ASSOC)) !== false){
                         $e = $this->get($e["EID"]);
@@ -109,7 +112,7 @@ class EntityAPI{
                         }
                     }
                 }
-                $output .= "$cnt mobs have been despawned!";
+                $output .= "$cnt entities have been despawned!";
                 break;
         }
         return $output;
