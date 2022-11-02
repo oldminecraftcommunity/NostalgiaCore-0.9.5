@@ -152,6 +152,7 @@ class EntityAPI{
         }else{
             $this->entities[$eid] = new Entity($level, $eid, $class, $type, $data);
         }
+        $level->entityList[$eid] = &$this->entities[$eid];
         $this->server->handle("entity.add", $this->entities[$eid]);
         return $this->entities[$eid];
     }

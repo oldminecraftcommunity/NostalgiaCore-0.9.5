@@ -71,7 +71,7 @@ class PocketMinecraftServer{
 		console("[INFO] Loading extra.properties...");
 		$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, [
 			"version" => "5",
-		    "update-mobs-on-every-tick" => false,
+		    "experemental-mob-features" => false,
 			"enable-nether-reactor" => true,
 			"enable-explosions" => true,
 			"enable-rail-connection" => false,
@@ -83,9 +83,9 @@ class PocketMinecraftServer{
 			"discord-webhook-url" => "none",
 			"discord-bot-name" => "NostalgiaCore Logger"
 		]);
-		Entity::$updateOnTick = $this->extraprops->get("update-mobs-on-every-tick");
+		Entity::$updateOnTick = $this->extraprops->get("experemental-mob-features");
 		if(Entity::$updateOnTick){
-		    console("[WARNING] Mobs will update every tick. Might cause lags with a huge amount of entities.");
+		    console("[WARNING] Experemental mob features are enabled. Unpredictable behavior.");
 		}
 		Explosion::$enableExplosions = $this->extraprops->get("enable-explosions");
 		RailBlock::$shouldconnectrails = $this->extraprops->get("enable-rail-connection"); //Rail connection in config

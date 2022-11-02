@@ -1,12 +1,15 @@
 <?php
 
 class Level{
-
-	/**
-	 * List of entities in this world
-	 * @var array
-	 */
+    /**
+     * @var Config
+     */
     public $entities;
+    /**
+     * This is an array of entities in this world. 
+     * @var Entity[]
+     */
+    public $entityList;
 	public $tiles, $blockUpdates, $nextSave, $players = [], $level;
 	private $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
 
@@ -230,7 +233,7 @@ class Level{
 	    if($e->level->getName() != $this->getName()){
 	        return false; //not the same world
 	    }
-	    foreach($this->entities as $e1){
+	    foreach($this->entityList as $e1){
 	        if($e->boundingBox->intersectsWith($e1->boundingBox) && $e1->isCollidable){
 	            $e->onCollideWith($e1);
 	            $e1->onCollideWith($e);
@@ -336,8 +339,12 @@ class Level{
 	}
     
 	public function onTick(PocketMinecraftServer $server){
-	    $ents = $server->api->entity->getAll($this);
-	    foreach($ents as $e){
+	    //$ents = $server->api->entity->getAll($this);
+	    foreach($this->entityList as $k => $e){
+	        if(!($e instanceof Entity)){
+	            unset($this->entityList[$k]);
+	            continue;
+	        }
 	        if($e->needsUpdate){
 	            $e->update();
 	        }

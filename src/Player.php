@@ -1467,7 +1467,8 @@ class Player{
 							break;
 						}
 						$pos = new Position($this->entity->x, $this->entity->y, $this->entity->z, $this->level);
-						$this->teleport($pos, $this->data->get("position")["yaw"], $this->data->get("position")["pitch"], true, true);
+						$pData = $this->data->get("position");
+						$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
 						$this->entity->setHealth($this->data->get("health"), "spawn", true);
 						$this->spawned = true;
 						$this->server->api->player->spawnAllPlayers($this);
