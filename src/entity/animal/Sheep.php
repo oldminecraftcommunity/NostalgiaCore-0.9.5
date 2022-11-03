@@ -11,6 +11,25 @@ class Sheep extends Animal{
 		$this->setSize($this->isBaby() ? 0.45 : 0.9, $this->isBaby() ? 0.675 : 1.3);
 		$this->setSpeed(0.25);
 		$this->update();
+		if($this->isSheared() and Entity::$updateOnTick){ //if ai enabled
+			$this->server->schedule(mt_rand(60, 400), [$this, "eatGrass"], null, true); //unknown time
+		}elseif($this->isBaby() and Entity::$updateOnTick){
+			$this->server->schedule(mt_rand(400, 1000), [$this, "eatGrass"], null, true); //unknown time
+		}
+	}
+	
+	public function eatGrass(){
+		$downBlock = $this->level->getBlock(new Vector3($this->x, $this->y-1, $this->z));
+		if($downBlock->getID() !== GRASS){
+			//console("eww i don't wanna eat this $downBlock");
+			return false;
+		}
+		$pk = new EntityEventPacket;
+		$pk->eid = $this->eid;
+		$pk->event = 10;
+		$this->server->api->player->broadcastPacket($this->level->players, $pk);
+		$this->server->schedule(38, [$this, "setSheared"], false);
+		$this->level->setblock(new Position($this->x, $this->y-1, $this->z, $this->level), new DirtBlock());
 	}
 	
 	public function setSheared($v = null){
@@ -28,7 +47,7 @@ class Sheep extends Animal{
 	
 	public function getDrops(){
 		return $this->isBaby() ? parent::getDrops() : [
-			[WOOL, $this->getColor() & 0x0F, 1],
+			[WOOL, $this->getColor() & 0x0F, 1]
 		];
 	}
 	
@@ -43,6 +62,7 @@ class Sheep extends Animal{
 	            if(!$this->isSheared()){
 	                $this->setSheared(1);
 	                $this->server->api->entity->drop($this, BlockAPI::getItem(WOOL, $this->getColor(), mt_rand(1, 3)));
+					//$this->server->schedule(20, [$this, "eatGrass"]);
 	                if($slot->getMetadata() >= $slot->getMaxDurability()){
 	                    $this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
 	                }

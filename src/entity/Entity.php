@@ -1278,10 +1278,14 @@ class Entity extends Position
             $this->health = min(127, max(- 127, $health));
             $this->server->query("UPDATE entities SET health = " . $this->health . " WHERE EID = " . $this->eid . ";");
             if($harm === true){
-                $this->server->api->dhandle("entity.event", array(
+				$pk = new EntityEventPacket;
+				$pk->eid = $this->eid;
+				$pk->event = 2;
+				$this->server->api->player->broadcastPacket($this->level->players, $pk);
+                /*$this->server->api->dhandle("entity.event", array(
                     "entity" => $this,
                     "event" => 2
-                )); // Ouch! sound
+                )); // Ouch! sound*/
             }
             if($this->player instanceof Player){
                 $pk = new SetHealthPacket();
@@ -1306,18 +1310,22 @@ class Entity extends Position
                     $pk->yaw = 0;
                     $pk->pitch = 0;
                     $this->server->api->player->broadcastPacket($this->level->players, $pk);
-                } else{
-                    $this->server->api->dhandle("entity.event", array(
+                }else{
+					$pk = new EntityEventPacket;
+					$pk->eid = $this->eid;
+					$pk->event = 3;
+					$this->server->api->player->broadcastPacket($this->level->players, $pk);
+                    /*$this->server->api->dhandle("entity.event", [
                         "entity" => $this,
                         "event" => 3
-                    )); // Entity dead
+                    ]); // Entity dead*/
                 }
                 if($this->player instanceof Player){
                     $this->player->blocked = true;
-                    $this->server->api->dhandle("player.death", array(
+                    $this->server->api->dhandle("player.death", [
                         "player" => $this->player,
                         "cause" => $cause
-                    ));
+                    ]);
                     if($this->server->api->getProperty("hardcore") == 1){
                         $this->server->api->ban->ban($this->player->username);
                     }
