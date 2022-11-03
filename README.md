@@ -42,10 +42,10 @@ Simply start your server using ./start.sh -l
 
 https://discord.gg/uSHEWe6NC3
 
-<h4> Want to contribute?</h4>
-​* Check the [Contributing Guidelines](CONTRIBUTING.md)
+# Want to contribute?
+* Check the [Contributing Guidelines](CONTRIBUTING.md)
 
-<h4> Third-party Libraries/Protocols Used</h4>
+# Third-party Libraries/Protocols Used
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
 * __[PHP SQLite3](http://php.net/manual/en/book.sqlite3.php)__
 * __[PHP BCMath](http://php.net/manual/en/book.bc.php)__
