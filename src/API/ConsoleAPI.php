@@ -57,8 +57,9 @@ class ConsoleAPI{
 		if(defined("NO_THREADS")){
 			return;
 		}
-		if($this->loop->line !== false){
-			$line = preg_replace("#\\x1b\\x5b([^\\x1b]*\\x7e|[\\x40-\\x50])#", "", trim($this->loop->line));
+		$line = $this->loop->line;
+		if($line !== false){
+			$line = preg_replace("#\\x1b\\x5b([^\\x1b]*\\x7e|[\\x40-\\x50])#", "", trim($line));
 			$this->loop->line = false;
 			$output = $this->run($line, "console");
 			if($output != ""){
@@ -290,8 +291,10 @@ class ConsoleLoop extends Thread{
 		}
 
 		while(!$this->stop){
-			$this->line = $this->readLine();
-			$this->wait();
+			$this->synchronized(function($t){
+				$t->line = $t->readLine();
+				$t->wait();
+			}, $this);
 			$this->line = false;
 		}
 
