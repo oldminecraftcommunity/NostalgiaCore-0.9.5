@@ -762,9 +762,8 @@ class Entity extends Position
         if($this->class === ENTITY_PLAYER and ($this->server->api->getProperty("pvp") == false or $this->server->difficulty <= 0 or ($e->player->gamemode & 0x01) === 0x01)){
             return false;
         }
-        $data["targetentity"] = $this;
-        $data["entity"] = $e;
-        if($this->server->handle("player.interact", $data) !== false && $action === InteractPacket::ACTION_ATTACK && $e->isPlayer()){
+
+        if($action === InteractPacket::ACTION_ATTACK && $e->isPlayer()){
             $slot = $e->player->getHeldItem();
             $damage = $slot->getDamageAgainstOf($e);
             $this->harm($damage, $e->eid);
