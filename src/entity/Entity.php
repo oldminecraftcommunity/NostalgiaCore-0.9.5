@@ -170,11 +170,11 @@ class Entity extends Position
         $this->update();
         $this->updateLast();
         $this->updatePosition();
-        if($this->y < 0 and $this->class !== ENTITY_PLAYER){
-            $this->close();
+        if($this->isInVoid()){
+            $this->outOfWorld();
         }
     }
-
+    
     public function addVelocity($vX, $vY = 0, $vZ = 0)
     {
         if($vX instanceof Vector3){
@@ -367,9 +367,8 @@ class Entity extends Position
             $this->air = 300;
             return false;
         }
-
-        if($this->y < - 16){
-            $this->harm(8, "void", true);
+        if($this->isInVoid()){
+            $this->outOfWorld();
             $hasUpdate = true;
         }
 
@@ -455,7 +454,11 @@ class Entity extends Position
         }
         return $hasUpdate;
     }
-
+    
+    public function isInVoid(){
+        return $this->y < -1.6;
+    }
+    
     public function update()
     {
         if($this->closed === true){
@@ -696,7 +699,19 @@ class Entity extends Position
 
         $this->lastUpdate = $now;
     }
-
+    
+    /**
+     * Handle fall out of world
+     */
+    public function outOfWorld(){
+        if($this->isPlayer()){
+            $this->health = 0;
+            $this->makeDead("void");
+        }else{
+            $this->close();
+        }
+    }
+    
     public function interactWith(Entity $e, $action)
     {
         if($this->class === ENTITY_PLAYER and ($this->server->api->getProperty("pvp") == false or $this->server->difficulty <= 0 or ($e->player->gamemode & 0x01) === 0x01)){
@@ -1082,16 +1097,19 @@ class Entity extends Position
 		return false;
 	}
 	$ret = $this->setHealth(max(- 128, $this->getHealth() - ((int) $dmg)), $cause, $force);
+	
 	if($ret != false && $this->hasKnockback && is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false){
-                $d = $entity->x - $this->x;
-                for($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01){
-                    $d = (Utils::randomFloat() - Utils::randomFloat()) * 0.01;
-                }
-
-                // attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) >
-                $this->knockBack($d, $d1);
-		$this->sendMotion();
+        $d = $entity->x - $this->x;
+        
+        for($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01){
+            $d = (Utils::randomFloat() - Utils::randomFloat()) * 0.01;
         }
+
+        // attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) >
+        $this->knockBack($d, $d1);
+		$this->sendMotion();
+    }
+    
 	return $ret;
     }
 
@@ -1243,45 +1261,7 @@ class Entity extends Position
                 $this->player->dataPacket($pk);
             }
             if($this->health <= 0 and $this->dead === false){
-                $this->spawnDrops();
-                $this->air = 300;
-                $this->fire = 0;
-                $this->crouched = false;
-                $this->fallY = false;
-                $this->fallStart = false;
-                $this->updateMetadata();
-                $this->dead = true;
-                if($this->player instanceof Player){
-                    $pk = new MoveEntityPacket_PosRot();
-                    $pk->eid = $this->eid;
-                    $pk->x = - 256;
-                    $pk->y = 128;
-                    $pk->z = - 256;
-                    $pk->yaw = 0;
-                    $pk->pitch = 0;
-                    $this->server->api->player->broadcastPacket($this->level->players, $pk);
-                }else{
-					$pk = new EntityEventPacket;
-					$pk->eid = $this->eid;
-					$pk->event = 3;
-					$this->server->api->player->broadcastPacket($this->level->players, $pk);
-                    /*$this->server->api->dhandle("entity.event", [
-                        "entity" => $this,
-                        "event" => 3
-                    ]); // Entity dead*/
-                }
-                if($this->player instanceof Player){
-                    $this->player->blocked = true;
-                    $this->server->api->dhandle("player.death", [
-                        "player" => $this->player,
-                        "cause" => $cause
-                    ]);
-                    if($this->server->api->getProperty("hardcore") == 1){
-                        $this->server->api->ban->ban($this->player->username);
-                    }
-                } else{
-                    $this->close();
-                }
+                $this->makeDead($cause);
             } elseif($this->health > 0){
                 $this->dead = false;
             }
@@ -1296,7 +1276,49 @@ class Entity extends Position
         $this->height = $h;
         $this->radius = $w / 2;
     }
-
+    
+    public function makeDead($cause){
+        $this->spawnDrops();
+        $this->air = 300;
+        $this->fire = 0;
+        $this->crouched = false;
+        $this->fallY = false;
+        $this->fallStart = false;
+        $this->updateMetadata();
+        $this->dead = true;
+        if($this->player instanceof Player){
+            $pk = new MoveEntityPacket_PosRot();
+            $pk->eid = $this->eid;
+            $pk->x = - 256;
+            $pk->y = 128;
+            $pk->z = - 256;
+            $pk->yaw = 0;
+            $pk->pitch = 0;
+            $this->server->api->player->broadcastPacket($this->level->players, $pk);
+        }else{
+            $pk = new EntityEventPacket;
+            $pk->eid = $this->eid;
+            $pk->event = 3;
+            $this->server->api->player->broadcastPacket($this->level->players, $pk);
+            /*$this->server->api->dhandle("entity.event", [
+             "entity" => $this,
+             "event" => 3
+             ]); // Entity dead*/
+        }
+        if($this->player instanceof Player){
+            $this->player->blocked = true;
+            $this->server->api->dhandle("player.death", [
+                "player" => $this->player,
+                "cause" => $cause
+            ]);
+            if($this->server->api->getProperty("hardcore") == 1){ //poor player =<
+                $this->server->api->ban->ban($this->player->username);
+            }
+        } else{
+            $this->close();
+        }
+    }
+    
     public function setSpeed($s)
     {
         $this->speed = $s;
