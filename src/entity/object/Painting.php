@@ -8,6 +8,7 @@ class Painting extends Hanging{
 		$this->y = isset($this->data["TileY"]) ? $this->data["TileY"]:$this->y;
 		$this->z = isset($this->data["TileZ"]) ? $this->data["TileZ"]:$this->z;
 		$this->setHealth(1, "generic");
+		$this->canBeAttacked = true;
 		$this->width = 1;
 		$this->isStatic = true;
 	}

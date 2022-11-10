@@ -4,130 +4,69 @@ class Entity extends Position
 {
 
     const TYPE = - 1;
-
     const CLASS_TYPE = - 1;
 
     public static $updateOnTick;
-
     public $isCollidable;
-
     public $canBeAttacked;
-
     public $moveTime, $lookTime, $idleTime;
-
     public $needsUpdate;
-
     public $speedModifer;
-
+    public $hasGravity;
     /**
-     *
      * @var AxisAlignedBB
      */
     public $boundingBox;
-
     public $age;
-
     public $air;
-
     public $spawntime;
-
     public $dmgcounter;
-
     public $eid;
-
     public $type;
-
     public $name;
-
     public $x;
-
     public $y;
-
     public $z;
-
     public $speedX;
-
     public $speedY;
-
     public $speedZ;
-
     public $speed;
-
-    public $last = array(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-    );
-
+    public $last = array(0, 0, 0, 0, 0, 0);
     public $yaw;
-
     public $pitch;
-
     public $dead;
-
     public $data;
-
     public $class;
-
     public $attach;
-
     public $closed;
-
     /**
-     *
      * @var Player
      */
     public $player;
-
     public $fallY;
-
     public $fallStart;
-
     private $state;
-
     private $tickCounter;
-
-    private $speedMeasure = array(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-    );
-
+    private $speedMeasure = array(0, 0, 0, 0, 0, 0, 0);
     public $server;
-
     private $isStatic;
-
     public $level;
-
     public $isRiding = false;
-
     public $lastUpdate;
-
     public $linkedEntity = null;
-
     public $check = true;
-
     public $width = 1;
-
     public $height = 1;
-
     public $random;
-
     public $radius;
-
     public $inAction = false;
+    public $hasKnockback;
 
     function __construct(Level $level, $eid, $class, $type = 0, $data = array())
     {
         $this->random = new Random();
         $this->canBeAttacked = false;
+	$this->hasKnockback = false;
         $this->level = $level;
         $this->speedModifer = 0.7;
         $this->fallY = false;
@@ -141,11 +80,8 @@ class Entity extends Position
         $this->data = $data;
         $this->status = 0;
         $this->health = 20;
-        $this->dmgcounter = array(
-            0,
-            0,
-            0
-        );
+	$this->hasGravity = false;
+        $this->dmgcounter = array(0, 0, 0);
         $this->air = 300;
         $this->fire = 0;
         $this->crouched = false;
@@ -186,6 +122,8 @@ class Entity extends Position
                 $this->speedModifer = 1;
                 $this->width = 1.2;
                 $this->height = 1.9;
+		$this->hasKnockback = true;
+		$this->hasGravity = true;
                 $this->canBeAttacked = true;
                 break;
             case ENTITY_ITEM:
@@ -196,6 +134,7 @@ class Entity extends Position
                     $this->meta = (int) $this->data["meta"];
                     $this->stack = (int) $this->data["stack"];
                 }
+		$this->hasGravity = true;
                 $this->setHealth(5, "generic");
                 $this->server->schedule(6010, array(
                     $this,
@@ -208,6 +147,7 @@ class Entity extends Position
                 $this->setHealth(PHP_INT_MAX, "generic");
                 $this->height = 0.98;
                 $this->width = 0.98;
+		$this->hasGravity = true;
                 break;
             case ENTITY_OBJECT:
                 $this->x = isset($this->data["TileX"]) ? $this->data["TileX"] : $this->x;
@@ -639,7 +579,7 @@ class Entity extends Position
                     $update = true;
                 }
 
-                if($support === false){
+                if($this->hasGravity && $support === false){
                     $this->speedY -= $this->class === ENTITY_FALLING ? 0.04 : 0.08; // TODO: replace with $gravity
                     $update = true;
                 } else{
@@ -1138,7 +1078,21 @@ class Entity extends Position
 
     public function harm($dmg, $cause = "generic", $force = false)
     {
-        return $this->setHealth(max(- 128, $this->getHealth() - ((int) $dmg)), $cause, $force);
+        if(!$this->canBeAttacked){
+		return false;
+	}
+	$ret = $this->setHealth(max(- 128, $this->getHealth() - ((int) $dmg)), $cause, $force);
+	if($ret != false && $this->hasKnockback && is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false){
+                $d = $entity->x - $this->x;
+                for($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01){
+                    $d = (Utils::randomFloat() - Utils::randomFloat()) * 0.01;
+                }
+
+                // attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) >
+                $this->knockBack($d, $d1);
+		$this->sendMotion();
+        }
+	return $ret;
     }
 
     public function setState($v)
@@ -1215,9 +1169,6 @@ class Entity extends Position
 
     public function setHealth($health, $cause = "generic", $force = false)
     {
-        if(! $this->canBeAttacked){
-            return false;
-        }
         $health = (int) $health;
         $harm = false;
         if($health < $this->health){
@@ -1333,17 +1284,6 @@ class Entity extends Position
                 }
             } elseif($this->health > 0){
                 $this->dead = false;
-            }
-            if(is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false){
-                $d = $entity->x - $this->x;
-                for($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01){
-                    $d = (Utils::randomFloat() - Utils::randomFloat()) * 0.01;
-                }
-
-                // attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) - rotationYaw;
-
-                $this->knockBack($d, $d1);
-                $this->sendMotion();
             }
             return true;
         }
