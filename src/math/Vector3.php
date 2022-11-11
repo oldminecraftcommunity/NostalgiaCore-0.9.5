@@ -16,6 +16,10 @@ class Vector3{
 		$this->z = $z;
 	}
 	
+	public function copy(){
+	    return new Vector3($this->x, $this->y, $this->z);
+	}
+	
 	public function toArray(){
 	    return ["x" => $this->x, "y" => $this->y, "z" => $this->z];
 	}

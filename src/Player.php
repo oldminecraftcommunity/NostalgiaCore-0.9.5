@@ -771,9 +771,10 @@ class Player{
 				$this->dataPacket($pk);
 				break;
 			case "entity.animate":
-				if($data["eid"] === $this->eid or $data["entity"]->level !== $this->level){
+				if($data["eid"] === $this->eid or $data["entity"]->level->getName() === $this->level->getName()){
 					break;
 				}
+				console("dis");
 				$pk = new AnimatePacket;
 				$pk->eid = $data["eid"];
 				$pk->action = $data["action"]; //1 swing arm,

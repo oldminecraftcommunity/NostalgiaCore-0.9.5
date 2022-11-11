@@ -1249,11 +1249,11 @@ class Entity extends Position
 				$pk = new EntityEventPacket;
 				$pk->eid = $this->eid;
 				$pk->event = 2;
-				$this->server->api->player->broadcastPacket($this->level->players, $pk);
-                /*$this->server->api->dhandle("entity.event", array(
+				//$this->server->api->player->broadcastPacket($this->level->players, $pk);
+                $this->server->api->dhandle("entity.event", array(
                     "entity" => $this,
                     "event" => 2
-                )); // Ouch! sound*/
+                )); // Ouch! sound
             }
             if($this->player instanceof Player){
                 $pk = new SetHealthPacket();
@@ -1300,10 +1300,10 @@ class Entity extends Position
             $pk->eid = $this->eid;
             $pk->event = 3;
             $this->server->api->player->broadcastPacket($this->level->players, $pk);
-            /*$this->server->api->dhandle("entity.event", [
+            $this->server->api->dhandle("entity.event", [
              "entity" => $this,
              "event" => 3
-             ]); // Entity dead*/
+             ]); // Entity dead
         }
         if($this->player instanceof Player){
             $this->player->blocked = true;

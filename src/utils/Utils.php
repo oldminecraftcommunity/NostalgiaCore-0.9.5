@@ -38,6 +38,15 @@ class Utils{
 		}
 		return $id;
 	}
+	
+	public static function getSign($v){
+	    return $v > 0 ? 1 : ($v < 0 ? -1  : 0);
+	}
+	
+	public static function clampDegrees($v){
+	    return floor(($v % 360 + 360) % 360);
+	}
+	
 	public static function hasEmoji($s){
 		return preg_match(Utils::emojiRegex, $s, $matches);
 	}
