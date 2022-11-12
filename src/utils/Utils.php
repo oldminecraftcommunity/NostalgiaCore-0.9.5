@@ -39,7 +39,6 @@ class Utils{
 		return $id;
 	}
 	
-<<<<<<< HEAD
 	public static function getSign($v){
 	    return $v > 0 ? 1 : ($v < 0 ? -1  : 0);
 	}
@@ -48,8 +47,6 @@ class Utils{
 	    return floor(($v % 360 + 360) % 360);
 	}
 	
-=======
->>>>>>> 1042e025 (look player achievements, moved method cmdWhitelist to ConsoleAPI(marked as deprecated in BanAPI to avoid losing compability with old pmmp plugins))
 	public static function hasEmoji($s){
 		return preg_match(Utils::emojiRegex, $s);
 	}
