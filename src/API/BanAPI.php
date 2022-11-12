@@ -49,7 +49,7 @@ class BanAPI{
 	 * @see ConsoleAPI::cmdWhitelist
 	 * @param string $cmd Command to Whitelist
 	 */
-	public function cmdWhitelist($cmd){//
+	public function cmdWhitelist($cmd){
 	    $this->server->api->console->cmdWhitelist($cmd);
 	}
 

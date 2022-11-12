@@ -185,7 +185,7 @@ class AchievementAPI{
         if(count($achs) <= 0){
             return "Player {$params[0]} unlocked 0 achievements";
         }
-        $output = "Unlocked Achievements(".count($achs)."), ";
+        $output = "Unlocked Achievements(".count($achs)."/".count(self::$achievements)."): ";
         foreach($achs as $achievement => $unlocked){
             if($unlocked && isset(self::$achievements[$achievement])){
                 $info = self::$achievements[$achievement];
