@@ -27,6 +27,13 @@ abstract class Animal extends Creature implements Ageable, Breedable{
 		return $d;
 	}
 	
+	public function createSaveData(){
+	    $data = parent::createSaveData();
+	    $data["IsBaby"] = $this->isBaby();
+	    return $data;
+	    
+	}
+	
 	public function isInLove(){
 	    return $this->inLove > 0;
 	}

@@ -31,7 +31,8 @@ class Entity extends Position
     public $speedY;
     public $speedZ;
     public $speed;
-    public $last = array(0, 0, 0, 0, 0, 0);
+    public $lastX = 0, $lastY  = 0, $lastZ  = 0, $lastYaw  = 0, $lastPitch  = 0, $lastTime = 0;
+    public $last;
     public $yaw;
     public $pitch;
     public $dead;
@@ -65,8 +66,9 @@ class Entity extends Position
     function __construct(Level $level, $eid, $class, $type = 0, $data = array())
     {
         $this->random = new Random();
+        $this->last = [&$this->lastX, &$this->lastY, &$this->lastZ, &$this->lastYaw, &$this->lastPitch, &$this->lastTime]; //pointers to variables
         $this->canBeAttacked = false;
-	$this->hasKnockback = false;
+        $this->hasKnockback = false;
         $this->level = $level;
         $this->speedModifer = 0.7;
         $this->fallY = false;
@@ -80,7 +82,7 @@ class Entity extends Position
         $this->data = $data;
         $this->status = 0;
         $this->health = 20;
-	$this->hasGravity = false;
+        $this->hasGravity = false;
         $this->dmgcounter = array(0, 0, 0);
         $this->air = 300;
         $this->fire = 0;
@@ -122,8 +124,8 @@ class Entity extends Position
                 $this->speedModifer = 1;
                 $this->width = 1.2;
                 $this->height = 1.9;
-		$this->hasKnockback = true;
-		$this->hasGravity = true;
+                $this->hasKnockback = true;
+                $this->hasGravity = true;
                 $this->canBeAttacked = true;
                 break;
             case ENTITY_ITEM:
@@ -134,7 +136,7 @@ class Entity extends Position
                     $this->meta = (int) $this->data["meta"];
                     $this->stack = (int) $this->data["stack"];
                 }
-		$this->hasGravity = true;
+                $this->hasGravity = true;
                 $this->setHealth(5, "generic");
                 $this->server->schedule(6010, array(
                     $this,
@@ -147,7 +149,7 @@ class Entity extends Position
                 $this->setHealth(PHP_INT_MAX, "generic");
                 $this->height = 0.98;
                 $this->width = 0.98;
-		$this->hasGravity = true;
+                $this->hasGravity = true;
                 break;
             case ENTITY_OBJECT:
                 $this->x = isset($this->data["TileX"]) ? $this->data["TileX"] : $this->x;
@@ -1075,7 +1077,42 @@ class Entity extends Position
         unset($this->speedMeasure[key($this->speedMeasure)]);
         $this->speedMeasure[] = $this->speed;
     }
-
+    /**
+     * @return array
+     */
+    public function createSaveData(){
+        $data = [
+            "id" => $this->type,
+            "Health" => $this->health,
+            "Pos" => [
+                0 => $this->x,
+                1 => $this->y,
+                2 => $this->z,
+            ],
+            "Rotation" => [
+                0 => $this->yaw,
+                1 => $this->pitch,
+            ],
+            
+        ];
+        if($this->class === ENTITY_OBJECT){
+            $data["TileX"] = $this->x;
+            $data["TileY"] = $this->y;
+            $data["TileZ"] = $this->z;
+        }
+        if($this->class === ENTITY_FALLING){
+            $data["Tile"] = $this->data["Tile"];
+        }
+        if($this->class === ENTITY_ITEM){
+            $data["Item"] = [
+                "id" => $this->type,
+                "Damage" => $this->meta,
+                "Count" => $this->stack,
+            ];
+        }
+        return $data;
+    }
+ 
     public function updateLast()
     {
         $this->last[0] = $this->x;

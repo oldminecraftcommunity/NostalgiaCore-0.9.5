@@ -18,6 +18,13 @@ class Sheep extends Animal{
 		}
 	}
 	
+	public function createSaveData(){
+	    $data = parent::createSaveData();
+	    $data["Color"] = @$this->data["Color"];
+	    $data["Sheared"] = @$this->data["Sheared"];
+	    return $data;
+	}
+	
 	public function eatGrass(){
 		$downBlock = $this->level->getBlock(new Vector3($this->x, $this->y-1, $this->z));
 		if($downBlock->getID() !== GRASS){

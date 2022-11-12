@@ -19,6 +19,12 @@ abstract class Creature extends Living{
 		}
 	}
 	
+	public function createSaveData(){
+	    $data = parent::createSaveData();
+	    $data["State"] = @$this->getState();
+	    return $data;
+	}
+	
 	public function getSpeedModifer(){
 	    return $this->speedModifer * ($this->inPanic ? 1.4 : 0.7);
 	}

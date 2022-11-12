@@ -1312,17 +1312,17 @@ class Player{
 					return;
 				}
 				if($packet->protocol1 !== ProtocolInfo::CURRENT_PROTOCOL){
-					if($packet->protocol1 < ProtocolInfo::CURRENT_PROTOCOL){
-						$pk = new LoginStatusPacket;
-						$pk->status = 1;
-						$this->directDataPacket($pk);
-					}else{
-						$pk = new LoginStatusPacket;
-						$pk->status = 2;
-						$this->directDataPacket($pk);
-					}
-					$this->close("Incorrect protocol #" . $packet->protocol1, false);
-					return;
+				    if($packet->protocol1 < ProtocolInfo::CURRENT_PROTOCOL){
+				        $pk = new LoginStatusPacket;
+				        $pk->status = 1;
+				        $this->directDataPacket($pk);
+				    }else{
+				        $pk = new LoginStatusPacket;
+				        $pk->status = 2;
+				        $this->directDataPacket($pk);
+				    }
+				    $this->close("Incorrect protocol #" . $packet->protocol1, false);
+				    return;
 				}
 				if(preg_match('#[^a-zA-Z0-9_]#', $this->username) > 0 or $this->username === "" or $this->iusername === "rcon" or $this->iusername === "console" or $this->iusername === "server"){
 					$this->close("Bad username", false);
