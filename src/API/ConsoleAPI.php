@@ -22,10 +22,18 @@ class ConsoleAPI{
 		$this->register("difficulty", "<0|1|2|3>", [$this, "defaultCommands"]);
 		$this->register("stop", "", [$this, "defaultCommands"]);
 		$this->register("defaultgamemode", "<mode>", [$this, "defaultCommands"]);
-		$this->server->api->ban->cmdWhitelist("help");
-		$this->server->api->ban->cmdWhitelist("status");
+		$this->cmdWhitelist("help");
+		$this->cmdWhitelist("status");
 	}
-
+    
+	/**
+	 * Whitelists a CMD so everyone can issue it - Even non OPs.
+	 * @param string $cmd Command to Whitelist
+	 */
+	public function cmdWhitelist($cmd){
+	    $this->server->api->ban->cmdWhitelist[strtolower(trim($cmd))] = true;
+	}
+	
 	public function register($cmd, $help, $callback){
 		if(!is_callable($callback)){
 			return false;

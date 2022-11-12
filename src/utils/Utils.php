@@ -39,6 +39,7 @@ class Utils{
 		return $id;
 	}
 	
+<<<<<<< HEAD
 	public static function getSign($v){
 	    return $v > 0 ? 1 : ($v < 0 ? -1  : 0);
 	}
@@ -47,8 +48,10 @@ class Utils{
 	    return floor(($v % 360 + 360) % 360);
 	}
 	
+=======
+>>>>>>> 1042e025 (look player achievements, moved method cmdWhitelist to ConsoleAPI(marked as deprecated in BanAPI to avoid losing compability with old pmmp plugins))
 	public static function hasEmoji($s){
-		return preg_match(Utils::emojiRegex, $s, $matches);
+		return preg_match(Utils::emojiRegex, $s);
 	}
 	public static function getCallableIdentifier(callable $variable){
 		if(is_array($variable)){
@@ -81,6 +84,7 @@ class Utils{
 	        }
 	    }
 	}
+	
 	public static function getUniqueID($raw = false, $extra = ""){
 		$machine = php_uname("a");
 		$machine .= file_exists("/proc/cpuinfo") ? file_get_contents("/proc/cpuinfo") : "";

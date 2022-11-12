@@ -44,6 +44,10 @@ class ServerAPI{
 	 * @var TileAPI
 	 */
 	public $tile;
+	/**
+	 * @var AchievementAPI
+	 */
+	public $achievement;
 	private $asyncCalls = [];
 	private $server;
 	private $config;
@@ -144,7 +148,6 @@ class ServerAPI{
 		console("[INFO] NostalgiaCore is distributed under the LGPL License", true, true, 0);
 
 		$this->loadProperties();
-
 		$this->loadAPI("console", "ConsoleAPI");
 		$this->loadAPI("level", "LevelAPI");
 		$this->loadAPI("block", "BlockAPI");
@@ -155,6 +158,7 @@ class ServerAPI{
 		$this->loadAPI("player", "PlayerAPI");
 		$this->loadAPI("time", "TimeAPI");
 		$this->loadAPI("queryAPI", "QueryAPI");
+		$this->loadAPI("achievement", "AchievementAPI");
 		foreach($this->apiList as $ob){
 			if(is_callable([$ob, "init"])){
 				$ob->init(); //Fails sometimes!!!

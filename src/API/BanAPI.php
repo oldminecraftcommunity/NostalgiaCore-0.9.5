@@ -14,7 +14,8 @@ class BanAPI{
 	private $ops;
 	/** @var Config */
 	private $bannedIPs;
-	private $cmdWL = [];//Command WhiteList
+	
+	public $cmdWhitelist = [];//Command WhiteList
 
 	function __construct(){
 		$this->server = ServerAPI::request();
@@ -43,10 +44,13 @@ class BanAPI{
 	}
 
 	/**
+	 * Whitelists a CMD so everyone can issue it - Even non OPs.
+	 * @deprecated use ConsoleAPI::cmdWhitelist
+	 * @see ConsoleAPI::cmdWhitelist
 	 * @param string $cmd Command to Whitelist
 	 */
-	public function cmdWhitelist($cmd){//Whitelists a CMD so everyone can issue it - Even non OPs.
-		$this->cmdWhitelist[strtolower(trim($cmd))] = true;
+	public function cmdWhitelist($cmd){//
+	    $this->server->api->console->cmdWhitelist($cmd);
 	}
 
 	/**

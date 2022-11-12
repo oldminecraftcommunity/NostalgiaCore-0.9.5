@@ -23,9 +23,9 @@ class PlayerAPI{
 		$this->server->api->console->alias("who", "list");
 		$this->server->api->console->alias("suicide", "kill");
 		$this->server->api->console->alias("tppos", "tp");
-		$this->server->api->ban->cmdWhitelist("list");
-		$this->server->api->ban->cmdWhitelist("ping");
-		$this->server->api->ban->cmdWhitelist("spawn");
+		$this->server->api->console->cmdWhitelist("list");
+		$this->server->api->console->cmdWhitelist("ping");
+		$this->server->api->console->cmdWhitelist("spawn");
 		$this->server->preparedSQL->selectPlayersToHeal = $this->server->database->prepare("SELECT EID FROM entities WHERE class = " . ENTITY_PLAYER . " AND health < 20;");
 	}
 
@@ -360,7 +360,7 @@ class PlayerAPI{
 		}
 	}
 
-	public function getOffline($name){
+	public function getOffline($name, $create = true){
 		$iname = strtolower($name);
 		$default = [
 			"caseusername" => $name,
@@ -387,10 +387,12 @@ class PlayerAPI{
 		];
 
 		if(!file_exists(DATA_PATH . "players/" . $iname . ".yml")){
-			if($this->server->extraprops->get("save-player-data")){
+			if($this->server->extraprops->get("save-player-data") && $create){
 				console("[NOTICE] Player data not found for \"" . $iname . "\", creating new profile");
 				$data = new Config(DATA_PATH . "players/" . $iname . ".yml", CONFIG_YAML, $default);
 				$data->save();
+			}else{
+			    return false;
 			}
 		}
 

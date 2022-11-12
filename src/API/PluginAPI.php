@@ -25,7 +25,10 @@ class PluginAPI extends stdClass{
 		$this->randomNonce = Utils::getRandomBytes(16, false);
 		$this->server->api->console->register("plugins", "", [$this, "commandHandler"]);
 		$this->server->api->console->register("version", "", [$this, "commandHandler"]);
-		$this->server->api->ban->cmdWhitelist("version");
+		$this->server->api->console->cmdWhitelist("version");
+		if($this->server->extraprops->get("query-plugins")){ //allow players to also view plugins ingame, since query makes names public
+		    $this->server->api->console->cmdWhitelist("plugins");
+		}
 		$this->server->api->console->alias("pl", "plugins");
 		$this->server->api->console->alias("ver", "version");
 		$this->server->api->console->alias("about", "version");
