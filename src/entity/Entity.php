@@ -1285,12 +1285,8 @@ class Entity extends Position
             if($harm === true){
 				$pk = new EntityEventPacket;
 				$pk->eid = $this->eid;
-				$pk->event = 2;
-				//$this->server->api->player->broadcastPacket($this->level->players, $pk);
-                $this->server->api->dhandle("entity.event", array(
-                    "entity" => $this,
-                    "event" => 2
-                )); // Ouch! sound
+				$pk->event = EntityEventPacket::ENTITY_DAMAGE;
+				$this->server->api->player->broadcastPacket($this->level->players, $pk);
             }
             if($this->player instanceof Player){
                 $pk = new SetHealthPacket();

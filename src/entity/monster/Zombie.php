@@ -8,28 +8,31 @@ class Zombie extends Monster{
 		$this->setSize(0.6, 1.85);
 		$this->setSpeed(0.23);
 		$this->update();
-		//$this->server->schedule(20, [$this, "burnable"], null, true); //todo
 	}
 	
-	public function burnable(){
-		if($this->fire > 0 or $this->server->api->time->getPhase($this->level->getTime()) == "day"){
-			return;
-		}
-		$y = $this->y;
-		for(; $y < 129; $y++){
-			$block = $this->level->getBlock(new Vector3($this->x, $y, $this->z));
-			if($block->isSolid){ //?
-				return false;
-			}
-		}
-		$block = $this->level->getBlock(new Vector3($this->x, $y, $this->z))->getID();
-		if($block === AIR){
-			$this->fire = 200;
-			$this->updateMetadata();
-			return true;
-		}else{
-			return false;
-		}
+	public function updateBurning(){
+	    if($this->fire > 0 or $this->server->api->time->getPhase($this->level->getTime()) != "day"){
+	        return false;
+	    }
+	    
+	    for($y = $this->y; $y < 129; $y++){
+	        $block = $this->level->getBlockWithoutVector($this->x, $y, $this->z);
+	        if($block->isSolid){
+	            return false;
+	        }
+	    }
+	    if($block->getID() === AIR){
+	        $this->fire = 160; //Value from 0.8.1
+	        $this->updateMetadata();
+	        return true;
+	    }else{
+	        return false;
+	    }
+	}
+	
+	public function update(){
+	    $this->updateBurning();
+	    parent::update();
 	}
 	
 	public function getDrops(){
