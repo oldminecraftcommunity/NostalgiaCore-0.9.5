@@ -139,12 +139,7 @@ class Entity extends Position
                 }
                 $this->hasGravity = true;
                 $this->setHealth(5, "generic");
-                $this->server->schedule(6010, array(
-                    $this,
-                    "update"
-                )); // Despawn
-                $this->height = 0.75;
-                $this->width = 0.75;
+                $this->setSize(0.25, 0.25);
                 break;
             case ENTITY_FALLING:
                 $this->setHealth(PHP_INT_MAX, "generic");
@@ -170,6 +165,7 @@ class Entity extends Position
                 break;
         }
         $this->boundingBox = new AxisAlignedBB($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
+        $this->update();
         $this->updateLast();
         $this->updatePosition();
         if($this->isInVoid()){
@@ -331,7 +327,7 @@ class Entity extends Position
         $hasUpdate = Entity::$updateOnTick ? $this->class === ENTITY_MOB : false; // force true for mobs
         $time = microtime(true);
         if($this->class === ENTITY_PLAYER and ($this->player instanceof Player) and $this->player->spawned === true and $this->player->blocked !== true && ! $this->dead){
-            foreach($this->server->api->entity->getRadius($this, 1.5, ENTITY_ITEM) as $item){
+            foreach($this->server->api->entity->getRadius($this, 1, ENTITY_ITEM) as $item){
                 if(! $item->closed && $item->spawntime > 0 && ($time - $item->spawntime) >= 0.6){
                     if((($this->player->gamemode & 0x01) === 1 || $this->player->hasSpace($item->type, $item->meta, $item->stack) === true) && $this->server->api->dhandle("player.pickup", array(
                         "eid" => $this->player->eid,
@@ -535,6 +531,7 @@ class Entity extends Position
                 if(Utils::in_range($this->speedY, - 0.001, 0.001)){
                     $this->speedY = 0;
                 }
+                
                 if(($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)) && ($this->speedX != 0 || $this->speedY != 0 || $this->speedZ != 0)){
                     $blocks = $this->level->getCubes($this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ));
                     foreach($blocks as $b){
@@ -585,7 +582,7 @@ class Entity extends Position
                 }
 
                 if($this->hasGravity && $support === false){
-                    $this->speedY -= $this->class === ENTITY_FALLING ? 0.04 : 0.08; // TODO: replace with $gravity
+                    $this->speedY -= ($this->class === ENTITY_FALLING) ? 0.04 : ($this->class === ENTITY_ITEM ? 0.06 : 0.08); // TODO: replace with $gravity
                     $update = true;
                 } else{
                     // $this->speedX = 0;

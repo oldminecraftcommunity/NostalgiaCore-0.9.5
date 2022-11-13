@@ -239,31 +239,43 @@ class EntityAPI{
         $e->setHealth($e->getHealth() - $attack, $cause, $force);
     }
     
+    public function dropRawPos(Position $pos, $item, $speedX, $speedY, $speedZ){
+        if($item->getID() === AIR or $item->count <= 0){
+            return;
+        }
+        $data = [
+            "x" => $pos->x,
+            "y" => $pos->y,
+            "z" => $pos->z,
+            "level" => $pos->level,
+            "speedX" => $speedX,
+            "speedY" => $speedY,
+            "speedZ" => $speedZ,
+            "item" => $item,
+        ];
+        if($this->server->api->handle("item.drop", $data) !== false){
+            for($count = $item->count; $count > 0;){
+                $item->count = min($item->getMaxStackSize(), $count);
+                $count -= $item->count;
+                $e = $this->add($pos->level, ENTITY_ITEM, $item->getID(), $data);
+                $this->spawnToAll($e);
+                $this->server->api->handle("entity.motion", $e);
+            }
+        }
+    }
+    
     public function drop(Position $pos, Item $item){
         if($item->getID() === AIR or $item->count <= 0){
             return;
         }
-        $i = 0;
-        do{ // drop the block to the first supporting block
-            $i++;
-            $v = new Vector3($pos->x, $pos->y - $i, $pos->z);
-            $b = $pos->level->getBlock($v);
-            if($b->isSolid === true)
-                break;
-                if(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL)
-                    break;
-                    
-        }while($i < 200);
-        $i %= 200; //if i >= 200, set to 0..1..2..199
-
         $data = [
         	"x" => $pos->x + mt_rand(-10, 10) / 50,
-            "y" => $pos->y + 0.19 + 1 - $i,
+            "y" => $pos->y + 0.19,
             "z" => $pos->z + mt_rand(-10, 10) / 50,
             "level" => $pos->level,
-            //"speedX" => mt_rand(-3, 3) / 8,
-            //"speedY" => mt_rand(5, 8) / 2, speed is handled differently now
-            //"speedZ" => mt_rand(-3, 3) / 8,
+            "speedX" => Utils::randomFloat() * 0.2 - 0.1,
+            "speedY" => 0.2,
+            "speedZ" => Utils::randomFloat() * 0.2 - 0.1,
             "item" => $item,
 		];
         if($this->server->api->handle("item.drop", $data) !== false){

@@ -1897,7 +1897,18 @@ class Player{
 				$data["item"] = $packet->item;
 				$data["player"] = $this;
 				if($this->blocked === false and $this->server->handle("player.drop", $data) !== false){
-					$this->server->api->entity->drop(new Position($this->entity->x - 0.5, $this->entity->y, $this->entity->z - 0.5, $this->level), $packet->item);
+				    $f1 = 0.3;
+				    $sX = -sin(($this->entity->yaw / 180) * M_PI) * cos(($this->entity->pitch / 180) * M_PI) * $f1;
+				    $sZ = cos(($this->entity->yaw / 180) * M_PI) * cos(($this->entity->pitch / 180) * M_PI) * $f1;
+				    $sY = -sin(($this->entity->pitch / 180) * M_PI) * $f1 + 0.1;
+				    $f1 = 0.02;
+				    $f3 = $this->entity->random->nextFloat() * M_PI * 2.0;
+				    $f1 *= $this->entity->random->nextFloat();
+				    $sX += cos($f3) * $f1;
+				    $sY += ($this->entity->random->nextFloat() - $this->entity->random->nextFloat()) * 0.1;
+				    $sZ += sin($f3) * $f1;
+				    
+				    $this->server->api->entity->dropRawPos(new Position($this->entity->x, $this->entity->y - 0.3 + $this->entity->height - 0.12, $this->entity->z, $this->level), $packet->item, $sX, $sY, $sZ);
 					$this->setSlot($this->slot, BlockAPI::getItem(AIR, 0, 0), false);
 				}
 				if($this->entity->inAction === true){

@@ -36,6 +36,8 @@ class Level{
 	public function close(){
 		$this->__destruct();
 	}
+	
+	
 	/**
 	 * @param AxisAlignedBB $aABB
 	 * @return AxisAlignedBB[]
@@ -55,9 +57,9 @@ class Level{
 	    $y1 = $y1 > 128 ? 128 : $y1;
 	    $z1 = $z1 > 256 ? 256 : $z1;
 	    
-	    for($x = $x0; $x <= $x1; ++$x) {
+	    for($x = $x0; $x < $x1; ++$x) {
 	        for($y = $y0; $y < $y1; ++$y) {
-	            for($z = $z0; $z <= $z1; ++$z) {
+	            for($z = $z0; $z < $z1; ++$z) {
 	                $b = $this->getBlockWithoutVector($x, $y, $z);
 	                if($b != false && $b->boundingBox->intersectsWith($aABB) && $b->isSolid) {
 	                    $aABBs[] = $b->boundingBox;
