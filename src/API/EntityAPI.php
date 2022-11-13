@@ -55,7 +55,7 @@ class EntityAPI{
                 }
                 $mobName = ucfirst(array_flip($mob)[$type]);
                 
-                if(strtolower($args[1] === "baby") or strtolower($args[2] === "baby") and $type > 13){
+                if((strtolower($args[1] === "baby") or strtolower($args[2] === "baby")) and !Utils::in_range($type, 10, 13)){
                     $output .= "$mobName cannot be a baby!";
                     break;
                 }
@@ -77,13 +77,13 @@ class EntityAPI{
                         $output .= "Cannot spawn > 25 mobs";
                         break;
                     }
-                    
+                    $isBaby = false;
                     if(isset($args[2]) and strtolower($args[2]) === 'baby'){//summon <mob> [amount] [baby]
-                        $isBaby = 1;
+                        $isBaby = true;
                     }
                     
                     for($cnt = $amount; $cnt > 0; --$cnt){
-                        $this->summon($pos, ENTITY_MOB, $type, $isBaby === 1 ? ["IsBaby" => 1] : []);
+                        $this->summon($pos, ENTITY_MOB, $type, ["IsBaby" => $isBaby]);
                     }
                     
                     $output .= "$amount ".($isBaby === 1 ? "Baby" : "")." $mobName".(($type !== 13 || $amount > 1) ? "s" : "")." spawned in $x, $y, $z.";
@@ -102,7 +102,7 @@ class EntityAPI{
 					break;
 				}else{
 					if($args[0] === "all"){
-						$l = $this->server->query("SELECT EID FROM entities WHERE class = 2 or 3 or 4 or 5;");
+						$l = $this->server->query("SELECT EID FROM entities WHERE class = 2 or class = 3 or class = 4 or class = 5;");
 					}else{
 						$array = explode(",", strtolower($args[0]));
 						if(count($array) > 4){

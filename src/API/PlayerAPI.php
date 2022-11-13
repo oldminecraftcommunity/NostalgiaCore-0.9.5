@@ -434,8 +434,8 @@ class PlayerAPI{
 						$clients[$e->CID] = $e;
 					}
 				}
-			}
-			return $clients;
+			}			return $clients;
+
 		}
 		return $this->server->clients;
 	}

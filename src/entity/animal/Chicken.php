@@ -37,4 +37,5 @@ class Chicken extends Animal{
 			[[$this->fire > 0 ? COOKED_CHICKEN : RAW_CHICKEN], 0, 1]
 		];
 	}
+
 }

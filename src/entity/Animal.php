@@ -7,22 +7,60 @@ abstract class Animal extends Creature implements Ageable, Breedable{
 	
     public $parent;
     public $inLove; //do NOT add it into metadata, it doesnt send it to player
+    public $age;
+    public function __construct(Level $level, $eid, $class, $type = 0, $data = []){
+        parent::__construct($level, $eid, $class, $type, $data);
+        
+        $this->setAge(isset($data["Age"]) ? $data["Age"] : 0);
+        if(isset($this->data["IsBaby"]) && $this->data["IsBaby"] && $this->getAge() >= 0){
+            $this->setAge(-24000);
+        }
+    }
+    
 	public function isBaby(){
-		if(!isset($this->data["IsBaby"])){
-			$this->data["IsBaby"] = false;
-		}
-		return $this->data["IsBaby"];
+		return $this->getAge() < 0;
 	}
 	
-	public function spawnChild(){
-	    //TODO
-	    //$c->parent = $this->eid;
+	public function breed(){
+	    $c = $this->spawnChild();
+	    if($this->server->dhandle("entity.animal.breed", ["parent" => $this, "child" => $c]) !== false){
+	        $c->parent = &$this;
+	        $this->server->api->entity->spawnToAll($c);
+	    }
 	}
+	
+	public function update(){
+	    parent::update();
+	    $age = $this->getAge() + 1; //100 - fast. debug, 1 - normal
+	    if($age >= 0 && $this->isBaby()){
+	        $this->setAge($age);
+	        $this->updateMetadata();
+	    }else{
+	        $this->setAge($age);
+	    }
+	}
+	
+	public function getAge(){
+	    return $this->age;
+	}
+	
+	public function setAge($i){
+	    $this->age = $i;
+	}
+	
+	public function spawnChild()
+	{
+	    return $this->server->api->entity->add($this->level, $this->class, $this->type, [
+	        "x" => $this->x + Utils::randomFloat() * mt_rand(-1, 1),
+	        "y" => $this->y,
+	        "z" => $this->z + Utils::randomFloat() * mt_rand(-1, 1),
+	        "IsBaby" => true,
+	        "Age" => -24000,
+	    ]);
+	}
+	
 	public function getMetadata(){
 		$d = parent::getMetadata();
-		if(!isset($this->data["IsBaby"])){
-			$this->data["IsBaby"] = 0;
-		}
 		$d[14]["value"] = $this->isBaby();
 		return $d;
 	}
@@ -30,8 +68,8 @@ abstract class Animal extends Creature implements Ageable, Breedable{
 	public function createSaveData(){
 	    $data = parent::createSaveData();
 	    $data["IsBaby"] = $this->isBaby();
+	    $data["Age"] = $this->getAge();
 	    return $data;
-	    
 	}
 	
 	public function isInLove(){
