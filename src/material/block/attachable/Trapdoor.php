@@ -11,8 +11,14 @@ class TrapdoorBlock extends TransparentBlock{
 		}
 		$this->hardness = 15;
 	}
+	
+	public function canAttachTo(Block $target){
+	    $id = $target->getID();
+	    return $id === SLAB || $id === GLOWSTONE || $id === SLAB || $id === WOOD_SLAB || (!$target->isTransparent || $target instanceof StairBlock);
+	}
+	
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
-			if(($target->isTransparent === false or $target->getID() === SLAB) and $face !== 0 and $face !== 1){
+			if(($this->canAttachTo($target)) and $face !== 0 and $face !== 1){
 				$faces = array(
 					2 => 0,
 					3 => 1,

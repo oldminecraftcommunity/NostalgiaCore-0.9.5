@@ -53,7 +53,7 @@ class Sheep extends Animal{
 	}
 	
 	public function getDrops(){
-		return $this->isBaby() ? parent::getDrops() : [
+		return ($this->isBaby() || $this->isSheared()) ? parent::getDrops() : [
 			[WOOL, $this->getColor() & 0x0F, 1]
 		];
 	}

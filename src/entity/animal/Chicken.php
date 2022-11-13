@@ -18,7 +18,7 @@ class Chicken extends Animal{
 	
 	public function update(){
 	    parent::update();
-	    if($this->timeUntilEgg-- <= 0){
+	    if($this->timeUntilEgg-- <= 0 && !$this->isBaby()){
 	        $this->dropAnEgg();
 	        $this->timeUntilEgg = mt_rand(0,6000) + 6000;
 	    }

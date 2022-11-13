@@ -170,7 +170,6 @@ class Entity extends Position
                 break;
         }
         $this->boundingBox = new AxisAlignedBB($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
-        $this->update();
         $this->updateLast();
         $this->updatePosition();
         if($this->isInVoid()){
