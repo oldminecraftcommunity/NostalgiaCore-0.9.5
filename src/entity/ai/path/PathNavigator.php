@@ -1,46 +1,64 @@
 <?php
 class PathNavigator
 {
+    const PATH_COMPLETED = 0x1;
+    const PATH_CONTINUE = 0x2;
+    const PATH_CANT_CONTINUE = 0x3;
     public $entity;
+    /**
+     * @var Node
+     */
+    private $getTo;
     public $currentPointIndex;
     public function __construct(Creature &$entity){
         $this->entity = $entity;
         $this->currentPointIndex = 0;
     }
     
+    
     public function reset(){
         $this->currentPointIndex = 0;
     }
-    
+    /**
+     * @param Node[] $path
+     */
     public function followPath($path){ //TODO remove local var
-        if($this->currentPointIndex >= count($path)){
-            $this->entity->moveTime = mt_rand(100, 200);
-            try{
-                return true; //path finished
-            }finally {
-                $this->reset();
-            }
+        if(!$this->canContinue()){
+            console($this->getTo);
+            console($this->entity);
+            $diffX = $this->getTo->x - $this->entity->x;
+            $diffY = 0; //todo ?
+            $diffZ = $this->getTo->z - $this->entity->z;
+            
+            $this->entity->moveEntityWithOffset(Utils::getSign($diffX), Utils::getSign($diffY), Utils::getSign($diffZ));
+            return self::PATH_CANT_CONTINUE;
         }
-        $point = $path[$this->currentPointIndex];
-        $eX = ceil($this->entity->x);
-        $eY = ceil($this->entity->y);
-        $eZ = ceil($this->entity->z);
-        //console($point.":::".$eX.":".$eY.":".$eZ."::::".$this->entity->moveTime);
-        if($this->entity->moveTime <= 0 && $point->x === $eX && $point->y === $eY && $point->z === $eZ){
-            ++$this->currentPointIndex;
-        }elseif($this->entity->moveTime <= 0 && !$this->entity->isMoving()){
-            //console($point.":::".$eX.":".$eY.":".$eZ);
-            $vX = $point->x - $eX;
-            $vY = 0;//$point->y - $this->entity->y; //vY is always 0 in current pathfinder\
-            $vZ = $point->z - $eZ;
-            //console($vX."::".$vZ);
-            $this->entity->addVelocity(($vX > 0 ? 0.1 : ($vX < 0 ? -0.1 : 0)), $vY, ($vZ > 0 ? 0.1 : ($vZ < 0 ? -0.1 : 0)));
-            $this->testLook($point);
-            //console($this->entity->yaw);
-            $this->entity->moveTime = 5; //use 20 for debug
+        $index = $this->currentPointIndex++;
+        if($index >= count($path)){
+            $this->onPathEnd();
+            console("COMPLETED");
+            return self::PATH_COMPLETED;
         }
-        //$this->entity->moveTime = 5*
-        return false;
+        $node = $path[$index];
+        
+        $this->getTo = $node;
+        
+        $diffX = $node->x - $this->entity->x;
+        $diffY = 0; //todo ?
+        $diffZ = $node->z - $this->entity->z;
+        
+        $this->entity->moveEntityWithOffset(Utils::getSign($diffX), Utils::getSign($diffY), Utils::getSign($diffZ));
+        
+        return self::PATH_CONTINUE;
+    }
+    
+    public function canContinue(){
+        return empty($this->getTo) || (floor($this->entity->x) == floor($this->getTo->x) && floor($this->entity->z) == floor($this->getTo->z));
+    }
+    
+    public function onPathEnd(){
+        $this->currentPointIndex = 0;
+        unset($this->getTo);
     }
     
     public function testLook($pos){

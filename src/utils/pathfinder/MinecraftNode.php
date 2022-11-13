@@ -12,6 +12,10 @@ class MinecraftNode extends Node
         parent::__construct($x, $y, $z);
     }
     
+    public static function fromArray($arr){
+        return new MinecraftNode($arr[0], $arr[1], $arr[2]);
+    }
+    
     public function __toString()
     {
         return "MinecraftNode({$this->x}, {$this->y}, {$this->z})";

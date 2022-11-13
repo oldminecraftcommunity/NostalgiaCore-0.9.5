@@ -19,6 +19,17 @@ abstract class Creature extends Living{
 		}
 	}
 	
+	public function update(){
+	    i/*f($this->path === false || count($this->path) <= 0){
+	        $this->path = $this->pathFinder->findPath(MinecraftNode::fromArray([$this->x, $this->y, $this->z]), new MinecraftNode($this->x + mt_rand(-7, 7), $this->y, $this->z + mt_rand(-7, 7)));
+	    }
+	    $state = $this->pathNavigator->followPath($this->path);
+	    if($state === PathNavigator::PATH_COMPLETED){
+	        $this->path = false;
+	    }*/
+	    parent::update();
+	}
+	
 	public function createSaveData(){
 	    $data = parent::createSaveData();
 	    $data["State"] = @$this->getState();
