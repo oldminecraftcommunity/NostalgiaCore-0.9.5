@@ -31,9 +31,9 @@ class Entity extends Position
     public $speedY;
     public $speedZ;
     public $speed;
-    public $lastX = 0, $lastY  = 0, $lastZ  = 0, $lastYaw  = 0, $lastPitch  = 0, $lastTime = 0;
+    public $lastX = 0, $lastY  = 0, $lastZ  = 0, $lastYaw  = 0, $lastPitch  = 0, $lastTime = 0, $lastHeadYaw = 0;
     public $last;
-    public $yaw;
+    public $yaw, $headYaw;
     public $pitch;
     public $dead;
     public $data;
@@ -104,6 +104,7 @@ class Entity extends Position
         $this->speedZ = isset($this->data["speedZ"]) ? (float) $this->data["speedZ"] : 0;
         $this->speed = 0;
         $this->yaw = isset($this->data["yaw"]) ? (float) $this->data["yaw"] : 0;
+        $this->headYaw = isset($this->data["headYaw"]) ? $this->data["headYaw"] : $this->yaw;
         $this->pitch = isset($this->data["pitch"]) ? (float) $this->data["pitch"] : 0;
         $this->position = array(
             "level" => $this->level,
@@ -535,7 +536,7 @@ class Entity extends Position
                 if(Utils::in_range($this->speedY, - 0.001, 0.001)){
                     $this->speedY = 0;
                 }
-                if(($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM) && ($this->speedX != 0 || $this->speedY != 0 || $this->speedZ != 0)){
+                if(($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)) && ($this->speedX != 0 || $this->speedY != 0 || $this->speedZ != 0)){
                     $blocks = $this->level->getCubes($this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ));
                     foreach($blocks as $b){
                         $this->speedX = $b->calculateXOffset($this->boundingBox, $this->speedX);
@@ -695,7 +696,11 @@ class Entity extends Position
                     }
                 }
             } else{
-                $this->updatePosition($this->x, $this->y, $this->z, $this->yaw, $this->pitch);
+                $this->updatePosition();
+                if($this->lastHeadYaw != $this->headYaw){
+                    $this->sendHeadYaw();
+                }
+                $this->updateLast();
             }
         }
 
@@ -977,7 +982,14 @@ class Entity extends Position
         // $this->sendMotion();
         $this->updateAABB();
     }
-
+    
+    public function sendHeadYaw(){
+        $pk = new RotateHeadPacket;
+        $pk->eid = $this->eid;
+        $pk->yaw = $this->headYaw;
+        $this->server->api->player->broadcastPacket($this->level->players, $pk);
+    }
+    
     public function setPosition(Vector3 $pos, $yaw = false, $pitch = false)
     {
         if($pos instanceof Position and $pos->level instanceof Level and $this->level !== $pos->level){
@@ -1121,6 +1133,7 @@ class Entity extends Position
         $this->last[3] = $this->yaw;
         $this->last[4] = $this->pitch;
         $this->last[5] = microtime(true);
+        $this->lastHeadYaw = $this->headYaw;
     }
 
     public function getPosition($round = false)

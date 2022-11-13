@@ -287,17 +287,7 @@ class EntityAPI{
     
     public function getAll($level = null){
         if($level instanceof Level){
-            $entities = [];
-            $l = $this->server->query("SELECT EID FROM entities WHERE level = '" . $level->getName() . "';");
-            if($l !== false and $l !== true){
-                while(($e = $l->fetchArray(SQLITE3_ASSOC)) !== false){
-                    $e = $this->get($e["EID"]);
-                    if($e instanceof Entity){
-                        $entities[$e->eid] = $e;
-                    }
-                }
-            }
-            return $entities;
+            return $level->entityList;
         }
         return $this->entities;
     }

@@ -35,10 +35,7 @@ class TaskRandomWalk extends TaskBase
         $ai->entity->moveEntityWithOffset(($this->x > 0 ? 1 : ($this->x < 0 ? -1 : 0)), 0, ($this->z > 0 ? 1 : ($this->z < 0 ? -1 : 0)));
         if($this->looking){
             $this->testLook($ai, $ai->entity->speedX, $ai->entity->speedZ);
-            $pk = new RotateHeadPacket();
-            $pk->eid = $ai->entity->eid;
-            $pk->yaw = $ai->entity->yaw;
-            $ai->entity->server->api->player->broadcastPacket($ai->entity->level->players, $pk);
+            $ai->entity->headYaw = $ai->entity->yaw;
             $this->looking = false;
         }
     }
