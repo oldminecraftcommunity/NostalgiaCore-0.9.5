@@ -104,9 +104,8 @@ abstract class Animal extends Creature implements Ageable, Breedable{
 	
 	public function getDrops(){
 		if($this->isBaby()){
-			return array(
-				array(AIR, 0, 0),
-			);
+			return [];
 		}
+		return parent::getDrops();
 	}
 }
