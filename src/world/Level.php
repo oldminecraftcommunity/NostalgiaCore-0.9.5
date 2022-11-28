@@ -89,8 +89,10 @@ class Level{
 
 		if($extra !== false){
 			$entities = [];
-			foreach($this->server->api->entity->getAll($this) as $entity){
-				$entities[] = $entity->createSaveData();
+			foreach($this->entityList as $entity){
+			    if($entity instanceof Entity){
+			        $entities[] = $entity->createSaveData();
+			    }
 			}
 			$this->entities->setAll($entities);
 			$this->entities->save();

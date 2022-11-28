@@ -14,7 +14,6 @@ class EntityAPI{
     }
     
     public function init(){
-        $this->server->schedule(25, [$this, "updateEntities"], [], true);
         $this->server->api->console->register("summon", "<mob>", [$this, "commandHandler"]);
         $this->server->api->console->register("spawnmob", "<mob>", [$this, "commandHandler"]);
         $this->server->api->console->register("despawn", "", [$this, "CommandHandler"]);
@@ -102,7 +101,13 @@ class EntityAPI{
 					break;
 				}else{
 					if($args[0] === "all"){
-						$l = $this->server->query("SELECT EID FROM entities WHERE class = 2 or class = 3 or class = 4 or class = 5;");
+					    $cnt = 0;
+					    foreach($this->entities as $e){
+					        if(!$e->isPlayer()){ //if player, not despawning
+					            $this->remove($e->eid);
+					            $cnt++;
+					        }
+					    }
 					}else{
 						$array = explode(",", strtolower($args[0]));
 						if(count($array) > 4){
@@ -117,18 +122,19 @@ class EntityAPI{
 						}
 						$despawning = substr($list, 0, -4);
 						$l = $this->server->query("SELECT EID FROM entities WHERE class = ".$despawning.";");
+						if($l !== false and $l !== true){
+						    while(($e = $l->fetchArray(SQLITE3_ASSOC)) !== false){
+						        $e = $this->get($e["EID"]);
+						        if($e instanceof Entity){
+						            $this->remove($e->eid);
+						            $cnt++;
+						        }
+						    }
+						}
 					}
 				}
-                if($l !== false and $l !== true){
-                    while(($e = $l->fetchArray(SQLITE3_ASSOC)) !== false){
-                        $e = $this->get($e["EID"]);
-                        if($e instanceof Entity){
-                            $this->remove($e->eid);
-                            $cnt++;
-                        }
-                    }
-                }
-                $output .= "$cnt entities have been despawned!";
+                
+                $output = "$cnt entities have been despawned!";
                 break;
         }
         return $output;
@@ -174,38 +180,21 @@ class EntityAPI{
     
     public function remove($eid){
         if(isset($this->entities[$eid])){
-            $entity = $this->entities[$eid];
-            $this->entities[$eid] = null;
-            unset($this->entities[$eid]);
-            $entity->closed = true;
-            $this->server->query("DELETE FROM entities WHERE EID = " . $eid . ";");
-            if($entity->class === ENTITY_PLAYER){
+            $this->entities[$eid]->closed = true;
+            if($this->entities[$eid]->isPlayer()){
                 $pk = new RemovePlayerPacket;
-                $pk->eid = $entity->eid;
+                $pk->eid = $eid;
                 $pk->clientID = 0;
-                $this->server->api->player->broadcastPacket($this->server->api->player->getAll(), $pk);
+                $this->server->api->player->broadcastPacket($this->entities[$eid]->level->players, $pk);
             }else{
                 $pk = new RemoveEntityPacket;
-                $pk->eid = $entity->eid;
-                $this->server->api->player->broadcastPacket($this->server->api->player->getAll($entity->level), $pk);
+                $pk->eid = $eid;
+                $this->server->api->player->broadcastPacket($this->entities[$eid]->level->players, $pk);
             }
-            $this->server->api->dhandle("entity.remove", $entity);
-            $entity = null;
-            unset($entity);
-        }
-    }
-    
-    public function updateEntities(){
-        $l = $this->server->query("SELECT EID FROM entities WHERE hasUpdate = 1;");
-        
-        if($l !== false and $l !== true){
-            while(($e = $l->fetchArray(SQLITE3_ASSOC)) !== false){
-                $e = $this->get($e["EID"]);
-                if($e instanceof Entity){
-                    $e->update();
-                    $this->server->query("UPDATE entities SET hasUpdate = 0 WHERE EID = " . $e->eid . ";");
-                }
-            }
+            $this->server->api->dhandle("entity.remove", $this->entities[$eid]);
+            unset($this->entities[$eid]);
+            $this->entities[$eid] = null;
+            $this->server->query("DELETE FROM entities WHERE EID = " . $eid . ";");
         }
     }
     

@@ -284,7 +284,7 @@ class Player{
 
 		$packet->messageIndex = $this->counter[3]++;
 		$packet->reliability = 2;
-		$this->buffer->data[] = $packet;
+		@$this->buffer->data[] = $packet;
 		$this->bufferLen += 6 + $len;
 		return [];
 	}
@@ -760,7 +760,7 @@ class Player{
 				if($data->eid === $this->eid or $data->level !== $this->level){
 					break;
 				}
-				if($data->speedX === 0 && $data->speedY === 0 && $data->speedZ === 0){ //causer of packet flood is eliminated.
+				if(($data->speedX === 0 && $data->speedY === 0 && $data->speedZ === 0) || ($data->speedX === $data->lastSpeedX && $data->speedY === $data->lastSpeedY && $data->lastSpeedZ === $data->speedZ)){ //causer of packet flood is eliminated.
 					break;
 				}
 				$pk = new SetEntityMotionPacket;
@@ -769,6 +769,9 @@ class Player{
 				$pk->speedY = $data->speedY;
 				$pk->speedZ = $data->speedZ;
 				$this->dataPacket($pk);
+				$data->lastSpeedZ = $data->speedZ;
+				$data->lastSpeedY = $data->speedY;
+				$data->lastSpeedX = $data->speedX;
 				break;
 			case "entity.animate":
 				if($data["eid"] === $this->eid or $data["entity"]->level->getName() === $this->level->getName()){

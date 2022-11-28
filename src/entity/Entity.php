@@ -24,14 +24,21 @@ class Entity extends Position
     public $eid;
     public $type;
     public $name;
-    public $x;
-    public $y;
-    public $z;
-    public $speedX;
-    public $speedY;
-    public $speedZ;
-    public $speed;
-    public $lastX = 0, $lastY  = 0, $lastZ  = 0, $lastYaw  = 0, $lastPitch  = 0, $lastTime = 0, $lastHeadYaw = 0;
+    public $x, $y, $z;
+    public $speedX, $speedY, $speedZ, $speed;
+    public $lastX = 0, $lastY  = 0, $lastZ  = 0, $lastYaw  = 0, $lastPitch  = 0, $lastTime = 0, $lastHeadYaw = 0, $lastSpeedX = 0, $lastSpeedY = 0, $lastSpeedZ = 0;
+    /**
+     * 0 = lastX, 
+     * 1 = lastY, 
+     * 2 = lastZ, 
+     * 3 = lastYaw, 
+     * 4 = lastPitch, 
+     * 5 = lastTime. 
+     * 
+     * It is not recommended to use this and it is left as a backwards compability.
+     * 
+     * @var array
+     */
     public $last;
     public $yaw, $headYaw;
     public $pitch;
@@ -393,63 +400,69 @@ class Entity extends Position
         $endY = $startY + 2;
         $endZ = $startZ + 2;
         $waterDone = false;
-        for($y = $startY; $y <= $endY; ++ $y){
-            for($x = $startX; $x <= $endX; ++ $x){
-                for($z = $startZ; $z <= $endZ; ++ $z){
-                    $pos = new Vector3($x, $y, $z);
-                    $b = $this->level->getBlock($pos);
-                    switch($b->getID()) {
-                        case WATER:
-                        case STILL_WATER: // Drowing
-                            if($this->fire > 0 and $this->inBlock($pos)){
-                                $this->fire = 0;
-                                $this->updateMetadata();
-                            }
-                            if($this->air <= 0){
-                                $this->harm(2, "water");
-                                $hasUpdate = true;
-                            } elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and ! $waterDone){
-                                $this->air -= 1;
-                                $waterDone = true;
-                                $this->updateMetadata();
-                                $hasUpdate = true;
-                            }
-                            break;
-                        case LAVA: // Lava damage
-                        case STILL_LAVA:
-                            if($this->inBlock($pos)){
-                                $this->harm(5, "lava");
-                                $this->fire = 300;
-                                $this->updateMetadata();
-                                $hasUpdate = true;
-                            }
-                            break;
-                        case FIRE: // Fire block damage
-                            if($this->inBlock($pos)){
-                                $this->harm(1, "fire");
-                                $this->fire = 300;
-                                $this->updateMetadata();
-                                $hasUpdate = true;
-                            }
-                            break;
-                        case CACTUS: // Cactus damage
-                            if($this->touchingBlock($pos)){
-                                $this->harm(1, "cactus");
-                                $hasUpdate = true;
-                            }
-                            break;
-                        default:
-                            if($this->inBlock($pos, 0.7) and $y == $endY and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)){
-                                $this->harm(1, "suffocation"); // Suffocation
-                                $hasUpdate = true;
-                            } elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1)){
-                                $this->air = 300; // Breathing
-                            }
-                            break;
+        if($this->isPlayer()){
+            
+        }
+        if($this->isPlayer()){
+            for($y = $startY; $y <= $endY; ++ $y){
+                for($x = $startX; $x <= $endX; ++ $x){
+                    for($z = $startZ; $z <= $endZ; ++ $z){
+                        $pos = new Vector3($x, $y, $z);
+                        $b = $this->level->getBlock($pos);
+                        switch($b->getID()) {
+                            case WATER:
+                            case STILL_WATER: // Drowing
+                                if($this->fire > 0 and $this->inBlock($pos)){
+                                    $this->fire = 0;
+                                    $this->updateMetadata();
+                                }
+                                if($this->air <= 0){
+                                    $this->harm(2, "water");
+                                    $hasUpdate = true;
+                                } elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and ! $waterDone){
+                                    $this->air -= 1;
+                                    $waterDone = true;
+                                    $this->updateMetadata();
+                                    $hasUpdate = true;
+                                }
+                                break;
+                            case LAVA: // Lava damage
+                            case STILL_LAVA:
+                                if($this->inBlock($pos)){
+                                    $this->harm(5, "lava");
+                                    $this->fire = 300;
+                                    $this->updateMetadata();
+                                    $hasUpdate = true;
+                                }
+                                break;
+                            case FIRE: // Fire block damage
+                                if($this->inBlock($pos)){
+                                    $this->harm(1, "fire");
+                                    $this->fire = 300;
+                                    $this->updateMetadata();
+                                    $hasUpdate = true;
+                                }
+                                break;
+                            case CACTUS: // Cactus damage
+                                if($this->touchingBlock($pos)){
+                                    $this->harm(1, "cactus");
+                                    $hasUpdate = true;
+                                }
+                                break;
+                            default:
+                                if($this->inBlock($pos, 0.7) and $y == $endY and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)){
+                                    $this->harm(1, "suffocation"); // Suffocation
+                                    $hasUpdate = true;
+                                } elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1)){
+                                    $this->air = 300; // Breathing
+                                }
+                                break;
+                        }
                     }
                 }
             }
         }
+        
         return $hasUpdate;
     }
     
@@ -491,35 +504,38 @@ class Entity extends Position
             $endZ = ceil($this->z - 0.5 + $this->width + 1);
             $support = false;
             $isFlying = true;
-            for($z = $startZ; $z <= $endZ; ++ $z){
-                for($x = $startX; $x <= $endX; ++ $x){
-                    $v = new Vector3($x, $y, $z);
-                    $v1 = new Vector3($x, $yC, $z);
-                    if($this->isSupport($v, $this->width)){
-                        $b = $this->level->getBlock($v);
-                        if($b->isSolid === true){
-                            $support = true;
-                            $isFlying = false;
-                            break;
-                        } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
-                            $isFlying = false;
-                        }
-                    } elseif($this->isSupport($v1, $this->width)){
-                        $b = $this->level->getBlock($v1);
-                        if($b->isSolid === true){
-                            $support = true;
-                            $isFlying = false;
-                            break;
-                        } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
-                            $isFlying = false;
+            if($this->isPlayer()){
+                for($z = $startZ; $z <= $endZ; ++ $z){
+                    for($x = $startX; $x <= $endX; ++ $x){
+                        $v = new Vector3($x, $y, $z);
+                        $v1 = new Vector3($x, $yC, $z);
+                        if($this->isSupport($v, $this->width)){
+                            $b = $this->level->getBlock($v);
+                            if($b->isSolid === true){
+                                $support = true;
+                                $isFlying = false;
+                                break;
+                            } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
+                                $isFlying = false;
+                            }
+                        } elseif($this->isSupport($v1, $this->width)){
+                            $b = $this->level->getBlock($v1);
+                            if($b->isSolid === true){
+                                $support = true;
+                                $isFlying = false;
+                                break;
+                            } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
+                                $isFlying = false;
+                            }
                         }
                     }
-                }
-                if($support === true){
-                    break;
+                    if($support === true){
+                        break;
+                    }
                 }
             }
-            if($this->class !== ENTITY_PLAYER){
+            
+            if(!$this->isPlayer()){
                 $update = false;
                 $drag = 0.2;
                 if(Utils::in_range($this->speedX, - 0.01, 0.01)){
@@ -532,14 +548,119 @@ class Entity extends Position
                     $this->speedY = 0;
                 }
                 
-                if(($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)) && ($this->speedX != 0 || $this->speedY != 0 || $this->speedZ != 0)){
-                    $blocks = $this->level->getCubes($this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ));
-                    foreach($blocks as $b){
-                        $this->speedX = $b->calculateXOffset($this->boundingBox, $this->speedX);
-                        $this->speedY = $b->calculateYOffset($this->boundingBox, $this->speedY);
-                        $this->speedZ = $b->calculateZOffset($this->boundingBox, $this->speedZ);
+                if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)){
+                    $aABB = $this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ);
+                    $x0 = floor($aABB->minX);
+                    $x1 = ceil($aABB->maxX);
+                    $y0 = floor($aABB->minY);
+                    $y1 = round($aABB->maxY);
+                    $z0 = floor($aABB->minZ);
+                    $z1 = ceil($aABB->maxZ);
+                    $x0 = $x0 < 0 ? 0 : $x0;
+                    $y0 = $y0 < 0 ? 0 : $y0;
+                    $z0 = $z0 < 0 ? 0 : $z0;
+                    $x1 = $x1 > 256 ? 256 : $x1;
+                    $y1 = $y1 > 128 ? 128 : $y1;
+                    $z1 = $z1 > 256 ? 256 : $z1;
+                    $waterDone = false;
+                    for($x = $x0; $x < $x1; ++ $x){
+                        for($y = $y0; $y < $y1; ++ $y){
+                            for($z = $z0; $z < $z1; ++ $z){
+                                $pos = new Vector3($x, $y, $z);
+                                $b = $this->level->getBlock($pos);
+                                switch($b->getID()) {
+                                    case WATER:
+                                    case STILL_WATER: // Drowing
+                                        if($this->fire > 0 and $this->inBlock($pos)){
+                                            $this->fire = 0;
+                                            $this->updateMetadata();
+                                        }
+                                        if($this->air <= 0){
+                                            $this->harm(2, "water");
+                                            $hasUpdate = true;
+                                        } elseif($x == ($endX - 1) and $y == $y1 and $z == ($endZ - 1) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and ! $waterDone){
+                                            $this->air -= 1;
+                                            $waterDone = true;
+                                            $this->updateMetadata();
+                                            $hasUpdate = true;
+                                        }
+                                        break;
+                                    case LAVA: // Lava damage
+                                    case STILL_LAVA:
+                                        if($this->inBlock($pos)){
+                                            $this->harm(5, "lava");
+                                            $this->fire = 300;
+                                            $this->updateMetadata();
+                                            $hasUpdate = true;
+                                        }
+                                        break;
+                                    case FIRE: // Fire block damage
+                                        if($this->inBlock($pos)){
+                                            $this->harm(1, "fire");
+                                            $this->fire = 300;
+                                            $this->updateMetadata();
+                                            $hasUpdate = true;
+                                        }
+                                        break;
+                                    case CACTUS: // Cactus damage
+                                        if($this->touchingBlock($pos)){
+                                            $this->harm(1, "cactus");
+                                            $hasUpdate = true;
+                                        }
+                                        break;
+                                    default:
+                                        if($this->inBlock($pos, 0.7) and $y == $y1 and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)){
+                                            $this->harm(1, "suffocation"); // Suffocation
+                                            $hasUpdate = true;
+                                        } elseif($x == ($endX - 1) and $y == $y1 and $z == ($endZ - 1)){
+                                            $this->air = 300; // Breathing
+                                        }
+                                        break;
+                                }
+                                if($b != false && $b->boundingBox->intersectsWith($aABB) && $b->isSolid && $this->isMoving()){
+                                        $this->speedX = $b->boundingBox->calculateXOffset($this->boundingBox, $this->speedX);
+                                        $lastY = $this->speedY;
+                                        $this->speedY = $b->boundingBox->calculateYOffset($this->boundingBox, $this->speedY);
+                                        if($this->speedY == 0 && $lastY > 0){
+                                            $support = true;
+                                        }
+                                        $this->speedZ = $b->boundingBox->calculateZOffset($this->boundingBox, $this->speedZ);
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+                
+                for($z = $startZ; $z <= $endZ; ++ $z){
+                    for($x = $startX; $x <= $endX; ++ $x){
+                        $v = new Vector3($x, $y, $z);
+                        $v1 = new Vector3($x, $yC, $z);
+                        if($this->isSupport($v, $this->width)){
+                            $b = $this->level->getBlock($v);
+                            if($b->isSolid === true){
+                                $support = true;
+                                $isFlying = false;
+                                break;
+                            } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
+                                $isFlying = false;
+                            }
+                        } elseif($this->isSupport($v1, $this->width)){
+                            $b = $this->level->getBlock($v1);
+                            if($b->isSolid === true){
+                                $support = true;
+                                $isFlying = false;
+                                break;
+                            } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
+                                $isFlying = false;
+                            }
+                        }
+                    }
+                    if($support === true){
+                        break;
                     }
                 }
+                
                 if($this->speedX != 0){
                     $this->x += $this->speedX;
                     $this->speedX -= $this->speedX * $drag;
@@ -557,6 +678,7 @@ class Entity extends Position
                         $z = (int) ($this->z - 0.5);
                         $lim = (int) floor($ny);
                         for($y = (int) ceil($this->y) - 1; $y >= $lim; -- $y){
+                            
                             if($this->level->getBlockWithoutVector($x, $y, $z)->isSolid === true){
                                 $support = true;
                                 if($this->class === ENTITY_FALLING){
@@ -580,7 +702,7 @@ class Entity extends Position
                     $this->speedY -= $this->speedY * $drag;
                     $update = true;
                 }
-
+                $this->onGround = $support;
                 if($this->hasGravity && $support === false){
                     $this->speedY -= ($this->class === ENTITY_FALLING) ? 0.04 : ($this->class === ENTITY_ITEM ? 0.06 : 0.08); // TODO: replace with $gravity
                     $update = true;
@@ -589,9 +711,6 @@ class Entity extends Position
                     // $this->speedY = 0;
                     // $this->speedZ = 0;
                     $this->server->api->handle("entity.move", $this);
-                    if(($this->class === ENTITY_OBJECT and $this->type !== OBJECT_PRIMEDTNT) or $this->speedY <= 0.1){
-                        $this->server->api->handle("entity.motion", $this);
-                    }
                     $update = true;
                 }
 
@@ -1390,7 +1509,14 @@ class Entity extends Position
     {
         return "Entity(x={$this->x},y={$this->y},z={$this->z},level=" . $this->level->getName() . ",class={$this->class},type={$this->type})";
     }
-
+    
+    /**
+     * Debug
+     */
+    public function printSpeed(){
+        console("{$this->speedX}:{$this->speedY}:{$this->speedZ}");
+    }
+    
     /*
      * Deprecated methods.
      * Those methods were left only for compability with older plugins
