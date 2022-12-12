@@ -316,7 +316,11 @@ class PMFLevel extends PMF{
 		$this->locationTable[$index][0] |= 1 << $Y;
 		return true;
 	}
-
+	private function report(){
+	    console("[ERROR] A weird error in PMFLevel just happeneed. Values: ");
+	    var_dump(func_get_args());
+	    console("[NOTICE] If you see this message, you should send the log with error to the devs.");
+	}
 	public function getBlockID($x, $y, $z){
 		if($y > 127 or $y < 0 or $x < 0 or $z < 0 or $x > 255 or $z > 255){
 			return 0;
@@ -328,7 +332,7 @@ class PMFLevel extends PMF{
 		$aX = $x - ($X << 4);
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
-		$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
+		$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]) or $this->report($index, $Y, ($aY + ($aX << 5) + ($aZ << 9)), $x, $y, $z);
 		return $b;
 	}
 

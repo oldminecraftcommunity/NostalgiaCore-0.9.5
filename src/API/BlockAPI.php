@@ -531,7 +531,8 @@ class BlockAPI{
 			$this->blockUpdateAround($block, $level);
 			$this->server->api->entity->updateRadius($pos, 1);
 		}elseif($level === BLOCK_UPDATE_RANDOM){
-			$this->nextRandomUpdate($pos);
+			//$this->nextRandomUpdate($pos); old version, change back if any issues will start to happen with this one(please note that old version makes a lot of lag)
+		    $this->scheduleBlockUpdate($pos, (mt_rand(25, 75) + Utils::getRandomUpdateTicks() * 0.05) / 0.05, BLOCK_UPDATE_RANDOM);
 		}
 		return $level;
 	}
