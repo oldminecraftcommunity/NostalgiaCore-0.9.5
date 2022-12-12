@@ -332,7 +332,7 @@ class PMFLevel extends PMF{
 		$aX = $x - ($X << 4);
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
-		$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]) or $this->report($index, $Y, ($aY + ($aX << 5) + ($aZ << 9)), $x, $y, $z);
+		$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
 		return $b;
 	}
 
