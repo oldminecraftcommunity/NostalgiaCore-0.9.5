@@ -401,9 +401,6 @@ class Entity extends Position
         $endZ = $startZ + 2;
         $waterDone = false;
         if($this->isPlayer()){
-            
-        }
-        if($this->isPlayer()){
             for($y = $startY; $y <= $endY; ++ $y){
                 for($x = $startX; $x <= $endX; ++ $x){
                     for($z = $startZ; $z <= $endZ; ++ $z){
@@ -1318,7 +1315,7 @@ class Entity extends Position
 
     public function isPlayer()
     {
-        return $this->player instanceof Player;
+        return isset($this->player) && $this->player instanceof Player;
     }
 
     public function sendMoveUpdate()

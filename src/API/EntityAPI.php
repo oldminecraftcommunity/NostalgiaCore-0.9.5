@@ -103,7 +103,7 @@ class EntityAPI{
 					if($args[0] === "all"){
 					    $cnt = 0;
 					    foreach($this->entities as $e){
-					        if(!$e->isPlayer()){ //if player, not despawning
+					        if(isset($e) && $e != null && !$e->isPlayer()){ //if player, not despawning
 					            $this->remove($e->eid);
 					            $cnt++;
 					        }
