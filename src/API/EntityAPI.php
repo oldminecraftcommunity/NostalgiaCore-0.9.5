@@ -17,6 +17,10 @@ class EntityAPI{
         $this->server->api->console->register("summon", "<mob>", [$this, "commandHandler"]);
         $this->server->api->console->register("spawnmob", "<mob>", [$this, "commandHandler"]);
         $this->server->api->console->register("despawn", "", [$this, "CommandHandler"]);
+		
+		if(($this->serverSpawnAnimals or $this->serverSpawnMobs) and Entity::$updateOnTick){
+			(new MobSpawner())->init();
+		}
     }
     
     
