@@ -31,6 +31,7 @@ class Level{
 		$this->usedChunks = [];
 		$this->changedBlocks = [];
 		$this->changedCount = [];
+		$this->mobSpawner = new MobSpawner($this);
 	}
 
 	public function close(){
@@ -77,6 +78,7 @@ class Level{
 			$this->level->close();
 			unset($this->level);
 		}
+		unset($this->mobSpawner->level);
 	}
     
 	public function save($force = false, $extra = true){
@@ -268,6 +270,10 @@ class Level{
 	            $e->update();
 	        }
 	    }
+		
+		if(Entity::$updateOnTick && $server->ticks % 40 === 0){ //40 ticks delay
+			$this->mobSpawner->handle();
+		}
 	}
 	
 	public function setBlock(Vector3 $pos, Block $block, $update = true, $tiles = false, $direct = false){

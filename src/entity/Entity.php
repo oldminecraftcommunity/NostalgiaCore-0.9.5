@@ -179,7 +179,12 @@ class Entity extends Position
             $this->outOfWorld();
         }
     }
-    
+	
+	public function isType(){
+		return in_array($this->type, func_get_args());
+	}
+	
+	
     public function addVelocity($vX, $vY = 0, $vZ = 0)
     {
         if($vX instanceof Vector3){
@@ -463,12 +468,15 @@ class Entity extends Position
         return $hasUpdate;
     }
     
+
+
+
     public function isInVoid(){
         return $this->y < -1.6;
     }
-    
-    public function update()
-    {
+
+	
+    public function update(){
         if($this->closed === true){
             return false;
         }

@@ -17,10 +17,6 @@ class EntityAPI{
         $this->server->api->console->register("summon", "<mob>", [$this, "commandHandler"]);
         $this->server->api->console->register("spawnmob", "<mob>", [$this, "commandHandler"]);
         $this->server->api->console->register("despawn", "", [$this, "CommandHandler"]);
-		
-		if(($this->serverSpawnAnimals or $this->serverSpawnMobs) and Entity::$updateOnTick){
-			(new MobSpawner())->init();
-		}
     }
     
     
@@ -185,7 +181,7 @@ class EntityAPI{
     public function remove($eid){
         if(isset($this->entities[$eid])){
             $this->entities[$eid]->closed = true;
-            if($this->entities[$eid]->isPlayer()){
+			if($this->entities[$eid]->isPlayer()){
                 $pk = new RemovePlayerPacket;
                 $pk->eid = $eid;
                 $pk->clientID = 0;
@@ -196,8 +192,8 @@ class EntityAPI{
                 $this->server->api->player->broadcastPacket($this->entities[$eid]->level->players, $pk);
             }
             $this->server->api->dhandle("entity.remove", $this->entities[$eid]);
+			unset($this->entities[$eid]->level->entityList[$eid]);
             unset($this->entities[$eid]);
-            $this->entities[$eid] = null;
             $this->server->query("DELETE FROM entities WHERE EID = " . $eid . ";");
         }
     }

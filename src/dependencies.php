@@ -93,7 +93,7 @@ require_once(FILE_PATH . "/src/entity/Creature.php");
 require_once(FILE_PATH . "/src/entity/Ageable.php");
 require_once(FILE_PATH . "/src/entity/Animal.php");
 
-require_once(FILE_PATH . "/src/entity/MobSpawner.php");
+require_once(FILE_PATH . "/src/world/MobSpawner.php");
 
 require_once(FILE_PATH . "/src/material/Item.php");
 require_once(FILE_PATH . "/src/material/item/base/ItemTool.php");
