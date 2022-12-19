@@ -2,37 +2,35 @@
 
 class TaskLookAround extends TaskBase
 {
-    private $rotation = 0;
-    public function shouldBeExecuted(EntityAI $ai)
+    private $rotation;
+    public function onStart(EntityAI $ai)
     {
-        return !$ai->entity->isMoving() && $ai->entity->lookTime <= 0 && Utils::randomFloat() < 0.02  && $ai->entity->idleTime <= 0;
-    }
-    
-    public function wasExecuted(EntityAI $ai){
-        
-        return $ai->entity->lookTime > 0 && $ai->entity->moveTime <= 0;
-    }
-    
-    public function onStart(EntityAI $ai){
-        $ai->entity->lookTime = 20 + mt_rand(0, 20);
+        $this->selfCounter = 1;
         $this->rotation = mt_rand(-180,180);
     }
-    
+
+    public function onEnd(EntityAI $ai)
+    {
+        $ai->entity->idleTime = mt_rand(20, 40);
+    }
+
+    public function canBeExecuted(EntityAI $ai)
+    {
+        return !$ai->entity->isMoving() && Utils::randomFloat() < 0.02;
+    }
+
     public function onUpdate(EntityAI $ai)
     {
-        //90 - 75 = -45deg rot
-        //60 - 30 = 90deg rot
-        //30 - 15 = -45deg rot
-        if($ai->entity->lookTime === 1){
-            $ai->entity->idleTime = mt_rand(10, 40);
+        if($this->rotation === 0){
+            $this->selfCounter = 0;
         }
-        $v = Utils::getSign($this->rotation) * 10;
+        $v = min(Utils::getSign($this->rotation) * 10, $this->rotation);
         $ai->entity->yaw += $v;
-        $pk = new RotateHeadPacket();
+        $pk = new RotateHeadPacket(); //TODO headYaw auto update
         $pk->eid = $ai->entity->eid;
         $pk->yaw = $ai->entity->yaw;
         $ai->entity->server->api->player->broadcastPacket($ai->entity->level->players, $pk);
-        
         $this->rotation -= $v;
+        
     }
 }

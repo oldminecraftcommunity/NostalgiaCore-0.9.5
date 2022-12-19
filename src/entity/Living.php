@@ -17,7 +17,9 @@ abstract class Living extends Entity implements Damageable{
     
     public function update(){
         
-        $this->ai->updateTasks();
+        if($this->idleTime <= 0) {
+            $this->ai->updateTasks();
+        }
         parent::update();
     }
     
