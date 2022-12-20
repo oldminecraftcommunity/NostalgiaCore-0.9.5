@@ -34,7 +34,7 @@ class Chicken extends Animal{
 	public function getDrops(){
 		return $this->isBaby() ? parent::getDrops() : [
 			[FEATHER, 0, mt_rand(0,2)],
-			[[$this->fire > 0 ? COOKED_CHICKEN : RAW_CHICKEN], 0, 1]
+			[$this->fire > 0 ? COOKED_CHICKEN : RAW_CHICKEN, 0, 1]
 		];
 	}
 
