@@ -839,6 +839,10 @@ class Entity extends Position
         }
     }
     
+    public function getEyeHeight(){
+        return $this->isPlayer() ? 1.62 : $this->width;
+    }
+    
     public function interactWith(Entity $e, $action)
     {
         if($this->class === ENTITY_PLAYER and ($this->server->api->getProperty("pvp") == false or $this->server->difficulty <= 0 or ($e->player->gamemode & 0x01) === 0x01)){

@@ -2,18 +2,16 @@
 
 class TaskRandomWalk extends TaskBase
 {
-    private $x, $z, $setupLook = false;
+    private $x, $z;
     public function onStart(EntityAI $ai)
     {
-        $this->x = mt_rand(-7, 7);
-        $this->z = mt_rand(-7, 7);
-        if($this->x = 0 && $this->z = 0){
+        $this->x = mt_rand(-10, 10);
+        $this->z = mt_rand(-10, 10);
+        if($this->x === 0 && $this->z === 0){
             $this->reset();
-            console("rip task");
             return false;
         }
         $this->selfCounter = floor(5 * Utils::distance($ai->entity, $ai->entity->add($this->x, 0, $this->z)));
-        $this->setupLook = false;
     }
 
     public function onEnd(EntityAI $ai)
@@ -29,14 +27,6 @@ class TaskRandomWalk extends TaskBase
         }
         --$this->selfCounter;
         $ai->mobController->moveNonInstant($this->x, 0, $this->z);
-        if(!$this->setupLook){
-            $ai->mobController->lookAt($ai->entity->speedX, 0, $ai->entity->speedZ);
-            $ai->entity->headYaw = $ai->entity->yaw;
-            $ai->entity->idleTime = 10;
-            $this->setupLook = true;
-            return;
-        }
-        
     }
 
     public function canBeExecuted(EntityAI $ai)
@@ -44,7 +34,7 @@ class TaskRandomWalk extends TaskBase
         if($ai->entity instanceof Creeper && $ai->entity->isIgnited()) {
             return false;
         }
-        return !$ai->getTask("TaskLookAround")->isStarted;
+        return !@$ai->getTask("TaskLookAround")->isStarted && !@$ai->getTask("TaskLookAtPlayer")->isStarted && mt_rand(0, 120) == 0;
     }
 
     

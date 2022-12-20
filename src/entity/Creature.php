@@ -16,7 +16,7 @@ abstract class Creature extends Living{
 		if(Entity::$updateOnTick){
 			$this->ai->addTask(new TaskLookAround());
 			$this->ai->addTask(new TaskRandomWalk());
-			//$this->ai->addTask(new TaskLookAtPlayer());
+			$this->ai->addTask(new TaskLookAtPlayer());
 		}
 	}
 	
