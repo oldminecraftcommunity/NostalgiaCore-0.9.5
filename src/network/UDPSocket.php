@@ -50,6 +50,6 @@ class UDPSocket{
 			return false;
 		}
 
-		return @socket_sendto($this->sock, $data, strlen($data), 0, $dest, $port);
+		return socket_sendto($this->sock, $data, strlen($data), MSG_DONTROUTE, $dest, $port);
 	}
 }

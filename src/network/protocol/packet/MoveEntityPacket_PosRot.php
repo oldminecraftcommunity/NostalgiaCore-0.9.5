@@ -13,7 +13,13 @@ class MoveEntityPacket_PosRot extends RakNetDataPacket{
 	}
 	
 	public function decode(){
-		
+		$this->get(7);
+		$this->eid = $this->getInt();
+		$this->x = $this->getFloat();
+		$this->y = $this->getFloat();
+		$this->z = $this->getFloat();
+		$this->yaw = $this->getFloat();
+		$this->pitch = $this->getFloat();
 	}
 	
 	public function encode(){

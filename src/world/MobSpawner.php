@@ -3,7 +3,7 @@
 class MobSpawner{
 	private $server;
 	public $level;
-	const MOB_LIMIT = 25; //constant for now
+	const MOB_LIMIT = 50; //constant for now
 	public function __construct(Level $level){
 		$this->server = ServerAPI::request();
 		$this->level = $level;
@@ -20,8 +20,7 @@ class MobSpawner{
 	}
 
 	public function handle(){
-	    return false;
-		if($this->countEntities() > self::MOB_LIMIT && count($this->level->players) <= 0){
+	    if($this->countEntities() > self::MOB_LIMIT || count($this->level->players) <= 0){
 			return false; //not spawning
 		}
 		return $this->spawnMobs();
@@ -46,7 +45,7 @@ class MobSpawner{
 		if(!$y || $y < 0){
 			return false;
 		}
-		$data = $this->genPosData($x, $y, $z);
+		$data = $this->genPosData($x, $y + 1, $z);
 		if($baby != 2) $data["IsBaby"] = $baby;
 		$e = $this->server->api->entity->add($this->level, 2, $type, $data);
 		if($e instanceof Entity){
