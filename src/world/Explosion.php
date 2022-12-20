@@ -28,6 +28,7 @@ class Explosion{
 	}
 
 	public function explode(){
+	    console("a");
 		if(!Explosion::$enableExplosions){ /*Disable Explosions*/
 			return;
 		}
@@ -40,7 +41,7 @@ class Explosion{
 			]) === false){
 			return false;
 		}
-
+		console("b");
 		$mRays = $this->rays - 1;
 		for($i = 0; $i < $this->rays; ++$i){
 			for($j = 0; $j < $this->rays; ++$j){
@@ -59,6 +60,7 @@ class Explosion{
 								$block->x = $vBlock->x;
 								$block->y = $vBlock->y;
 								$block->z = $vBlock->z;
+								$block->level = $this->level;
 								$blastForce -= ($block->getHardness() / 5 + 0.3) * $this->stepLen;
 								if($blastForce > 0){
 									$index = ($block->x << 15) + ($block->z << 7) + $block->y;
@@ -84,7 +86,6 @@ class Explosion{
 		}
 
 		foreach($this->affectedBlocks as $block){
-
 			if($block instanceof TNTBlock){
 				$data = [
 					"x" => $block->x + 0.5,
@@ -100,7 +101,7 @@ class Explosion{
 					$server->api->entity->drop(new Position($block->x + 0.5, $block->y, $block->z + 0.5, $this->level), BlockAPI::getItem($drop[0], $drop[1], $drop[2])); //id, meta, count
 				}
 			}
-			$this->level->setBlock($block, new AirBlock(), true, false, true);
+			$this->level->setBlock($block, new AirBlock(), true);
 			$send[] = $block->subtract($source);
 		}
 		$pk = new ExplodePacket;

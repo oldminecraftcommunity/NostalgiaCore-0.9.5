@@ -57,7 +57,7 @@ class NetherReactorBlock extends SolidBlock{
 	    }
 	}
 	
-	private function decay($x,$y,$z,$aOne,$aTwo,$aThree,$bOne,$bTwo,$bThree,$cOne,$cTwo,$cThree) {
+	private function decay($x, $y, $z, $aOne, $aTwo, $aThree, $bOne, $bTwo, $bThree, $cOne, $cTwo, $cThree) {
 		for($a = $aOne; $a < $aTwo; $a += $aThree) { //wth those cycles are?
 			for($b = $bOne; $b < $bTwo; $b += $bThree) {
 				for($c = $cOne; $c < $cTwo; $c += $cThree) {
@@ -101,7 +101,7 @@ class NetherReactorBlock extends SolidBlock{
 			$shiftZ = sin(floor(Utils::randomFloat()*360)*(pi()/180));
 			if(Utils::chance(5)) $randomID = $this->rarePossibleLoot[array_rand($this->rarePossibleLoot)];
 			else $randomID = $this->possibleLoot[array_rand($this->possibleLoot)];
-			$server->api->entity->drop(new Position($x+($shiftX*$randomRange)+0.5, $y-1, $z+($shiftZ*$randomRange)+0.5, $this->level), BlockAPI::getItem($randomID, 0, 1));
+			$server->api->entity->drop(new Position($x+($shiftX*$randomRange)+0.5, $y, $z+($shiftZ*$randomRange)+0.5, $this->level), BlockAPI::getItem($randomID, 0, 1));
 		}
 		for($i = 0; $i < $pigmen; $i++) {
 			$randomRange = floor(Utils::randomFloat()*5+3);
@@ -109,7 +109,7 @@ class NetherReactorBlock extends SolidBlock{
 			$shiftZ = sin(floor(Utils::randomFloat()*360)*(pi()/180));
 			$data = array(
 					"x" => $x+($shiftX*$randomRange)+0.5,
-					"y" => $y-1,
+					"y" => $y,
 					"z" => $z+($shiftZ*$randomRange)+0.5,
 				);
 			$e = $server->api->entity->add($this->level, ENTITY_MOB, MOB_PIGMAN, $data);

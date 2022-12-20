@@ -261,6 +261,8 @@ class Level{
     
 	public function onTick(PocketMinecraftServer $server){
 	    //$ents = $server->api->entity->getAll($this);
+	    if(!$this->stopTime) ++$this->time;
+	    ConsoleAPI::debug($this->getTime());
 	    foreach($this->entityList as $k => $e){
 	        if(!($e instanceof Entity)){
 	            unset($this->entityList[$k]);
@@ -280,14 +282,12 @@ class Level{
 		if(!isset($this->level) or (($pos instanceof Position) and $pos->level !== $this) or $pos->x < 0 or $pos->y < 0 or $pos->z < 0){
 			return false;
 		}
-
 		$ret = $this->level->setBlock($pos->x, $pos->y, $pos->z, $block->getID(), $block->getMetadata());
 		if($ret === true){
 			if(!($pos instanceof Position)){
 				$pos = new Position($pos->x, $pos->y, $pos->z, $this);
 			}
 			$block->position($pos);
-
 			if($direct === true){
 				$pk = new UpdateBlockPacket;
 				$pk->x = $pos->x;
@@ -500,13 +500,14 @@ class Level{
 		}else{
 			$time = $this->startTime + ($now - $this->startCheck) * 20;
 		}
-		if($this->server->api->dhandle("time.change", ["level" => $this, "time" => $time]) !== false){
+		if($this->server->api->dhandle("time.change", ["level" => $this, "time" => $time]) !== false){ //send time to player every 5 ticks
 			$this->time = $time;
-
 			$pk = new SetTimePacket;
 			$pk->time = (int) $this->time;
 			$pk->started = $this->stopTime == false;
 			$this->server->api->player->broadcastPacket($this->players, $pk);
+		}else{
+		    $this->time -= 20 * 13;
 		}
 	}
 

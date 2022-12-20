@@ -549,7 +549,7 @@ class Entity extends Position
                 if(Utils::in_range($this->speedZ, - 0.01, 0.01)){
                     $this->speedZ = 0;
                 }
-                if(Utils::in_range($this->speedY, - 0.001, 0.001)){
+                if(Utils::in_range($this->speedY, - 0.0007, 0.007)){
                     $this->speedY = 0;
                 }
                 
@@ -636,35 +636,37 @@ class Entity extends Position
                     }
                     
                 }
-                
-                for($z = $startZ; $z <= $endZ; ++ $z){
-                    for($x = $startX; $x <= $endX; ++ $x){
-                        $v = new Vector3($x, $y, $z);
-                        $v1 = new Vector3($x, $yC, $z);
-                        if($this->isSupport($v, $this->width)){
-                            $b = $this->level->getBlock($v);
-                            if($b->isSolid === true){
-                                $support = true;
-                                $isFlying = false;
-                                break;
-                            } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
-                                $isFlying = false;
-                            }
-                        } elseif($this->isSupport($v1, $this->width)){
-                            $b = $this->level->getBlock($v1);
-                            if($b->isSolid === true){
-                                $support = true;
-                                $isFlying = false;
-                                break;
-                            } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
-                                $isFlying = false;
+                if(!$support){
+                    for($z = $startZ; $z <= $endZ; ++ $z){
+                        for($x = $startX; $x <= $endX; ++ $x){
+                            $v = new Vector3($x, $y, $z);
+                            $v1 = new Vector3($x, $yC, $z);
+                            if($this->isSupport($v, $this->width)){
+                                $b = $this->level->getBlock($v);
+                                if($b->isSolid === true){
+                                    $support = true;
+                                    $isFlying = false;
+                                    break;
+                                } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
+                                    $isFlying = false;
+                                }
+                            } elseif($this->isSupport($v1, $this->width)){
+                                $b = $this->level->getBlock($v1);
+                                if($b->isSolid === true){
+                                    $support = true;
+                                    $isFlying = false;
+                                    break;
+                                } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
+                                    $isFlying = false;
+                                }
                             }
                         }
-                    }
-                    if($support === true){
-                        break;
+                        if($support === true){
+                            break;
+                        }
                     }
                 }
+
                 
                 if($this->speedX != 0){
                     $this->x += $this->speedX;
@@ -711,17 +713,20 @@ class Entity extends Position
                 if($this->hasGravity && $support === false){
                     $this->speedY -= ($this->class === ENTITY_FALLING) ? 0.04 : ($this->class === ENTITY_ITEM ? 0.06 : 0.08); // TODO: replace with $gravity
                     $update = true;
-                } else{
+                } elseif($this->lastX != $this->x && $this->lastZ != $this->z & $this->lastY != $this->z){
                     // $this->speedX = 0;
                     // $this->speedY = 0;
                     // $this->speedZ = 0;
                     $this->server->api->handle("entity.move", $this);
                     $update = true;
+                    
                 }
 
                 if($update === true){
                     $hasUpdate = true;
-                    $this->server->api->handle("entity.motion", $this);
+                    if(($this->server->ticks % 4 === 0 && $this->class === ENTITY_ITEM) || $this->class != ENTITY_ITEM){ //update item speed every 4 ticks
+                        $this->server->api->handle("entity.motion", $this);
+                    }
                 }
             } elseif($this->player instanceof Player){
                 if($isFlying === true and ($this->player->gamemode & 0x01) === 0x00){
@@ -1523,7 +1528,7 @@ class Entity extends Position
      * Debug
      */
     public function printSpeed(){
-        console("{$this->speedX}:{$this->speedY}:{$this->speedZ}");
+        ConsoleAPI::debug("{$this->speedX}:{$this->speedY}:{$this->speedZ}");
     }
     
     /*
