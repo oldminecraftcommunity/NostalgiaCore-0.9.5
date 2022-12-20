@@ -262,7 +262,6 @@ class Level{
 	public function onTick(PocketMinecraftServer $server){
 	    //$ents = $server->api->entity->getAll($this);
 	    if(!$this->stopTime) ++$this->time;
-	    ConsoleAPI::debug($this->getTime());
 	    foreach($this->entityList as $k => $e){
 	        if(!($e instanceof Entity)){
 	            unset($this->entityList[$k]);

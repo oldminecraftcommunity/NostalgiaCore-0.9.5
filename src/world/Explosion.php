@@ -28,7 +28,6 @@ class Explosion{
 	}
 
 	public function explode(){
-	    console("a");
 		if(!Explosion::$enableExplosions){ /*Disable Explosions*/
 			return;
 		}
@@ -41,7 +40,6 @@ class Explosion{
 			]) === false){
 			return false;
 		}
-		console("b");
 		$mRays = $this->rays - 1;
 		for($i = 0; $i < $this->rays; ++$i){
 			for($j = 0; $j < $this->rays; ++$j){
