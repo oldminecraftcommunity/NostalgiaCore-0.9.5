@@ -273,6 +273,11 @@ class ConsoleAPI{
 		return $output;
 	}
 
+	public static function debug($msg){
+		console($msg, true, true, 2);
+	}
+
+
 }
 
 class ConsoleLoop extends Thread{

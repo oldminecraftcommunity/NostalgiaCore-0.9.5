@@ -41,6 +41,7 @@ class EntityAI
         return $this->tasks[$id] ?: false; //i never saw this operator before
     }
     
+
     public function updateTasks(){
         foreach($this->tasks as $t){
             if(!$t->isStarted && $t->canBeExecuted($this)){
