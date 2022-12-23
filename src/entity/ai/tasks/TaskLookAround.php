@@ -6,7 +6,7 @@ class TaskLookAround extends TaskBase
     public function onStart(EntityAI $ai)
     {
         $this->selfCounter = 1;
-        $this->rotation = mt_rand(-180,180);
+        $this->rotation = mt_rand(-90, 90);
     }
 
     public function onEnd(EntityAI $ai)
@@ -16,7 +16,7 @@ class TaskLookAround extends TaskBase
 
     public function canBeExecuted(EntityAI $ai)
     {
-        return !$ai->entity->isMoving() && Utils::randomFloat() < 0.02;
+        return !$ai->entity->isMoving() && Utils::randomFloat() < 0.04;
     }
 
     public function onUpdate(EntityAI $ai)

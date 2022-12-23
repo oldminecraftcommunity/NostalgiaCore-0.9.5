@@ -713,14 +713,15 @@ class Entity extends Position
                 if($this->hasGravity && $support === false){
                     $this->speedY -= ($this->class === ENTITY_FALLING) ? 0.04 : ($this->class === ENTITY_ITEM ? 0.06 : 0.08); // TODO: replace with $gravity
                     $update = true;
-                } elseif($this->lastX != $this->x && $this->lastZ != $this->z & $this->lastY != $this->z){
+                } elseif($this->lastX != $this->x || $this->lastZ != $this->z || $this->lastY != $this->z){
                     // $this->speedX = 0;
                     // $this->speedY = 0;
                     // $this->speedZ = 0;
                     $this->server->api->handle("entity.move", $this);
                     $update = true;
-                    
-                }
+                }elseif($this->lastYaw != $this->yaw || $this->lastPitch != $this->pitch){
+			$update = true;
+		}
 
                 if($update === true){
                     $hasUpdate = true;

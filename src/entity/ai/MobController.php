@@ -54,9 +54,9 @@ class MobController
     
     public function lookOn($x, $y = 0, $z = 0, $pitch = true){
         if($x instanceof Vector3){
-            return $this->lookOn($x->x, $x->y + ($x->getEyeHeight() ?: 0), $x->z);
+            return $this->lookOn($x->x, $x->y + $x->getEyeHeight(), $x->z, $pitch);
         }
-        return $this->lookOffset($x - $this->entity->x, $this->entity->y + $this->entity->height - $y, $z - $this->entity->z, $pitch);
+        return $this->lookOffset($x - $this->entity->x, ($this->entity->y + $this->entity->height) - $y, $z - $this->entity->z, $pitch);
     }
     
     public function __destruct(){

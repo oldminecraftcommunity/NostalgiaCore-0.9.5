@@ -93,15 +93,7 @@ abstract class Animal extends Creature implements Ageable, Breedable{
 	        --$this->inLove;
 	    }
 	}
-	
-	public function environmentUpdate(){
-		if($this->server->api->getProperty("spawn-animals") !== true){
-			$this->close();
-			return false;
-		}
-		return parent::environmentUpdate();
-	}
-	
+
 	public function getDrops(){
 		if($this->isBaby()){
 			return [];

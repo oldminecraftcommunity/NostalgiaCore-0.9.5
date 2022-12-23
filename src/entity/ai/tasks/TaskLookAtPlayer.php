@@ -4,10 +4,9 @@ class TaskLookAtPlayer extends TaskBase{
 	const S_LOOK = 0x1;
 	const S_STOPLOOK = 0x2;
 	public $target = false;
-	private $nextExecCounter = 0;
 	private $state, $yaw, $pitch;
 	public function canBeExecuted(EntityAI $ai){
-	    return !$ai->entity->isMoving() && --$this->nextExecCounter <= 0 && !@$ai->getTask("TaskLookAround")->wasExecuted && mt_rand(0,5) === 0 && Utils::randomFloat() >= 0.02;
+		return !$ai->entity->isMoving() && !@$ai->getTask("TaskLookAround")->isStarted && mt_rand(0, 20) == 0;
 	}
 
 	protected function findTarget($e, $r){
@@ -23,7 +22,7 @@ class TaskLookAtPlayer extends TaskBase{
 		}
 		$this->yaw = $ai->entity->yaw;
 		$this->pitch = $ai->entity->pitch;
-		$this->selfCounter = mt_rand(20, 40);
+		$this->selfCounter = mt_rand(20, 60);
 	}
 
 	public function onUpdate(EntityAI $ai){
@@ -41,7 +40,6 @@ class TaskLookAtPlayer extends TaskBase{
 
 	public function onEnd(EntityAI $ai){
 		unset($this->target);
-		$this->nextExecCounter = mt_rand(100, 200);
 		$ai->entity->pitch = 0;
 	}
 }
