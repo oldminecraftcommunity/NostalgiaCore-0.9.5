@@ -636,38 +636,6 @@ class Entity extends Position
                     }
                     
                 }
-                if(!$support){
-                    for($z = $startZ; $z <= $endZ; ++ $z){
-                        for($x = $startX; $x <= $endX; ++ $x){
-                            $v = new Vector3($x, $y, $z);
-                            $v1 = new Vector3($x, $yC, $z);
-                            if($this->isSupport($v, $this->width)){
-                                $b = $this->level->getBlock($v);
-                                if($b->isSolid === true){
-                                    $support = true;
-                                    $isFlying = false;
-                                    break;
-                                } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
-                                    $isFlying = false;
-                                }
-                            } elseif($this->isSupport($v1, $this->width)){
-                                $b = $this->level->getBlock($v1);
-                                if($b->isSolid === true){
-                                    $support = true;
-                                    $isFlying = false;
-                                    break;
-                                } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
-                                    $isFlying = false;
-                                }
-                            }
-                        }
-                        if($support === true){
-                            break;
-                        }
-                    }
-                }
-
-                
                 if($this->speedX != 0){
                     $this->x += $this->speedX;
                     $this->speedX -= $this->speedX * $drag;
