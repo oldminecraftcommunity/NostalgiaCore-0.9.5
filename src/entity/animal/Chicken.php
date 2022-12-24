@@ -8,7 +8,7 @@ class Chicken extends Animal{
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 4, "generic");
 		$this->setName('Chicken');
-		$this->setSize($this->isBaby() ? 0.2 : 0.4, $this->isBaby() ? 0.35 : 0.7);
+		$this->setSize($this->isBaby() ? 0.2 : 0.3, $this->isBaby() ? 0.35 : 0.4);
 		$this->setSpeed(0.25);
 		$this->update();
 	}

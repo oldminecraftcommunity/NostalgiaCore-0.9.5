@@ -17,7 +17,7 @@ class TaskTempt extends TaskBase
 
 	public function onUpdate(EntityAI $ai)
 	{
-		if($this->target instanceof Entity && $this->target->distanceSquared($ai->entity) > 100 || !$ai->entity->isFood($this->target->player->getHeldItem()->getID())){
+		if($this->target instanceof Entity && $this->target->isPlayer() && $this->target->distanceSquared($ai->entity) > 100 || !$ai->entity->isFood($this->target->player->getHeldItem()->getID())){
 			$this->reset();
 			return;
 		}
