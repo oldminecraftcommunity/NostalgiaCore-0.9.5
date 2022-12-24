@@ -14,6 +14,7 @@ abstract class Animal extends Creature implements Ageable, Breedable{
         if(isset($this->data["IsBaby"]) && $this->data["IsBaby"] && $this->getAge() >= 0){
             $this->setAge(-24000);
         }
+        $this->ai->addTask(new TaskTempt());
     }
     
 	public function isBaby(){

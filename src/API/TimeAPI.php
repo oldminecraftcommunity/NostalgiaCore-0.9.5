@@ -92,7 +92,7 @@ class TimeAPI{
 					case "day":
 					case "sunset":
 					case "night":
-						if(substr($args[1], 0, 2) === "w:"){
+						if(count($args) > 1 && substr($args[1], 0, 2) === "w:"){
 							$levelName = preg_replace("/w:/", "", $args[1]);
 							$level = $this->server->api->level->get($levelName);
 							if($level instanceof Level){

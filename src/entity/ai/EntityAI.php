@@ -38,9 +38,13 @@ class EntityAI
      * @return TaskBase | false
      */
     public function getTask($id){
-        return $this->tasks[$id] ?: false; //i never saw this operator before
+    	return isset($this->tasks[$id]) ? $this->tasks[$id] : false;
     }
     
+    public function isStarted($id){
+    	$task = @$this->getTask($id);
+    	return $task instanceof TaskBase && $task->isStarted;
+    }
 
     public function updateTasks(){
         foreach($this->tasks as $t){

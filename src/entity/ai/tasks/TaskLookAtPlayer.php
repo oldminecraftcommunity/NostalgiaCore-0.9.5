@@ -6,16 +6,32 @@ class TaskLookAtPlayer extends TaskBase{
 	public $target = false;
 	private $state, $yaw, $pitch;
 	public function canBeExecuted(EntityAI $ai){
-		return !$ai->entity->isMoving() && !@$ai->getTask("TaskLookAround")->isStarted && mt_rand(0, 20) == 0;
+		return Utils::randomFloat() < 0.02 && !$ai->entity->isMoving() && !$ai->isStarted("TaskLookAround") && !$ai->isStarted("TaskTempt");
 	}
 
 	protected function findTarget($e, $r){
-		$ents = $e->server->api->entity->getRadius($e, $r, ENTITY_PLAYER); //TODO sort by nearest and select nearest
-		return count($ents) <= 0 ? false : $ents[array_rand($ents)];
+		$svd = null;
+		$svdDist = -1;
+		foreach($e->server->api->entity->getRadius($e, $r, ENTITY_PLAYER) as $p){
+			if($svdDist === -1){
+				$svdDist = Utils::manh_distance($e, $p);
+				$svd = $p;
+				continue;
+			}
+			if($svd != null && $svdDist === 0){
+				$svd = $p;
+			}
+			
+			if(($cd = Utils::manh_distance($e, $p)) < $svdDist){
+				$svdDist = $cd;
+				$svd = $p;
+			}
+		}
+		return $svd;
 	}
 
 	public function onStart(EntityAI $ai){
-		$this->target = $this->findTarget($ai->entity, 5);
+		$this->target = $this->findTarget($ai->entity, 6); //TODO max distance for different mobs
 		if(!($this->target instanceof Entity) || !$this->target->isPlayer()){
 			$this->reset();
 			return;
@@ -26,7 +42,7 @@ class TaskLookAtPlayer extends TaskBase{
 	}
 
 	public function onUpdate(EntityAI $ai){
-		if(!($this->target instanceof Entity)){
+		if(!($this->target instanceof Entity) || Utils::distance($ai->entity, $this->target) > 6){ //TODO max distance for different mobs
 			$this->reset();
 			return;
 		}

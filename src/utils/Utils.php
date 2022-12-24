@@ -56,6 +56,7 @@ class Utils{
 	public static function hasEmoji($s){
 		return preg_match(Utils::emojiRegex, $s);
 	}
+	
 	public static function getCallableIdentifier(callable $variable){
 		if(is_array($variable)){
 			return sha1(strtolower(get_class($variable[0])) . "::" . strtolower($variable[1]));
@@ -551,6 +552,26 @@ class Utils{
 	public static function round($number){
 		return round($number, 0, PHP_ROUND_HALF_DOWN);
 	}
+	/**
+	 * manhattan distance, less accurate, but still useful sometimes
+	 */
+	public static function manh_distance(Vector3 $pos1, Vector3 $pos2){
+		return abs($pos2->x - $pos1->x) + abs($pos2->y - $pos1->y) + abs($pos2->z - $pos1->z);
+	}
+	
+	/**
+	 * Euclidian distance, but without square roots
+	 */
+	public static function distance_noroot(Vector3 $pos1, Vector3 $pos2){
+		return pow($pos2->x - $pos1->x, 2) + pow($pos2->z - $pos1->z, 2) + pow($pos2->z - $pos1->z, 2);
+	}
+	
+	/**
+	 * 
+	 * @param $pos1
+	 * @param $pos2
+	 * @return number
+	 */
 	public static function distance($pos1, $pos2){
 	    if($pos1 instanceof Vector3){
 	        $pos1 = $pos1->toArray();

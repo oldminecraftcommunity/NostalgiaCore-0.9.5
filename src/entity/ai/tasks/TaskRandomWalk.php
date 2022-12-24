@@ -17,7 +17,6 @@ class TaskRandomWalk extends TaskBase
     public function onEnd(EntityAI $ai)
     {
         $this->x = $this->z = 0;
-        $ai->entity->idleTime = mt_rand(20, 120);
     }
 
     public function onUpdate(EntityAI $ai)
@@ -34,7 +33,7 @@ class TaskRandomWalk extends TaskBase
         if($ai->entity instanceof Creeper && $ai->entity->isIgnited()) {
             return false;
         }
-        return !@$ai->getTask("TaskLookAround")->isStarted && !@$ai->getTask("TaskLookAtPlayer")->isStarted && mt_rand(0, 40) == 0;
+        return !$ai->isStarted("TaskLookAround") && !$ai->isStarted("TaskLookAtPlayer") && mt_rand(0, 120) == 0;
     }
 
     
