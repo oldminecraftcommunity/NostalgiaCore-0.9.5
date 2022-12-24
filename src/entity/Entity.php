@@ -624,12 +624,12 @@ class Entity extends Position
                                 }
                                 if($b != false && $b->boundingBox->intersectsWith($aABB) && $b->isSolid && $this->isMoving()){
                                         $this->speedX = $b->boundingBox->calculateXOffset($this->boundingBox, $this->speedX);
+                                        $this->speedZ = $b->boundingBox->calculateZOffset($this->boundingBox, $this->speedZ);
                                         $lastY = $this->speedY;
                                         $this->speedY = $b->boundingBox->calculateYOffset($this->boundingBox, $this->speedY);
                                         if($this->speedY == 0 && $lastY > 0){
                                             $support = true;
                                         }
-                                        $this->speedZ = $b->boundingBox->calculateZOffset($this->boundingBox, $this->speedZ);
                                 }
                             }
                         }

@@ -304,11 +304,11 @@ class ConsoleLoop extends Thread{
 		}
 
 		while(!$this->stop){
-			$this->synchronized(function($t){
-				$t->line = $t->readLine();
-				$t->wait();
-			}, $this);
-			$this->line = false;
+		    $this->line = $this->readLine();
+		    $this->synchronized(function($t) {
+		        $this->wait();
+		        $this->line = false;
+		    }, $this);
 		}
 
 		if(!extension_loaded("readline")){
