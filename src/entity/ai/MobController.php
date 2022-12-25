@@ -50,7 +50,7 @@ class MobController
         if($pitch){
             $diff = sqrt($x * $x + $z * $z);
             $calcPitch = rad2deg(atan($y / $diff));
-            $this->entity->pitch = $calcPitch;
+            $this->entity->pitch = $this->entity->type === MOB_CHICKEN ? -$calcPitch : $calcPitch;
         }
         
         $this->entity->server->query("UPDATE entities SET pitch = ".$this->entity->pitch.", yaw = ".$this->entity->yaw." WHERE EID = ".$this->entity->eid.";");
