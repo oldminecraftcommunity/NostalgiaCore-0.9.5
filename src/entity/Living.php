@@ -7,8 +7,8 @@ abstract class Living extends Entity implements Damageable{
         $this->ai = new EntityAI($this);
         parent::__construct($level, $eid, $class, $type, $data);
         $this->canBeAttacked = true;
-	$this->hasGravity = true;
-	$this->hasKnockback = true;
+    	$this->hasGravity = true;
+    	$this->hasKnockback = true;
     }
     
     public function update(){

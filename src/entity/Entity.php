@@ -69,7 +69,9 @@ class Entity extends Position
 	public $radius;
 	public $inAction = false;
 	public $hasKnockback;
-
+    
+	public $onGround;
+	
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array())
 	{
 		$this->random = new Random();
@@ -635,6 +637,36 @@ class Entity extends Position
 					}
 					
 				}
+				if(!$support){
+				    for($z = $startZ; $z <= $endZ; ++ $z){
+				        for($x = $startX; $x <= $endX; ++ $x){
+				            $v = new Vector3($x, $y, $z);
+				            $v1 = new Vector3($x, $yC, $z);
+				            if($this->isSupport($v, $this->width)){
+				                $b = $this->level->getBlock($v);
+				                if($b->isSolid === true){
+				                    $support = true;
+				                    $isFlying = false;
+				                    break;
+				                } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
+				                    $isFlying = false;
+				                }
+				            } elseif($this->isSupport($v1, $this->width)){
+				                $b = $this->level->getBlock($v1);
+				                if($b->isSolid === true){
+				                    $support = true;
+				                    $isFlying = false;
+				                    break;
+				                } elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
+				                    $isFlying = false;
+				                }
+				            }
+				        }
+				        if($support === true){
+				            break;
+				        }
+				    }
+				}
 				if($this->speedX != 0){
 					$this->x += $this->speedX;
 					$this->speedX -= $this->speedX * $drag;
@@ -677,10 +709,9 @@ class Entity extends Position
 					$this->speedY -= $this->speedY * $drag;
 					$update = true;
 				}
-				if($this->speedY == 0){
-				    $support = true;
-				}
+				
 				$this->onGround = $support;
+
 				if($this->hasGravity && $support === false){
 					$this->speedY -= ($this->class === ENTITY_FALLING) ? 0.04 : ($this->class === ENTITY_ITEM ? 0.06 : 0.08); // TODO: replace with $gravity
 					$update = true;

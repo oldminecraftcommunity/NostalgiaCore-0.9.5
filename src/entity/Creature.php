@@ -25,26 +25,20 @@ abstract class Creature extends Living{
 	}
 	
 	public function update(){
-	    /*if($this->path === null && $this->pathFinder instanceof ITileNavigator){
-	        $this->path = $this->pathFinder->navigate(new PathTileXYZ($this->x, $this->y, $this->z, $this->level), new PathTileXYZ($this->x + mt_rand(-7, 7), $this->y, $this->z + mt_rand(-7, 7), $this->level));
+	    if($this->onGround){
+	        /*if($this->path === null && $this->pathFinder instanceof ITileNavigator && mt_rand(0, 120) === 0){
+	            $this->path = $this->pathFinder->navigate(new PathTileXYZ($this->x, $this->y, $this->z, $this->level), new PathTileXYZ($this->x + mt_rand(-10, 10), $this->y, $this->z + mt_rand(-10, 10), $this->level));
+	        }
+	        if($this->path != null && (is_array($this->path) && count($this->path) <= 0 || $this->currentIndex >= count($this->path))){
+	            $this->path = null;
+	            $this->currentIndex = 0;
+	            $this->currentNode = false;
+	        }elseif($this->path != null && ($this->currentNode == false || $this->ai->mobController->moveTo($this->currentNode->x, $this->currentNode->y, $this->currentNode->z) === false)){
+	            $this->currentNode = $this->path[$this->currentIndex++];
+	        }*/
 	    }
-	    if(is_array($this->path) && count($this->path) <= 0 || $this->currentIndex >= count($this->path)){
-	        $this->path = null;
-	        $this->currentIndex = 0;
-	        $this->currentNode = false;
-	    }elseif($this->currentNode == false || $this->ai->mobController->moveTo($this->currentNode->x, $this->currentNode->y, $this->currentNode->z) === false){
-	        console("this");
-	        $this->currentNode = $this->path[$this->currentIndex++];
-	    }*/
-	    
-	    
-	    /*if($this->path === false || count($this->path) <= 0){
-	    }
-	    $state = $this->pathNavigator->followPath($this->path);
-	    if($state === PathNavigator::PATH_COMPLETED){
-	        $this->path = false;
-	    }*/
 	    parent::update();
+	    
 	}
 	
 	public function createSaveData(){
