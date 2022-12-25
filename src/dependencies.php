@@ -77,8 +77,24 @@ require_once(FILE_PATH . "/src/math/Vector3.php");
 require_once(FILE_PATH . "/src/world/Position.php");
 require_once(FILE_PATH . "/src/pmf/PMF.php");
 
-require_once(FILE_PATH . "/src/utils/pathfinder/astar/Node.php");
-require_once(FILE_PATH . "/src/utils/pathfinder/astar/AStar.php");
+require_once(FILE_PATH . "/src/astarnavigator/IElement.php");
+require_once(FILE_PATH . "/src/astarnavigator/PHPUtils.php");
+require_once(FILE_PATH . "/src/astarnavigator/PathTile.php");
+require_once(FILE_PATH . "/src/astarnavigator/ArrayList.php");
+
+require_once(FILE_PATH . "/src/astarnavigator/algorithms/IDistanceAlgorithm.php");
+require_once(FILE_PATH . "/src/astarnavigator/algorithms/PythagorasAlgorithm.php");
+require_once(FILE_PATH . "/src/astarnavigator/algorithms/ManhattanHeuristicAlgorithm.php");
+
+require_once(FILE_PATH . "/src/astarnavigator/providers/INeighborProvider.php");
+require_once(FILE_PATH . "/src/astarnavigator/providers/DiagonalNeighborProvider.php");
+
+require_once(FILE_PATH . "/src/astarnavigator/providers/IBlockedProvider.php");
+require_once(FILE_PATH . "/src/astarnavigator/providers/EmptyBlockedProvider.php");
+
+require_once(FILE_PATH . "/src/astarnavigator/ITileNavigator.php");
+require_once(FILE_PATH . "/src/astarnavigator/TileNavigator.php");
+
 
 require_once(FILE_PATH . "/src/entity/ai/tasks/TaskBase.php");
 

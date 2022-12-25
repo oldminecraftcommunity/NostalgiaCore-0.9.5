@@ -440,7 +440,6 @@ class PMFLevel extends PMF{
 			$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
 			$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
 		}else{
-			console(get_class($this->chunks[$index][$Y]));
 			$b = 0;
 			$m = 0;
 		}

@@ -12,9 +12,10 @@ class MobController
     }
     
     public function moveNonInstant($x, $y, $z){
-        if($x === $this->entity->x && $y === $this->entity->y && $z === $this->entity->z){
+        if($x == 0 && $y == 0 && $z == 0){
             return false; //failed
         }
+        
         $ox = ($x > 0 ? 1 : ($x < 0 ? -1 : 0));
         $oy = ($y > 0 ? 1 : ($y < 0 ? -1 : 0));
         $oz = ($z > 0 ? 1 : ($z < 0 ? -1 : 0));
@@ -25,6 +26,10 @@ class MobController
         $pk->yaw = $this->entity->yaw;
         $this->entity->server->api->player->broadcastPacket($this->entity->level->players, $pk);
         return true;
+    }
+    
+    public function moveTo($x, $y, $z){
+        return $this->moveNonInstant($x - floor($this->entity->x), $y - floor($this->entity->y), $z - floor($this->entity->z));
     }
     
     public function faceEntity(Vector3 $v){
