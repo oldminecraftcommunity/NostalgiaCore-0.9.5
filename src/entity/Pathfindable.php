@@ -3,5 +3,5 @@
 Illegal features
 */
 interface Pathfindable{
-	function getPathFinder();
+	public function hasPath();
 }

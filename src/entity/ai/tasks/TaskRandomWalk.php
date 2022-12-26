@@ -21,7 +21,7 @@ class TaskRandomWalk extends TaskBase
 
 	public function onUpdate(EntityAI $ai)
 	{
-		if($ai->entity instanceof Creeper && $ai->entity->isIgnited()) {
+		if($ai->entity instanceof Creeper && $ai->entity->isIgnited() || $ai->isStarted("TaskTempt")) {
 			return false; //TODO Better way: block movement 
 		}
 		--$this->selfCounter;
@@ -30,7 +30,7 @@ class TaskRandomWalk extends TaskBase
 
 	public function canBeExecuted(EntityAI $ai)
 	{
-		if($ai->entity instanceof Creeper && $ai->entity->isIgnited()) {
+		if($ai->entity instanceof Creeper && $ai->entity->isIgnited() || $ai->entity->hasPath() || $ai->isStarted("TaskTempt")) {
 			return false;
 		}
 		return !$ai->isStarted("TaskLookAround") && !$ai->isStarted("TaskLookAtPlayer") && mt_rand(0, 120) == 0;

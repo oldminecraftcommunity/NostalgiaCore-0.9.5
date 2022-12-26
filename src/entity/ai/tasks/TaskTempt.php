@@ -17,7 +17,7 @@ class TaskTempt extends TaskBase
 
 	public function onUpdate(EntityAI $ai)
 	{
-		if($this->target instanceof Entity && $this->target->isPlayer() && $this->target->distanceSquared($ai->entity) > 100 || !$ai->entity->isFood($this->target->player->getHeldItem()->getID())){
+		if(($this->target instanceof Entity && !$this->target->isPlayer()) || $this->target->distanceSquared($ai->entity) > 100 || !$ai->entity->isFood($this->target->player->getHeldItem()->getID()) || $this->target->level->getName() != $ai->entity->level->getName()){
 			$this->reset();
 			return;
 		}
@@ -31,7 +31,7 @@ class TaskTempt extends TaskBase
 
 	public function canBeExecuted(EntityAI $ai)
 	{
-		if(!($ai->entity instanceof Breedable)){
+		if(!($ai->entity instanceof Breedable)){ //TODO Work with path
 			return false;
 		}
 		$target = $this->findTarget($ai->entity, 10);

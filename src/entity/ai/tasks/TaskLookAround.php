@@ -16,7 +16,7 @@ class TaskLookAround extends TaskBase
 
 	public function canBeExecuted(EntityAI $ai)
 	{
-		return !$ai->entity->isMoving() && Utils::randomFloat() < 0.02 && !$ai->isStarted("TaskLookAtPlayer") && !$ai->isStarted("TaskTempt"); /*Vanilla value*/
+		return !$ai->entity->isMoving() && Utils::randomFloat() < 0.02 && !$ai->isStarted("TaskLookAtPlayer") && !$ai->isStarted("TaskTempt") && !$ai->entity->hasPath(); /*Vanilla value*/
 	}
 
 	public function onUpdate(EntityAI $ai)
