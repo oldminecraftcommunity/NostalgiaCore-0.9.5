@@ -29,7 +29,7 @@ class PaintingItem extends Item{
 		array("Flaming Skull", 4, 4),
 	);
 	private static $direction = array(2, 0, 1, 3);
-    private static $right = array(4, 5, 3, 2);
+	private static $right = array(4, 5, 3, 2);
 	
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		if($target->isTransparent === false and $face > 1 and $block->isSolid === false){
@@ -56,17 +56,17 @@ class PaintingItem extends Item{
 					for($y = 0; $y <= $motive[2]; $y++){
 						if ($target->getSide(PaintingItem::$right[$face - 2], $x)->isTransparent || $target->getSide(1, $y)->isTransparent
 							|| $block->getSide(PaintingItem::$right[$face - 2], $x)->isSolid || $block->getSide(1, $y)->isSolid) {
-                            $valid = false;
+							$valid = false;
 							break;
-                        }
+						}
 					}
 					if(!$valid){
 						break;
 					}
 				}
 				if ($valid) {
-                    $validMotives[] = $motive;
-                }
+					$validMotives[] = $motive;
+				}
 			}
 			$motive = $validMotives[array_rand($validMotives)];
 			$data = array(

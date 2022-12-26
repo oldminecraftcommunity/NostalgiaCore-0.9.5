@@ -50,7 +50,7 @@ class BanAPI{
 	 * @param string $cmd Command to Whitelist
 	 */
 	public function cmdWhitelist($cmd){
-	    $this->server->api->console->cmdWhitelist($cmd);
+		$this->server->api->console->cmdWhitelist($cmd);
 	}
 
 	/**
@@ -67,21 +67,21 @@ class BanAPI{
 				}
 				break;
 			case "player.block.break":
-			    /**
-			     * @var Player $player
-			     */
-			    $player = $data["player"];
-			    if(!$this->isOp($player->iusername) && $player->level->getName() === $this->server->api->level->getDefault()){
-			        $t = new Vector2($data["target"]->x, $data["target"]->z);
-			        $s = new Vector2($this->server->spawn->x, $this->server->spawn->z);
-			        if($t->distance($s) <= $this->server->api->getProperty("spawn-protection") and $this->server->api->dhandle($event . ".spawn", $data) !== true){
-			            return false;
-			        }
-			    }
-			    return;
+				/**
+				 * @var Player $player
+				 */
+				$player = $data["player"];
+				if(!$this->isOp($player->iusername) && $player->level->getName() === $this->server->api->level->getDefault()){
+					$t = new Vector2($data["target"]->x, $data["target"]->z);
+					$s = new Vector2($this->server->spawn->x, $this->server->spawn->z);
+					if($t->distance($s) <= $this->server->api->getProperty("spawn-protection") and $this->server->api->dhandle($event . ".spawn", $data) !== true){
+						return false;
+					}
+				}
+				return;
 			case "player.block.place"://Spawn protection detection. Allows OPs to place/break blocks in the spawn area.
-			    $player = $data["player"];
-			    if(!$this->isOp($player->iusername) && $player->level->getName() === $this->server->api->level->getDefault()){
+				$player = $data["player"];
+				if(!$this->isOp($player->iusername) && $player->level->getName() === $this->server->api->level->getDefault()){
 					$t = new Vector2($data["block"]->x, $data["block"]->z);
 					$s = new Vector2($this->server->spawn->x, $this->server->spawn->z);
 					if($t->distance($s) <= $this->server->api->getProperty("spawn-protection") and $this->server->api->dhandle($event . ".spawn", $data) !== true){

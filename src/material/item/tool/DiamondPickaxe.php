@@ -6,6 +6,6 @@ class DiamondPickaxeItem extends ItemPickaxe{
 	}
 	
 	public function getDamageAgainstOf($e){
-	    return 5;
+		return 5;
 	}
 }

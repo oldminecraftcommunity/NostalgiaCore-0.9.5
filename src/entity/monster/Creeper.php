@@ -16,28 +16,28 @@ class Creeper extends Monster{
 	
 	
 	public function setIgnited($v = null){
-        $this->setState($v === null ? !$this->getState() : $v);	
+		$this->setState($v === null ? !$this->getState() : $v);	
 	}
 	
 	/**
 	 * @return boolean
 	 */
 	public function isIgnited(){
-	    return (boolean)$this->getState();
+		return (boolean)$this->getState();
 	}
 	
 	public function interactWith(Entity $e, $action){
-	    if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
-	        $slot = $e->player->getHeldItem();
-	        if($slot->getID() === FLINT_AND_STEEL && !$this->isIgnited()){
-	            if($slot->useOn($e) and $slot->getMetadata() >= $slot->getMaxDurability()){
-	                $e->player->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
-	            }
-	            $this->ignite();
-	            return true;
-	        }
-	    }
-	    return parent::interactWith($e, $action);
+		if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
+			$slot = $e->player->getHeldItem();
+			if($slot->getID() === FLINT_AND_STEEL && !$this->isIgnited()){
+				if($slot->useOn($e) and $slot->getMetadata() >= $slot->getMaxDurability()){
+					$e->player->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
+				}
+				$this->ignite();
+				return true;
+			}
+		}
+		return parent::interactWith($e, $action);
 	}
 	
 	public function ignite(){
@@ -55,16 +55,16 @@ class Creeper extends Monster{
 		parent::update();
 	}
 
-    public function explode()
-    {
-        if($this->closed){
-            return false;
-        }
-        $this->setIgnited(0);
-        $explosion = new Explosion($this, 3);
-        $explosion->explode();
-        $this->close();
-    }
+	public function explode()
+	{
+		if($this->closed){
+			return false;
+		}
+		$this->setIgnited(0);
+		$explosion = new Explosion($this, 3);
+		$explosion->explode();
+		$this->close();
+	}
 	
 	public function getDrops(){
 		return [

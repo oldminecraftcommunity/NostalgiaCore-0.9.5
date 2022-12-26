@@ -2,6 +2,6 @@
 
 interface IElement
 {
-    public function __toString();
+	public function __toString();
 }
 

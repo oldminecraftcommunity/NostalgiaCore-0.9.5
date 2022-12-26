@@ -40,7 +40,7 @@ class DirtBlock extends SolidBlock{
 		$x = $this->x;
 		$y = $this->y;
 		$z = $this->z;
-        
+		
 		if($this->getBlockID($x+1, $y, $z+1) == 2) return true;
 		if($this->getBlockID($x+1, $y, $z) == 2) return true;
 		if($this->getBlockID($x+1, $y, $z-1) == 2) return true;

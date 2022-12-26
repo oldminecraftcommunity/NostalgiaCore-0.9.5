@@ -25,13 +25,13 @@ class ConsoleAPI{
 		$this->cmdWhitelist("help");
 		$this->cmdWhitelist("status");
 	}
-    
+	
 	/**
 	 * Whitelists a CMD so everyone can issue it - Even non OPs.
 	 * @param string $cmd Command to Whitelist
 	 */
 	public function cmdWhitelist($cmd){
-	    $this->server->api->ban->cmdWhitelist[strtolower(trim($cmd))] = true;
+		$this->server->api->ban->cmdWhitelist[strtolower(trim($cmd))] = true;
 	}
 	
 	public function register($cmd, $help, $callback){
@@ -304,11 +304,11 @@ class ConsoleLoop extends Thread{
 		}
 
 		while(!$this->stop){
-		    $this->line = $this->readLine();
-		    $this->synchronized(function($t) {
-		        $this->wait();
-		        $this->line = false;
-		    }, $this);
+			$this->line = $this->readLine();
+			$this->synchronized(function($t) {
+				$this->wait();
+				$this->line = false;
+			}, $this);
 		}
 
 		if(!extension_loaded("readline")){

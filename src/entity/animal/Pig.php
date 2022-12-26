@@ -15,47 +15,47 @@ class Pig extends Animal implements Rideable{
 	 * @return boolean
 	 */
 	public function isSaddled(){
-	    return (boolean) $this->getState();
+		return (boolean) $this->getState();
 	}
 	
 	/**
 	 * @param boolean $value
 	 */
 	public function setSaddled($value = null){
-	    $this->setState($value === null ? !$this->getState() : $value);
+		$this->setState($value === null ? !$this->getState() : $value);
 	}
 	
 	public function canRide($e){
-	    return $this->isSaddled() && !($this->linkedEntity instanceof Entity);
+		return $this->isSaddled() && !($this->linkedEntity instanceof Entity);
 	}
 
-    public function interactWith(Entity $e, $action)
-    {
-        if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
-            $slot = $e->player->getHeldItem();
-            if($this->canRide($e)){
-                $this->linkedEntity = $e;
-                $e->isRiding = true;
-                $this->linkEntity($e, SetEntityLinkPacket::TYPE_RIDE);
-                return true;
-            }
-            if($e->isRiding && $this->linkedEntity->eid = $e->eid){
-                $this->linkEntity($e, SetEntityLinkPacket::TYPE_REMOVE);
-                $e->isRiding = false;
-                $this->linkedEntity = 0;
-                return true;
-            }
-            if($slot->getID() === SADDLE){
-                if(!$this->isSaddled()){
-                    $e->player->removeItem($slot->getID(), 0, 1);
-                    $this->setSaddled(1);
-                }
-                return true; //avoid further interactions
-            }
-            
-        }
-        return parent::interactWith($e, $action);
-    }
+	public function interactWith(Entity $e, $action)
+	{
+		if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
+			$slot = $e->player->getHeldItem();
+			if($this->canRide($e)){
+				$this->linkedEntity = $e;
+				$e->isRiding = true;
+				$this->linkEntity($e, SetEntityLinkPacket::TYPE_RIDE);
+				return true;
+			}
+			if($e->isRiding && $this->linkedEntity->eid = $e->eid){
+				$this->linkEntity($e, SetEntityLinkPacket::TYPE_REMOVE);
+				$e->isRiding = false;
+				$this->linkedEntity = 0;
+				return true;
+			}
+			if($slot->getID() === SADDLE){
+				if(!$this->isSaddled()){
+					$e->player->removeItem($slot->getID(), 0, 1);
+					$this->setSaddled(1);
+				}
+				return true; //avoid further interactions
+			}
+			
+		}
+		return parent::interactWith($e, $action);
+	}
 	
 	public function isFood($id){
 		return $id === POTATO || $id === CARROT || $id === BEETROOT;

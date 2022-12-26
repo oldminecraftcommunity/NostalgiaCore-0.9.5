@@ -1,10 +1,10 @@
 <?php
 
 class LevelAPI{
-    /**
-     * @var Level[]
-     */
-    public $levels;
+	/**
+	 * @var Level[]
+	 */
+	public $levels;
 	private $server, $default;
 
 	public function __construct(){

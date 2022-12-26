@@ -6,6 +6,6 @@ class IronAxeItem extends ItemAxe{
 	}
 	
 	public function getDamageAgainstOf($e){
-	    return 5;
+		return 5;
 	}
 }

@@ -81,13 +81,13 @@ class AchievementAPI{
 		],
 
 	];
-    
+	
 	private $server;
 	
 	function __construct(){
-	    $this->server = ServerAPI::request();
+		$this->server = ServerAPI::request();
 	}
-    
+	
 	/**
 	 * Add an achievement
 	 * @param string $achievementId
@@ -157,47 +157,47 @@ class AchievementAPI{
 		}
 	}
 
-    public function viewAchievements($cmd, $params, $issuer, $alias)
-    {
-        if(!($issuer instanceof Player) && !isset($params[0])){
-            return "Please enter a nickname.";
-        } else{
-            if(isset($params[0]) && ($this->server->api->ban->isOp($issuer->username) || ! ($issuer instanceof Player))){
-                $player = $this->server->api->player->get($params[0]);
-                if($player instanceof Player){
-                    $data = $player->data;
-                } else{
-                    $data = $this->server->api->player->getOffline(trim($params[0]), false);
-                }
-            } else{
-                $data = $issuer->achievements;
-            }
-        }
-        if($data === false){
-            return "Player {$params[0]} is not found.";
-        }
-        if($data instanceof Config){
-            $achs = $data->get("achievements");
-        }else{
-            $achs = $data;
-        }
-        
-        if(count($achs) <= 0){
-            return "Player {$params[0]} unlocked 0 achievements";
-        }
-        $output = "Unlocked Achievements(".count($achs)."/".count(self::$achievements)."): ";
-        foreach($achs as $achievement => $unlocked){
-            if($unlocked && isset(self::$achievements[$achievement])){
-                $info = self::$achievements[$achievement];
-                $output .= "{$info["name"]}, ";
-            }
-        }
-        return substr($output, 0, - 2);
-    }
+	public function viewAchievements($cmd, $params, $issuer, $alias)
+	{
+		if(!($issuer instanceof Player) && !isset($params[0])){
+			return "Please enter a nickname.";
+		} else{
+			if(isset($params[0]) && ($this->server->api->ban->isOp($issuer->username) || ! ($issuer instanceof Player))){
+				$player = $this->server->api->player->get($params[0]);
+				if($player instanceof Player){
+					$data = $player->data;
+				} else{
+					$data = $this->server->api->player->getOffline(trim($params[0]), false);
+				}
+			} else{
+				$data = $issuer->achievements;
+			}
+		}
+		if($data === false){
+			return "Player {$params[0]} is not found.";
+		}
+		if($data instanceof Config){
+			$achs = $data->get("achievements");
+		}else{
+			$achs = $data;
+		}
+		
+		if(count($achs) <= 0){
+			return "Player {$params[0]} unlocked 0 achievements";
+		}
+		$output = "Unlocked Achievements(".count($achs)."/".count(self::$achievements)."): ";
+		foreach($achs as $achievement => $unlocked){
+			if($unlocked && isset(self::$achievements[$achievement])){
+				$info = self::$achievements[$achievement];
+				$output .= "{$info["name"]}, ";
+			}
+		}
+		return substr($output, 0, - 2);
+	}
 	
 	public function init(){
-	    $this->server->api->console->register("ach", "<player>", [$this, "viewAchievements"]);
-	    $this->server->api->console->alias("getplayerachievements", "ach");
-	    $this->server->api->console->cmdWhitelist("ach");
+		$this->server->api->console->register("ach", "<player>", [$this, "viewAchievements"]);
+		$this->server->api->console->alias("getplayerachievements", "ach");
+		$this->server->api->console->cmdWhitelist("ach");
 	}
 }

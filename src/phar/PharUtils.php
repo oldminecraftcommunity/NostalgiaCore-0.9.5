@@ -26,7 +26,7 @@ class PharUtils{
 	}
 	
 	public static function getNameSpaceClass($content){
-	    return trim(substr(str_replace("/", "\\", $content), 0, -4));
+		return trim(substr(str_replace("/", "\\", $content), 0, -4));
 	}
 	
 	

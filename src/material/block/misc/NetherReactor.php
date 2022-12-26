@@ -49,12 +49,12 @@ class NetherReactorBlock extends SolidBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-	    if($item->getPickaxeLevel() >= 1){
-	        return array(
-	            [DIAMOND, 0, 3],
-	            [IRON_INGOT, 0, 6],
-	        );
-	    }
+		if($item->getPickaxeLevel() >= 1){
+			return array(
+				[DIAMOND, 0, 3],
+				[IRON_INGOT, 0, 6],
+			);
+		}
 	}
 	
 	private function decay($x, $y, $z, $aOne, $aTwo, $aThree, $bOne, $bTwo, $bThree, $cOne, $cTwo, $cThree) {

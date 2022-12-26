@@ -17,7 +17,7 @@ class TallGrassBlock extends FlowableBlock{
 		if($type === BLOCK_UPDATE_NORMAL){
 			if($this->getSide(0)->isTransparent === true){//Replace with common break method
 				$this->level->setBlock($this, new AirBlock(), false, false, true);
-              	if(Utils::chance(15)) ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem(WHEAT_SEEDS));
+			  	if(Utils::chance(15)) ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem(WHEAT_SEEDS));
 				return BLOCK_UPDATE_NORMAL;
 			}
 		}

@@ -13,8 +13,8 @@ class TrapdoorBlock extends TransparentBlock{
 	}
 	
 	public function canAttachTo(Block $target){
-	    $id = $target->getID();
-	    return $id === SLAB || $id === GLOWSTONE || $id === SLAB || $id === WOOD_SLAB || (!$target->isTransparent || $target instanceof StairBlock);
+		$id = $target->getID();
+		return $id === SLAB || $id === GLOWSTONE || $id === SLAB || $id === WOOD_SLAB || (!$target->isTransparent || $target instanceof StairBlock);
 	}
 	
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){

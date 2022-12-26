@@ -2,7 +2,7 @@
 
 class PocketMinecraftServer{
 
-    public $tCnt, $ticks;
+	public $tCnt, $ticks;
 	public $extraprops, $serverID, $interface, $database, $version, $invisible, $tickMeasure, $preparedSQL, $seed, $gamemode, $name, $maxClients, $clients, $eidCnt, $custom, $description, $motd, $port, $saveEnabled;
 	/**
 	 * @var ServerAPI
@@ -70,7 +70,7 @@ class PocketMinecraftServer{
 		console("[INFO] Loading extra.properties...");
 		$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, [
 			"version" => "5",
-		    "experemental-mob-features" => false,
+			"experemental-mob-features" => false,
 			"enable-nether-reactor" => true,
 			"enable-explosions" => true,
 			"enable-rail-connection" => false,
@@ -84,7 +84,7 @@ class PocketMinecraftServer{
 		]);
 		Entity::$updateOnTick = $this->extraprops->get("experemental-mob-features");
 		if(Entity::$updateOnTick){
-		    console("[WARNING] Experemental mob features are enabled. Unpredictable behavior.");
+			console("[WARNING] Experemental mob features are enabled. Unpredictable behavior.");
 		}
 		Explosion::$enableExplosions = $this->extraprops->get("enable-explosions");
 		RailBlock::$shouldconnectrails = $this->extraprops->get("enable-rail-connection"); //Rail connection in config
@@ -451,31 +451,31 @@ class PocketMinecraftServer{
 		}
 	}
 
-    public function process()
-    {
-        $lastLoop = 0;
-        while($this->stop === false){
-            $packet = $this->interface->readPacket();
-            if($packet instanceof Packet){
-                $this->packetHandler($packet);
-                $lastLoop = 0;
-            } elseif($this->tick() > 0){
-                $lastLoop = 0;
-            } else{
-                ++ $lastLoop;
-                if($lastLoop < 16){
-                    usleep(1);
-                } elseif($lastLoop < 128){
-                    usleep(100);
-                } elseif($lastLoop < 256){
-                    usleep(512);
-                } else{
-                    usleep(10000);
-                }
-            }
-            $this->tick();
-        }
-    }
+	public function process()
+	{
+		$lastLoop = 0;
+		while($this->stop === false){
+			$packet = $this->interface->readPacket();
+			if($packet instanceof Packet){
+				$this->packetHandler($packet);
+				$lastLoop = 0;
+			} elseif($this->tick() > 0){
+				$lastLoop = 0;
+			} else{
+				++ $lastLoop;
+				if($lastLoop < 16){
+					usleep(1);
+				} elseif($lastLoop < 128){
+					usleep(100);
+				} elseif($lastLoop < 256){
+					usleep(512);
+				} else{
+					usleep(10000);
+				}
+			}
+			$this->tick();
+		}
+	}
 
 	public function packetHandler(Packet $packet){
 		$data =& $packet;
@@ -568,7 +568,7 @@ class PocketMinecraftServer{
 			unset($this->tickMeasure[key($this->tickMeasure)]);
 			++$this->ticks;
 			foreach($this->api->level->levels as $l){
-			    $l->onTick($this);
+				$l->onTick($this);
 			}
 			return $this->tickerFunction($time);
 		}

@@ -5,6 +5,6 @@ class DiamondShovelItem extends ItemShovel{
 		parent::__construct(DIAMOND_SHOVEL, $meta, $count, "Diamond Shovel");
 	}
 	public function getDamageAgainstOf($e){
-	    return 4;
+		return 4;
 	}
 }

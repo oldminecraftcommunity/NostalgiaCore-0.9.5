@@ -20,7 +20,7 @@ class MobSpawner{
 	}
 
 	public function handle(){
-	    if($this->countEntities() > self::MOB_LIMIT || count($this->level->players) <= 0){
+		if($this->countEntities() > self::MOB_LIMIT || count($this->level->players) <= 0){
 			return false; //not spawning
 		}
 		return $this->spawnMobs();

@@ -27,7 +27,7 @@ class PluginAPI extends stdClass{
 		$this->server->api->console->register("version", "", [$this, "commandHandler"]);
 		$this->server->api->console->cmdWhitelist("version");
 		if($this->server->extraprops->get("query-plugins")){ //allow players to also view plugins ingame, since query makes names public
-		    $this->server->api->console->cmdWhitelist("plugins");
+			$this->server->api->console->cmdWhitelist("plugins");
 		}
 		$this->server->api->console->alias("pl", "plugins");
 		$this->server->api->console->alias("ver", "version");
@@ -65,7 +65,7 @@ class PluginAPI extends stdClass{
 
 	public function __destruct(){
 		foreach($this->plugins as $p){
-		    if(method_exists($p[0], "__destruct")){$p[0]->__destruct();};
+			if(method_exists($p[0], "__destruct")){$p[0]->__destruct();};
 		}
 		unset($this->plugins);
 	}
@@ -163,7 +163,7 @@ class PluginAPI extends stdClass{
 					
 					$aver = CURRENT_API_VERSION;
 					if($pluginInfo["api"] != $aver){
-					    console("[WARNING] API is not the same as Core, might cause bugs({$pluginInfo["api"]} != {$aver})");
+						console("[WARNING] API is not the same as Core, might cause bugs({$pluginInfo["api"]} != {$aver})");
 					}
 					
 					$phr = "phar://$filePath/";

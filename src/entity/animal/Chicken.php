@@ -4,7 +4,7 @@ class Chicken extends Animal{
 	const TYPE = MOB_CHICKEN;
 	public $timeUntilEgg;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = []){
-	    $this->timeUntilEgg = mt_rand(0,6000) + 6000;
+		$this->timeUntilEgg = mt_rand(0,6000) + 6000;
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 4, "generic");
 		$this->setName('Chicken');
@@ -17,11 +17,11 @@ class Chicken extends Animal{
 	}
 	
 	public function update(){
-	    parent::update();
-	    if($this->timeUntilEgg-- <= 0 && !$this->isBaby()){
-	        $this->dropAnEgg();
-	        $this->timeUntilEgg = mt_rand(0,6000) + 6000;
-	    }
+		parent::update();
+		if($this->timeUntilEgg-- <= 0 && !$this->isBaby()){
+			$this->dropAnEgg();
+			$this->timeUntilEgg = mt_rand(0,6000) + 6000;
+		}
 	}
 	
 	public function dropAnEgg(){

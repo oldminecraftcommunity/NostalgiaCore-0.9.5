@@ -1,11 +1,11 @@
 <?php
 
 class AnimatePacket extends RakNetDataPacket{
-    /**
-     * Minecart Hurt, Swing Hand
-     */
-    const ANIM_1 = 0x1;
-    
+	/**
+	 * Minecart Hurt, Swing Hand
+	 */
+	const ANIM_1 = 0x1;
+	
 	public $action;
 	public $eid;
 	

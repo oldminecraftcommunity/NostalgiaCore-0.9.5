@@ -20,11 +20,11 @@ class Painting extends Hanging{
 	}
 	
 	public function createSaveData(){
-	    $data = parent::createSaveData();
-	    
-	    $data["Motive"] = $this->data["Motive"];
-	    
-	    return $data;
+		$data = parent::createSaveData();
+		
+		$data["Motive"] = $this->data["Motive"];
+		
+		return $data;
 	}
 	
 	public function spawn($player){

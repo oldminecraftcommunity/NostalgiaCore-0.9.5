@@ -180,7 +180,7 @@ class AxisAlignedBB{
 
 		return $z;
 	}
-    
+	
 	public function intersectsWith(AxisAlignedBB $bb){
 		if($bb->maxX > $this->minX and $bb->minX < $this->maxX){
 			if($bb->maxY > $this->minY and $bb->minY < $this->maxY){
@@ -192,14 +192,14 @@ class AxisAlignedBB{
 	}
 	
 	public function isXYZInside($x, $y, $z){
-	    if($x <= $this->minX or $x >= $this->maxX){
-	        return false;
-	    }
-	    if($y <= $this->minY or $y >= $this->maxY){
-	        return false;
-	    }
-	    
-	    return $z > $this->minZ and $z < $this->maxZ;
+		if($x <= $this->minX or $x >= $this->maxX){
+			return false;
+		}
+		if($y <= $this->minY or $y >= $this->maxY){
+			return false;
+		}
+		
+		return $z > $this->minZ and $z < $this->maxZ;
 	}
 	public function isVectorInside(Vector3 $vector){
 		if($vector->x <= $this->minX or $vector->x >= $this->maxX){
@@ -306,7 +306,7 @@ class AxisAlignedBB{
 	}
 	
 	public function __toString(){
-	    return "min: {$this->minX}, {$this->minY}, {$this->minZ}, max:  {$this->maxX}, {$this->maxY}, {$this->maxZ}";
+		return "min: {$this->minX}, {$this->minY}, {$this->minZ}, max:  {$this->maxX}, {$this->maxY}, {$this->maxZ}";
 	}
 	
 }

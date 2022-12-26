@@ -41,16 +41,16 @@ class Utils{
 	
 	public static function wrapAngleTo180_float($par0)
 	{
-	    $par0 %= 360.0;
-	    return $par0 >= 180 ? $par0 - 360 : ($par0 + 360);
+		$par0 %= 360.0;
+		return $par0 >= 180 ? $par0 - 360 : ($par0 + 360);
 	}
 	
 	public static function getSign($v){
-	    return $v > 0 ? 1 : ($v < 0 ? -1  : 0);
+		return $v > 0 ? 1 : ($v < 0 ? -1  : 0);
 	}
 	
 	public static function clampDegrees($v){
-	    return floor(($v % 360 + 360) % 360);
+		return floor(($v % 360 + 360) % 360);
 	}
 	
 	public static function hasEmoji($s){
@@ -70,23 +70,23 @@ class Utils{
 	}
 	
 	public function xrange($start, $limit, $step = 1) {
-	    if ($start <= $limit) {
-	        if ($step <= 0) {
-	            throw new LogicException('Step must be positive');
-	        }
-	        
-	        for ($i = $start; $i <= $limit; $i += $step) {
-	            yield $i;
-	        }
-	    } else {
-	        if ($step >= 0) {
-	            throw new LogicException('Step must be negative');
-	        }
-	        
-	        for ($i = $start; $i >= $limit; $i += $step) {
-	            yield $i;
-	        }
-	    }
+		if ($start <= $limit) {
+			if ($step <= 0) {
+				throw new LogicException('Step must be positive');
+			}
+			
+			for ($i = $start; $i <= $limit; $i += $step) {
+				yield $i;
+			}
+		} else {
+			if ($step >= 0) {
+				throw new LogicException('Step must be negative');
+			}
+			
+			for ($i = $start; $i >= $limit; $i += $step) {
+				yield $i;
+			}
+		}
 	}
 	
 	public static function getUniqueID($raw = false, $extra = ""){
@@ -573,22 +573,22 @@ class Utils{
 	 * @return number
 	 */
 	public static function distance($pos1, $pos2){
-	    if($pos1 instanceof Vector3){
-	        $pos1 = $pos1->toArray();
-	    }
-	    if($pos2 instanceof Vector3){
-	        $pos2 = $pos2->toArray();
-	    }
+		if($pos1 instanceof Vector3){
+			$pos1 = $pos1->toArray();
+		}
+		if($pos2 instanceof Vector3){
+			$pos2 = $pos2->toArray();
+		}
 		return sqrt(pow($pos1["x"] - $pos2["x"], 2) + pow($pos1["y"] - $pos2["y"], 2) + pow($pos1["z"] - $pos2["z"], 2));
 	}
-    
+	
 	public static function angle3D($pos1, $pos2){
-	    if($pos1 instanceof Vector3){
-	        $pos1 = $pos1->toArray();
-	    }
-	    if($pos2 instanceof Vector3){
-	        $pos2 = $pos2->toArray();
-	    }
+		if($pos1 instanceof Vector3){
+			$pos1 = $pos1->toArray();
+		}
+		if($pos2 instanceof Vector3){
+			$pos2 = $pos2->toArray();
+		}
 		$X = $pos1["x"] - $pos2["x"];
 		$Z = $pos1["z"] - $pos2["z"];
 		$dXZ = sqrt(pow($X, 2) + pow($Z, 2));
@@ -718,24 +718,24 @@ class Utils{
 		if(!is_float($value)){
 			if(strval($value[0] == null ? '' : $value[0]) === "-"){
 				$negative = true;
-			    $value = bcadd($value, "1");
-			    if(strval($value[0]) === "-"){
-				    $value = substr($value, 1);
-			    }
-		    }else{
-			    $negative = false;
-		    }
-		    while(bccomp($value, "0", 0) > 0){
-			    $temp = bcmod($value, "16777216");
-			    $x = chr($temp >> 16) . chr($temp >> 8) . chr($temp) . $x;
-			    $value = bcdiv($value, "16777216", 0);
-		    }
-		    $x = str_pad(substr($x, 0, 8), 8, "\x00", STR_PAD_LEFT);
-		    if($negative === true){
-			    $x = ~$x;
-		    }
-		    return $x;
-	    }
+				$value = bcadd($value, "1");
+				if(strval($value[0]) === "-"){
+					$value = substr($value, 1);
+				}
+			}else{
+				$negative = false;
+			}
+			while(bccomp($value, "0", 0) > 0){
+				$temp = bcmod($value, "16777216");
+				$x = chr($temp >> 16) . chr($temp >> 8) . chr($temp) . $x;
+				$value = bcdiv($value, "16777216", 0);
+			}
+			$x = str_pad(substr($x, 0, 8), 8, "\x00", STR_PAD_LEFT);
+			if($negative === true){
+				$x = ~$x;
+			}
+			return $x;
+		}
 	}
 }
 

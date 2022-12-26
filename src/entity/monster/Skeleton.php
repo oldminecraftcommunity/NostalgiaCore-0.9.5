@@ -11,28 +11,28 @@ class Skeleton extends Monster{
 	}
 	
 	public function updateBurning(){
-	    if($this->fire > 0 or $this->server->api->time->getPhase($this->level->getTime()) != "day"){
-	        return false;
-	    }
-	    
-	    for($y = $this->y; $y < 129; $y++){
-	        $block = $this->level->getBlockWithoutVector($this->x, $y, $this->z);
-	        if($block->isSolid){
-	            return false;
-	        }
-	    }
-	    if($block->getID() === AIR){
-	        $this->fire = 160; //Value from 0.8.1
-	        $this->updateMetadata();
-	        return true;
-	    }else{
-	        return false;
-	    }
+		if($this->fire > 0 or $this->server->api->time->getPhase($this->level->getTime()) != "day"){
+			return false;
+		}
+		
+		for($y = $this->y; $y < 129; $y++){
+			$block = $this->level->getBlockWithoutVector($this->x, $y, $this->z);
+			if($block->isSolid){
+				return false;
+			}
+		}
+		if($block->getID() === AIR){
+			$this->fire = 160; //Value from 0.8.1
+			$this->updateMetadata();
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	public function update(){
-	    $this->updateBurning();
-	    parent::update();
+		$this->updateBurning();
+		parent::update();
 	}
 	
 	public function getDrops(){

@@ -6,6 +6,6 @@ class WoodenPickaxeItem extends ItemPickaxe{
 	}
 	
 	public function getDamageAgainstOf($e){
-	    return 2;
+		return 2;
 	}
 }

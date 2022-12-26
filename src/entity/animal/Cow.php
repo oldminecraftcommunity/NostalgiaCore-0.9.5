@@ -16,15 +16,15 @@ class Cow extends Animal{
 	}
 	
 	public function interactWith(Entity $e, $action){
-	    if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
-	        $slot = $e->player->getHeldItem();
-	        if($slot->getID() === BUCKET && $slot->getMetadata() === 0){
-	            $e->player->removeItem($slot->getID(), $slot->getMetadata(), 1, true); //remove only 1 bucket
-	            $e->player->addItem(BUCKET, 1, 1, true);
-	            return true;
-	        }
-	    }
-	    parent::interactWith($e, $action);
+		if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
+			$slot = $e->player->getHeldItem();
+			if($slot->getID() === BUCKET && $slot->getMetadata() === 0){
+				$e->player->removeItem($slot->getID(), $slot->getMetadata(), 1, true); //remove only 1 bucket
+				$e->player->addItem(BUCKET, 1, 1, true);
+				return true;
+			}
+		}
+		parent::interactWith($e, $action);
 	}
 	
 	public function getDrops(){

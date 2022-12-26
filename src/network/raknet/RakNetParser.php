@@ -326,8 +326,8 @@ class RakNetParser{
 				case ProtocolInfo::SET_ENTITY_LINK_PACKET:
 					$data = new SetEntityLinkPacket;
 				case ProtocolInfo::PLAYER_INPUT_PACKET:
-				    $data = new PlayerInputPacket;
-				    break;
+					$data = new PlayerInputPacket;
+					break;
 				default:
 					$data = new UnknownPacket();
 					$data->packetID = $pid;

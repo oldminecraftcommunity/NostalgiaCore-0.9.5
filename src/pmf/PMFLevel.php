@@ -317,9 +317,9 @@ class PMFLevel extends PMF{
 		return true;
 	}
 	private function report(){
-	    console("[ERROR] A weird error in PMFLevel just happeneed. Values: ");
-	    var_dump(func_get_args());
-	    console("[NOTICE] If you see this message, you should send the log with error to the devs.");
+		console("[ERROR] A weird error in PMFLevel just happeneed. Values: ");
+		var_dump(func_get_args());
+		console("[NOTICE] If you see this message, you should send the log with error to the devs.");
 	}
 	public function getBlockID($x, $y, $z){
 		if($y > 127 or $y < 0 or $x < 0 or $z < 0 or $x > 255 or $z > 255){
@@ -333,9 +333,9 @@ class PMFLevel extends PMF{
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
 		if(is_array($this->chunks) && is_array($this->chunks[$index]) && is_string($this->chunks[$index][$Y])){
-		    $b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
+			$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
 		}else{ //php8 fix
-		    $b = 0;
+			$b = 0;
 		}
 		
 		return $b;
@@ -378,9 +378,9 @@ class PMFLevel extends PMF{
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
 		if(is_array($this->chunks) && is_array($this->chunks[$index]) && is_string($this->chunks[$index][$Y])){
-		    $m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
+			$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
 		}else{ //php8 fix
-		    $m = 0;
+			$m = 0;
 		}
 		
 		if(($y & 1) === 0){

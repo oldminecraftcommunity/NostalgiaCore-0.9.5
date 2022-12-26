@@ -2,10 +2,10 @@
 
 abstract class ItemAxe extends ItemTool
 {
-    public function isAxe(){
-        return true;
-    }
-    
-    
+	public function isAxe(){
+		return true;
+	}
+	
+	
 }
 

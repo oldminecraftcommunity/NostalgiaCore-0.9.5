@@ -59,9 +59,9 @@ class BeetrootBlock extends FlowableBlock{
 			$drops[] = array(BEETROOT, 0, 1);
 		}
 		for($i = 0; $i < 3; ++$i){
-		    if(mt_rand(0,15) <= $this->meta){ //a way from 1.4.7
-		        $drops[] = array(BEETROOT_SEEDS, 0, 1);
-		    }
+			if(mt_rand(0,15) <= $this->meta){ //a way from 1.4.7
+				$drops[] = array(BEETROOT_SEEDS, 0, 1);
+			}
 		}
 		return $drops;
 	}

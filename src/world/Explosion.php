@@ -54,7 +54,7 @@ class Explosion{
 							$blockID = $this->level->level->getBlockID($vBlock->x, $vBlock->y, $vBlock->z);
 							$blockMeta = $this->level->level->getBlockDamage($vBlock->x, $vBlock->y, $vBlock->z);
 							if($blockID > 0){
-							    $block = BlockAPI::get($blockID, $blockMeta);
+								$block = BlockAPI::get($blockID, $blockMeta);
 								$block->x = $vBlock->x;
 								$block->y = $vBlock->y;
 								$block->z = $vBlock->z;

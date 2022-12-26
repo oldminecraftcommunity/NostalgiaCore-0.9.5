@@ -28,7 +28,7 @@ class FenceGateBlock extends TransparentBlock{
 		);
 	}
 	public function onActivate(Item $item, Player $player){
-                $this->meta ^= 0x04;
+				$this->meta ^= 0x04;
 		$this->level->setBlock($this, $this, true, false, true);
 		$players = ServerAPI::request()->api->player->getAll($this->level);
 		unset($players[$player->CID]);

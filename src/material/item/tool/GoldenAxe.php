@@ -5,6 +5,6 @@ class GoldenAxeItem extends ItemAxe{
 		parent::__construct(GOLDEN_AXE, $meta, $count, "Golden Axe");
 	}
 	public function getDamageAgainstOf($e){
-	    return 3;
+		return 3;
 	}
 }

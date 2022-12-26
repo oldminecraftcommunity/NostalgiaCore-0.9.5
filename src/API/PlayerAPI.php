@@ -19,7 +19,7 @@ class PlayerAPI{
 		$this->registerCmd("spawn");
 		$this->registerCmd("ping");
 		$this->server->api->console->alias("lag", "ping");
-                $this->server->api->console->alias("gm", "gamemode");
+				$this->server->api->console->alias("gm", "gamemode");
 		$this->server->api->console->alias("who", "list");
 		$this->server->api->console->alias("suicide", "kill");
 		$this->server->api->console->alias("tppos", "tp");
@@ -392,7 +392,7 @@ class PlayerAPI{
 				$data = new Config(DATA_PATH . "players/" . $iname . ".yml", CONFIG_YAML, $default);
 				$data->save();
 			}else{
-			    return false;
+				return false;
 			}
 		}
 

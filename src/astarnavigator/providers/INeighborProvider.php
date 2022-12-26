@@ -2,6 +2,6 @@
 
 interface INeighborProvider
 {
-    public function getNeighbors(PathTile $tile);
+	public function getNeighbors(PathTile $tile);
 }
 

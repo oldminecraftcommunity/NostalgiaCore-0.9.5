@@ -21,11 +21,11 @@ class FlintSteelItem extends ItemTool{
 	}
 	
 	public function useOn($object, $force = false){
-	    if(($object instanceof Creeper) and $this->id === FLINT_STEEL){
-	        $this->meta++;
-	        return true;
-	    }else{
-	        return parent::useOn($object, $force);
-	    }
+		if(($object instanceof Creeper) and $this->id === FLINT_STEEL){
+			$this->meta++;
+			return true;
+		}else{
+			return parent::useOn($object, $force);
+		}
 	}
 }

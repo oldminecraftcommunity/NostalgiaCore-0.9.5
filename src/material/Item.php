@@ -153,7 +153,7 @@ class Item{
 	}
 	
 	public function isPickaxe(){
-	    return false;
+		return false;
 	}
 	
 	public function getName(){
@@ -217,11 +217,11 @@ class Item{
 	
 	public function useOn($object, $force = false){
 		if($force){
-		    if(($object instanceof Entity) and !$this->isSword()){
-		        $this->meta += 2;
-		    }else{
-		        $this->meta++;
-		    }
+			if(($object instanceof Entity) and !$this->isSword()){
+				$this->meta += 2;
+			}else{
+				$this->meta++;
+			}
 			return true;
 		}
 		return false;
@@ -303,7 +303,7 @@ class Item{
 	}
 	
 	public function getDamageAgainstOf($e){
-	    return Item::DEF_DAMAGE;
+		return Item::DEF_DAMAGE;
 	}
 	
 	public function getDestroySpeed(Block $block, Player $player){

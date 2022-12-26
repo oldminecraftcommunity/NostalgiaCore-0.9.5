@@ -1,7 +1,7 @@
 <?php
 
 class Sheep extends Animal{
-    public $color;
+	public $color;
 	const TYPE = MOB_SHEEP;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 		parent::__construct($level, $eid, $class, $type, $data);
@@ -20,10 +20,10 @@ class Sheep extends Animal{
 	}
 	
 	public function createSaveData(){
-	    $data = parent::createSaveData();
-	    $data["Color"] = @$this->data["Color"];
-	    $data["Sheared"] = @$this->data["Sheared"];
-	    return $data;
+		$data = parent::createSaveData();
+		$data["Color"] = @$this->data["Color"];
+		$data["Sheared"] = @$this->data["Sheared"];
+		return $data;
 	}
 	
 	public function eatGrass(){
@@ -41,16 +41,16 @@ class Sheep extends Animal{
 	}
 	
 	public function setSheared($v = null){
-	    $this->data["Sheared"] = $v === null ? !$this->isSheared() : $v;
-	    $this->updateMetadata();
+		$this->data["Sheared"] = $v === null ? !$this->isSheared() : $v;
+		$this->updateMetadata();
 	}
 	
 	public function isSheared(){
-	    return $this->data["Sheared"];
+		return $this->data["Sheared"];
 	}
 	
 	public function getColor(){
-	    return $this->data["Color"] & 16; //color === 16 -> color = 0, color === 17 -> color = 1 ...
+		return $this->data["Color"] & 16; //color === 16 -> color = 0, color === 17 -> color = 1 ...
 	}
 	
 	public function getDrops(){
@@ -64,21 +64,21 @@ class Sheep extends Animal{
 	}
 	
 	public function interactWith(Entity $e, $action){
-	    if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
-	        $slot = $e->player->getHeldItem();
-	        if($slot->getID() === SHEARS){
-	            if(!$this->isSheared()){
-	                $this->setSheared(1);
-	                $this->server->api->entity->drop($this, BlockAPI::getItem(WOOL, $this->getColor(), mt_rand(1, 3)));
+		if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
+			$slot = $e->player->getHeldItem();
+			if($slot->getID() === SHEARS){
+				if(!$this->isSheared()){
+					$this->setSheared(1);
+					$this->server->api->entity->drop($this, BlockAPI::getItem(WOOL, $this->getColor(), mt_rand(1, 3)));
 					//$this->server->schedule(20, [$this, "eatGrass"]);
-	                if($slot->getMetadata() >= $slot->getMaxDurability()){
-	                    $this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
-	                }
-	            }
-	            return true;
-	        }
-	    }
-	    return parent::interactWith($e, $action);
+					if($slot->getMetadata() >= $slot->getMaxDurability()){
+						$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
+					}
+				}
+				return true;
+			}
+		}
+		return parent::interactWith($e, $action);
 	}
 	
 	public function getMetadata(){
@@ -93,19 +93,19 @@ class Sheep extends Animal{
 	public function sheepColor(){ //a method from 0.8.1
 		$c = mt_rand(0,100);
 		if($c <= 4){
-		    return 0xF; //white
+			return 0xF; //white
 		}
 		if($c <= 9){
-		    return 0x7;
+			return 0x7;
 		}
 		if($c <= 14){
-		    return 0x8;
+			return 0x8;
 		}
 		if($c <= 17){
-		    return 0xC;
+			return 0xC;
 		}
 		if(mt_rand(0, 500)){
-		    return 0x0;
+			return 0x0;
 		}
 		return 0x0;
 	}

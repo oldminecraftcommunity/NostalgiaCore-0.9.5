@@ -25,10 +25,10 @@ class MovingObjectPosition{
 	}
 
 	/**
-	 * @param int     $x
-	 * @param int     $y
-	 * @param int     $z
-	 * @param int     $side
+	 * @param int	 $x
+	 * @param int	 $y
+	 * @param int	 $z
+	 * @param int	 $side
 	 * @param Vector3 $hitVector
 	 *
 	 * @return MovingObjectPosition

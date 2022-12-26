@@ -1,13 +1,13 @@
 <?php
 abstract class WalkingEntity extends Entity{
-    
-    
-    
-    /**
-     * @param int $tickDiff
-     *
-     * @return null|Vector3
-     */
-    
-    
+	
+	
+	
+	/**
+	 * @param int $tickDiff
+	 *
+	 * @return null|Vector3
+	 */
+	
+	
 }

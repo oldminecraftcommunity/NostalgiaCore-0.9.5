@@ -898,14 +898,14 @@ class Player{
 		}
 	}
 	public function makeInvisibleForOnePlayer(Player $player){
-	    $pk = new RemoveEntityPacket;
-	    $pk->eid = $this->entity->eid;
-	    $player->dataPacket($pk);
+		$pk = new RemoveEntityPacket;
+		$pk->eid = $this->entity->eid;
+		$player->dataPacket($pk);
 	}
 	public function makeInvisibleForAllPlayers(){
-	    $pk = new RemoveEntityPacket;
-	    $pk->eid = $this->entity->eid;
-	    $this->server->api->player->broadcastPacket($this->server->api->player->getAll($this->level), $pk);
+		$pk = new RemoveEntityPacket;
+		$pk->eid = $this->entity->eid;
+		$this->server->api->player->broadcastPacket($this->server->api->player->getAll($this->level), $pk);
 	}
 	public function getGamemode(){
 		switch($this->gamemode){
@@ -959,10 +959,10 @@ class Player{
 		}
 		
 		if($this->gamemode === SPECTATOR){
-		    $this->makeInvisibleForAllPlayers();
+			$this->makeInvisibleForAllPlayers();
 		}
 		if($this->gamemode === CREATIVE){
-		    $this->server->api->player->spawnToAllPlayers($this);
+			$this->server->api->player->spawnToAllPlayers($this);
 		}
 		
 		$this->inventory = $inv;
@@ -1315,17 +1315,17 @@ class Player{
 					return;
 				}
 				if($packet->protocol1 !== ProtocolInfo::CURRENT_PROTOCOL){
-				    if($packet->protocol1 < ProtocolInfo::CURRENT_PROTOCOL){
-				        $pk = new LoginStatusPacket;
-				        $pk->status = 1;
-				        $this->directDataPacket($pk);
-				    }else{
-				        $pk = new LoginStatusPacket;
-				        $pk->status = 2;
-				        $this->directDataPacket($pk);
-				    }
-				    $this->close("Incorrect protocol #" . $packet->protocol1, false);
-				    return;
+					if($packet->protocol1 < ProtocolInfo::CURRENT_PROTOCOL){
+						$pk = new LoginStatusPacket;
+						$pk->status = 1;
+						$this->directDataPacket($pk);
+					}else{
+						$pk = new LoginStatusPacket;
+						$pk->status = 2;
+						$this->directDataPacket($pk);
+					}
+					$this->close("Incorrect protocol #" . $packet->protocol1, false);
+					return;
 				}
 				if(preg_match('#[^a-zA-Z0-9_]#', $this->username) > 0 or $this->username === "" or $this->iusername === "rcon" or $this->iusername === "console" or $this->iusername === "server"){
 					$this->close("Bad username", false);
@@ -1485,7 +1485,7 @@ class Player{
 						$this->sendArmor();
 						$array = explode("@n", (string)$this->server->motd);
 						foreach($array as $msg){
-						    $this->sendChat($msg."\n");
+							$this->sendChat($msg."\n");
 						}
 
 						$this->sendInventory();
@@ -1799,7 +1799,7 @@ class Player{
 				$target = $this->server->api->entity->get($packet->target);
 				if($target instanceof Entity and $this->entity instanceof Entity and $this->gamemode !== VIEW and $this->blocked === false and ($target instanceof Entity) and $this->entity->distance($target) <= 8){
 					$data["targetentity"] = $packet->target;
-				        $data["entity"] = $this;
+						$data["entity"] = $this;
 					if($this->server->handle("player.interact", $data) !== false){
 						$target->interactWith($this->entity, $packet->action);
 					}
@@ -1900,18 +1900,18 @@ class Player{
 				$data["item"] = $packet->item;
 				$data["player"] = $this;
 				if($this->blocked === false and $this->server->handle("player.drop", $data) !== false){
-				    $f1 = 0.3;
-				    $sX = -sin(($this->entity->yaw / 180) * M_PI) * cos(($this->entity->pitch / 180) * M_PI) * $f1;
-				    $sZ = cos(($this->entity->yaw / 180) * M_PI) * cos(($this->entity->pitch / 180) * M_PI) * $f1;
-				    $sY = -sin(($this->entity->pitch / 180) * M_PI) * $f1 + 0.1;
-				    $f1 = 0.02;
-				    $f3 = $this->entity->random->nextFloat() * M_PI * 2.0;
-				    $f1 *= $this->entity->random->nextFloat();
-				    $sX += cos($f3) * $f1;
-				    $sY += ($this->entity->random->nextFloat() - $this->entity->random->nextFloat()) * 0.1;
-				    $sZ += sin($f3) * $f1;
-				    
-				    $this->server->api->entity->dropRawPos(new Position($this->entity->x, $this->entity->y - 0.3 + $this->entity->height - 0.12, $this->entity->z, $this->level), $packet->item, $sX, $sY, $sZ);
+					$f1 = 0.3;
+					$sX = -sin(($this->entity->yaw / 180) * M_PI) * cos(($this->entity->pitch / 180) * M_PI) * $f1;
+					$sZ = cos(($this->entity->yaw / 180) * M_PI) * cos(($this->entity->pitch / 180) * M_PI) * $f1;
+					$sY = -sin(($this->entity->pitch / 180) * M_PI) * $f1 + 0.1;
+					$f1 = 0.02;
+					$f3 = $this->entity->random->nextFloat() * M_PI * 2.0;
+					$f1 *= $this->entity->random->nextFloat();
+					$sX += cos($f3) * $f1;
+					$sY += ($this->entity->random->nextFloat() - $this->entity->random->nextFloat()) * 0.1;
+					$sZ += sin($f3) * $f1;
+					
+					$this->server->api->entity->dropRawPos(new Position($this->entity->x, $this->entity->y - 0.3 + $this->entity->height - 0.12, $this->entity->z, $this->level), $packet->item, $sX, $sY, $sZ);
 					$this->setSlot($this->slot, BlockAPI::getItem(AIR, 0, 0), false);
 				}
 				if($this->entity->inAction === true){
@@ -2167,20 +2167,20 @@ class Player{
 				}
 				break;
 			case ProtocolInfo::PLAYER_INPUT_PACKET:
-			    break; //TODO player input-
+				break; //TODO player input-
 			default:
 				console("[DEBUG] Unhandled 0x" . dechex($packet->pid()) . " data packet for " . $this->username . " (" . $this->clientID . "): " . print_r($packet, true), true, true, 2);
 				break;
 		}
 	}
-    
+	
 	/**
 	 * Get an Item which is currently held by player
 	 * @return Item
 	 */
 	
 	public function getHeldItem(){
-	    return $this->getSlot($this->slot);
+		return $this->getSlot($this->slot);
 	}
 	
 	public function stopSleep(){

@@ -1,15 +1,15 @@
 <?php
 
 class Level{
-    /**
-     * @var Config
-     */
-    public $entities;
-    /**
-     * This is an array of entities in this world. 
-     * @var Entity[]
-     */
-    public $entityList;
+	/**
+	 * @var Config
+	 */
+	public $entities;
+	/**
+	 * This is an array of entities in this world. 
+	 * @var Entity[]
+	 */
+	public $entityList;
 	public $tiles, $blockUpdates, $nextSave, $players = [], $level;
 	private $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
 
@@ -44,32 +44,32 @@ class Level{
 	 * @return AxisAlignedBB[]
 	 */
 	public function getCubes(AxisAlignedBB $aABB) {
-	    $aABBs = [];
-	    $x0 = floor($aABB->minX);
-	    $x1 = ceil($aABB->maxX);
-	    $y0 = floor($aABB->minY);
-	    $y1 = round($aABB->maxY);
-	    $z0 = floor($aABB->minZ);
-	    $z1 = ceil($aABB->maxZ);
-	    $x0 = $x0 < 0 ? 0 : $x0;
-	    $y0 = $y0 < 0 ? 0 : $y0;
-	    $z0 = $z0 < 0 ? 0 : $z0;
-	    $x1 = $x1 > 256 ? 256 : $x1;
-	    $y1 = $y1 > 128 ? 128 : $y1;
-	    $z1 = $z1 > 256 ? 256 : $z1;
-	    
-	    for($x = $x0; $x < $x1; ++$x) {
-	        for($y = $y0; $y < $y1; ++$y) {
-	            for($z = $z0; $z < $z1; ++$z) {
-	                $b = $this->getBlockWithoutVector($x, $y, $z);
-	                if($b != false && $b->boundingBox->intersectsWith($aABB) && $b->isSolid) {
-	                    $aABBs[] = $b->boundingBox;
-	                }
-	            }
-	        }
-	    }
-	    
-	    return $aABBs;
+		$aABBs = [];
+		$x0 = floor($aABB->minX);
+		$x1 = ceil($aABB->maxX);
+		$y0 = floor($aABB->minY);
+		$y1 = round($aABB->maxY);
+		$z0 = floor($aABB->minZ);
+		$z1 = ceil($aABB->maxZ);
+		$x0 = $x0 < 0 ? 0 : $x0;
+		$y0 = $y0 < 0 ? 0 : $y0;
+		$z0 = $z0 < 0 ? 0 : $z0;
+		$x1 = $x1 > 256 ? 256 : $x1;
+		$y1 = $y1 > 128 ? 128 : $y1;
+		$z1 = $z1 > 256 ? 256 : $z1;
+		
+		for($x = $x0; $x < $x1; ++$x) {
+			for($y = $y0; $y < $y1; ++$y) {
+				for($z = $z0; $z < $z1; ++$z) {
+					$b = $this->getBlockWithoutVector($x, $y, $z);
+					if($b != false && $b->boundingBox->intersectsWith($aABB) && $b->isSolid) {
+						$aABBs[] = $b->boundingBox;
+					}
+				}
+			}
+		}
+		
+		return $aABBs;
 	}
 	
 	public function __destruct(){
@@ -80,7 +80,7 @@ class Level{
 		}
 		unset($this->mobSpawner->level);
 	}
-    
+	
 	public function save($force = false, $extra = true){
 		if(!isset($this->level)){
 			return false;
@@ -92,9 +92,9 @@ class Level{
 		if($extra !== false){
 			$entities = [];
 			foreach($this->entityList as $entity){
-			    if($entity instanceof Entity){
-			        $entities[] = $entity->createSaveData();
-			    }
+				if($entity instanceof Entity){
+					$entities[] = $entity->createSaveData();
+				}
 			}
 			$this->entities->setAll($entities);
 			$this->entities->save();
@@ -149,20 +149,20 @@ class Level{
 	public function freeChunk($X, $Z, Player $player){
 		unset($this->usedChunks[$X . "." . $Z][$player->CID]);
 	}
-    
+	
 	public function checkCollisionsFor(Entity $e){
-	    if($e->level->getName() != $this->getName()){
-	        return false; //not the same world
-	    }
-	    foreach($this->entityList as $e1){
-	        if($e->boundingBox->intersectsWith($e1->boundingBox) && $e1->isCollidable){
-	            $e->onCollideWith($e1);
-	            $e1->onCollideWith($e);
-	        }
-	    }
+		if($e->level->getName() != $this->getName()){
+			return false; //not the same world
+		}
+		foreach($this->entityList as $e1){
+			if($e->boundingBox->intersectsWith($e1->boundingBox) && $e1->isCollidable){
+				$e->onCollideWith($e1);
+				$e1->onCollideWith($e);
+			}
+		}
 	}
 	public function isObstructed($e){
-	    
+		
 	}
 	
 	public function checkThings(){
@@ -258,19 +258,19 @@ class Level{
 		}
 		return $ret;
 	}
-    
+	
 	public function onTick(PocketMinecraftServer $server){
-	    //$ents = $server->api->entity->getAll($this);
-	    if(!$this->stopTime) ++$this->time;
-	    foreach($this->entityList as $k => $e){
-	        if(!($e instanceof Entity)){
-	            unset($this->entityList[$k]);
-	            continue;
-	        }
-	        if($e->needsUpdate){
-	            $e->update();
-	        }
-	    }
+		//$ents = $server->api->entity->getAll($this);
+		if(!$this->stopTime) ++$this->time;
+		foreach($this->entityList as $k => $e){
+			if(!($e instanceof Entity)){
+				unset($this->entityList[$k]);
+				continue;
+			}
+			if($e->needsUpdate){
+				$e->update();
+			}
+		}
 		
 		if(Entity::$updateOnTick && $server->ticks % 40 === 0){ //40 ticks delay
 			$this->mobSpawner->handle();
@@ -445,7 +445,7 @@ class Level{
 		}
 		return new Position($this->level->getData("spawnX"), $this->level->getData("spawnY"), $this->level->getData("spawnZ"), $this);
 	}
-    
+	
 	/**
 	 * @param number $x
 	 * @param number $y
@@ -454,8 +454,8 @@ class Level{
 	 */
 	
 	public function getBlockWithoutVector($x, $y, $z){
-	    $b = $this->level->getBlock($x, $y, $z);
-	    return BlockAPI::get($b[0], $b[1], new Position($x, $y, $z, $this));
+		$b = $this->level->getBlock($x, $y, $z);
+		return BlockAPI::get($b[0], $b[1], new Position($x, $y, $z, $this));
 	}
 	
 	/**
@@ -506,7 +506,7 @@ class Level{
 			$pk->started = $this->stopTime == false;
 			$this->server->api->player->broadcastPacket($this->players, $pk);
 		}else{
-		    $this->time -= 20 * 13;
+			$this->time -= 20 * 13;
 		}
 	}
 

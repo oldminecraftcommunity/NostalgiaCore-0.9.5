@@ -49,24 +49,24 @@ class Minecart extends Vehicle{
 	}
 	
 	public function interactWith(Entity $e, $action){
-	    if($action === InteractPacket::ACTION_HOLD && $e->isPlayer() && $this->canRide($e)){
-	        $this->linkedEntity = $e;
-	        $e->isRiding = true;
-	        $this->linkEntity($e, SetEntityLinkPacket::TYPE_RIDE);
-	        return true;
-	    }
-	    if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
-	        $this->linkEntity($e, SetEntityLinkPacket::TYPE_REMOVE);
-	        $this->linkedEntity = 0;
-	        $e->isRiding = false;
-	        return true;
-	    }
-	    parent::interactWith($e, $action);
+		if($action === InteractPacket::ACTION_HOLD && $e->isPlayer() && $this->canRide($e)){
+			$this->linkedEntity = $e;
+			$e->isRiding = true;
+			$this->linkEntity($e, SetEntityLinkPacket::TYPE_RIDE);
+			return true;
+		}
+		if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
+			$this->linkEntity($e, SetEntityLinkPacket::TYPE_REMOVE);
+			$this->linkedEntity = 0;
+			$e->isRiding = false;
+			return true;
+		}
+		parent::interactWith($e, $action);
 	}
 	
-    public function canRide($e)
-    {
-       return !($this->linkedEntity instanceof Entity) && !$e->isRiding;
-    }
+	public function canRide($e)
+	{
+	   return !($this->linkedEntity instanceof Entity) && !$e->isRiding;
+	}
 
 }

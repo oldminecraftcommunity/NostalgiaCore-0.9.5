@@ -20,23 +20,23 @@ class Arrow extends Projectile{
 	
 	public function shoot($d, $d1, $d2, $f, $f1){ //original name from 0.8.1 IDA decompilation, var names are taken from b1.7.3
 		$f2 = sqrt($d * $d + $d1 * $d1 + $d2 * $d2);
-        $d /= $f2;
-        $d1 /= $f2;
-        $d2 /= $f2;
-        $d += $this->random->nextGaussian() * 0.0075 * $f1; //0.0074999998323619366 replaced with 0.0075
-        $d1 += $this->random->nextGaussian() * 0.0075 * $f1;
-        $d2 += $this->random->nextGaussian() * 0.0075 * $f1;
-        $d *= $f;
-        $d1 *= $f;
-        $d2 *= $f;
-        $this->speedX = $d;
-        $this->speedY = $d1;
-        $this->speedZ = $d2;
-        $f3 = sqrt($d * $d + $d2 * $d2);
-        $this->yaw = (atan2($d, $d2) * 180) / M_PI;
-        $this->pitch = (atan2($d1, $f3) * 180) / M_PI;
+		$d /= $f2;
+		$d1 /= $f2;
+		$d2 /= $f2;
+		$d += $this->random->nextGaussian() * 0.0075 * $f1; //0.0074999998323619366 replaced with 0.0075
+		$d1 += $this->random->nextGaussian() * 0.0075 * $f1;
+		$d2 += $this->random->nextGaussian() * 0.0075 * $f1;
+		$d *= $f;
+		$d1 *= $f;
+		$d2 *= $f;
+		$this->speedX = $d;
+		$this->speedY = $d1;
+		$this->speedZ = $d2;
+		$f3 = sqrt($d * $d + $d2 * $d2);
+		$this->yaw = (atan2($d, $d2) * 180) / M_PI;
+		$this->pitch = (atan2($d1, $f3) * 180) / M_PI;
 		$this->update();
-        //TODO i guess? $ticksInGround = 0;
+		//TODO i guess? $ticksInGround = 0;
 	}
 	
 	public function spawn($player){

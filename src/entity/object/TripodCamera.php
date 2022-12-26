@@ -9,10 +9,10 @@ class TripodCamera extends Entity{
 	}
 	
 	public function interactWith(Entity $e, $action){
-	    if($e->isPlayer() and $action === InteractPacket::ACTION_HOLD){
+		if($e->isPlayer() and $action === InteractPacket::ACTION_HOLD){
 			//todo
 			$this->server->schedule(40, [$this, "close"]);
-	    }
-	    parent::interactWith($e, $action);
+		}
+		parent::interactWith($e, $action);
 	}
 }

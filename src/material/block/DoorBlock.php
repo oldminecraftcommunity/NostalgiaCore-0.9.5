@@ -1,27 +1,27 @@
 <?php
 
 class DoorBlock extends TransparentBlock{
-    /**
-     * @param int $id
-     * @param int $meta
-     * @param string $name
-     */
-    public function __construct($id, $meta = 0, $name = "Unknown"){
+	/**
+	 * @param int $id
+	 * @param int $meta
+	 * @param string $name
+	 */
+	public function __construct($id, $meta = 0, $name = "Unknown"){
 		parent::__construct($id, $meta, $name);
 		$this->isSolid = false;
 	}
 
-    /**
-     * @param int $type
-     *
-     * @return bool|int
-     */
-     public function onUpdate($type){
+	/**
+	 * @param int $type
+	 *
+	 * @return bool|int
+	 */
+	 public function onUpdate($type){
 		if($type === BLOCK_UPDATE_NORMAL){
 			if($this->getSide(0)->getID() === AIR){ //Replace with common break method
 				$this->level->setBlock($this, new AirBlock(), false);
-              		if($this->getID() == 64) ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y, $this->z+0.5, $this->level), BlockAPI::getItem(324, 0, 1));
-              		elseif($this->getID() == 71) ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y, $this->z+0.5, $this->level), BlockAPI::getItem(330, 0, 1));
+			  		if($this->getID() == 64) ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y, $this->z+0.5, $this->level), BlockAPI::getItem(324, 0, 1));
+			  		elseif($this->getID() == 71) ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y, $this->z+0.5, $this->level), BlockAPI::getItem(330, 0, 1));
 				if($this->getSide(1) instanceof DoorBlock){
 					$this->level->setBlock($this->getSide(1), new AirBlock(), false);
 				}
@@ -32,19 +32,19 @@ class DoorBlock extends TransparentBlock{
 	}
 
 
-    /**
-     * @param Item $item
-     * @param Player $player
-     * @param Block $block
-     * @param Block $target
-     * @param integer $face
-     * @param integer $fx
-     * @param integer $fy
-     * @param integer $fz
-     *
-     * @return boolean
-     */
-    public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+	/**
+	 * @param Item $item
+	 * @param Player $player
+	 * @param Block $block
+	 * @param Block $target
+	 * @param integer $face
+	 * @param integer $fx
+	 * @param integer $fy
+	 * @param integer $fz
+	 *
+	 * @return boolean
+	 */
+	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		if($face === 1){
 			$blockUp = $this->getSide(1);
 			$blockDown = $this->getSide(0);
@@ -73,13 +73,13 @@ class DoorBlock extends TransparentBlock{
 		return false;
 	}
 
-    /**
-     * @param Item $item
-     * @param Player $player
-     *
-     * @return boolean
-     */
-    public function onBreak(Item $item, Player $player){
+	/**
+	 * @param Item $item
+	 * @param Player $player
+	 *
+	 * @return boolean
+	 */
+	public function onBreak(Item $item, Player $player){
 		if(($this->meta & 0x08) === 0x08){
 			$down = $this->getSide(0);
 			if($down->getID() === $this->id){
@@ -95,13 +95,13 @@ class DoorBlock extends TransparentBlock{
 		return true;
 	}
 
-    /**
-     * @param Item $item
-     * @param Player $player
-     *
-     * @return boolean
-     */
-    public function onActivate(Item $item, Player $player){
+	/**
+	 * @param Item $item
+	 * @param Player $player
+	 *
+	 * @return boolean
+	 */
+	public function onActivate(Item $item, Player $player){
 		if(($this->meta & 0x08) === 0x08){ //Top
 			$down = $this->getSide(0);
 			if($down->getID() === $this->id){

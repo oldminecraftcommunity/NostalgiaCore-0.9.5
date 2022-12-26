@@ -17,11 +17,11 @@ class Vector3{
 	}
 	
 	public function copy(){
-	    return new Vector3($this->x, $this->y, $this->z);
+		return new Vector3($this->x, $this->y, $this->z);
 	}
 	
 	public function toArray(){
-	    return ["x" => $this->x, "y" => $this->y, "z" => $this->z];
+		return ["x" => $this->x, "y" => $this->y, "z" => $this->z];
 	}
 	
 	public function getFloorX(){
@@ -72,7 +72,7 @@ class Vector3{
 		if(($x instanceof Vector3) === true){
 			return $this->subtract($x->x, $x->y, $x->z);
 		}else{
-		    return new Vector3($this->x - $x, $this->y - $y, $this->z - $z);
+			return new Vector3($this->x - $x, $this->y - $y, $this->z - $z);
 		}
 	}
 
@@ -178,9 +178,9 @@ class Vector3{
 			$this->x * $v->y - $this->y * $v->x
 		);
 	}
-    
+	
 	public static function fromArray($arr){
-	    return new Vector3($arr[0], $arr[1], $arr[2]);
+		return new Vector3($arr[0], $arr[1], $arr[2]);
 	}
 	
 	public function __toString(){

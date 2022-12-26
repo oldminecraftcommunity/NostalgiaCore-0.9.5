@@ -2,11 +2,11 @@
 
 interface IBlockedProvider
 {
-    /**
-     * @param Tile $tile
-     * 
-     * @return boolean
-     */
-    public function isBlocked(PathTile $tile);
+	/**
+	 * @param Tile $tile
+	 * 
+	 * @return boolean
+	 */
+	public function isBlocked(PathTile $tile);
 }
 

@@ -2,8 +2,8 @@
 
 class ItemShovel extends ItemTool
 {
-    public function isShovel(){
-        return true;
-    }
+	public function isShovel(){
+		return true;
+	}
 }
 

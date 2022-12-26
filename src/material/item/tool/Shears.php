@@ -6,10 +6,10 @@ class ShearsItem extends ItemTool{
 	}
 	
 	public function useOn($object, $force = false){
-	    if(($object instanceof Sheep) and $this->id === SHEARS){
-	        $this->meta++;
-	        return true;
-	    }
-	    parent::useOn($object, $force);
+		if(($object instanceof Sheep) and $this->id === SHEARS){
+			$this->meta++;
+			return true;
+		}
+		parent::useOn($object, $force);
 	}
 }

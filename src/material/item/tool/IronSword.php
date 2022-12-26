@@ -5,6 +5,6 @@ class IronSwordItem extends ItemSword{
 		parent::__construct(IRON_SWORD, $meta, $count, "Iron Sword");
 	}
 	public function getDamageAgainstOf($e){
-	    return 6;
+		return 6;
 	}
 }

@@ -2,7 +2,7 @@
 
 class RailBlock extends FlowableBlock{
 	public function __construct($meta = 0){
-	    parent::__construct(RAIL, $meta, "Rail");
+		parent::__construct(RAIL, $meta, "Rail");
 		$this->hardness = 0.7;
 		$this->isFullBlock = false;		
 		$this->isSolid = false;
@@ -11,25 +11,25 @@ class RailBlock extends FlowableBlock{
 	public static $shouldconnectrails = false;
 	
 	private function isRailBlock($id){ 
-	    return $id === RAIL || $id === POWERED_RAIL;
-    }
+		return $id === RAIL || $id === POWERED_RAIL;
+	}
 	
 	private function isValidRailMeta($meta){ 
-        return !($meta < 0 || $meta > 10);
-    }
+		return !($meta < 0 || $meta > 10);
+	}
 	
 	private function canConnectRail($block) { 
-        if(!($block instanceof RailBlock)) return null;
-        if($this->distanceSquared($block) > 2) return null;
-        $result = $this->checkRail($this);
-        if(count($result) === 2) return null;
-        return $result;
-    }
+		if(!($block instanceof RailBlock)) return null;
+		if($this->distanceSquared($block) > 2) return null;
+		$result = $this->checkRail($this);
+		if(count($result) === 2) return null;
+		return $result;
+	}
 	
 	private function checkRail($rail){//fixed
-        if(!($rail instanceof RailBlock)) return null;
-        $damage = $rail->meta;
-        if ($damage < 0 || $damage > 10) return null;
+		if(!($rail instanceof RailBlock)) return null;
+		$damage = $rail->meta;
+		if ($damage < 0 || $damage > 10) return null;
 		$delta = array(
 			array(array(0, 1), array(0, -1)),
 			array(array(1, 0), array(-1, 0)),
@@ -44,70 +44,70 @@ class RailBlock extends FlowableBlock{
 			array(array(-1, 0), array(0, -1)),
 			array(array(0, -1), array(1, 0))
 		);
-        $deltaY = array(0, 1, -1);
-        $blocks = $delta[$damage];
-        $connected = array();
+		$deltaY = array(0, 1, -1);
+		$blocks = $delta[$damage];
+		$connected = array();
 		
-        foreach($deltaY as $y){
-            $v3 = new Vector3(
-                $rail->getFloorX() + $blocks[0][0],
-                $rail->getFloorY() + $y,
-                $rail->getFloorZ() + $blocks[0][1]
-            );
-            $railBlock = $rail->level->getBlock($v3);
-            $idToConnect = $railBlock->getID();
-            $metaToConnect = $railBlock->getMetadata();
-            if (!$this->isRailBlock($idToConnect) || !$this->isValidRailMeta($metaToConnect)) continue;
-            $xDiff = $this->getFloorX() - $v3->getFloorX();
-            $zDiff = $this->getFloorZ() - $v3->getFloorZ();
-            foreach($blocks as $xz) {
-                if($xz[0] !== $xDiff || $xz[1] !== $zDiff) continue;
-                $connected[] = $v3;
-            }
-        }
-        foreach($deltaY as $y){
-            $v3 = new Vector3(
-                $rail->getFloorX() + $blocks[1][0],
-                $rail->getFloorY() + $y,
-                $rail->getFloorZ() + $blocks[1][1]
-            );
-            $railBlock = $rail->level->getBlock($v3);
-            $idToConnect = $railBlock->getID();
-            $metaToConnect = $railBlock->getMetadata();
-            if(!$this->isRailBlock($idToConnect) || !$this->isValidRailMeta($metaToConnect)) continue;
-            $xDiff = $this->getFloorX() - $v3->getFloorX();
-            $zDiff = $this->getFloorZ() - $v3->getFloorZ();
-            foreach($blocks as $xz){
-                if ($xz[0] !== $xDiff || $xz[1] !== $zDiff) continue;
-                $connected[] = $v3;
-            }
-        }
-        return $connected;
-    }
+		foreach($deltaY as $y){
+			$v3 = new Vector3(
+				$rail->getFloorX() + $blocks[0][0],
+				$rail->getFloorY() + $y,
+				$rail->getFloorZ() + $blocks[0][1]
+			);
+			$railBlock = $rail->level->getBlock($v3);
+			$idToConnect = $railBlock->getID();
+			$metaToConnect = $railBlock->getMetadata();
+			if (!$this->isRailBlock($idToConnect) || !$this->isValidRailMeta($metaToConnect)) continue;
+			$xDiff = $this->getFloorX() - $v3->getFloorX();
+			$zDiff = $this->getFloorZ() - $v3->getFloorZ();
+			foreach($blocks as $xz) {
+				if($xz[0] !== $xDiff || $xz[1] !== $zDiff) continue;
+				$connected[] = $v3;
+			}
+		}
+		foreach($deltaY as $y){
+			$v3 = new Vector3(
+				$rail->getFloorX() + $blocks[1][0],
+				$rail->getFloorY() + $y,
+				$rail->getFloorZ() + $blocks[1][1]
+			);
+			$railBlock = $rail->level->getBlock($v3);
+			$idToConnect = $railBlock->getID();
+			$metaToConnect = $railBlock->getMetadata();
+			if(!$this->isRailBlock($idToConnect) || !$this->isValidRailMeta($metaToConnect)) continue;
+			$xDiff = $this->getFloorX() - $v3->getFloorX();
+			$zDiff = $this->getFloorZ() - $v3->getFloorZ();
+			foreach($blocks as $xz){
+				if ($xz[0] !== $xDiff || $xz[1] !== $zDiff) continue;
+				$connected[] = $v3;
+			}
+		}
+		return $connected;
+	}
 	
 	private function connectRail($rail){
-        $connected = $this->canConnectRail($rail);
-        if ($connected === null || count($connected) === 0) return;
-        if(count($connected) === 1){
-            $v3 = $connected[0]->subtract($this);
-            $this->meta = ($v3->y !== 1) ? ($v3->x === 0 ? 0 : 1) : (int) ($v3->z === 0 ? ($v3->x / -2) + 2.5 : ($v3->z / 2) + 4.5);
-        }elseif(count(connected) === 2){
-            $subtract = array(new Vector3(0, 0, 0),new Vector3(0, 0, 0));
-            for ($i = 0; $i < count($connected); $i++) {
-                $subtract[$i] = $connected[$i]->subtract($this);
-            }
-            if (abs($subtract[0]->x) === abs($subtract[1]->z) && abs($subtract[1]->x) === abs($subtract[0]->z)){
-                $v3 = $connected[0]->subtract($this)->add($connected[1]->subtract($this));
-                $this->meta = $v3->x === 1 ? ($v3->z === 1 ? 6 : 9) : ($v3->z === 1 ? 7 : 8);
-            }elseif ($subtract[0]->y === 1 || $subtract[1]->y === 1){
-                $v3 = $subtract[0]->y === 1 ? $subtract[0] : $subtract[1];
-                $this->meta = $v3->x === 0 ? ($v3->z === -1 ? 4 : 5) : ($v3->x === 1 ? 2 : 3);
-            }else{
-                $this->meta = $subtract[0]->x === 0 ? 0 : 1;
-            }
-        }
-        $this->level->setBlock($rail, new RailBlock($this->meta), true, true);
-    }
+		$connected = $this->canConnectRail($rail);
+		if ($connected === null || count($connected) === 0) return;
+		if(count($connected) === 1){
+			$v3 = $connected[0]->subtract($this);
+			$this->meta = ($v3->y !== 1) ? ($v3->x === 0 ? 0 : 1) : (int) ($v3->z === 0 ? ($v3->x / -2) + 2.5 : ($v3->z / 2) + 4.5);
+		}elseif(count(connected) === 2){
+			$subtract = array(new Vector3(0, 0, 0),new Vector3(0, 0, 0));
+			for ($i = 0; $i < count($connected); $i++) {
+				$subtract[$i] = $connected[$i]->subtract($this);
+			}
+			if (abs($subtract[0]->x) === abs($subtract[1]->z) && abs($subtract[1]->x) === abs($subtract[0]->z)){
+				$v3 = $connected[0]->subtract($this)->add($connected[1]->subtract($this));
+				$this->meta = $v3->x === 1 ? ($v3->z === 1 ? 6 : 9) : ($v3->z === 1 ? 7 : 8);
+			}elseif ($subtract[0]->y === 1 || $subtract[1]->y === 1){
+				$v3 = $subtract[0]->y === 1 ? $subtract[0] : $subtract[1];
+				$this->meta = $v3->x === 0 ? ($v3->z === -1 ? 4 : 5) : ($v3->x === 1 ? 2 : 3);
+			}else{
+				$this->meta = $subtract[0]->x === 0 ? 0 : 1;
+			}
+		}
+		$this->level->setBlock($rail, new RailBlock($this->meta), true, true);
+	}
 
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$down = $this->getSide(0);
