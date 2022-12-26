@@ -11,17 +11,16 @@ class TileNavigator implements ITileNavigator
     }
     
     public function reconstructPath($path, $current){
-        $totalPath = [$current];
-        while (array_key_exists((string)$current, $path))
-        {
-            $current = $path[(string)$current];
-            $totalPath[] = $current;
-        }
-        
-        $totalPath = array_reverse($totalPath);
-        unset($totalPath[0]);
-        
-        return array_values($totalPath);
+		$totalPath = [$current];
+		while (isset($path[(string)$current]))
+		{
+			$current = $path[(string)$current];
+			$totalPath[] = $current;
+		}
+		//foreach(array_unique($path) as $k => $p) console($k.":".$p);
+		//foreach($totalPath as $k => $p) console($k.":".$p);
+		array_pop($totalPath);
+        return array_reverse($totalPath);
     }
     
     public function navigate(PathTile $from, PathTile $to)
@@ -40,6 +39,7 @@ class TileNavigator implements ITileNavigator
         if($this->blockedProvider->isBlocked($to)){
             return null;
         }
+	$visited = [];
         while($open->countElements() > 0)
         {
             //sleep(1);
@@ -54,12 +54,14 @@ class TileNavigator implements ITileNavigator
             $closed->add($current);
             foreach($this->neighborProvider->getNeighbors($current) as $neighbor)
             {
-                
                 if ($closed->has($neighbor) || $this->blockedProvider->isBlocked($neighbor))
                 {
                     continue;
                 }
-                
+		if(in_array($neighbor, $visited)){
+			continue;
+		}
+                $visited[] = $neighbor;
                 $tentativeG = $gScore[(string) $current] + $this->distanceAlgorithm->calculate($current, $neighbor);
                 
                 if (!$open->has($neighbor))
