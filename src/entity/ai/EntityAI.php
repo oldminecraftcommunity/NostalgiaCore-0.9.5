@@ -18,6 +18,8 @@ class EntityAI
     
     public $lastTask;
     
+    public $counter = 0;
+    
     public function __construct($entity){
         $this->entity = $entity;
         $this->tasks = [];
@@ -47,6 +49,9 @@ class EntityAI
     }
 
     public function updateTasks(){
+        if($this->counter % 3 != 0){
+            return;
+        }
         foreach($this->tasks as $t){
             if(!$t->isStarted && $t->canBeExecuted($this)){
                 $t->isStarted = true;

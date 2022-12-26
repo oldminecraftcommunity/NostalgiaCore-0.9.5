@@ -332,7 +332,12 @@ class PMFLevel extends PMF{
 		$aX = $x - ($X << 4);
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
-		$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
+		if(is_array($this->chunks) && is_array($this->chunks[$index]) && is_string($this->chunks[$index][$Y])){
+		    $b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
+		}else{ //php8 fix
+		    $b = 0;
+		}
+		
 		return $b;
 	}
 
@@ -372,7 +377,12 @@ class PMFLevel extends PMF{
 		$aX = $x - ($X << 4);
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
-		$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
+		if(is_array($this->chunks) && is_array($this->chunks[$index]) && is_string($this->chunks[$index][$Y])){
+		    $m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
+		}else{ //php8 fix
+		    $m = 0;
+		}
+		
 		if(($y & 1) === 0){
 			$m = $m & 0x0F;
 		}else{
