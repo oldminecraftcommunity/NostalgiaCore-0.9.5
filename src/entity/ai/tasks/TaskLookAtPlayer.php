@@ -47,10 +47,6 @@ class TaskLookAtPlayer extends TaskBase{
 			return;
 		}
 		$ai->mobController->lookOn($this->target);
-		$pk = new RotateHeadPacket(); //TODO headYaw auto update
-		$pk->eid = $ai->entity->eid;
-		$pk->yaw = $ai->entity->yaw;
-		$ai->entity->server->api->player->broadcastPacket($ai->entity->level->players, $pk);
 		$this->selfCounter--;
 	}
 

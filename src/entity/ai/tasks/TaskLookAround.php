@@ -25,11 +25,7 @@ class TaskLookAround extends TaskBase
 			$this->selfCounter = 0;
 		}
 		$v = min(Utils::getSign($this->rotation) * 10, $this->rotation);
-		$ai->entity->yaw += $v;
-		$pk = new RotateHeadPacket(); //TODO headYaw auto update
-		$pk->eid = $ai->entity->eid;
-		$pk->yaw = $ai->entity->yaw;
-		$ai->entity->server->api->player->broadcastPacket($ai->entity->level->players, $pk);
+		$ai->entity->headYaw += $v;
 		$this->rotation -= $v;
 		
 	}

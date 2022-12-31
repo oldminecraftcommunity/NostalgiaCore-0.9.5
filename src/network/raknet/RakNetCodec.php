@@ -87,11 +87,11 @@ class RakNetCodec{
 					++$pointer;
 					if($type === false){
 						$payload .= "\x00";
-						$payload .= strrev(Utils::writeTriad($start));
-						$payload .= strrev(Utils::writeTriad($end));
+						$payload .= Utils::writeLTriad($start);
+						$payload .= Utils::writeLTriad($end);
 					}else{
 						$payload .= Utils::writeBool(true);
-						$payload .= strrev(Utils::writeTriad($start));
+						$payload .= Utils::writeLTriad($start);
 					}
 					++$records;
 				}
@@ -126,7 +126,7 @@ class RakNetCodec{
 	}
 
 	protected function putLTriad($v){
-		$this->buffer .= strrev(Utils::writeTriad($v));
+		$this->buffer .= Utils::writeLTriad($v);
 	}
 
 	private function encodeDataPacket(RakNetDataPacket $pk){

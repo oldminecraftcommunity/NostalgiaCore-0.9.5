@@ -780,6 +780,15 @@ class Entity extends Position
 		if($this->class !== ENTITY_PLAYER && $update){
 			$this->updateMovement();
 		}
+		
+		if($this->headYaw != $this->lastHeadYaw) {
+			$this->lastHeadYaw = $this->headYaw;
+			$pk = new RotateHeadPacket();
+			$pk->eid = $this->eid;
+			$pk->yaw = $this->headYaw;
+			$this->server->api->player->broadcastPacket($this->level->players, $pk);
+		}
+		
 		$this->needsUpdate = $hasUpdate;
 		$this->lastUpdate = $now;
 	}

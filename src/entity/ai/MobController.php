@@ -21,10 +21,6 @@ class MobController
 		$oz = ($z > 0 ? 1 : ($z < 0 ? -1 : 0));
 		$this->entity->moveEntityWithOffset($ox, $oy, $oz);
 		$this->faceEntity($this->entity->add($ox, $oy, $oz));
-		$pk = new RotateHeadPacket(); //TODO headYaw auto update
-		$pk->eid = $this->entity->eid;
-		$pk->yaw = $this->entity->yaw;
-		$this->entity->server->api->player->broadcastPacket($this->entity->level->players, $pk);
 		return true;
 	}
 	
@@ -46,7 +42,7 @@ class MobController
 		$tan = $z == 0 ? ($x < 0 ? 180 : 0) : (90 - rad2deg(atan($x / $z))); /*arctan(infinity) = pi/2 = (90deg) - 90 = 0*/
 		$thetaOffset = $z <= 0 ? 90 : 270;
 		$calcYaw = $tan + $thetaOffset;
-		$this->entity->yaw = $calcYaw;
+		$this->entity->headYaw = $calcYaw;
 		if($pitch){
 			$diff = sqrt($x * $x + $z * $z);
 			$calcPitch = rad2deg(atan($y / $diff));

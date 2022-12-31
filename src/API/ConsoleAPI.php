@@ -274,10 +274,17 @@ class ConsoleAPI{
 	}
 
 	public static function debug($msg){
-		console($msg, true, true, 2);
+		console("[DEBUG] ".$msg, true, true, 2);
 	}
-
-
+	public static function info($msg){
+		console("[INFO] ".$msg);
+	}
+	public static function warn($msg){
+		console("[WARNING] ".$msg);
+	}
+	public static function error($msg){
+		console("[ERROR] ".$msg);
+	}
 }
 
 class ConsoleLoop extends Thread{

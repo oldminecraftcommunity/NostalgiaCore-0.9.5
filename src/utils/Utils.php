@@ -66,7 +66,7 @@ class Utils{
 	}
 	
 	public static function in_range($num, $min, $max){
-	   return $num >= $min && $num <= $max;
+		return $num >= $min && $num <= $max;
 	}
 	
 	public function xrange($start, $limit, $step = 1) {
@@ -274,9 +274,6 @@ class Utils{
 	}
 
 	public static function writeLShort($value){
-		if($value < 0){
-			$value += 0x10000;
-		}
 		return pack("v", $value);
 	}
 
@@ -296,9 +293,6 @@ class Utils{
 	}
 
 	public static function writeShort($value){
-		if($value < 0){
-			$value += 0x10000;
-		}
 		return pack("n", $value);
 	}
 
@@ -402,11 +396,11 @@ class Utils{
 	}
 
 	public static function readLInt($str){
-		list(, $unpacked) = @unpack("V", $str);
-		if($unpacked >= 2147483648){
-			$unpacked -= 4294967296;
+		if(PHP_INT_SIZE === 8){
+			return @unpack("V", $str)[1] << 32 >> 32;
+		}else{
+			return @unpack("V", $str)[1];
 		}
-		return (int) $unpacked;
 	}
 
 	public static function readLFloat($str){
@@ -427,8 +421,7 @@ class Utils{
 	}
 
 	public static function readTriad($str){
-		list(, $unpacked) = @unpack("N", "\x00" . $str);
-		return $unpacked;
+		return @unpack("N", "\x00" . $str)[1];
 	}
 
 	public static function writeDataArray($data){
@@ -439,7 +432,11 @@ class Utils{
 		}
 		return $raw;
 	}
-
+	
+	public static function writeLTriad($value){
+		return substr(pack("V", $value), 0, -1);
+	}
+	
 	public static function writeTriad($value){
 		return substr(pack("N", $value), 1);
 	}
@@ -563,7 +560,7 @@ class Utils{
 	 * Euclidian distance, but without square roots
 	 */
 	public static function distance_noroot(Vector3 $pos1, Vector3 $pos2){
-		return pow($pos2->x - $pos1->x, 2) + pow($pos2->z - $pos1->z, 2) + pow($pos2->z - $pos1->z, 2);
+		return ($pos2->x - $pos1->x)*($pos2->x - $pos1->x) + ($pos2->z - $pos1->z)*($pos2->z - $pos1->z) + ($pos2->z - $pos1->z)*($pos2->z - $pos1->z);
 	}
 	
 	/**
@@ -579,7 +576,7 @@ class Utils{
 		if($pos2 instanceof Vector3){
 			$pos2 = $pos2->toArray();
 		}
-		return sqrt(pow($pos1["x"] - $pos2["x"], 2) + pow($pos1["y"] - $pos2["y"], 2) + pow($pos1["z"] - $pos2["z"], 2));
+		return sqrt(($pos1["x"] - $pos2["x"])*($pos1["x"] - $pos2["x"]) + ($pos1["y"] - $pos2["y"])*($pos1["y"] - $pos2["y"]) + ($pos1["z"] - $pos2["z"])*($pos1["z"] - $pos2["z"]));
 	}
 	
 	public static function angle3D($pos1, $pos2){
@@ -637,16 +634,11 @@ class Utils{
 	}
 
 	public static function readInt($str){
-		if(strlen($str) === 0){
-			return;
+		if(PHP_INT_SIZE === 8){
+			return @unpack("N", $str)[1] << 32 >> 32;
+		}else{
+			return @unpack("N", $str)[1];
 		}
-
-		list(, $unpacked) = unpack("N", $str);
-		if($unpacked >= 2147483648){
-			$unpacked -= 4294967296;
-		}
-
-		return (int) $unpacked;
 	}
 
 	public static function writeInt($value){

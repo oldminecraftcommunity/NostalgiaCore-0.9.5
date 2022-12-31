@@ -23,7 +23,7 @@ class TileNavigator implements ITileNavigator
 		return array_reverse($totalPath);
 	}
 	
-	public function navigate(PathTile $from, PathTile $to)
+	public function navigate(PathTile $from, PathTile $to, $maxDist) //TODO optimizations, no arraylist
 	{
 		$closed = new ArrayList();
 		$open = new ArrayList();
@@ -54,14 +54,20 @@ class TileNavigator implements ITileNavigator
 			$closed->add($current);
 			foreach($this->neighborProvider->getNeighbors($current) as $neighbor)
 			{
+				
+				if(in_array($neighbor, $visited)){
+					continue;
+				}
+				
+				$visited[] = $neighbor;
 				if ($closed->has($neighbor) || $this->blockedProvider->isBlocked($neighbor))
 				{
 					continue;
 				}
-				if(in_array($neighbor, $visited)){
+				if(!Utils::in_range(Utils::distance($neighbor->asArray(), $from->asArray()), -$maxDist, $maxDist)){
 					continue;
 				}
-				$visited[] = $neighbor;
+				
 				$tentativeG = $gScore[(string) $current] + $this->distanceAlgorithm->calculate($current, $neighbor);
 				
 				if (!$open->has($neighbor))

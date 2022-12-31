@@ -72,7 +72,7 @@ abstract class RakNetDataPacket extends stdClass{
 	}
 
 	protected function putLTriad($v){
-		$this->buffer .= strrev(Utils::writeTriad($v));
+		$this->buffer .= Utils::writeLTriad($v);
 	}
 
 	protected function getDataArray($len = 10){

@@ -24,6 +24,10 @@ class PathTileXYZ extends PathTile
 		return new Vector3($this->x, $this->y, $this->z);
 	}
 	
+	public function asArray(){
+		return ["x" => $this->x, "y" => $this->y, "z" => $this->z];
+	}
+	
 	public function addOffset($offset){
 		$this->x += $offset[0];
 		$this->y += $offset[1];
