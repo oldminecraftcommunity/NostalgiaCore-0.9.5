@@ -15,10 +15,6 @@ abstract class ProtocolInfo{
 	const CLIENT_HANDSHAKE_PACKET = 0x13;
 	//const SERVER_FULL_PACKET = 0x14;
 	const DISCONNECT_PACKET = 0x15;
-
-	//const BANNED_PACKET = 0x17;
-
-
 	const LOGIN_PACKET = 0x82;
 	const LOGIN_STATUS_PACKET = 0x83;
 	const READY_PACKET = 0x84;
