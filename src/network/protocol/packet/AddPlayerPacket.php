@@ -1,24 +1,5 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 class AddPlayerPacket extends RakNetDataPacket{
 	public $clientID;
 	public $username;
@@ -28,8 +9,19 @@ class AddPlayerPacket extends RakNetDataPacket{
 	public $z;
 	public $pitch;
 	public $yaw;
+	public $itemID;
+	public $itemAuxValue;
+	/**
+	 *@deprecated use $itemID instead
+	 */
 	public $unknown1;
+	/**
+	 *@deprecated use $itemAuxValue instead
+	 */
 	public $unknown2;
+	/**
+	 *@var array
+	 */
 	public $metadata;
 	
 	public function pid(){
@@ -50,8 +42,8 @@ class AddPlayerPacket extends RakNetDataPacket{
 		$this->putFloat($this->z);
 		$this->putByte($this->yaw);
 		$this->putByte($this->pitch);
-		$this->putShort($this->unknown1);
-		$this->putShort($this->unknown2);
+		$this->putShort($this->itemID);
+		$this->putShort($this->itemAuxValue); //Example: bow shooting power
 		$this->put(Utils::writeMetadata($this->metadata));
 	}
 

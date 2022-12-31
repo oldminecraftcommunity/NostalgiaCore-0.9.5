@@ -34,9 +34,9 @@ It is mainly [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accept
 * Long arrays MAY be split across multiple lines, where each subsequent line is indented once. 
 * Files MUST use only the `<?php` tag.
 * Files MUST NOT have an ending `?>` tag.
-* Code MUST NOT use namespaces. _(This restriction will be lifted on the Alpha_1.4 code)_
+* Code MUST NOT use namespaces. _(This restriction maybe will be lifted)_
 * Strings SHOULD use the double quote `"` except when the single quote is required.
-* Arrays SHOULD be declared using `array()`, not the `[]` shortcut.
+* Arrays SHOULD be declared using `[]`, not the `array()` shortcut.
 * Argument lists MAY NOT be split across multiple lines, except long arrays.
 
 ```php
@@ -52,14 +52,14 @@ class ExampleClass{
 			//do things
 		}elseif($firstArgument === "otherValue"){
 			$secondArgument = function(){
-				return array(
+				return [
 					0 => "value1",
 					1 => "value2",
 					2 => "value3",
 					3 => "value4",
 					4 => "value5",
-					5 => "value6",
-				);
+					5 => "value6"
+				];
 			}
 		}
 	}

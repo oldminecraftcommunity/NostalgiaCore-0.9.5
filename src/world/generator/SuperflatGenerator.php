@@ -1,32 +1,14 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 /***REM_START***/
 require_once("LevelGenerator.php");
-/***REM_END***/
 
+/***REM_END***/
 class SuperflatGenerator implements LevelGenerator{
-	private $level, $random, $structure, $chunks, $options, $floorLevel, $populators = array();
-	
-	public function __construct(array $options = array()){
+
+	private $level, $random, $structure, $chunks, $options, $floorLevel, $populators = [];
+
+	public function __construct(array $options = []){
 		$this->preset = "2;7,59x1,3x3,2;1;spawn(radius=10 block=89),decoration(treecount=80 grasscount=45)";
 		$this->options = $options;
 		if(isset($options["preset"])){
@@ -36,50 +18,50 @@ class SuperflatGenerator implements LevelGenerator{
 		}
 		if(isset($this->options["decoration"])){
 			$ores = new OrePopulator();
-			$ores->setOreTypes(array(
+			$ores->setOreTypes([
 				new OreType(new CoalOreBlock(), 20, 16, 0, 128),
-				new OreType(New IronOreBlock(), 20, 8, 0, 64),
+				new OreType(new IronOreBlock(), 20, 8, 0, 64),
 				new OreType(new RedstoneOreBlock(), 8, 7, 0, 16),
 				new OreType(new LapisOreBlock(), 1, 6, 0, 32),
 				new OreType(new GoldOreBlock(), 2, 8, 0, 32),
 				new OreType(new DiamondOreBlock(), 1, 7, 0, 16),
 				new OreType(new DirtBlock(), 20, 32, 0, 128),
 				new OreType(new GravelBlock(), 10, 16, 0, 128),
-			));
-			$this->populators[] = $ores;			
+			]);
+			$this->populators[] = $ores;
 		}
-		
+
 		/*if(isset($this->options["mineshaft"])){
 			$this->populators[] = new MineshaftPopulator(isset($this->options["mineshaft"]["chance"]) ? floatval($this->options["mineshaft"]["chance"]) : 0.01);
 		}*/
 	}
-	
+
 	public function parsePreset($preset){
 		$this->preset = $preset;
 		$preset = explode(";", $preset);
 		$version = (int) $preset[0];
 		$blocks = @$preset[1];
-		$biome = isset($preset[2]) ? $preset[2]:1;
-		$options = isset($preset[3]) ? $preset[3]:"";
+		$biome = isset($preset[2]) ? $preset[2] : 1;
+		$options = isset($preset[3]) ? $preset[3] : "";
 		preg_match_all('#(([0-9]{0,})x?([0-9]{1,3}:?[0-9]{0,2})),?#', $blocks, $matches);
 		$y = 0;
-		$this->structure = array();
-		$this->chunks = array();
+		$this->structure = [];
+		$this->chunks = [];
 		foreach($matches[3] as $i => $b){
 			$b = BlockAPI::fromString($b);
-			$cnt = $matches[2][$i] === "" ? 1:intval($matches[2][$i]);
+			$cnt = $matches[2][$i] === "" ? 1 : intval($matches[2][$i]);
 			for($cY = $y, $y += $cnt; $cY < $y; ++$cY){
 				$this->structure[$cY] = $b;
 			}
 		}
-		
+
 		$this->floorLevel = $y;
-		
-		for(;$y < 0xFF; ++$y){
+
+		for(; $y < 0xFF; ++$y){
 			$this->structure[$y] = new AirBlock();
 		}
-		
-		
+
+
 		for($Y = 0; $Y < 8; ++$Y){
 			$this->chunks[$Y] = "";
 			$startY = $Y << 4;
@@ -92,16 +74,16 @@ class SuperflatGenerator implements LevelGenerator{
 						$blocks .= chr($this->structure[$y]->getID());
 						$metas .= substr(dechex($this->structure[$y]->getMetadata()), -1);
 					}
-					$this->chunks[$Y] .= $blocks.hex2bin($metas)."\x00\x00\x00\x00\x00\x00\x00\x00";
+					$this->chunks[$Y] .= $blocks . hex2bin($metas) . "\x00\x00\x00\x00\x00\x00\x00\x00";
 				}
 			}
 		}
-		
+
 		preg_match_all('#(([0-9a-z_]{1,})\(?([0-9a-z_ =:]{0,})\)?),?#', $options, $matches);
 		foreach($matches[2] as $i => $option){
 			$params = true;
 			if($matches[3][$i] !== ""){
-				$params = array();
+				$params = [];
 				$p = explode(" ", $matches[3][$i]);
 				foreach($p as $k){
 					$k = explode("=", $k);
@@ -113,29 +95,29 @@ class SuperflatGenerator implements LevelGenerator{
 			$this->options[$option] = $params;
 		}
 	}
-	
+
 	public function init(Level $level, Random $random){
 		$this->level = $level;
 		$this->random = $random;
 	}
-		
+
 	public function generateChunk($chunkX, $chunkZ){
 		for($Y = 0; $Y < 8; ++$Y){
 			$this->level->setMiniChunk($chunkX, $chunkZ, $Y, $this->chunks[$Y]);
 		}
 	}
-	
-	public function populateChunk($chunkX, $chunkZ){		
+
+	public function populateChunk($chunkX, $chunkZ){
 		foreach($this->populators as $populator){
 			$this->random->setSeed((int) ($chunkX * 0xdead + $chunkZ * 0xbeef) ^ $this->level->getSeed());
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
 	}
-	
+
 	public function populateLevel(){
 		$this->random->setSeed($this->level->getSeed());
 		if(isset($this->options["spawn"])){
-			$spawn = array(10, new SandstoneBlock());
+			$spawn = [10, new SandstoneBlock()];
 			if(isset($this->options["spawn"]["radius"])){
 				$spawn[0] = intval($this->options["spawn"]["radius"]);
 			}
@@ -156,7 +138,7 @@ class SuperflatGenerator implements LevelGenerator{
 				}
 			}
 		}
-		
+
 		if(isset($this->options["decoration"])){
 			$treecount = 80;
 			$grasscount = 120;
@@ -171,7 +153,7 @@ class SuperflatGenerator implements LevelGenerator{
 				$centerZ = $this->random->nextRange(0, 255);
 				$down = $this->level->level->getBlockID($centerX, $this->floorLevel - 1, $centerZ);
 				if($down === DIRT or $down === GRASS or $down === FARMLAND){
-					TreeObject::growTree($this->level, new Vector3($centerX, $this->floorLevel, $centerZ), $this->random, $this->random->nextRange(0,3));
+					TreeObject::growTree($this->level, new Vector3($centerX, $this->floorLevel, $centerZ), $this->random, $this->random->nextRange(0, 3));
 				}
 			}
 			for($t = 0; $t < $grasscount; ++$t){
@@ -184,7 +166,7 @@ class SuperflatGenerator implements LevelGenerator{
 			}
 		}
 	}
-	
+
 	public function getSpawn(){
 		return new Vector3(128, $this->floorLevel, 128);
 	}

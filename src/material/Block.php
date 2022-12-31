@@ -1,24 +1,5 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 abstract class Block extends Position{
 	public static $class = array(
 			AIR => "AirBlock",
@@ -156,6 +137,7 @@ abstract class Block extends Position{
 	protected $meta;
 	protected $name;
 	protected $breakTime;
+	public $boundingBox;
 	protected $hardness;
 	public $isActivable = false;
 	public $breakable = true;
@@ -178,6 +160,7 @@ abstract class Block extends Position{
 		$this->name = $name;
 		$this->breakTime = 0.20;
 		$this->hardness = 10;
+		$this->boundingBox = new AxisAlignedBB($this->x, $this->y, $this->z, $this->x + 1, $this->y + 1, $this->z + 1);
 	}
 	
 	final public function getHardness(){
@@ -191,7 +174,9 @@ abstract class Block extends Position{
 	final public function getID(){
 		return $this->id;
 	}
-	
+	public function setMetadata($i){
+		$this->meta = $i;
+	}
 	final public function getMetadata(){
 		return $this->meta & 0x0F;
 	}
@@ -201,6 +186,7 @@ abstract class Block extends Position{
 		$this->x = (int) $v->x;
 		$this->y = (int) $v->y;
 		$this->z = (int) $v->z;
+		$this->boundingBox->setBounds($this->x, $this->y, $this->z, $this->x + 1, $this->y + 1, $this->z + 1);
 	}
 	
 	public function getDrops(Item $item, Player $player){
@@ -220,8 +206,8 @@ abstract class Block extends Position{
 		return $this->breakTime;
 	}
 	
-	public function getSide($side){
-		$v = parent::getSide($side);
+	public function getSide($side, $step = 1){
+		$v = parent::getSide($side, $step);
 		if($this->level instanceof Level){
 			return $this->level->getBlock($v);
 		}

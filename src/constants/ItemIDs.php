@@ -1,24 +1,5 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 define("IRON_SHOVEL", 256);
 define("IRON_PICKAXE", 257);
 define("IRON_AXE", 258);
@@ -101,7 +82,9 @@ define("GOLDEN_APPLE", 322);
 define("SIGN", 323);
 define("WOODEN_DOOR", 324);
 define("BUCKET", 325);
-
+define("WATER_BUCKET", "325:8");
+define("LAVA_BUCKET", "325:10");
+define("MILK_BUCKET", "325:1");
 define("MINECART", 328);
 define("SADDLE", 329);
 define("IRON_DOOR", 330);

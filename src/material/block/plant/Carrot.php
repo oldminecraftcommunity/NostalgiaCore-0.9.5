@@ -1,24 +1,5 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 class CarrotBlock extends FlowableBlock{
 	public function __construct($meta = 0){
 		parent::__construct(CARROT_BLOCK, $meta, "Carrot Block");
@@ -53,7 +34,7 @@ class CarrotBlock extends FlowableBlock{
 
 	public function onUpdate($type){
 		if($type === BLOCK_UPDATE_NORMAL){
-			if($this->getSide(0)->isTransparent === true){ //Replace with common break method
+			if($this->getSide(0)->getID() != 60){
 				ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem(CARROT, 0, 1));
 				$this->level->setBlock($this, new AirBlock(), false, false, true);
 				return BLOCK_UPDATE_NORMAL;
@@ -75,9 +56,12 @@ class CarrotBlock extends FlowableBlock{
 	public function getDrops(Item $item, Player $player){
 		$drops = array();
 		if($this->meta >= 0x07){
-			$drops[] = array(CARROT, 0, mt_rand(1, 4));
-		}else{
-			$drops[] = array(CARROT, 0, 1);
+			$drops[] = array(CARROT, 0, mt_rand(1));
+		}
+		for($i = 0; $i < 3; ++$i){
+		   if(mt_rand(0,15) <= $this->meta){ //a way from 1.4.7
+			  $drops[] = array(CARROT, 0, 1);
+		   }
 		}
 		return $drops;
 	}

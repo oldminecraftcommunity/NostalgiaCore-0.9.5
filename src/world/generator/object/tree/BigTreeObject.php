@@ -1,39 +1,20 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 /***REM_START***/
 require_once("src/world/generator/object/tree/TreeObject.php");
-/***REM_END***/
 
+/***REM_END***/
 class BigTreeObject extends TreeObject{
+
+	protected $radiusIncrease = 0;
 	private $trunkHeightMultiplier = 0.618;
 	private $trunkHeight;
 	private $leafAmount = 1;
 	private $leafDistanceLimit = 5;
 	private $widthScale = 1;
 	private $branchSlope = 0.381;
-
 	private $totalHeight = 6;
 	private $leavesHeight = 3;
-	protected $radiusIncrease = 0;
 	private $addLeavesVines = false;
 	private $addLogVines = false;
 	private $addCocoaPlants = false;
@@ -50,7 +31,7 @@ class BigTreeObject extends TreeObject{
 			$groupX = $leafGroup->getBlockX();
 			$groupY = $leafGrou->getBlockY();
 			$groupZ = $leafGroup->getBlockZ();
-			for ($yy = $groupY; $yy < $groupY + $this->leafDistanceLimit; ++$yy) {
+			for($yy = $groupY; $yy < $groupY + $this->leafDistanceLimit; ++$yy){
 				$this->generateGroupLayer($level, $groupX, $yy, $groupZ, $this->getLeafGroupLayerSize($yy - $groupY));
 			}
 		}

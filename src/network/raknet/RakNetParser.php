@@ -1,29 +1,11 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 class RakNetParser{
+
+	public $packet;
 	private $buffer;
 	private $offset;
-	public $packet;
-	
+
 	public function __construct(&$buffer){
 		$this->buffer =& $buffer;
 		$this->offset = 0;
@@ -33,44 +15,7 @@ class RakNetParser{
 			$this->packet = false;
 		}
 	}
-	
-	private function get($len){
-		if($len <= 0){
-			$this->offset = strlen($this->buffer) - 1;
-			return "";
-		}
-		if($len === true){
-			return substr($this->buffer, $this->offset);
-		}
-		$this->offset += $len;
-		return substr($this->buffer, $this->offset - $len, $len);
-	}
-	
-	private function getLong($unsigned = false){
-		return Utils::readLong($this->get(8), $unsigned);
-	}
-	
-	private function getInt($unsigned = false){
-		return Utils::readInt($this->get(4), $unsigned);
-	}
-	
-	private function getShort($unsigned = false){
-		return Utils::readShort($this->get(2), $unsigned);
-	}
-	
-	private function getLTriad(){
-		return Utils::readTriad(strrev($this->get(3)));
-	}
-	
-	private function getByte(){
-		return ord($this->get(1));
-	}
-	
-	
-	private function feof(){
-		return !isset($this->buffer{$this->offset});
-	}
-	
+
 	private function parse(){
 		$this->packet = new RakNetPacket(ord($this->get(1)));
 		$this->packet->buffer =& $this->buffer;
@@ -110,15 +55,15 @@ class RakNetParser{
 			case RakNetInfo::DATA_PACKET_E:
 			case RakNetInfo::DATA_PACKET_F:
 				$this->packet->seqNumber = $this->getLTriad();
-				$this->packet->data = array();
+				$this->packet->data = [];
 				while(!$this->feof() and ($pk = $this->parseDataPacket()) instanceof RakNetDataPacket){
-					$this->packet->data[] = $pk;	
+					$this->packet->data[] = $pk;
 				}
 				break;
 			case RakNetInfo::NACK:
 			case RakNetInfo::ACK:
 				$count = $this->getShort();
-				$this->packet->packets = array();
+				$this->packet->packets = [];
 				for($i = 0; $i < $count and !$this->feof(); ++$i){
 					if($this->getByte() === 0){
 						$start = $this->getLTriad();
@@ -139,33 +84,65 @@ class RakNetParser{
 				break;
 		}
 	}
-	
+
+	private function get($len){
+		if($len <= 0){
+			$this->offset = strlen($this->buffer) - 1;
+			return "";
+		}
+		if($len === true){
+			return substr($this->buffer, $this->offset);
+		}
+		$this->offset += $len;
+		return substr($this->buffer, $this->offset - $len, $len);
+	}
+
+	private function getLong($unsigned = false){
+		return Utils::readLong($this->get(8), $unsigned);
+	}
+
+	private function getByte(){
+		return ord($this->get(1));
+	}
+
+	private function getShort($unsigned = false){
+		return Utils::readShort($this->get(2), $unsigned);
+	}
+
+	private function getLTriad(){
+		return Utils::readTriad(strrev($this->get(3)));
+	}
+
+	private function feof(){
+		return !isset($this->buffer[$this->offset]);
+	}
+
 	private function parseDataPacket(){
 		$packetFlags = $this->getByte();
 		$reliability = ($packetFlags & 0b11100000) >> 5;
 		$hasSplit = ($packetFlags & 0b00010000) > 0;
 		$length = (int) ceil($this->getShort() / 8);
 		if($reliability === 2
-		or $reliability === 3
-		or $reliability === 4
-		or $reliability === 6
-		or $reliability === 7){
+			or $reliability === 3
+			or $reliability === 4
+			or $reliability === 6
+			or $reliability === 7){
 			$messageIndex = $this->getLTriad();
 		}else{
 			$messageIndex = false;
 		}
-		
+
 		if($reliability === 1
-		or $reliability === 3
-		or $reliability === 4
-		or $reliability === 7){
+			or $reliability === 3
+			or $reliability === 4
+			or $reliability === 7){
 			$orderIndex = $this->getLTriad();
 			$orderChannel = $this->getByte();
 		}else{
 			$orderIndex = false;
 			$orderChannel = false;
 		}
-		
+
 		if($hasSplit == true){
 			$splitCount = $this->getInt();
 			$splitID = $this->getShort();
@@ -175,10 +152,10 @@ class RakNetParser{
 			$splitID = false;
 			$splitIndex = false;
 		}
-		
+
 		if($length <= 0
-		or $orderChannel >= 32
-		or ($hasSplit === true and $splitIndex >= $splitCount)){
+			or $orderChannel >= 32
+			or ($hasSplit === true and $splitIndex >= $splitCount)){
 			return false;
 		}else{
 			$pid = $this->getByte();
@@ -348,6 +325,9 @@ class RakNetParser{
 					break;
 				case ProtocolInfo::SET_ENTITY_LINK_PACKET:
 					$data = new SetEntityLinkPacket;
+				case ProtocolInfo::PLAYER_INPUT_PACKET:
+					$data = new PlayerInputPacket;
+					break;
 				default:
 					$data = new UnknownPacket();
 					$data->packetID = $pid;
@@ -364,6 +344,10 @@ class RakNetParser{
 			$data->setBuffer($buffer);
 		}
 		return $data;
+	}
+
+	private function getInt($unsigned = false){
+		return Utils::readInt($this->get(4), $unsigned);
 	}
 
 }

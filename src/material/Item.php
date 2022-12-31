@@ -1,25 +1,14 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 class Item{
+	const TOOL_SWORD = 0;
+	const TOOL_PICKAXE = 1;
+	const TOOL_AXE = 2;
+	const TOOL_SHOVEL = 3;
+	const TOOL_HOE = 4;	
+	
+	const DEF_DAMAGE = 1;
+	
 	public static $class = array(
 	
 		//armor
@@ -158,20 +147,24 @@ class Item{
 			$this->block = BlockAPI::get($this->id, $this->meta);
 			$this->name = $this->block->getName();
 		}
-		if($this->isTool() !== false){
+		if($this->isTool() || $this->isArmor() || $this->getID() === SADDLE){
 			$this->maxStackSize = 1;
 		}
 	}
 	
-	final public function getName(){
+	public function isPickaxe(){
+		return false;
+	}
+	
+	public function getName(){
 		return $this->name;
 	}
 	
-	final public function isPlaceable(){
+	public function isPlaceable(){
 		return (($this->block instanceof Block) and $this->block->isPlaceable === true);
 	}
 	
-	final public function getBlock(){
+	public function getBlock(){
 		if($this->block instanceof Block){
 			return $this->block;
 		}else{
@@ -179,19 +172,23 @@ class Item{
 		}
 	}
 	
-	final public function getID(){
+	public function getID(){
 		return $this->id;
 	}
 	
-	final public function getMetadata(){
+	public function getMetadata(){
 		return $this->meta;
 	}	
 	
-	final public function getMaxStackSize(){
+	public function isArmor(){
+		return false;
+	}
+	
+	public function getMaxStackSize(){
 		return $this->maxStackSize;
 	}
 	
-	final public function getFuelTime(){
+	public function getFuelTime(){
 		if(!isset(FuelData::$duration[$this->id])){
 			return false;
 		}
@@ -201,7 +198,7 @@ class Item{
 		return false;
 	}
 	
-	final public function getSmeltItem(){
+	public function getSmeltItem(){
 		if(!isset(SmeltingData::$product[$this->id])){
 			return false;
 		}
@@ -219,72 +216,38 @@ class Item{
 	}
 	
 	public function useOn($object, $force = false){
-		if($this->isTool() or $force === true){
+		if($force){
 			if(($object instanceof Entity) and !$this->isSword()){
 				$this->meta += 2;
 			}else{
 				$this->meta++;
 			}
 			return true;
-		}elseif($this->isHoe()){
-			if(($object instanceof Block) and ($object->getID() === GRASS or $object->getID() === DIRT)){
-				$this->meta++;
-			}
 		}
 		return false;
 	}
 	
-	final public function isTool(){
-		return ($this->id === FLINT_STEEL or $this->id === SHEARS or $this->isPickaxe() !== false or $this->isAxe() !== false or $this->isShovel() !== false or $this->isSword() !== false);
+	public function isTool(){
+		return false;
 	}
 	
-	final public function getMaxDurability(){
-		$isArmor = $this->isArmor();
-		if($isArmor !== false){
-			$armorDurability = [
-				10 => 56,
-				11 => 81,
-				12 => 76,
-				13 => 66,
-				
-				20 => 166,
-				21 => 241,
-				22 => 226,
-				23 => 196,
-				
-				30 => 166,
-				31 => 241,
-				32 => 226,
-				33 => 196,
-				
-				40 => 364,
-				41 => 529,
-				42 => 496,
-				43 => 430,
-				
-				50 => 78,
-				51 => 113,
-				52 => 106,
-				53 => 92,
-			];
-			return $armorDurability[$isArmor];
-		}
+	public function getMaxDurability(){
 		if(!$this->isTool() and $this->isHoe() === false and $this->id !== BOW){
 			return false;
 		}
 		
-		$levels = array(
-			2 => 33,
-			1 => 60,
-			3 => 132,
-			4 => 251,
-			5 => 1562,
-			FLINT_STEEL => 65,
-			SHEARS => 239,
-			BOW => 385,
-		);
+		$levels = [
+			2 => 40, //GOLD
+			1 => 59, //WOODEN
+			3 => 131, //STONE
+			4 => 250, //IRON
+			5 => 1561, //DIAMOND(called EMERALD in disassembled code)
+			FLINT_STEEL => 65, //lets assume it is correct
+			SHEARS => 239, //x2
+			BOW => 385 //x3
+		];
 
-		if(($type = $this->isPickaxe()) === false){			
+		if(($type = $this->getPickaxeLevel()) === false){			
 			if(($type = $this->isAxe()) === false){			
 				if(($type = $this->isSword()) === false){				
 					if(($type = $this->isShovel()) === false){					
@@ -297,144 +260,50 @@ class Item{
 		}
 		return $levels[$type];
 	}
-	final public function isArmor(){
+
+	public function getPickaxeLevel(){ //Returns false or level of the pickaxe
 		switch($this->id){
-			case LEATHER_CAP:
-				return 10;
-			case LEATHER_TUNIC:
-				return 11;
-			case LEATHER_PANTS:
-				return 12;
-			case LEATHER_BOOTS:
-				return 13;
-				
-			case CHAIN_HELMET:
-				return 20;
-			case CHAIN_CHESTPLATE:
-				return 21;
-			case CHAIN_LEGGINGS:
-				return 22;
-			case CHAIN_BOOTS:
-				return 23;
-				
-			case IRON_HELMET:
-				return 30;
-			case IRON_CHESTPLATE:
-				return 31;
-			case IRON_LEGGINGS:
-				return 32;
-			case IRON_BOOTS:
-				return 33;	
-				
-			case DIAMOND_HELMET:
-				return 40;
-			case DIAMOND_CHESTPLATE:
-				return 41;
-			case DIAMOND_LEGGINGS:
-				return 42;
-			case DIAMOND_BOOTS:
-				return 43;
-				
-			case GOLD_HELMET:
-				return 50;
-			case GOLD_CHESTPLATE:
-				return 51;
-			case GOLD_LEGGINGS:
-				return 52;
-			case GOLD_BOOTS:
-				return 53;
-			default:
-				return false;
-		}
-		
-	}
-	final public function isPickaxe(){ //Returns false or level of the pickaxe
-		switch($this->id){
-			case IRON_PICKAXE:
-				return 4;
 			case WOODEN_PICKAXE:
 				return 1;
-			case STONE_PICKAXE:
-				return 3;
-			case DIAMOND_PICKAXE:
-				return 5;
 			case GOLDEN_PICKAXE:
 				return 2;
+			case STONE_PICKAXE:
+				return 3;
+			case IRON_PICKAXE:
+				return 4;
+			case DIAMOND_PICKAXE:
+				return 5;
 			default:
 				return false;
 		}
 	}
 	
-	final public function isAxe(){
-		switch($this->id){
-			case IRON_AXE:
-				return 4;
-			case WOODEN_AXE:
-				return 1;
-			case STONE_AXE:
-				return 3;
-			case DIAMOND_AXE:
-				return 5;
-			case GOLDEN_AXE:
-				return 2;
-			default:
-				return false;
-		}
+	public function isAxe(){
+		return false;
 	}
 
-	final public function isSword(){
-		switch($this->id){
-			case IRON_SWORD:
-				return 4;
-			case WOODEN_SWORD:
-				return 1;
-			case STONE_SWORD:
-				return 3;
-			case DIAMOND_SWORD:
-				return 5;
-			case GOLDEN_SWORD:
-				return 2;
-			default:
-				return false;
-		}
+	public function isSword(){
+		return false;
 	}
 	
-	final public function isShovel(){
-		switch($this->id){
-			case IRON_SHOVEL:
-				return 4;
-			case WOODEN_SHOVEL:
-				return 1;
-			case STONE_SHOVEL:
-				return 3;
-			case DIAMOND_SHOVEL:
-				return 5;
-			case GOLDEN_SHOVEL:
-				return 2;
-			default:
-				return false;
-		}
+	public function isShovel(){
+		return false;
 	}
 	
 	public function isHoe(){
-		switch($this->id){
-			case IRON_HOE:
-			case WOODEN_HOE:
-			case STONE_HOE:
-			case DIAMOND_HOE:
-			case GOLDEN_HOE:
-				return true;
-			default:
-				return false;
-		}
+		return false;
 	}
 
 	public function isShears(){
 		return ($this->id === SHEARS);
 	}
 	
-	final public function __toString(){
+	public function __toString(){
 		return "Item ". $this->name ." (".$this->id.":".$this->meta.")";
+	}
+	
+	public function getDamageAgainstOf($e){
+		return Item::DEF_DAMAGE;
 	}
 	
 	public function getDestroySpeed(Block $block, Player $player){

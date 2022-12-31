@@ -1,40 +1,29 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 class RotateHeadPacket extends RakNetDataPacket{
 	public $eid;
 	public $yaw;
-	
+	/**
+	 * Should yaw be modifed<br>
+	 * false = <b>yaw  / 360 / 0.0039062</b><br>
+	 * true = <b>yaw</b>
+	 * @var boolean
+	 */
+	public $rawYaw = false;
 	public function pid(){
 		return ProtocolInfo::ROTATE_HEAD_PACKET;
 	}
 	
 	public function decode(){
-		
+	   $this->get(7); //id + data
+	   $this->eid = $this->getInt();
+	   $this->yaw = $this->getByte();
 	}
 	
 	public function encode(){
 		$this->reset();
 		$this->putInt($this->eid);
-		$this->putByte($this->yaw);
+		@$this->putByte($this->rawYaw ? $this->yaw : $this->yaw / 360 / 0.0039062); //dont ask me why does chr count float TODO find a better way
 	}
 
 }

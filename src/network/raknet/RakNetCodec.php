@@ -1,32 +1,15 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 class RakNetCodec{
+
 	public $packet;
+
 	public function __construct(RakNetPacket $packet){
 		$this->packet = $packet;
 		$this->buffer =& $this->packet->buffer;
 		$this->encode();
 	}
-	
+
 	private function encode(){
 		if(strlen($this->packet->buffer) > 0){
 			return;
@@ -87,7 +70,7 @@ class RakNetCodec{
 				$pointer = 0;
 				sort($this->packet->packets, SORT_NUMERIC);
 				$max = count($this->packet->packets);
-				
+
 				while($pointer < $max){
 					$type = true;
 					$curr = $start = $this->packet->packets[$pointer];
@@ -104,11 +87,11 @@ class RakNetCodec{
 					++$pointer;
 					if($type === false){
 						$payload .= "\x00";
-						$payload .= strrev(Utils::writeTriad($start));
-						$payload .= strrev(Utils::writeTriad($end));
+						$payload .= Utils::writeLTriad($start);
+						$payload .= Utils::writeLTriad($end);
 					}else{
 						$payload .= Utils::writeBool(true);
-						$payload .= strrev(Utils::writeTriad($start));
+						$payload .= Utils::writeLTriad($start);
 					}
 					++$records;
 				}
@@ -116,69 +99,69 @@ class RakNetCodec{
 				$this->buffer .= $payload;
 				break;
 			default:
-				
+
 		}
-	
+
 	}
-	
-	private function encodeDataPacket(RakNetDataPacket $pk){
-		$this->putByte(($pk->reliability << 5) | ($pk->hasSplit > 0 ? 0b00010000:0));
-		$this->putShort(strlen($pk->buffer) << 3);
-		if($pk->reliability === 2
-		or $pk->reliability === 3
-		or $pk->reliability === 4
-		or $pk->reliability === 6
-		or $pk->reliability === 7){
-			$this->putLTriad($pk->messageIndex);
-		}
-		
-		if($pk->reliability === 1
-		or $pk->reliability === 3
-		or $pk->reliability === 4
-		or $pk->reliability === 7){
-			$this->putLTriad($pk->orderIndex);
-			$this->putByte($pk->orderChannel);
-		}
-		
-		if($pk->hasSplit === true){
-			$this->putInt($pk->splitCount);
-			$this->putShort($pk->splitID);
-			$this->putInt($pk->splitIndex);
-		}
-		
-		$this->buffer .= $pk->buffer;
+
+	protected function putLong($v){
+		$this->buffer .= Utils::writeLong($v);
+	}
+
+	protected function putByte($v){
+		$this->buffer .= chr($v);
+	}
+
+	protected function putShort($v){
+		$this->buffer .= Utils::writeShort($v);
+	}
+
+	protected function putString($v){
+		$this->putShort(strlen($v));
+		$this->put($v);
 	}
 
 	protected function put($str){
 		$this->buffer .= $str;
 	}
 
-	protected function putLong($v){
-		$this->buffer .= Utils::writeLong($v);
+	protected function putLTriad($v){
+		$this->buffer .= Utils::writeLTriad($v);
 	}
-	
+
+	private function encodeDataPacket(RakNetDataPacket $pk){
+		$this->putByte(($pk->reliability << 5) | ($pk->hasSplit > 0 ? 0b00010000 : 0));
+		$this->putShort(strlen($pk->buffer) << 3);
+		if($pk->reliability === 2
+			or $pk->reliability === 3
+			or $pk->reliability === 4
+			or $pk->reliability === 6
+			or $pk->reliability === 7){
+			$this->putLTriad($pk->messageIndex);
+		}
+
+		if($pk->reliability === 1
+			or $pk->reliability === 3
+			or $pk->reliability === 4
+			or $pk->reliability === 7){
+			$this->putLTriad($pk->orderIndex);
+			$this->putByte($pk->orderChannel);
+		}
+
+		if($pk->hasSplit === true){
+			$this->putInt($pk->splitCount);
+			$this->putShort($pk->splitID);
+			$this->putInt($pk->splitIndex);
+		}
+
+		$this->buffer .= $pk->buffer;
+	}
+
 	protected function putInt($v){
 		$this->buffer .= Utils::writeInt($v);
-	}
-	
-	protected function putShort($v){
-		$this->buffer .= Utils::writeShort($v);
 	}
 
 	protected function putTriad($v){
 		$this->buffer .= Utils::writeTriad($v);
-	}
-	
-	protected function putLTriad($v){
-		$this->buffer .= strrev(Utils::writeTriad($v));
-	}
-	
-	protected function putByte($v){
-		$this->buffer .= chr($v);
-	}
-	
-	protected function putString($v){
-		$this->putShort(strlen($v));
-		$this->put($v);
 	}
 }

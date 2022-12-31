@@ -4,22 +4,22 @@ Lets hope it will work
 */
 class SetEntityLinkPacket extends RakNetDataPacket{
 
-    const TYPE_REMOVE = 0;
-    const TYPE_RIDE = 1;
-    const TYPE_PASSENGER = 2;
+	const TYPE_REMOVE = 0;
+	const TYPE_RIDE = 1;
+	const TYPE_PASSENGER = 2;
 
-    public $rider;
-    public $riding;
-    public $type;
-    public function decode() {
+	public $rider;
+	public $riding;
+	public $type;
+	public function decode() {
 
-    }
-    public function encode() {
-        $this->reset();
-        $this->putLong($this->rider);
-        $this->putLong($this->riding);
-        $this->putByte($this->type);
-    }
+	}
+	public function encode() {
+		$this->reset();
+		$this->putLong($this->rider);
+		$this->putLong($this->riding);
+		$this->putByte($this->type);
+	}
 
 
 	public function pid(){

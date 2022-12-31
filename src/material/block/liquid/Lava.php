@@ -1,24 +1,5 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 class LavaBlock extends LiquidBlock implements LightingBlock{
 	public function __construct($meta = 0){
 		parent::__construct(LAVA, $meta, "Lava");
@@ -50,14 +31,14 @@ class LavaBlock extends LiquidBlock implements LightingBlock{
 	}
 	
 	public function checkWater(){
-		for($side = 1; $side <= 5; ++$side){
+		for($side = 0; $side <= 5; ++$side){
 			$b = $this->getSide($side);
 			if($b instanceof WaterBlock){
 				$level = $this->meta & 0x06;
 				if($level == 0x00){
-					$this->level->setBlock($this, new ObsidianBlock(), false, false, true);
+					$this->level->setBlock($b, new ObsidianBlock(), false, false, true);
 				}else{
-					$this->level->setBlock($this, new CobblestoneBlock(), false, false, true);
+					$this->level->setBlock($b, new CobblestoneBlock(), false, false, true);
 				}
 			}
 		}
@@ -85,7 +66,7 @@ class LavaBlock extends LiquidBlock implements LightingBlock{
 			return false;
 		}
 		
-		if( $this->checkWater()){
+		if($this->checkWater()){
 			return;
 		}
 		
@@ -116,8 +97,8 @@ class LavaBlock extends LiquidBlock implements LightingBlock{
 					$tlevel = $sb->meta & 0x06;
 					if($tlevel != 0x00){
 						for ($s = 0; $s <= 5; $s++) {
-                					$ssb = $sb->getSide($s);
-                					ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($ssb, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
+									$ssb = $sb->getSide($s);
+									ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($ssb, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
 						}
 						$this->level->setBlock($sb, new AirBlock(), false, false, true);
 					}
@@ -126,10 +107,10 @@ class LavaBlock extends LiquidBlock implements LightingBlock{
 				if($b instanceof LavaBlock){
 					$tlevel = $b->meta & 0x06;
 					if($tlevel != 0x00){
-				              	for ($s = 0; $s <= 5; $s++) {
-				              		$ssb = $sb->getSide($s);
-                					ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($ssb, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
-              					}
+							  	for ($s = 0; $s <= 5; $s++) {
+							  		$ssb = $sb->getSide($s);
+									ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($ssb, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
+			  					}
 						$this->level->setBlock($b, new AirBlock(), false, false, true);
 					}
 				}

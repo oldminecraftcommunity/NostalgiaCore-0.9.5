@@ -1,24 +1,5 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 class NetherReactorBlock extends SolidBlock{
 	public static $enableReactor = true;
 	public function __construct($meta = 0){
@@ -28,7 +9,7 @@ class NetherReactorBlock extends SolidBlock{
 	
 	public function onActivate(Item $item, Player $player){
 		//if(($item->getID() === IRON_SWORD || $item->getID() === WOODEN_SWORD || $item->getID() === STONE_SWORD || $item->getID() === DIAMOND_SWORD || $item->getID() === GOLD_SWORD) /*&& $player->gamemode === 0*/){
-		if($this->isCorrect($this->getX(),$this->getY(),$this->getZ()) && $this->getY() < 101){
+		if($this->isCorrect($this->getX(),$this->getY(),$this->getZ()) && $this->getY() < 101 && NetherReactorBlock::$enableReactor){
 			NetherReactorStructure::buildReactor($this->level, $this->getX(),$this->getY(),$this->getZ());
 			$this->meta = 1;
 			$this->level->setBlock($this,$this);
@@ -67,7 +48,16 @@ class NetherReactorBlock extends SolidBlock{
 		$this->decay($this->x-8, $this->y-3, $this->z-8, 6, 11, 1, 14, 34, 1, 5, 12, 16);	
 	}
 	
-	private function decay($x,$y,$z,$aOne,$aTwo,$aThree,$bOne,$bTwo,$bThree,$cOne,$cTwo,$cThree) {
+	public function getDrops(Item $item, Player $player){
+		if($item->getPickaxeLevel() >= 1){
+			return array(
+				[DIAMOND, 0, 3],
+				[IRON_INGOT, 0, 6],
+			);
+		}
+	}
+	
+	private function decay($x, $y, $z, $aOne, $aTwo, $aThree, $bOne, $bTwo, $bThree, $cOne, $cTwo, $cThree) {
 		for($a = $aOne; $a < $aTwo; $a += $aThree) { //wth those cycles are?
 			for($b = $bOne; $b < $bTwo; $b += $bThree) {
 				for($c = $cOne; $c < $cTwo; $c += $cThree) {
@@ -111,7 +101,7 @@ class NetherReactorBlock extends SolidBlock{
 			$shiftZ = sin(floor(Utils::randomFloat()*360)*(pi()/180));
 			if(Utils::chance(5)) $randomID = $this->rarePossibleLoot[array_rand($this->rarePossibleLoot)];
 			else $randomID = $this->possibleLoot[array_rand($this->possibleLoot)];
-			$server->api->entity->drop(new Position($x+($shiftX*$randomRange)+0.5, $y-1, $z+($shiftZ*$randomRange)+0.5, $this->level), BlockAPI::getItem($randomID, 0, 1));
+			$server->api->entity->drop(new Position($x+($shiftX*$randomRange)+0.5, $y, $z+($shiftZ*$randomRange)+0.5, $this->level), BlockAPI::getItem($randomID, 0, 1));
 		}
 		for($i = 0; $i < $pigmen; $i++) {
 			$randomRange = floor(Utils::randomFloat()*5+3);
@@ -119,7 +109,7 @@ class NetherReactorBlock extends SolidBlock{
 			$shiftZ = sin(floor(Utils::randomFloat()*360)*(pi()/180));
 			$data = array(
 					"x" => $x+($shiftX*$randomRange)+0.5,
-					"y" => $y-1,
+					"y" => $y,
 					"z" => $z+($shiftZ*$randomRange)+0.5,
 				);
 			$e = $server->api->entity->add($this->level, ENTITY_MOB, MOB_PIGMAN, $data);
@@ -201,26 +191,26 @@ class NetherReactorBlock extends SolidBlock{
 					switch($char){
 						case "G":
 							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === GOLD_BLOCK){
-								continue;
+								break;
 							}
 							return false;
 						case "C":
 							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === COBBLESTONE){
-								continue;
+								break;
 							}
 							return false;
 						case "R":
 							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === NETHER_REACTOR){
-								continue;
+								break;
 							}
 							return false;
 						case " ":
 							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === 0){
-								continue;
+								break;
 							}
 							return false;
 						default:
-							continue;
+							break;
 					}
 					++$offsetX;
 				}

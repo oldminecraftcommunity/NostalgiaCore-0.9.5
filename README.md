@@ -1,47 +1,55 @@
-![](http://185.117.153.152/nc_favicon.png)
+![](http://owouwu.ru/favicon.png)
 
 # NostalgiaCore
 
-NostalgiaCore is a fork of Legacy PocketMine-MP 1.3.12, which fixes bugs of Legacy PocketMine-MP, and brings a *new* live into it.
+NostalgiaCore is a fork of Legacy PocketMine-MP 1.3.12, which fixes bugs of Legacy PocketMine-MP, and adds new content
 
-Supported version: 0.8.1
+Supported MCPE versions: 0.8.0, 0.8.1 (maybe 0.8.2)
 
 (Special thx to GullCraft Network and DartMiner43)
 
-# Why should you use NostalgiaCore to run a Minecraft Pocket Edition 0.8.1 server?
+<h2> Why should you use NostalgiaCore to run a Minecraft Pocket Edition 0.8.1 server?</h2>
 
 • Items are dropping normally.
 
-• Dupes, that were in pmmp by mistake is fixed.
+• Dupes, that were in PocketMine by mistake are fixed.
 
 • Player hotbar is saved.
 
-• Advanced cache option.
-
-• Server is starting faster.
+• Extra options (like in-game messages to discord)
 
 • Vector2 is fixed.
 
-• Players can't join as "RCON" or "CONSOLE".
+• Working Nether Reactor.
+
+• PHAR plugins support
 
 ...and etc.
 
-# How to use auto-restart?
+<h3> Download Stable NostalgiaCore</h3>
+
+https://github.com/kotyaralih/NostalgiaCore/releases/
+
+<h3> PHP binaries download</h3>
+
+https://sourceforge.net/projects/pocketmine/files/builds/
+
+<h3> How to use auto-restart?</h3>
 
 Simply start your server using ./start.sh -l
 
-# Our discord server
+<h3> Our discord server</h3>
 
 https://discord.gg/uSHEWe6NC3
 
-## Want to contribute?
-​* Check the [Contributing Guidelines](CONTRIBUTING.md)
+# Want to contribute?
+* Check the [Contributing Guidelines](CONTRIBUTING.md)
 
-## Third-party Libraries/Protocols Used
+# Third-party Libraries/Protocols Used
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
 * __[PHP SQLite3](http://php.net/manual/en/book.sqlite3.php)__
 * __[PHP BCMath](http://php.net/manual/en/book.bc.php)__
-* __[PHP pthreads](http://pthreads.org/)__ by _[krakjoe](https://github.com/krakjoe)_: Threading for PHP - Share Nothing, Do Everything.
+* __[PHP pthreads](https://github.com/krakjoe/pthreads)__ by _[krakjoe](https://github.com/krakjoe)_: Threading for PHP - Share Nothing, Do Everything.
 * __[PHP YAML](https://code.google.com/p/php-yaml/)__ by _Bryan Davis_: The Yaml PHP Extension provides a wrapper to the LibYAML library.
 * __[LibYAML](http://pyyaml.org/wiki/LibYAML)__ by _Kirill Simonov_: A YAML 1.1 parser and emitter written in C.
 * __[mintty](https://code.google.com/p/mintty/)__ : xterm Terminal Emulator

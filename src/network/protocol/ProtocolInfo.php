@@ -1,30 +1,9 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 
 abstract class ProtocolInfo{
 
 	const CURRENT_PROTOCOL = 14;
-	
-	
 
 	const PING_PACKET = 0x00;
 
@@ -36,10 +15,6 @@ abstract class ProtocolInfo{
 	const CLIENT_HANDSHAKE_PACKET = 0x13;
 	//const SERVER_FULL_PACKET = 0x14;
 	const DISCONNECT_PACKET = 0x15;
-
-	//const BANNED_PACKET = 0x17;
-
-
 	const LOGIN_PACKET = 0x82;
 	const LOGIN_STATUS_PACKET = 0x83;
 	const READY_PACKET = 0x84;
@@ -94,10 +69,16 @@ abstract class ProtocolInfo{
 	const CHAT_PACKET = 0xb6;
 	const ADVENTURE_SETTINGS_PACKET = 0xb7;
 	const ENTITY_DATA_PACKET = 0xb8;
-	//const PLAYER_INPUT_PACKET = 0xb9;
+	const PLAYER_INPUT_PACKET = 0xb9;
 
 }
-
+/*Unused:
+ * 0xb5
+ * 0xb9
+ * 0x96
+ * 0x17
+ * 0x14
+ */
 /***REM_START***/
 require_once(FILE_PATH . "src/network/raknet/RakNetDataPacket.php");
 /***REM_END***/
