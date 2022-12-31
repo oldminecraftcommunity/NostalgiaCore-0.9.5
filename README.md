@@ -32,7 +32,9 @@ https://github.com/kotyaralih/NostalgiaCore/releases/
 
 <h3> PHP binaries download</h3>
 
-https://sourceforge.net/projects/pocketmine/files/builds/
+* https://sourceforge.net/projects/pocketmine/files/builds/ - PHP for old PocketMine
+* https://owouwu.ru/NCArm_bin.tar.gz - PHP binaries for ARM
+* https://jenkins.pmmp.io/job/PHP-8.0-Aggregate/ PHP8(core should have php8 support as of now)
 
 <h3> How to use auto-restart?</h3>
 
