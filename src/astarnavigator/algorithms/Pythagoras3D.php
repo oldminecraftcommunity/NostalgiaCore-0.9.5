@@ -7,7 +7,7 @@ class Pythagoras3D implements IDistanceAlgorithm
 		if($from instanceof PathTileXYZ && $to instanceof PathTileXYZ){
 			return Utils::distance($from->asArray(), $to->asArray());
 		}
-		return 666;
+		return INF;
 	}
 
 }

@@ -23,64 +23,63 @@ class TileNavigator implements ITileNavigator
 		return array_reverse($totalPath);
 	}
 	
-	public function navigate(PathTile $from, PathTile $to, $maxDist) //TODO optimizations, no arraylist
+	public function navigate(PathTile $from, PathTile $to, $maxDist)
 	{
-		$closed = new ArrayList();
-		$open = new ArrayList();
-		$open->add($from);
-		$path = []; //new Dictionary<Tile, Tile>();
-		$gScore = []; //new Dictionary<Tile, double>();
+		$open = new SplPriorityQueue();
+		$open->insert($from, 0);
+		$path = [];
+		$gScore = [];
 		$gScore[(string) $from] = 0;
+		$has = [(string)$from, true];
 		/**
 		 * @var array[Tile] $fScore
 		 */
-		$fScore = [];//new Dictionary<Tile, double>();
+		$fScore = [];
 		$fScore[(string) $from] = $this->heuristicAlgorithm->calculate($from, $to);
 		if($this->blockedProvider->isBlocked($to)){
 			return null;
 		}
 		$visited = [];
-		while($open->countElements() > 0)
+		while(!$open->isEmpty())
 		{
-			//sleep(1);
-			$open->sortWith(function($k, $k1) use ($fScore){
-				return $fScore[(string)$k] === $fScore[(string)$k1] ? 0 : ($fScore[(string)$k] > $fScore[(string)$k1] ? 1 : -1);
-			});
-			$current = $open->getFirst();
-			if ($current->equals($to)){
+			$current = $open->top();
+			$open->next();
+			if ($current == $to){
+
 				return $this->reconstructPath($path, $current);
 			}
-			$open->remove($current);
-			$closed->add($current);
 			foreach($this->neighborProvider->getNeighbors($current) as $neighbor)
 			{
-				
-				if(in_array($neighbor, $visited)){
-					continue;
-				}
-				
-				$visited[] = $neighbor;
-				if ($closed->has($neighbor) || $this->blockedProvider->isBlocked($neighbor))
-				{
-					continue;
-				}
 				if(!Utils::in_range(Utils::distance($neighbor->asArray(), $from->asArray()), -$maxDist, $maxDist)){
 					continue;
 				}
+				if(isset($visited[(string)$neighbor])){
+					continue;
+				}
 				
-				$tentativeG = $gScore[(string) $current] + $this->distanceAlgorithm->calculate($current, $neighbor);
-				
-				if (!$open->has($neighbor))
+				$visited[(string)$neighbor] = $neighbor;
+				if ($this->blockedProvider->isBlocked($neighbor))
 				{
-					$open->add($neighbor);
+					continue;
+				}
+				$distbetweenCost = $this->distanceAlgorithm->calculate($current, $neighbor);
+				$tentativeG = $gScore[(string) $current] + $distbetweenCost;
+				$tentativeF = $distbetweenCost + $this->heuristicAlgorithm->calculate($neighbor, $to);
+				if (!isset($has[(string)$neighbor]))
+				{
+					$open->insert($neighbor, -$tentativeF);
+					$has[(string)$neighbor] = true;
 				}
 				else if ($tentativeG >= $gScore[(string) $neighbor])
 				{
 					continue;
 				}
-				$path[(string) $neighbor] = $current;
+				if(!isset($gScore[(string) $neighbor]) || $distbetweenCost < $gScore[(string) $neighbor]){
+					$path[(string) $neighbor] = $current;
+				}
+				
 				$gScore[(string) $neighbor] = $tentativeG;
-				$fScore[(string) $neighbor] = $gScore[(string) $neighbor] + $this->heuristicAlgorithm->calculate($neighbor, $to);
+				$fScore[(string) $neighbor] = $tentativeF;
 			}
 		}
 		

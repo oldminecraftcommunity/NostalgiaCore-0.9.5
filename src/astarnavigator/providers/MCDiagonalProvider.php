@@ -7,12 +7,9 @@ class MCDiagonalProvider implements INeighborProvider
 	{
 		
 		if($tile instanceof PathTileXYZ){
-			$result = [];
-			foreach(self::$neighbors as $offset){
-				$t = clone $tile;
-				$result[] = $t->addOffset($offset);
-			}
-			return $result;
+			return array_map(function($offset) use($tile){
+			    return $tile->addOffset($offset);
+			}, MCDiagonalProvider::$neighbors);
 		}
 		return [];
 	}

@@ -29,10 +29,7 @@ class PathTileXYZ extends PathTile
 	}
 	
 	public function addOffset($offset){
-		$this->x += $offset[0];
-		$this->y += $offset[1];
-		$this->z += $offset[2];
-		return $this;
+		return new PathTileXYZ($this->x + $offset[0], $this->y + $offset[1], $this->z + $offset[2], $this->level);
 	}
 	
 	public function __toString(){

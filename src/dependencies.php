@@ -80,17 +80,16 @@ require_once(FILE_PATH . "/src/pmf/PMF.php");
 require_once(FILE_PATH . "/src/astarnavigator/IElement.php");
 require_once(FILE_PATH . "/src/astarnavigator/PHPUtils.php");
 require_once(FILE_PATH . "/src/astarnavigator/PathTile.php");
-require_once(FILE_PATH . "/src/astarnavigator/ArrayList.php");
 
 require_once(FILE_PATH . "/src/astarnavigator/algorithms/IDistanceAlgorithm.php");
-require_once(FILE_PATH . "/src/astarnavigator/algorithms/PythagorasAlgorithm.php");
-require_once(FILE_PATH . "/src/astarnavigator/algorithms/ManhattanHeuristicAlgorithm.php");
+require_once(FILE_PATH . "/src/astarnavigator/algorithms/Pythagoras3D.php");
+require_once(FILE_PATH . "/src/astarnavigator/algorithms/ManhattanHeuristic3D.php");
 
 require_once(FILE_PATH . "/src/astarnavigator/providers/INeighborProvider.php");
-require_once(FILE_PATH . "/src/astarnavigator/providers/DiagonalNeighborProvider.php");
+require_once(FILE_PATH . "/src/astarnavigator/providers/MCDiagonalProvider.php");
 
 require_once(FILE_PATH . "/src/astarnavigator/providers/IBlockedProvider.php");
-require_once(FILE_PATH . "/src/astarnavigator/providers/EmptyBlockedProvider.php");
+require_once(FILE_PATH . "/src/astarnavigator/providers/MCBlockedProvider.php");
 
 require_once(FILE_PATH . "/src/astarnavigator/ITileNavigator.php");
 require_once(FILE_PATH . "/src/astarnavigator/TileNavigator.php");

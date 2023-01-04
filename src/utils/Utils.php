@@ -423,7 +423,11 @@ class Utils{
 		}
 		return $data;
 	}
-
+	
+	public static function php8_nulcoal(&$arr, $else){
+		return isset($arr) ? $arr : $else;
+	}
+	
 	public static function readTriad($str){
 		return @unpack("N", "\x00" . $str)[1];
 	}
@@ -556,8 +560,15 @@ class Utils{
 	/**
 	 * manhattan distance, less accurate, but still useful sometimes
 	 */
-	public static function manh_distance(Vector3 $pos1, Vector3 $pos2){
-		return abs($pos2->x - $pos1->x) + abs($pos2->y - $pos1->y) + abs($pos2->z - $pos1->z);
+	public static function manh_distance($pos1, $pos2){
+		if($pos1 instanceof Vector3){
+			$pos1 = $pos1->toArray();
+		}
+		if($pos2 instanceof Vector3){
+			$pos2 = $pos2->toArray();
+		}
+		
+		return abs($pos2["x"] - $pos1["x"]) + abs($pos2["y"] - $pos1["y"]) + abs($pos2["z"] - $pos1["z"]);
 	}
 	
 	/**
