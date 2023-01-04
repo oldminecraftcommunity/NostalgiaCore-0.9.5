@@ -20,7 +20,11 @@ abstract class RakNetDataPacket extends stdClass{
 	public function getBuffer(){
 		return $this->buffer;
 	}
-
+    
+	public function getOffset(){
+	    return $this->offset;
+	}
+	
 	public function setBuffer($buffer = ""){
 		$this->buffer = $buffer;
 		$this->offset = 0;

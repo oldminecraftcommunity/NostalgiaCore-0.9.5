@@ -1,6 +1,6 @@
 <?php
 class PlayerInputPacket extends RakNetDataPacket{
-	public $unk1, $unk2, $unk3, $unk4;
+	public $unk1, $unk2, $sneaking, $unk4;
 	public function encode()
 	{
 		
@@ -15,8 +15,8 @@ class PlayerInputPacket extends RakNetDataPacket{
 	{
 		$this->unk1 = $this->getFloat();
 		$this->unk2 = $this->getFloat();
-		$this->unk3 = $this->getByte();
-		$this->unk4 = $this->getByte();
+		$this->sneaking = bin2hex($this->buffer)[$this->getOffset()] === 4;
+		$this->unk4 = bin2hex($this->buffer)[$this->getOffset()+1] === 4;
 	}
 	
 }
