@@ -54,7 +54,7 @@ class Utils{
 	}
 	
 	public static function endsWith($str, $check) {
-	    return substr($str, -strlen($check)) === $check;
+		return substr($str, -strlen($check)) === $check;
 	}
 	
 	public static function hasEmoji($s){
@@ -638,7 +638,7 @@ class Utils{
 	}
 
 	public static function readInt($str){
-	    if(strlen($str) <= 0) return; 
+		if(strlen($str) <= 0) return; 
 		if(PHP_INT_SIZE === 8){
 			return @unpack("N", $str)[1] << 32 >> 32;
 		}else{

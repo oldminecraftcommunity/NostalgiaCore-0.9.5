@@ -35,7 +35,7 @@ class SuperflatGenerator implements LevelGenerator{
 			$this->populators[] = new MineshaftPopulator(isset($this->options["mineshaft"]["chance"]) ? floatval($this->options["mineshaft"]["chance"]) : 0.01);
 		}*/
 	}
-    
+	
 	public function parsePreset($preset){
 		$this->preset = $preset;
 		$preset = explode(";", $preset);

@@ -188,7 +188,7 @@ class NetherReactorBlock extends SolidBlock{
 		foreach($this->core as $yOffset => $layer){
 			foreach($layer as $line){
 				foreach(str_split($line) as $char){
-				    $b = $this->level->getBlockWithoutVector(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ));
+					$b = $this->level->getBlockWithoutVector(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ));
 					switch($char){
 						case "G":
 							if($b === GOLD_BLOCK){ //TODO make it use structure class
@@ -196,17 +196,17 @@ class NetherReactorBlock extends SolidBlock{
 							}
 							return false;
 						case "C":
-						    if($b === COBBLESTONE){
+							if($b === COBBLESTONE){
 								break;
 							}
 							return false;
 						case "R":
-						    if($b === NETHER_REACTOR){
+							if($b === NETHER_REACTOR){
 								break;
 							}
 							return false;
 						case " ":
-						    if($b->getID() === 0){
+							if($b->getID() === 0){
 								break;
 							}
 							return false;

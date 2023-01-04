@@ -71,8 +71,8 @@ class PocketMinecraftServer{
 		$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, [
 			"version" => "5",
 			"experemental-mob-features" => true,
-            "enable-mob-ai" => false,
-		    "enable-nether-reactor" => true,
+			"enable-mob-ai" => false,
+			"enable-nether-reactor" => true,
 			"enable-explosions" => true,
 			"enable-rail-connection" => false,
 			"save-player-data" => true,
