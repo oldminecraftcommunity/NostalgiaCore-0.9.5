@@ -711,6 +711,7 @@ class Utils{
 
 	public static function writeLong($value){
 		$x = "";
+		$value = (string) $value;
 		if(!is_float($value)){
 			if(strval($value[0] == null ? '' : $value[0]) === "-"){
 				$negative = true;
