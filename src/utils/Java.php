@@ -1,6 +1,6 @@
 <?php
 
-
+//TODO remove
 class Java_String{
 
 	private $value = "", $count = 0, $hash = 0;

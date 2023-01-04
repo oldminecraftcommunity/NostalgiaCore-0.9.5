@@ -1,7 +1,7 @@
 <?php
 
 /***REM_START***/
-require_once("BurningFurnace.php");
+require_once("BurningFurnaceBlock.php");
 /***REM_END***/
 
 

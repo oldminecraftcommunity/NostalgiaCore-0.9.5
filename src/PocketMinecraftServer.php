@@ -70,8 +70,9 @@ class PocketMinecraftServer{
 		console("[INFO] Loading extra.properties...");
 		$this->extraprops = new Config(DATA_PATH . "extra.properties", CONFIG_PROPERTIES, [
 			"version" => "5",
-			"experemental-mob-features" => false,
-			"enable-nether-reactor" => true,
+			"experemental-mob-features" => true,
+            "enable-mob-ai" => false,
+		    "enable-nether-reactor" => true,
 			"enable-explosions" => true,
 			"enable-rail-connection" => false,
 			"save-player-data" => true,
@@ -82,6 +83,7 @@ class PocketMinecraftServer{
 			"discord-webhook-url" => "none",
 			"discord-bot-name" => "NostalgiaCore Logger"
 		]);
+		Entity::$allowedAI = $this->extraprops->get("enable-mob-ai");
 		Entity::$updateOnTick = $this->extraprops->get("experemental-mob-features");
 		if(Entity::$updateOnTick){
 			console("[WARNING] Experemental mob features are enabled. Unpredictable behavior.");

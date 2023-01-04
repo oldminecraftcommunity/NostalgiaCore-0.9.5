@@ -30,7 +30,7 @@ class RailBlock extends FlowableBlock{
 		if(!($rail instanceof RailBlock)) return null;
 		$damage = $rail->meta;
 		if ($damage < 0 || $damage > 10) return null;
-		$delta = array(
+		$delta = array( //TODO make static
 			array(array(0, 1), array(0, -1)),
 			array(array(1, 0), array(-1, 0)),
 			array(array(1, 0), array(-1, 0)),

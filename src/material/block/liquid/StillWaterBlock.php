@@ -2,7 +2,7 @@
 
 
 /***REM_START***/
-require_once("Water.php");
+require_once("WaterBlock.php"); //TODO class loader?
 /***REM_END***/
 
 class StillWaterBlock extends WaterBlock{

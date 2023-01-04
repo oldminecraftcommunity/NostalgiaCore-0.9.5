@@ -123,7 +123,15 @@ require_once(FILE_PATH . "/src/material/item/armor/ArmorItem.php");
 
 require_once(FILE_PATH . "/src/structure/Structure.php");
 
+require_once(FILE_PATH . "/src/plugin/Plugin.php");
+require_once(FILE_PATH . "/src/plugin/OtherPluginRequirement.php");
+require_once(FILE_PATH . "/src/plugin/DummyPlugin.php");
+require_once(FILE_PATH . "/src/plugin/phar/IClassLoader.php");
+require_once(FILE_PATH . "/src/plugin/phar/PharUtils.php");
+
 require_all(FILE_PATH . "src/");
+
+
 
 $inc = get_included_files();
 $inc[] = array_shift($inc);

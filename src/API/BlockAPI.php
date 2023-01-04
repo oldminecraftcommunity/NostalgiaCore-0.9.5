@@ -573,11 +573,7 @@ class BlockAPI{
 
 	public function nextRandomUpdate(Position $pos){
 		if(!isset($this->scheduledUpdates[$pos->x . "." . $pos->y . "." . $pos->z . "." . $pos->level->getName() . "." . BLOCK_UPDATE_RANDOM])){
-			$X = (($pos->x >> 4) << 4);
-			$Y = (($pos->y >> 4) << 4);
-			$Z = (($pos->z >> 4) << 4);
 			$time = microtime(true);
-			$i = 0;
 			$offset = 0;
 			while(true){
 				$t = $offset + Utils::getRandomUpdateTicks() * 0.05;

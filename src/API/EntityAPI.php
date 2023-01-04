@@ -54,7 +54,7 @@ class EntityAPI{
 				}
 				$mobName = ucfirst(array_flip($mob)[$type]);
 				
-				if((strtolower($args[1] === "baby") or strtolower($args[2] === "baby")) and !Utils::in_range($type, 10, 13)){
+				if((isset($args[1]) || isset($args[2])) && (strtolower($args[1] === "baby") or strtolower($args[2] === "baby")) and !Utils::in_range($type, 10, 13)){
 					$output .= "$mobName cannot be a baby!";
 					break;
 				}

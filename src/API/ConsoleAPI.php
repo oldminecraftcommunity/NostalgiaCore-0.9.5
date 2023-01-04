@@ -51,7 +51,6 @@ class ConsoleAPI{
 			$this->loop->notify();
 			//@fclose($this->loop->fp);
 			usleep(50000);
-			$this->loop->kill();
 			//$this->loop->join();
 		}
 	}
@@ -294,7 +293,6 @@ class ConsoleLoop extends Thread{
 	public $base;
 	public $ev;
 	public $fp;
-
 	public function __construct(){
 		$this->line = false;
 		$this->stop = false;

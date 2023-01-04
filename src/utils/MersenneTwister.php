@@ -41,7 +41,7 @@ $val = MASK31 | (MASK31 << 1);
 define("MASK32", $val);
 
 
-class twister{
+class MersenneTwister{ //Does it even used? //rename back if any problems will be spotted
 
 	const N = N;
 	# the class constant is not used anywhere in this namespace,

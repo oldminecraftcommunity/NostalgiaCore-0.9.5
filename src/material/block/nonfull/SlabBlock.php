@@ -3,7 +3,7 @@
 class SlabBlock extends TransparentBlock{
 	public function __construct($meta = 0){
 		parent::__construct(SLAB, $meta, "Slab");
-		$names = array(
+		$names = array( //TODO make it static
 			0 => "Stone",
 			1 => "Sandstone",
 			2 => "Wooden",

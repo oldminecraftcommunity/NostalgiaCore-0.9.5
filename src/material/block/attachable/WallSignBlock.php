@@ -1,7 +1,7 @@
 <?php
 
 /***REM_START***/
-require_once("SignPost.php");
+require_once("SignPostBlock.php");
 /***REM_END***/
 
 class WallSignBlock extends SignPostBlock{

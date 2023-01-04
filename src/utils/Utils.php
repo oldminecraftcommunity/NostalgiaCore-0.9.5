@@ -53,6 +53,10 @@ class Utils{
 		return floor(($v % 360 + 360) % 360);
 	}
 	
+	public static function endsWith($str, $check) {
+	    return substr($str, -strlen($check)) === $check;
+	}
+	
 	public static function hasEmoji($s){
 		return preg_match(Utils::emojiRegex, $s);
 	}

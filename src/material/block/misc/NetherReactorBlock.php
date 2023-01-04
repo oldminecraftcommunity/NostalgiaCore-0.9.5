@@ -58,7 +58,7 @@ class NetherReactorBlock extends SolidBlock{
 	}
 	
 	private function decay($x, $y, $z, $aOne, $aTwo, $aThree, $bOne, $bTwo, $bThree, $cOne, $cTwo, $cThree) {
-		for($a = $aOne; $a < $aTwo; $a += $aThree) { //wth those cycles are?
+		for($a = $aOne; $a < $aTwo; $a += $aThree) { //wth those cycles are? TODO simplify if possible(makes server lag)
 			for($b = $bOne; $b < $bTwo; $b += $bThree) {
 				for($c = $cOne; $c < $cTwo; $c += $cThree) {
 					if ($this->level->getBlock(new Vector3($x+$a, $y+$b, $z+$c))->getID() === 87 && Utils::randomFloat() > 0.75){
@@ -188,24 +188,25 @@ class NetherReactorBlock extends SolidBlock{
 		foreach($this->core as $yOffset => $layer){
 			foreach($layer as $line){
 				foreach(str_split($line) as $char){
+				    $b = $this->level->getBlockWithoutVector(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ));
 					switch($char){
 						case "G":
-							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === GOLD_BLOCK){
+							if($b === GOLD_BLOCK){ //TODO make it use structure class
 								break;
 							}
 							return false;
 						case "C":
-							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === COBBLESTONE){
+						    if($b === COBBLESTONE){
 								break;
 							}
 							return false;
 						case "R":
-							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === NETHER_REACTOR){
+						    if($b === NETHER_REACTOR){
 								break;
 							}
 							return false;
 						case " ":
-							if($this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID() === 0){
+						    if($b->getID() === 0){
 								break;
 							}
 							return false;

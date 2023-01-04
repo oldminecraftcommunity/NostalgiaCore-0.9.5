@@ -1,19 +1,5 @@
 <?php
 
-interface OtherPluginRequirement{
-
-	public function getRequiredPlugins();
-}
-
-interface Plugin{
-
-	public function __construct(ServerAPI $api, $server = false);
-
-	public function init();
-
-	//public function __destruct(); useless
-}
-
 class PluginAPI extends stdClass{
 
 	private $server;
@@ -323,14 +309,4 @@ class RequiredPluginEntry{ //Use this as object of requirements array
 	}
 }
 
-class DummyPlugin implements Plugin{
-
-	public function __construct(ServerAPI $api, $server = false){
-	}
-
-	public function init(){
-	}
-
-	public function __destruct(){
-	}
-}
+ 

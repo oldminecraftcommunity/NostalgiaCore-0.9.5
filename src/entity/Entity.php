@@ -6,7 +6,7 @@ class Entity extends Position
 	const TYPE = - 1;
 	const CLASS_TYPE = - 1;
 
-	public static $updateOnTick;
+	public static $updateOnTick, $allowedAI;
 	public $isCollidable;
 	public $canBeAttacked;
 	public $moveTime, $lookTime, $idleTime;
