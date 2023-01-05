@@ -34,6 +34,7 @@ class TaskLookAtPlayer extends TaskBase{
 		$this->target = $this->findTarget($ai->entity, 6); //TODO max distance for different mobs
 		if(!($this->target instanceof Entity) || !$this->target->isPlayer()){
 			$this->reset();
+			$this->onEnd($ai);
 			return;
 		}
 		$this->yaw = $ai->entity->yaw;
@@ -44,12 +45,13 @@ class TaskLookAtPlayer extends TaskBase{
 	public function onUpdate(EntityAI $ai){
 		if(!($this->target instanceof Entity) || Utils::distance($ai->entity, $this->target) > 6 || $this->target->level->getName() != $ai->entity->level->getName()){ //TODO max distance for different mobs
 			$this->reset();
+			$this->onEnd($ai);
 			return;
 		}
 		$ai->mobController->lookOn($this->target);
 		$this->selfCounter--;
 	}
-
+	
 	public function onEnd(EntityAI $ai){
 		unset($this->target);
 		$ai->entity->pitch = 0;

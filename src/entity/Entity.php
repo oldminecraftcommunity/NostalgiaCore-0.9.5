@@ -5,7 +5,9 @@ class Entity extends Position
 
 	const TYPE = - 1;
 	const CLASS_TYPE = - 1;
-
+	
+	public $counter = 0;
+	
 	public static $updateOnTick, $allowedAI;
 	public $isCollidable;
 	public $canBeAttacked;
@@ -487,7 +489,6 @@ class Entity extends Position
 			return;
 		}
 		$tdiff = $now - $this->lastUpdate;
-
 		if($this->tickCounter === 0){
 			$this->tickCounter = 1;
 			$hasUpdate = $this->environmentUpdate();
@@ -499,7 +500,7 @@ class Entity extends Position
 		if($this->closed === true){
 			return false;
 		}
-
+		++$this->counter;
 		if($this->isStatic === false){
 			$startX = floor($this->x - 0.5 - $this->width - 1);
 			// prefix for flying when player on fence
@@ -510,6 +511,7 @@ class Entity extends Position
 			$endZ = ceil($this->z - 0.5 + $this->width + 1);
 			$support = false;
 			$isFlying = true;
+			
 			if($this->isPlayer()){
 				for($z = $startZ; $z <= $endZ; ++ $z){
 					for($x = $startX; $x <= $endX; ++ $x){
@@ -569,9 +571,9 @@ class Entity extends Position
 					$y1 = $y1 > 128 ? 128 : $y1;
 					$z1 = $z1 > 256 ? 256 : $z1;
 					$waterDone = false;
-					for($x = $x0; $x < $x1; ++ $x){
+					for($x = $x0 - 1; $x < $x1 + 1; ++ $x){
 						for($y = $y0; $y < $y1; ++ $y){
-							for($z = $z0; $z < $z1; ++ $z){
+							for($z = $z0 - 1; $z < $z1 + 1; ++ $z){
 								$pos = new Vector3($x, $y, $z);
 								$b = $this->level->getBlock($pos);
 								switch($b->getID()) {
@@ -623,7 +625,7 @@ class Entity extends Position
 										}
 										break;
 								}
-								if($b != false && $b->boundingBox->intersectsWith($aABB) && $b->isSolid && $this->isMoving()){
+								if($this->isMoving() && $b != false && $b->isSolid && $b->boundingBox->intersectsWith($aABB)){
 									$this->speedX = $b->boundingBox->calculateXOffset($this->boundingBox, $this->speedX);
 									$this->speedZ = $b->boundingBox->calculateZOffset($this->boundingBox, $this->speedZ);
 									$lastY = $this->speedY;
@@ -721,9 +723,9 @@ class Entity extends Position
 					// $this->speedZ = 0;
 					$this->server->api->handle("entity.move", $this);
 					$update = true;
-				}elseif($this->lastYaw != $this->yaw || $this->lastPitch != $this->pitch){
-			$update = true;
-		}
+				}elseif ($this->lastYaw != $this->yaw || $this->lastPitch != $this->pitch) {
+					$update = true;
+				}
 
 				if($update === true){
 					$hasUpdate = true;

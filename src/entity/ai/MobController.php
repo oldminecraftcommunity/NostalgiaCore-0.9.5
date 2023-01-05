@@ -34,7 +34,7 @@ class MobController
 		$dz = $d->z;
 		
 		$tan = $dz == 0 ? ($dx < 0 ? 180 : 0) : (90 - rad2deg($dx / $dz)); 
-		$thetaOffset = $dz < 0 ? 90 : 270;
+		$thetaOffset = $dz <= 0 ? 90 : 270;
 		$this->entity->yaw = $this->entity->headYaw = ($thetaOffset + $tan);
 	}
 	

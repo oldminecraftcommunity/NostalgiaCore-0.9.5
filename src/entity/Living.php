@@ -42,4 +42,11 @@ abstract class Living extends Entity implements Damageable, Pathfindable{
 		parent::update();
 	}
 	
+	public function sendMoveUpdate(){
+		if($this->counter % 3 != 0){
+			return;
+		}
+		parent::sendMoveUpdate();
+		
+	}
 }
