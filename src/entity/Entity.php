@@ -1368,7 +1368,7 @@ class Entity extends Position
 	public function moveEntityWithOffset($oX, $oY, $oZ)
 	{
 		$oX = $oX === 0 ? $this->speedX : $this->getSpeedModifer() * $oX * $this->getSpeed();
-		$oY = $oY === 0 ? $this->speedY : $this->getSpeedModifer() * $oY * $this->getSpeed();
+		$oY = $oY <= 0 ? $this->speedY : (0.5);
 		$oZ = $oZ === 0 ? $this->speedZ : $this->getSpeedModifer() * $oZ * $this->getSpeed();
 		$this->setVelocity($oX, $oY, $oZ);
 	}

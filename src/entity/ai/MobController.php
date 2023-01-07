@@ -33,14 +33,14 @@ class MobController
 		$dx = $d->x;
 		$dz = $d->z;
 		
-		$tan = $dz == 0 ? ($dx < 0 ? 180 : 0) : (90 - rad2deg($dx / $dz)); 
-		$thetaOffset = $dz <= 0 ? 90 : 270;
+		$tan = $dz == 0 ? ($dx < 0 ? 180 : 0) : (90 - rad2deg(atan($dx / $dz))); 
+		$thetaOffset = $dz < 0 ? 90 : 270;
 		$this->entity->yaw = $this->entity->headYaw = ($thetaOffset + $tan);
 	}
 	
 	public function lookOffset($x, $y, $z, $pitch = true){
 		$tan = $z == 0 ? ($x < 0 ? 180 : 0) : (90 - rad2deg(atan($x / $z))); /*arctan(infinity) = pi/2 = (90deg) - 90 = 0*/
-		$thetaOffset = $z <= 0 ? 90 : 270;
+		$thetaOffset = $z < 0 ? 90 : 270;
 		$calcYaw = $tan + $thetaOffset;
 		$this->entity->headYaw = $calcYaw;
 		if($pitch){

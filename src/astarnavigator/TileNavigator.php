@@ -58,10 +58,10 @@ class TileNavigator implements ITileNavigator
 				}
 				
 				$visited[(string)$neighbor] = $neighbor;
-				if ($this->blockedProvider->isBlocked($neighbor))
-				{
-					continue;
-				}
+				//if ($this->blockedProvider->isBlocked($neighbor)) shouldnt be neccessary now
+				//{
+				//	continue;
+				//}
 				$distbetweenCost = $this->distanceAlgorithm->calculate($current, $neighbor);
 				$tentativeG = $gScore[(string) $current] + $distbetweenCost;
 				$tentativeF = $distbetweenCost + $this->heuristicAlgorithm->calculate($neighbor, $to);
