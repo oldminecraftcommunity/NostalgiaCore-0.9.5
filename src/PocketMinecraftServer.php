@@ -651,8 +651,7 @@ class PocketMinecraftServer{
 			$dump .= "$line\r\n";
 		}
 		$dump .= "\r\n\r\n";
-		$version = new VersionString();
-		$dump .= "NostalgiaCore version: " . $version . " #" . $version->getNumber() . " [Protocol " . ProtocolInfo::CURRENT_PROTOCOL . "; API " . CURRENT_API_VERSION . "]\r\n";
+		$dump .= "NostalgiaCore version: " . MAJOR_VERSION . " [Protocol " . ProtocolInfo::CURRENT_PROTOCOL . "; API " . CURRENT_API_VERSION . "]\r\n";
 		$dump .= "Git commit: " . GIT_COMMIT . "\r\n";
 		$dump .= "Source SHA1 sum: " . SOURCE_SHA1SUM . "\r\n";
 		$dump .= "uname -a: " . php_uname("a") . "\r\n";
