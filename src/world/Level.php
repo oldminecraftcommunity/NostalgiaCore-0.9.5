@@ -271,7 +271,6 @@ class Level{
 				$e->update();
 			}
 		}
-		
 		if(Entity::$updateOnTick && $server->ticks % 40 === 0){ //40 ticks delay
 			$this->mobSpawner->handle();
 		}

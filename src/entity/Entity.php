@@ -570,9 +570,9 @@ class Entity extends Position
 					$y1 = $y1 > 128 ? 128 : $y1;
 					$z1 = $z1 > 256 ? 256 : $z1;
 					$waterDone = false;
-					for($x = $x0 - 1; $x < $x1 + 1; ++ $x){
-						for($y = $y0; $y < $y1; ++ $y){
-							for($z = $z0 - 1; $z < $z1 + 1; ++ $z){
+					for($x = $x0; $x < $x1; ++$x){
+						for($y = $y0; $y < $y1; ++$y){
+							for($z = $z0; $z < $z1; ++$z){
 								$pos = new Vector3($x, $y, $z);
 								$b = $this->level->getBlock($pos);
 								switch($b->getID()) {
@@ -637,37 +637,9 @@ class Entity extends Position
 						}
 					}
 					
+					
 				}
-				if(!$support){
-					for($z = $startZ; $z <= $endZ; ++ $z){
-						for($x = $startX; $x <= $endX; ++ $x){
-							$v = new Vector3($x, $y, $z);
-							$v1 = new Vector3($x, $yC, $z);
-							if($this->isSupport($v, $this->width)){
-								$b = $this->level->getBlock($v);
-								if($b->isSolid === true){
-									$support = true;
-									$isFlying = false;
-									break;
-								} elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
-									$isFlying = false;
-								}
-							} elseif($this->isSupport($v1, $this->width)){
-								$b = $this->level->getBlock($v1);
-								if($b->isSolid === true){
-									$support = true;
-									$isFlying = false;
-									break;
-								} elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
-									$isFlying = false;
-								}
-							}
-						}
-						if($support === true){
-							break;
-						}
-					}
-				}
+
 				if($this->speedX != 0){
 					$this->x += $this->speedX;
 					$this->speedX -= $this->speedX * $drag;
@@ -1524,7 +1496,7 @@ class Entity extends Position
 		if($this->speedY > 0.40000000596046448){
 			$this->speedY = 0.40000000596046448;
 		}
-		$this->speedY /= 2;
+		//$this->speedY /= 2;
 	}
 
 	public function getHealth()
