@@ -17,6 +17,7 @@ class EntityAPI{
 		$this->server->api->console->register("summon", "<mob>", [$this, "commandHandler"]);
 		$this->server->api->console->register("spawnmob", "<mob>", [$this, "commandHandler"]);
 		$this->server->api->console->register("despawn", "", [$this, "CommandHandler"]);
+		$this->server->api->console->register("entcnt", "", [$this, "CommandHandler"]);
 	}
 	
 	
@@ -35,6 +36,8 @@ class EntityAPI{
 		];
 		$output = "";
 		switch($cmd){
+			case "entcnt":
+				return "Total amount of entities: ". count($this->entities);
 			case "summon":
 			case "spawnmob":
 				if(!($issuer instanceof Player)){
