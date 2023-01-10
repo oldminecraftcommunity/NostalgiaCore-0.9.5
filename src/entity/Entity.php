@@ -95,7 +95,7 @@ class Entity extends Position
 		$this->health = 20;
 		$this->hasGravity = false;
 		$this->dmgcounter = array(0, 0, 0);
-		$this->air = 300;
+		$this->air = 200;
 		$this->fire = 0;
 		$this->crouched = false;
 		$this->invincible = false;
@@ -377,7 +377,7 @@ class Entity extends Position
 
 		if($this->dead === true){
 			$this->fire = 0;
-			$this->air = 300;
+			$this->air = 200;
 			return false;
 		}
 		if($this->isInVoid()){
@@ -421,10 +421,11 @@ class Entity extends Position
 									$this->fire = 0;
 									$this->updateMetadata();
 								}
-								if($this->air <= 0){
+								if($this->air <= 0 && !$waterDone){
 									$this->harm(2, "water");
 									$hasUpdate = true;
-								} elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and ! $waterDone){
+									$waterDone = true;
+								} elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1 - (($b->getMetadata() % 8) / 9)) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and ! $waterDone){
 									$this->air -= 1;
 									$waterDone = true;
 									$this->updateMetadata();
@@ -459,7 +460,7 @@ class Entity extends Position
 									$this->harm(1, "suffocation"); // Suffocation
 									$hasUpdate = true;
 								} elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1)){
-									$this->air = 300; // Breathing
+									$this->air = 200; // Breathing
 								}
 								break;
 						}
@@ -582,10 +583,12 @@ class Entity extends Position
 											$this->fire = 0;
 											$this->updateMetadata();
 										}
-										if($this->air <= 0){
+										console($x.":".$endX.":".$y.":".$y1.":".$z.":".$endZ);
+										if($this->air <= 0 and !$waterDone){
 											$this->harm(2, "water");
+											$waterDone = true;
 											$hasUpdate = true;
-										} elseif($x == ($endX - 1) and $y == $y1 and $z == ($endZ - 1) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and ! $waterDone){
+										} elseif($x == ($endX - 2) and $y == ($y1 - 1) and $z == ($endZ - 2) and ($this->class === ENTITY_MOB) and !$waterDone){ //TODO aabb
 											$this->air -= 1;
 											$waterDone = true;
 											$this->updateMetadata();
@@ -616,11 +619,11 @@ class Entity extends Position
 										}
 										break;
 									default:
-										if($this->inBlock($pos, 0.7) and $y == $y1 and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)){
+										if($this->inBlock($pos, $this->radius) and $y == ($y1 - 1) and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)){
 											$this->harm(1, "suffocation"); // Suffocation
 											$hasUpdate = true;
 										} elseif($x == ($endX - 1) and $y == $y1 and $z == ($endZ - 1)){
-											$this->air = 300; // Breathing
+											$this->air = 200; // Breathing
 										}
 										break;
 								}
@@ -1439,7 +1442,7 @@ class Entity extends Position
 	
 	public function makeDead($cause){
 		$this->spawnDrops();
-		$this->air = 300;
+		$this->air = 200;
 		$this->fire = 0;
 		$this->crouched = false;
 		$this->fallY = false;
