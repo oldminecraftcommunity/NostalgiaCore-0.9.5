@@ -1,8 +1,10 @@
 <?php
 
 abstract class Living extends Entity implements Damageable, Pathfindable{
-	public $target, $ai;
 	
+	public static $despawnMobs, $despawnTimer;
+	
+	public $target, $ai;
 	public $pathFinder, $path = null, $currentIndex = 0, $currentNode, $pathFollower;
 	public function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		$this->target = false;
@@ -13,7 +15,7 @@ abstract class Living extends Entity implements Damageable, Pathfindable{
 		$this->canBeAttacked = true;
 		$this->hasGravity = true;
 		$this->hasKnockback = true;
-		$this->server->schedule(18000, [$this, "close"]); //900*20
+		if(self::$despawnMobs) $this->server->schedule(self::$despawnTimer, [$this, "close"]); //900*20
 	}
 	
 	public function hasPath(){

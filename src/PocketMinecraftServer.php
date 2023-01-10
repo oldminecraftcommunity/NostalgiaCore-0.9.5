@@ -81,8 +81,13 @@ class PocketMinecraftServer{
 			"discord-msg" => false,
 			"discord-ru-smiles" => false,
 			"discord-webhook-url" => "none",
-			"discord-bot-name" => "NostalgiaCore Logger"
+			"discord-bot-name" => "NostalgiaCore Logger",
+			"despawn-mobs" => true, 
+			"mob-despawn-ticks" => 18000,
+			
 		]);
+		Living::$despawnMobs = $this->extraprops->get("despawn-mobs");
+		Living::$despawnTimer = $this->extraprops->get("mob-despawn-ticks");
 		Entity::$allowedAI = $this->extraprops->get("enable-mob-ai");
 		Entity::$updateOnTick = $this->extraprops->get("experemental-mob-features");
 		if(Entity::$updateOnTick){
