@@ -583,7 +583,6 @@ class Entity extends Position
 											$this->fire = 0;
 											$this->updateMetadata();
 										}
-										console($x.":".$endX.":".$y.":".$y1.":".$z.":".$endZ);
 										if($this->air <= 0 and !$waterDone){
 											$this->harm(2, "water");
 											$waterDone = true;
