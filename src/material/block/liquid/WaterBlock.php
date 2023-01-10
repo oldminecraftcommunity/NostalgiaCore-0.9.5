@@ -76,18 +76,18 @@ class WaterBlock extends LiquidBlock{
 		//Has Source or Its Source
 		if($from !== null || $level == 0x00){
 			if($down instanceof AirBlock || $down instanceof WaterBlock){
-				$this->level->setBlock($down, new WaterBlock(0x00), false, false, true);
-				ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($down, 0, 0, $this->level), 5, BLOCK_UPDATE_NORMAL);
+				$this->level->setBlock($down, new WaterBlock(1), false, false, true); //TODO fix somehow
+				ServerAPI::request()->api->block->scheduleBlockUpdate($down, 5, BLOCK_UPDATE_NORMAL);
 			}elseif($level !== 0x07){{
 				for($side = 2; $side <= 5; ++$side){
 					$b = $this->getSide($side);
 					if($b instanceof WaterBlock){
-						if( $this->getSourceCount() >= 2 && $level != 0x00){
-							$this->level->setBlock($this, new WaterBlock(0), false, false, true);
+						if($this->getSourceCount() >= 2 && $level != 0x00){
+							$this->level->setBlock($this, new WaterBlock(1), false, false, true); //TODO fix somehow
 						}
 					}elseif($b->isFlowable === true){
 						$this->level->setBlock($b, new WaterBlock($level + 1), false, false, true);
-						ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 5, BLOCK_UPDATE_NORMAL);
+						ServerAPI::request()->api->block->scheduleBlockUpdate($b, 5, BLOCK_UPDATE_NORMAL);
 					}
 				}
 			}
@@ -99,10 +99,7 @@ class WaterBlock extends LiquidBlock{
 				if($sb instanceof WaterBlock){
 					$tlevel = $sb->meta & 0x07;
 					if($tlevel != 0x00){
-						for ($s = 0; $s <= 5; $s++) {
-							$ssb = $sb->getSide($s);
-							ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($ssb, 0, 0, $this->level), 5, BLOCK_UPDATE_NORMAL);
-						}
+						ServerAPI::request()->api->block->blockUpdateAround($sb, BLOCK_UPDATE_NORMAL, 5);
 						$this->level->setBlock($sb, new AirBlock(), false, false, true);
 					}
 				}
@@ -110,14 +107,10 @@ class WaterBlock extends LiquidBlock{
 				if($b instanceof WaterBlock){
 					$tlevel = $b->meta & 0x07;
 					if($tlevel != 0x00){
-						for ($s = 0; $s <= 5; $s++) {
-							$ssb = $sb->getSide($s);
-							ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($ssb, 0, 0, $this->level), 5, BLOCK_UPDATE_NORMAL);
-						}
+						ServerAPI::request()->api->block->blockUpdateAround($b, BLOCK_UPDATE_NORMAL, 5);
 						$this->level->setBlock($b, new AirBlock(), false, false, true);
 					}
 				}
-				//ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 10, BLOCK_UPDATE_NORMAL);
 			}
 			$this->level->setBlock($this, new AirBlock(), false, false, true);
 		}

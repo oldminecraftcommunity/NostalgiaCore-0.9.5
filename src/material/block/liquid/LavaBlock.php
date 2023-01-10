@@ -77,7 +77,7 @@ class LavaBlock extends LiquidBlock implements LightingBlock{
 		if($from !== null || $level == 0x00){
 			if($down instanceof AirBlock || $down instanceof LavaBlock){
 				$this->level->setBlock($down, new LavaBlock(0x01), false, false, true);
-				ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($down, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
+				ServerAPI::request()->api->block->scheduleBlockUpdate($down, 40, BLOCK_UPDATE_NORMAL);
 			}elseif($level !== 0x06){
 				for($side = 2; $side <= 5; ++$side){
 					$b = $this->getSide($side);
@@ -85,7 +85,7 @@ class LavaBlock extends LiquidBlock implements LightingBlock{
 						
 					}elseif($b->isFlowable === true){
 						$this->level->setBlock($b, new LavaBlock( min($level + 2,6) ), false, false, true);
-						ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($b, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
+						ServerAPI::request()->api->block->scheduleBlockUpdate($b, 40, BLOCK_UPDATE_NORMAL);
 					}
 				}
 			}
@@ -97,8 +97,8 @@ class LavaBlock extends LiquidBlock implements LightingBlock{
 					$tlevel = $sb->meta & 0x06;
 					if($tlevel != 0x00){
 						for ($s = 0; $s <= 5; $s++) {
-									$ssb = $sb->getSide($s);
-									ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($ssb, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
+							$ssb = $sb->getSide($s);
+							ServerAPI::request()->api->block->scheduleBlockUpdate($ssb, 40, BLOCK_UPDATE_NORMAL);
 						}
 						$this->level->setBlock($sb, new AirBlock(), false, false, true);
 					}
@@ -107,10 +107,10 @@ class LavaBlock extends LiquidBlock implements LightingBlock{
 				if($b instanceof LavaBlock){
 					$tlevel = $b->meta & 0x06;
 					if($tlevel != 0x00){
-							  	for ($s = 0; $s <= 5; $s++) {
-							  		$ssb = $sb->getSide($s);
-									ServerAPI::request()->api->block->scheduleBlockUpdate(new Position($ssb, 0, 0, $this->level), 40, BLOCK_UPDATE_NORMAL);
-			  					}
+						for ($s = 0; $s <= 5; $s++) {
+							$ssb = $sb->getSide($s);
+							ServerAPI::request()->api->block->scheduleBlockUpdate($ssb, 40, BLOCK_UPDATE_NORMAL);
+			  			}
 						$this->level->setBlock($b, new AirBlock(), false, false, true);
 					}
 				}
