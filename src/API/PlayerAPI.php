@@ -18,14 +18,20 @@ class PlayerAPI{
 		$this->registerCmd("spawnpoint", "[player] [x] [y] [z]");
 		$this->registerCmd("spawn");
 		$this->registerCmd("ping");
+		$this->registerCmd("loc");
+
 		$this->server->api->console->alias("lag", "ping");
-				$this->server->api->console->alias("gm", "gamemode");
+		$this->server->api->console->alias("gm", "gamemode");
 		$this->server->api->console->alias("who", "list");
 		$this->server->api->console->alias("suicide", "kill");
 		$this->server->api->console->alias("tppos", "tp");
+		$this->server->api->console->alias("xyz", "loc");
+		$this->server->api->console->alias("coords", "loc");
+
 		$this->server->api->console->cmdWhitelist("list");
 		$this->server->api->console->cmdWhitelist("ping");
 		$this->server->api->console->cmdWhitelist("spawn");
+		$this->server->api->console->cmdWhitelist("loc");
 		$this->server->preparedSQL->selectPlayersToHeal = $this->server->database->prepare("SELECT EID FROM entities WHERE class = " . ENTITY_PLAYER . " AND health < 20;");
 	}
 
@@ -109,7 +115,7 @@ class PlayerAPI{
 		switch($cmd){
 			case "spawnpoint":
 				if(!($issuer instanceof Player)){
-					$output .= "Please run this command in-game.\n";
+					$output .= "Please run this command in-game.";
 					break;
 				}
 
@@ -120,7 +126,7 @@ class PlayerAPI{
 				}
 
 				if(!($target instanceof Player)){
-					$output .= "That player cannot be found.\n";
+					$output .= "That player cannot be found.";
 					break;
 				}
 
@@ -135,14 +141,14 @@ class PlayerAPI{
 				break;
 			case "spawn":
 				if(!($issuer instanceof Player)){
-					$output .= "Please run this command in-game.\n";
+					$output .= "Please run this command in-game.";
 					break;
 				}
 				$issuer->teleport($this->server->spawn);
 				break;
 			case "ping":
 				if(!($issuer instanceof Player)){
-					$output .= "Please run this command in-game.\n";
+					$output .= "Please run this command in-game.";
 					break;
 				}
 				$output .= "ping " . round($issuer->getLag(), 2) . "ms, packet loss " . round($issuer->getPacketLoss() * 100, 2) . "%, " . round($issuer->getBandwidth() / 1024, 2) . " KB/s\n";
@@ -253,6 +259,17 @@ class PlayerAPI{
 					$output .= $c->username . ", ";
 				}
 				$output = substr($output, 0, -2) . "\n";
+				break;
+			case "loc":
+				if(!($issuer instanceof Player)) return "Please run this command in-game.";
+				$x = round($issuer->entity->x, 1, PHP_ROUND_HALF_UP);
+				$y = round($issuer->entity->y, 1, PHP_ROUND_HALF_UP);
+				$z = round($issuer->entity->z, 1, PHP_ROUND_HALF_UP);
+				$level = $issuer->entity->level->getName();
+				$compass = [0 => "X+", 1 => "Z+", 2 => "X-", 3 => "Z-", null => "null"];
+				$direction = $compass[$issuer->entity->getDirection()];
+				$output .= "Your coordinates: X: $x, Y: $y, Z: $z, world: $level.\n";
+				$output .= "Direction: $direction";
 				break;
 		}
 		return $output;

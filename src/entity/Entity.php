@@ -860,13 +860,13 @@ class Entity extends Position
 			$rotation += 360.0;
 		}
 		if((0 <= $rotation and $rotation < 45) or (315 <= $rotation and $rotation < 360)){
-			return 2; // North
+			return 2; //x-
 		} elseif(45 <= $rotation and $rotation < 135){
-			return 3; // East
+			return 3; //z-
 		} elseif(135 <= $rotation and $rotation < 225){
-			return 0; // South
+			return 0; //x+
 		} elseif(225 <= $rotation and $rotation < 315){
-			return 1; // West
+			return 1; //z+
 		} else{
 			return null;
 		}
