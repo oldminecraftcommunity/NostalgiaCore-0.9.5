@@ -1742,11 +1742,11 @@ class Player{
 						$packet->slots[$i] = 255;
 					}elseif($s->getID() !== AIR and $slot->getID() === AIR and ($sl = $this->hasItem($s->getID())) !== false){
 						$this->armor[$i] = $this->getSlot($sl);
-						$this->setSlot($sl, BlockAPI::getItem(AIR, 0, 0), false);
+						$this->setSlot($sl, BlockAPI::getItem(AIR, 0, 0), true);
 					}elseif($s->getID() !== AIR and $slot->getID() !== AIR and ($slot->getID() !== $s->getID() or $slot->getMetadata() !== $s->getMetadata()) and ($sl = $this->hasItem($s->getID())) !== false){
 						$item = $this->armor[$i];
 						$this->armor[$i] = $this->getSlot($sl);
-						$this->setSlot($sl, $item, false);
+						$this->setSlot($sl, $item, true);
 					}else{
 						$packet->slots[$i] = 255;
 					}
@@ -1851,7 +1851,7 @@ class Player{
 							$this->entity->heal($items[$slot->getID()], "eating");
 							--$slot->count;
 							if($slot->count <= 0){
-								$this->setSlot($this->slot, BlockAPI::getItem(AIR, 0, 0), false);
+								$this->setSlot($this->slot, BlockAPI::getItem(AIR, 0, 0), true);
 							}
 							if($slot->getID() === MUSHROOM_STEW or $slot->getID() === BEETROOT_SOUP){
 								$this->addItem(BOWL, 0, 1, false);
@@ -1885,7 +1885,7 @@ class Player{
 					$sZ += sin($f3) * $f1;
 					
 					$this->server->api->entity->dropRawPos(new Position($this->entity->x, $this->entity->y - 0.3 + $this->entity->height - 0.12, $this->entity->z, $this->level), $packet->item, $sX, $sY, $sZ);
-					$this->setSlot($this->slot, BlockAPI::getItem(AIR, 0, 0), false);
+					$this->setSlot($this->slot, BlockAPI::getItem(AIR, 0, 0), true);
 				}
 				if($this->entity->inAction === true){
 					$this->entity->inAction = false;
@@ -2250,15 +2250,15 @@ class Player{
 				$s = $this->getSlot($slot);
 				$s->count -= $item->count;
 				if($s->count <= 0){
-					$this->setSlot($slot, BlockAPI::getItem(AIR, 0, 0), false);
+					$this->setSlot($slot, BlockAPI::getItem(AIR, 0, 0), true);
 				}
 			}
 			foreach($craft as $slot => $item){
 				$s = $this->getSlot($slot);
 				if($s->count <= 0 or $s->getID() === AIR){
-					$this->setSlot($slot, BlockAPI::getItem($item->getID(), $item->getMetadata(), $item->count), false);
+					$this->setSlot($slot, BlockAPI::getItem($item->getID(), $item->getMetadata(), $item->count), true);
 				}else{
-					$this->setSlot($slot, BlockAPI::getItem($item->getID(), $item->getMetadata(), $s->count + $item->count), false);
+					$this->setSlot($slot, BlockAPI::getItem($item->getID(), $item->getMetadata(), $s->count + $item->count), true);
 				}
 				switch($item->getID()){
 					case WORKBENCH:

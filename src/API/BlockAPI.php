@@ -395,8 +395,11 @@ class BlockAPI{
 			if($target->onBreak($item, $player) === false){
 				return $this->cancelAction($target, $player, false);
 			}
-			if(($player->gamemode & 0x01) === 0 and $item->useOn($target) and $item->getMetadata() >= $item->getMaxDurability()){
-				$player->setSlot($player->slot, new Item(AIR, 0, 0), false);
+			$itemUse = $item->useOn($target);
+			if(($player->gamemode & 0x01) === 0 and $itemUse and $item->getMetadata() >= $item->getMaxDurability()){
+				$player->setSlot($player->slot, new Item(AIR, 0, 0), true);
+			}elseif($itemUse){
+				$player->setSlot($player->slot, $item, true); //update slot meta TODO less packet sending?
 			}
 		}else{
 			return $this->cancelAction($target, $player, false);
@@ -466,7 +469,7 @@ class BlockAPI{
 
 		if($item->isActivable === true and $item->onActivate($player->level, $player, $block, $target, $face, $fx, $fy, $fz) === true){
 			if($item->count <= 0){
-				$player->setSlot($player->slot, BlockAPI::getItem(AIR, 0, 0), false);
+				$player->setSlot($player->slot, BlockAPI::getItem(AIR, 0, 0), true);
 			}
 			return false;
 		}
@@ -508,7 +511,7 @@ class BlockAPI{
 		if(($player->gamemode & 0x01) === 0x00){
 			--$item->count;
 			if($item->count <= 0){
-				$player->setSlot($player->slot, BlockAPI::getItem(AIR, 0, 0), false);
+				$player->setSlot($player->slot, BlockAPI::getItem(AIR, 0, 0), true);
 			}
 		}
 
