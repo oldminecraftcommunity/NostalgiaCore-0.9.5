@@ -1,6 +1,7 @@
 <?php
 
 class MobSpawner{
+	public static $spawnAnimals = false, $spawnMobs = false;
 	private $server;
 	public $level;
 	const MOB_LIMIT = 50; //constant for now
@@ -11,10 +12,8 @@ class MobSpawner{
 
 	public function countEntities(){
 		$ents = 0;
-		foreach($this->level->entityList as $e){ //TODO no for loop
-			if(!$e->isPlayer() && $e->class === ENTITY_MOB){
-				++$ents;
-			}
+		foreach($this->level->entityList as $e){
+			if(!$e->isPlayer() && $e->class === ENTITY_MOB) ++$ents;
 		}
 		return $ents;
 	}
@@ -28,12 +27,10 @@ class MobSpawner{
 
 	public function spawnMobs(){
 		
-		$t = $this->level->getTime();
-		if($this->server->api->getProperty("spawn-animals") && $t <= 9500){ //Animal
+		if(self::$spawnAnimals && $this->level->isDay()){ //Animal
 			$type = mt_rand(10, 13);
 			$baby = false; //TODO baby
-		}else
-		if($this->server->api->getProperty("spawn-mobs") && $t >= 10000){ //Monster
+		}elseif(self::$spawnMobs && $this->level->isNight()){ //Monster
 			$type = mt_rand(32, 35);
 			$baby = 2;
 		}else{
@@ -47,7 +44,9 @@ class MobSpawner{
 		}
 		$data = $this->genPosData($x, $y + 1, $z);
 		if($baby != 2) $data["IsBaby"] = $baby;
+		
 		$e = $this->server->api->entity->add($this->level, 2, $type, $data);
+		
 		if($e instanceof Entity){
 			$this->server->api->entity->spawnToAll($e);
 			//console("[DEBUG] $type spawned at $x, $y, $z");

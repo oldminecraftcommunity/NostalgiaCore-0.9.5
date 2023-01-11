@@ -197,10 +197,13 @@ class Entity extends Position
 		$this->speedY += $vY;
 		$this->speedZ += $vZ;
 	}
-
+	public function isMovingHorizontally()
+	{
+		return ($this->speedX > 0.01 || $this->speedX < - 0.01) || ($this->speedZ > 0.01 || $this->speedZ < - 0.01);
+	}
 	public function isMoving()
 	{
-		return ($this->speedX > 0.01 || $this->speedX < - 0.01) || ($this->speedY > 0.007 || $this->speedY < - 0.007) || ($this->speedZ > 0.01 || $this->speedZ < - 0.01);
+		return  $this->isMovingHorizontally() || ($this->speedY > 0.007 || $this->speedY < - 0.007);
 	}
 
 	public function setVelocity($vX, $vY = 0, $vZ = 0)
@@ -756,14 +759,6 @@ class Entity extends Position
 			$this->updateMovement();
 		}
 		
-		if($this->headYaw != $this->lastHeadYaw) {
-			$this->lastHeadYaw = $this->headYaw;
-			$pk = new RotateHeadPacket();
-			$pk->eid = $this->eid;
-			$pk->yaw = $this->headYaw;
-			$this->server->api->player->broadcastPacket($this->level->players, $pk);
-		}
-		
 		$this->needsUpdate = $hasUpdate;
 		$this->lastUpdate = $now;
 	}
@@ -774,13 +769,13 @@ class Entity extends Position
 			return false;
 		}
 		$now = microtime(true);
-		if($this->isStatic === false and ($this->last[0] != $this->x or $this->last[1] != $this->y or $this->last[2] != $this->z or $this->last[3] != $this->yaw or $this->last[4] != $this->pitch)){
+		if($this->isStatic === false and ($this->lastX != $this->x or $this->lastY != $this->y or $this->lastZ != $this->z or $this->lastYaw != $this->yaw or $this->lastPitch != $this->pitch or $this->lastHeadYaw != $this->headYaw)){
 			if($this->class === ENTITY_PLAYER or ($this->last[5] + 8) < $now){
 				if($this->server->api->handle("entity.move", $this) === false){
 					if($this->class === ENTITY_PLAYER){
 						$this->player->teleport(new Vector3($this->last[0], $this->last[1], $this->last[2]), $this->last[3], $this->last[4]);
 					} else{
-						$this->setPosition($this->last[0], $this->last[1], $this->last[2], $this->last[3], $this->last[4]);
+						//TODO fix $this->setPosition($this->last[0], $this->last[1], $this->last[2], $this->last[3], $this->last[4]);
 					}
 				} else{
 					$this->updateLast();
@@ -797,6 +792,7 @@ class Entity extends Position
 						$pk->bodyYaw = $this->yaw;
 						$this->server->api->player->broadcastPacket($players, $pk);
 					} else{
+						
 						$pk = new MoveEntityPacket_PosRot();
 						$pk->eid = $this->eid;
 						$pk->x = $this->x;
@@ -814,6 +810,8 @@ class Entity extends Position
 				}
 				$this->updateLast();
 			}
+			
+			
 		}
 
 		$this->lastUpdate = $now;

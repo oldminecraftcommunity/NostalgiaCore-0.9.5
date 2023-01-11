@@ -134,7 +134,8 @@ class ServerAPI{
 		if(ADVANCED_CACHE == true){
 			console("[INFO] Advanced cache enabled");
 		}
-
+		MobSpawner::$spawnAnimals = $this->getProperty("spawn-animals");
+		MobSpawner::$spawnMobs = $this->getProperty("spawn-mobs");
 		if($this->getProperty("upnp-forwarding") == true){
 			console("[INFO] [UPnP] Trying to port forward...");
 			UPnP_PortForward($this->getProperty("server-port"));

@@ -42,7 +42,7 @@ class Utils{
 	public static function wrapAngleTo180_float($par0)
 	{
 		$par0 %= 360.0;
-		return $par0 >= 180 ? $par0 - 360 : ($par0 + 360);
+		return $par0 >= 180 ? $par0 - 360 : (($par0 < -180) ? ($par0 + 360) : $par0);
 	}
 	
 	public static function getSign($v){

@@ -81,6 +81,13 @@ class Level{
 		unset($this->mobSpawner->level);
 	}
 	
+	public function isDay(){
+		return $this->getTime() % 19200 < TimeAPI::$phases["sunset"];
+	}
+	public function isNight(){
+		$t = $this->getTime() % 19200;
+		return $t < TimeAPI::$phases["sunrise"] && $t > TimeAPI::$phases["sunset"];
+	}
 	public function save($force = false, $extra = true){
 		if(!isset($this->level)){
 			return false;
