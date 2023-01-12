@@ -21,7 +21,12 @@ class PMF{
 
 	public function create($file, $type, $version = PMF_CURRENT_VERSION){
 		$this->file = $file;
-		@mkdir(dirname($this->file), 0755, true);
+		$dirname = dirname($this->file);
+		if(!is_dir($dirname)){
+			@mkdir($dirname, 0755, true);
+		}
+		
+		
 		if(!is_resource($this->fp)){
 			if(($this->fp = @fopen($file, "c+b")) === false){
 				return false;
