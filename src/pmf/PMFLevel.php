@@ -38,7 +38,11 @@ class PMFLevel extends PMF{
 		$this->saveData(false);
 		$this->locationTable = [];
 		$cnt = pow($this->levelData["width"], 2);
-		@mkdir(dirname($this->file) . "/chunks/", 0755);
+		$dirname = dirname($this->file) . "/chunks/";
+		if(!is_dir($dirname)){
+			@mkdir($dirname , 0755);
+		}
+		
 		for($index = 0; $index < $cnt; ++$index){
 			$this->chunks[$index] = false;
 			$this->chunkChange[$index] = false;
