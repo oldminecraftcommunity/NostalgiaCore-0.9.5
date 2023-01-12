@@ -460,7 +460,7 @@ class PlayerAPI{
 	public function getByEID($eid){
 		$eid = (int) $eid;
 		$CID = $this->server->query("SELECT ip,port FROM players WHERE EID = '" . $eid . "';", true);
-		$CID = PocketMinecraftServer::clientID($CID["ip"], $CID["port"]);
+		$CID = is_array($CID) ? PocketMinecraftServer::clientID($CID["ip"], $CID["port"]) : false;
 		if(isset($this->server->clients[$CID])){
 			return $this->server->clients[$CID];
 		}
