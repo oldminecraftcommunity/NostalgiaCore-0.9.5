@@ -30,15 +30,17 @@ class MobSpawner{
 		if(self::$spawnAnimals && $this->level->isDay()){ //Animal
 			$type = mt_rand(10, 13);
 			$baby = false; //TODO baby
+			$grassOnly = true;
 		}elseif(self::$spawnMobs && $this->level->isNight()){ //Monster
 			$type = mt_rand(32, 35);
+			$grassOnly = false;
 			$baby = 2;
 		}else{
 			return false;
 		}
 		$x = mt_rand(0,255);
 		$z = mt_rand(0,255);
-		$y = $this->getSafeY($x, $z);
+		$y = $this->getSafeY($x, $z, $grassOnly);
 		if(!$y || $y < 0){
 			return false;
 		}
@@ -62,13 +64,17 @@ class MobSpawner{
 		];
 	}
 	
-	protected function getSafeY($x, $z){ //first safe block
+	protected function getSafeY($x, $z, $grassOnly = false){ //first safe block
+		$allowed = [];
 		for($y = 0; $y < 128; ++$y){
-			if($this->level->level->getBlock($x, $y, $z)[0] === AIR){
-				return $y; //TODO checking aabb
+			$b = $this->level->getBlockWithoutVector($x, $y, $z);
+			$b1 = $this->level->getBlockWithoutVector($x, $y - 1, $z);
+			if(!$b->isSolid && ($b1->isSolid && ($grassOnly ? $b1->getID() === GRASS : true))){
+				$allowed[] = $y;
 			}
 		}
-		return false;
+		
+		return empty($allowed) ? -1 : $allowed[mt_rand(0, count($allowed) - 1)];
 	}
 }
 
