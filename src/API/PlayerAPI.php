@@ -145,6 +145,7 @@ class PlayerAPI{
 					break;
 				}
 				$issuer->teleport($this->server->spawn);
+                                $output .= "You teleported to the world spawn, " . $issuer->username . " . ";
 				break;
 			case "ping":
 				if(!($issuer instanceof Player)){
