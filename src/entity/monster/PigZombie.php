@@ -16,4 +16,12 @@ class PigZombie extends Monster{
 			[GOLD_INGOT, 0, mt_rand(0,1)]
 		];
 	}
+	
+	public function harm($dmg, $cause = "generic", $force = false)
+	{
+		if($cause === "fire" || $cause === "lava" || $cause === "burning"){
+			return false;
+		}
+		return parent::harm($dmg, $cause, $force);
+	}
 }
