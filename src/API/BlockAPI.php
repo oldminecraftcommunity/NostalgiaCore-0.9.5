@@ -306,7 +306,10 @@ class BlockAPI{
 					$output .= "Giving ".$item->count." of ".$item->getName()." (".$item->getID().":".$item->getMetadata().") to ".$player->username;
 					break;
 				}else{
-					$item = self::fromString($args[0]);		
+					$item = self::fromString($args[0]);	
+					if(!($issuer instanceof Player)){
+						return "You cant give an item to a non-player.";
+					}
 					if(($issuer->gamemode & 0x01) === 0x01){
 						$output .= "You are in creative mode.";
 						break;

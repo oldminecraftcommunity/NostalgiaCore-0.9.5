@@ -9,7 +9,7 @@ class NetherReactorBlock extends SolidBlock{
 	
 	public function onActivate(Item $item, Player $player){
 		//if(($item->getID() === IRON_SWORD || $item->getID() === WOODEN_SWORD || $item->getID() === STONE_SWORD || $item->getID() === DIAMOND_SWORD || $item->getID() === GOLD_SWORD) /*&& $player->gamemode === 0*/){
-		if($this->isCorrect($this->getX(),$this->getY(),$this->getZ()) && $this->getY() < 101 && NetherReactorBlock::$enableReactor){
+		if($this->getMetadata() === 0 && $this->isCorrect($this->getX(),$this->getY(),$this->getZ()) && $this->getY() < 101 && NetherReactorBlock::$enableReactor){
 			NetherReactorStructure::buildReactor($this->level, $this->getX(),$this->getY(),$this->getZ());
 			$this->meta = 1;
 			$this->level->setBlock($this,$this);

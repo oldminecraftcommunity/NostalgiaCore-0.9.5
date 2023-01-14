@@ -143,7 +143,7 @@ class EntityAPI{
 		return $output;
 	}
 	
-	public function summon(Position $pos, $class, $type, Array $data = []){
+	public function summon(Position $pos, $class, $type, array $data = []){
 		$entity = $this->add($pos->level, $class, $type, [
 			"x" => $pos->x,
 			"y" => $pos->y,

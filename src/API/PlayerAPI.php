@@ -115,8 +115,7 @@ class PlayerAPI{
 		switch($cmd){
 			case "spawnpoint":
 				if(!($issuer instanceof Player)){
-					$output .= "Please run this command in-game.";
-					break;
+					return "Please run this command in-game.";
 				}
 
 				if(count($args) === 1 or count($args) === 4){
@@ -126,8 +125,7 @@ class PlayerAPI{
 				}
 
 				if(!($target instanceof Player)){
-					$output .= "That player cannot be found.";
-					break;
+					return "That player cannot be found.";
 				}
 
 				if(count($args) === 3){
@@ -137,23 +135,18 @@ class PlayerAPI{
 				}
 
 				$target->setSpawn($spawn);
-				$output .= "Spawnpoint set correctly!\n";
-				break;
+				return "Spawnpoint set correctly!\n";
 			case "spawn":
 				if(!($issuer instanceof Player)){
-					$output .= "Please run this command in-game.";
-					break;
+					return "Please run this command in-game.";
 				}
 				$issuer->teleport($this->server->spawn);
-                                $output .= "You teleported to the world spawn, " . $issuer->username . " . ";
-				break;
+				return "You were teleported to the spawn.";
 			case "ping":
 				if(!($issuer instanceof Player)){
-					$output .= "Please run this command in-game.";
-					break;
+					return "Please run this command in-game.";
 				}
-				$output .= "ping " . round($issuer->getLag(), 2) . "ms, packet loss " . round($issuer->getPacketLoss() * 100, 2) . "%, " . round($issuer->getBandwidth() / 1024, 2) . " KB/s\n";
-				break;
+				return "ping " . round($issuer->getLag(), 2) . "ms, packet loss " . round($issuer->getPacketLoss() * 100, 2) . "%, " . round($issuer->getBandwidth() / 1024, 2) . " KB/s\n";
 			case "gamemode":
 				$player = false;
 				$setgm = false;
@@ -186,16 +179,14 @@ class PlayerAPI{
 						$player = $this->server->api->player->get($args[0]);
 						$setgm = $args[1];
 					}else{
-						$output .= "Usage: /$cmd <mode> [player] or /$cmd [player] <mode>\n";
-						break;
+						return "Usage: /$cmd <mode> [player] or /$cmd [player] <mode>\n";
 					}
 				}
 				if(!($player instanceof Player) or !isset($gms[strtolower($setgm)])){
-					$output .= "Usage: /$cmd <mode> [player] or /$cmd [player] <mode>\n";
-					break;
+					return "Usage: /$cmd <mode> [player] or /$cmd [player] <mode>\n";
 				}
 				if($player->setGamemode($gms[strtolower($setgm)])){
-					$output .= "Gamemode of " . $player->username . " changed to " . $player->getGamemode() . "\n";
+					return "Gamemode of " . $player->username . " changed to " . $player->getGamemode() . "\n";
 				}
 				break;
 			case "tp":
@@ -207,13 +198,12 @@ class PlayerAPI{
 						$name = array_shift($args);
 						$target = implode(" ", $args);
 					}else{
-						$output .= "Usage: /$cmd [target player] <destination player>\n";
-						break;
+						return "Usage: /$cmd [target player] <destination player>\n";
 					}
 					if($this->teleport($name, $target) !== false){
-						$output .= "\"$name\" teleported to \"$target\"\n";
+						return "\"$name\" teleported to \"$target\"\n";
 					}else{
-						$output .= "Couldn't teleport.\n";
+						return "Couldn't teleport.\n";
 					}
 				}else{
 					if(!isset($args[3]) and isset($args[2]) and isset($args[1]) and isset($args[0]) and ($issuer instanceof Player)){
@@ -227,16 +217,14 @@ class PlayerAPI{
 						$y = $args[2];
 						$z = $args[3];
 					}else{
-						$output .= "Usage: /$cmd [player] <x> <y> <z>\n";
-						break;
+						return "Usage: /$cmd [player] <x> <y> <z>\n";
 					}
 					if($this->tppos($name, $x, $y, $z)){
-						$output .= "\"$name\" teleported to ($x, $y, $z)\n";
+						return "\"$name\" teleported to ($x, $y, $z)\n";
 					}else{
-						$output .= "Couldn't teleport.\n";
+						return "Couldn't teleport.\n";
 					}
 				}
-				break;
 			case "kill":
 			case "suicide":
 				if(!isset($args[0]) and ($issuer instanceof Player)){
@@ -246,9 +234,9 @@ class PlayerAPI{
 				}
 				if($player instanceof Player){
 					$player->entity->harm(PHP_INT_MAX, "console", true);
-					$player->sendChat("Ouch. That looks like it hurt.\n");
+					return "Ouch. That looks like it hurt.\n";
 				}else{
-					$output .= "Usage: /$cmd [player]\n";
+					return "Usage: /$cmd [player]\n";
 				}
 				break;
 			case "list":
@@ -259,7 +247,7 @@ class PlayerAPI{
 				foreach($this->server->clients as $c){
 					$output .= $c->username . ", ";
 				}
-				$output = substr($output, 0, -2) . "\n";
+				return substr($output, 0, -2) . "\n";
 				break;
 			case "loc":
 				if(!($issuer instanceof Player)) return "Please run this command in-game.";
@@ -269,9 +257,7 @@ class PlayerAPI{
 				$level = $issuer->entity->level->getName();
 				$compass = [0 => "X+", 1 => "Z+", 2 => "X-", 3 => "Z-", null => "null"];
 				$direction = $compass[$issuer->entity->getDirection()];
-				$output .= "Your coordinates: X: $x, Y: $y, Z: $z, world: $level.\n";
-				$output .= "Direction: $direction";
-				break;
+				return "Your coordinates: X: $x, Y: $y, Z: $z, world: $level.\nDirection: $direction";
 		}
 		return $output;
 	}
@@ -281,7 +267,7 @@ class PlayerAPI{
 		if($name === ""){
 			return false;
 		}
-		$query = $this->server->query("SELECT ip,port,name FROM players WHERE name " . ($alike === true ? "LIKE '%" . $name . "%'" : "= '" . $name . "'") . ";");
+		$query = $this->server->query("SELECT ip,port,name FROM players WHERE name " . ($alike === true ? "LIKE '" . $name . "%'" : "= '" . $name . "'") . ";");
 		$players = [];
 		if($query !== false and $query !== true){
 			while(($d = $query->fetchArray(SQLITE3_ASSOC)) !== false){
