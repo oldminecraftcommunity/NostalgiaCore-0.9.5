@@ -50,12 +50,19 @@ class Sheep extends Animal{
 	}
 	
 	public function getColor(){
-		return $this->data["Color"] & 16; //color === 16 -> color = 0, color === 17 -> color = 1 ...
+		return $this->data["Color"]; //color === 16 -> color = 0, color === 17 -> color = 1 ...
 	}
 	
+	public function switchColorMeta($meta){
+		return abs($meta - 15);
+	}
+	
+	public function setColor($meta){
+		$this->data["Color"] = $meta;
+	}
 	public function getDrops(){
 		return ($this->isBaby() || $this->isSheared()) ? parent::getDrops() : [
-			[WOOL, $this->getColor() & 0x0F, 1]
+			[WOOL, $this->getColor(), 1]
 		];
 	}
 	
@@ -72,10 +79,16 @@ class Sheep extends Animal{
 					$this->server->api->entity->drop($this, BlockAPI::getItem(WOOL, $this->getColor(), mt_rand(1, 3)));
 					//$this->server->schedule(20, [$this, "eatGrass"]);
 					if($slot->getMetadata() >= $slot->getMaxDurability()){
-						$this->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
+						$e->player->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
 					}
 				}
 				return true;
+			}elseif($slot->getID() === DYE){
+				$this->setColor($this->switchColorMeta($slot->getMetadata()));
+				
+				if(($e->player->gamemode & 0x01) === SURVIVAL){
+					$e->player->removeItem($slot->getID(), $slot->getMetadata(), 1, true);
+				}
 			}
 		}
 		return parent::interactWith($e, $action);
