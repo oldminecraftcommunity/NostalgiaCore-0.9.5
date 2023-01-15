@@ -564,7 +564,7 @@ class Entity extends Position
 					$x0 = floor($aABB->minX);
 					$x1 = ceil($aABB->maxX);
 					$y0 = floor($aABB->minY);
-					$y1 = round($aABB->maxY);
+					$y1 = ceil($aABB->maxY);
 					$z0 = floor($aABB->minZ);
 					$z1 = ceil($aABB->maxZ);
 					$x0 = $x0 < 0 ? 0 : $x0;
@@ -629,14 +629,14 @@ class Entity extends Position
 										}
 										break;
 								}
-								if($this->isMoving() && $b != false && $b->isSolid && $b->boundingBox->intersectsWith($aABB)){
-									$this->speedX = $b->boundingBox->calculateXOffset($this->boundingBox, $this->speedX);
-									$this->speedZ = $b->boundingBox->calculateZOffset($this->boundingBox, $this->speedZ);
+								if($b != false && ($b->isSolid && $b->boundingBox->intersectsWith($aABB))){
 									$lastY = $this->speedY;
 									$this->speedY = $b->boundingBox->calculateYOffset($this->boundingBox, $this->speedY);
 									if($this->speedY == 0 && $lastY > 0){
 										$support = true;
 									}
+									$this->speedX = $b->boundingBox->calculateXOffset($this->boundingBox, $this->speedX);
+									$this->speedZ = $b->boundingBox->calculateZOffset($this->boundingBox, $this->speedZ);
 								}
 							}
 						}

@@ -4,6 +4,10 @@ class ServerAPI{
 
 	private static $serverRequest = false;
 	public $restart = false;
+	
+	/**
+	 * @var QueryAPI
+	 */
 	public $queryAPI;
 
 	/**
@@ -48,6 +52,11 @@ class ServerAPI{
 	 * @var AchievementAPI
 	 */
 	public $achievement;
+	/**
+	 * @var PluginAPI
+	 */
+	public $plugin;
+	
 	private $asyncCalls = [];
 	private $server;
 	private $config;

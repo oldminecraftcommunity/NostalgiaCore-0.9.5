@@ -4,11 +4,11 @@ class Creeper extends Monster{
 	const EXPL_TIME = 30;
 	public $timeUntilExplode;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = []){
+		$this->setSize(0.6, 1.7);
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 16, "generic");
 		$this->setName("Creeper");
 		$this->ignited = 0;
-		$this->setSize(0.6, 1.7);
 		$this->setSpeed(0.25);
 		$this->update();
 		$this->timeUntilExplode = $this->isIgnited() ? self::EXPL_TIME : 0;

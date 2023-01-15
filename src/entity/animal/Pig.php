@@ -3,10 +3,10 @@ class Pig extends Animal implements Rideable{
 	const TYPE = MOB_PIG;
 	
 	public function __construct(Level $level, $eid, $class, $type = 0, $data = []){
+		$this->setSize($this->isBaby() ? 0.45 : 0.9, $this->isBaby() ? 0.45 : 0.9);
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:10, "generic");
 		$this->server = ServerAPI::request();
-		$this->setSize($this->isBaby() ? 0.45 : 0.9, $this->isBaby() ? 0.45 : 0.9);
 		$this->setName("Pig");
 		$this->setSpeed(0.25);
 		$this->update();
