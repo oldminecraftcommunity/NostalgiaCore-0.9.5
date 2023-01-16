@@ -632,8 +632,10 @@ class Entity extends Position
 								if($b != false && ($b->isSolid && $b->boundingBox->intersectsWith($aABB))){
 									$lastY = $this->speedY;
 									$this->speedY = $b->boundingBox->calculateYOffset($this->boundingBox, $this->speedY);
-									if($this->speedY == 0 && $lastY > 0){
+									if($this->speedY == 0 && $lastY != 0){
 										$support = true;
+									}elseif($this->speedY != 0){
+										$support = false;
 									}
 									$this->speedX = $b->boundingBox->calculateXOffset($this->boundingBox, $this->speedX);
 									$this->speedZ = $b->boundingBox->calculateZOffset($this->boundingBox, $this->speedZ);
