@@ -27,7 +27,7 @@ class Position extends Vector3{
 
 		return parent::distance($x, $y, $z);
 	}
-
+	
 	public function __toString(){
 		return "Position(level=" . $this->level->getName() . ",x=" . $this->x . ",y=" . $this->y . ",z=" . $this->z . ")";
 	}

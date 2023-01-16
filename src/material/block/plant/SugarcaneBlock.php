@@ -35,6 +35,19 @@ class SugarcaneBlock extends FlowableBlock{
 	}
 
 	public function onUpdate($type){
+		
+		$down = $this->getSide(0);
+		if($down->getID() === GRASS or $down->getID() === DIRT or $down->getID() === SAND){
+			$block0 = $down->getSide(2);
+			$block1 = $down->getSide(3);
+			$block2 = $down->getSide(4);
+			$block3 = $down->getSide(5);
+			if(!($block0 instanceof WaterBlock) and !($block1 instanceof WaterBlock) and !($block2 instanceof WaterBlock) and !($block3 instanceof WaterBlock)){
+				$this->level->setBlock($this, new AirBlock(), true, false, true);
+				ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem(SUGARCANE));
+				return true;
+			}
+		}
 		if($type === BLOCK_UPDATE_NORMAL){
 			$down = $this->getSide(0);
 			if($down->isTransparent === true and $down->getID() !== SUGARCANE_BLOCK){ //Replace with common break method

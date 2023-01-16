@@ -542,7 +542,6 @@ class BlockAPI{
 		}
 		return $level;
 	}
-
 	public function blockUpdateAround(Position $pos, $type = BLOCK_UPDATE_NORMAL, $delay = false){
 		if($delay !== false){
 			$this->scheduleBlockUpdate($pos->getSide(0), $delay, $type);
