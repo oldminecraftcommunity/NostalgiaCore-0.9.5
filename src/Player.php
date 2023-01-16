@@ -1823,7 +1823,7 @@ class Player{
 				}
 				switch($packet->event){
 					case 9: //Eating
-						$items = [
+						$items = [ //TODO rewrite
 							APPLE => 4,
 							MUSHROOM_STEW => 10,
 							BEETROOT_SOUP => 10,
@@ -1839,7 +1839,8 @@ class Player{
 							PUMPKIN_PIE => 8,
 							CARROT => 4,
 							POTATO => 1,
-							BAKED_POTATO => 6
+							BAKED_POTATO => 6,
+							BEETROOT => 1
 						];
 						$slot = $this->getSlot($this->slot);
 						if($this->entity->getHealth() < 20 and isset($items[$slot->getID()])){
