@@ -63,6 +63,7 @@ class WaterBlock extends LiquidBlock{
 		//return false;
 		$newId = $this->id;
 		$level = $this->meta & 0x07;
+		
 		if($type !== BLOCK_UPDATE_NORMAL){
 			return false;
 		}
@@ -82,8 +83,8 @@ class WaterBlock extends LiquidBlock{
 				for($side = 2; $side <= 5; ++$side){
 					$b = $this->getSide($side);
 					if($b instanceof WaterBlock){
-						if($this->getSourceCount() >= 2 && $level != 0x00){
-							$this->level->setBlock($this, new WaterBlock(1), false, false, true); //TODO fix somehow
+						if($this->getSourceCount() >= 2 && $level != 0x00){ //Infinite water source
+							$this->level->setBlock($this, new WaterBlock(0), false, false, true);
 						}
 					}elseif($b->isFlowable === true){
 						$this->level->setBlock($b, new WaterBlock($level + 1), false, false, true);
@@ -112,6 +113,7 @@ class WaterBlock extends LiquidBlock{
 					}
 				}
 			}
+			ServerAPI::request()->api->block->blockUpdateAround($this, BLOCK_UPDATE_NORMAL, 5);
 			$this->level->setBlock($this, new AirBlock(), false, false, true);
 		}
 		return false;
