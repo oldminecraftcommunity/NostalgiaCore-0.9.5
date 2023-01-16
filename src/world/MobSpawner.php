@@ -58,9 +58,9 @@ class MobSpawner{
 	
 	private function genPosData($x, $y, $z){
 		return [
-			"x" => $x,
+			"x" => $x + 0.5,
 			"y" => $y,
-			"z" => $z
+			"z" => $z + 0.5
 		];
 	}
 	
