@@ -398,11 +398,8 @@ class BlockAPI{
 			if($target->onBreak($item, $player) === false){
 				return $this->cancelAction($target, $player, false);
 			}
-			$itemUse = $item->useOn($target);
-			if(($player->gamemode & 0x01) === 0 and $itemUse and $item->getMetadata() >= $item->getMaxDurability()){
+			if(($player->gamemode & 0x01) === 0 and $item->useOn($target) and $item->getMetadata() >= $item->getMaxDurability()){
 				$player->setSlot($player->slot, new Item(AIR, 0, 0), true);
-			}elseif($itemUse){
-				$player->setSlot($player->slot, $item, true); //update slot meta TODO less packet sending?
 			}
 		}else{
 			return $this->cancelAction($target, $player, false);
