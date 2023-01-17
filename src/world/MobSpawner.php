@@ -4,7 +4,7 @@ class MobSpawner{
 	public static $spawnAnimals = false, $spawnMobs = false;
 	private $server;
 	public $level;
-	const MOB_LIMIT = 50; //constant for now
+	public static $MOB_LIMIT = 50;
 	public function __construct(Level $level){
 		$this->server = ServerAPI::request();
 		$this->level = $level;
@@ -19,7 +19,7 @@ class MobSpawner{
 	}
 
 	public function handle(){
-		if($this->countEntities() > self::MOB_LIMIT || count($this->level->players) <= 0){
+		if($this->countEntities() > self::$MOB_LIMIT || count($this->level->players) <= 0){
 			return false; //not spawning
 		}
 		return $this->spawnMobs();
@@ -40,11 +40,11 @@ class MobSpawner{
 		}
 		$x = mt_rand(0,255);
 		$z = mt_rand(0,255);
-		$y = $this->getSafeY($x, $z, $grassOnly);
+		$y = $this->getSafeY($x, $z, $grassOnly, $type >= 32 && $type <= 36 && $type != 35);
 		if(!$y || $y < 0){
 			return false;
 		}
-		$data = $this->genPosData($x, $y + 1, $z);
+		$data = $this->genPosData($x, $y + 0.5, $z);
 		if($baby != 2) $data["IsBaby"] = $baby;
 		
 		$e = $this->server->api->entity->add($this->level, 2, $type, $data);
@@ -64,12 +64,13 @@ class MobSpawner{
 		];
 	}
 	
-	protected function getSafeY($x, $z, $grassOnly = false){ //first safe block
+	protected function getSafeY($x, $z, $grassOnly = false, $highMob = false){ //first safe block //TODO check boundingbox
 		$allowed = [];
 		for($y = 0; $y < 128; ++$y){
 			$b = $this->level->getBlockWithoutVector($x, $y, $z);
+			$b2 = $this->level->getBlockWithoutVector($x, $y + 1, $z);
 			$b1 = $this->level->getBlockWithoutVector($x, $y - 1, $z);
-			if(!$b->isSolid && ($b1->isSolid && ($grassOnly ? $b1->getID() === GRASS : true))){
+			if(!$b->isSolid && !$b->isLiquid && ($b1->isSolid && ($grassOnly ? $b1->getID() === GRASS : true) && ($highMob ? !$b2->isSolid && !$b2->isLiquid : true))){
 				$allowed[] = $y;
 			}
 		}

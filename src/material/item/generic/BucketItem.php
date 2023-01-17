@@ -28,7 +28,7 @@ class BucketItem extends Item{
 			if($block->getID() === AIR || ( $block instanceof WaterBlock && ($block->getMetadata() & 0x07) != 0x00 ) ){
 				$water = new WaterBlock();
 				$level->setBlock($block, $water, true, false, true);
-				$water->place(clone $this, $player, $block, $target, $face, $fx, $fy, $fz);
+				$water->place($this, $player, $block, $target, $face, $fx, $fy, $fz);
 				if(($player->gamemode & 0x01) === 0){
 					$this->meta = 0;
 				}

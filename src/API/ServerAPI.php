@@ -120,6 +120,7 @@ class ServerAPI{
 			"allow-flight" => false,
 			"spawn-animals" => true,
 			"spawn-mobs" => true,
+			"mobs-amount" => 50,
 			"gamemode" => SURVIVAL,
 			"hardcore" => false,
 			"pvp" => true,
@@ -135,7 +136,7 @@ class ServerAPI{
 		]);
 
 		$this->parseProperties();
-
+		MobSpawner::$MOB_LIMIT = $this->getProperty("mobs-amount", 50);
 		//Load advanced properties
 		define("DEBUG", $this->getProperty("debug", 1));
 		define("ADVANCED_CACHE", $this->getProperty("enable-advanced-cache", false));
