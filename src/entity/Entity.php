@@ -72,7 +72,7 @@ class Entity extends Position
 	public $inAction = false;
 	public $hasKnockback;
 	
-	public $onGround;
+	public $onGround, $inWater;
 	
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array())
 	{
@@ -558,7 +558,7 @@ class Entity extends Position
 				if(Utils::in_range($this->speedY, -0.007, 0.007)){
 					$this->speedY = 0;
 				}
-				
+				$this->inWater = false;
 				if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)){
 					$aABB = $this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ);
 					$x0 = floor($aABB->minX);
@@ -594,6 +594,7 @@ class Entity extends Position
 											$this->air -= 1;
 											$waterDone = true;
 											$this->updateMetadata();
+											$this->inWater = true;
 											$hasUpdate = true;
 										}
 										break;
@@ -646,7 +647,7 @@ class Entity extends Position
 					
 					
 				}
-
+				
 				if($this->speedX != 0){
 					$this->x += $this->speedX;
 					$this->speedX -= $this->speedX * $drag;
