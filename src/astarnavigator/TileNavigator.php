@@ -1,13 +1,14 @@
 <?php
-
 class TileNavigator implements ITileNavigator
 {
-	private $blockedProvider, $neighborProvider, $distanceAlgorithm, $heuristicAlgorithm;
-	public function __construct(IBlockedProvider $blockedProvider, INeighborProvider $neighborProvider, IDistanceAlgorithm $distanceAlgorithm, IDistanceAlgorithm $heuristicAlgorithm){
+    private $blockedProvider, $neighborProvider, $distanceAlgorithm;
+
+    public static $pathfinderAccessed = 0;
+
+	public function __construct(IBlockedProvider $blockedProvider, INeighborProvider $neighborProvider, IDistanceAlgorithm $distanceAlgorithm){
 		$this->blockedProvider = $blockedProvider;
 		$this->neighborProvider = $neighborProvider;
 		$this->distanceAlgorithm = $distanceAlgorithm;
-		$this->heuristicAlgorithm = $heuristicAlgorithm;
 	}
 	
 	public function reconstructPath($path, $current){
@@ -31,15 +32,11 @@ class TileNavigator implements ITileNavigator
 		$gScore = [];
 		$gScore[(string) $from] = 0;
 		$has = [(string)$from, true];
-		/**
-		 * @var array[Tile] $fScore
-		 */
-		$fScore = [];
-		$fScore[(string) $from] = $this->heuristicAlgorithm->calculate($from, $to);
 		if($this->blockedProvider->isBlocked($to)){
 			return null;
 		}
 		$visited = [];
+		$maxDist*=$maxDist; //no square root
 		while(!$open->isEmpty())
 		{
 			$current = $open->top();
@@ -50,7 +47,7 @@ class TileNavigator implements ITileNavigator
 			}
 			foreach($this->neighborProvider->getNeighbors($current) as $neighbor)
 			{
-				if(!Utils::in_range(Utils::distance($neighbor->asArray(), $from->asArray()), -$maxDist, $maxDist)){
+				if(!Utils::in_range(Utils::distance_noroot($neighbor->asArray(), $from->asArray()), -$maxDist, $maxDist)){
 					continue;
 				}
 				if(isset($visited[(string)$neighbor])){
@@ -58,16 +55,11 @@ class TileNavigator implements ITileNavigator
 				}
 				
 				$visited[(string)$neighbor] = $neighbor;
-				//if ($this->blockedProvider->isBlocked($neighbor)) shouldnt be neccessary now
-				//{
-				//	continue;
-				//}
 				$distbetweenCost = $this->distanceAlgorithm->calculate($current, $neighbor);
 				$tentativeG = $gScore[(string) $current] + $distbetweenCost;
-				$tentativeF = $distbetweenCost + $this->heuristicAlgorithm->calculate($neighbor, $to);
 				if (!isset($has[(string)$neighbor]))
 				{
-					$open->insert($neighbor, -$tentativeF);
+					$open->insert($neighbor, -$tentativeG);
 					$has[(string)$neighbor] = true;
 				}
 				else if ($tentativeG >= $gScore[(string) $neighbor])
@@ -79,7 +71,6 @@ class TileNavigator implements ITileNavigator
 				}
 				
 				$gScore[(string) $neighbor] = $tentativeG;
-				$fScore[(string) $neighbor] = $tentativeF;
 			}
 		}
 		

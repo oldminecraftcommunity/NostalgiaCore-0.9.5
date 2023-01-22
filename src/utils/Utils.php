@@ -574,8 +574,17 @@ class Utils{
 	/**
 	 * Euclidian distance, but without square roots
 	 */
-	public static function distance_noroot(Vector3 $pos1, Vector3 $pos2){
-		return ($pos2->x - $pos1->x)*($pos2->x - $pos1->x) + ($pos2->z - $pos1->z)*($pos2->z - $pos1->z) + ($pos2->z - $pos1->z)*($pos2->z - $pos1->z);
+	public static function distance_noroot($pos1, $pos2){
+	    if($pos1 instanceof Vector3){
+	        $pos1 = $pos1->toArray();
+	    }
+	    if($pos2 instanceof Vector3){
+	        $pos2 = $pos2->toArray();
+	    }
+	    $pX = ($pos1["x"] - $pos2["x"]);
+	    $pY = ($pos1["y"] - $pos2["y"]);
+	    $pZ = ($pos1["z"] - $pos2["z"]);
+	    return ($pX*$pX) + ($pY*$pY) + ($pZ*$pZ);
 	}
 	
 	/**

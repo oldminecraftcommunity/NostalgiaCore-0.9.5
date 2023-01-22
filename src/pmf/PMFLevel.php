@@ -333,11 +333,12 @@ class PMFLevel extends PMF{
 		$Z = $z >> 4;
 		$Y = $y >> 4;
 		$index = $this->getIndex($X, $Z);
-		$aX = $x - ($X << 4);
-		$aZ = $z - ($Z << 4);
-		$aY = $y - ($Y << 4);
+		$aX = $x & 0xf;
+		$aZ = $z & 0xf;
+		$aY = $y & 0xf;
+		
 		if(is_array($this->chunks) && isset($this->chunks[$index]) && is_array($this->chunks[$index]) && isset($this->chunks[$index][$Y]) && is_string($this->chunks[$index][$Y])){
-			$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
+			$b = ord($this->chunks[$index][$Y][($aY + ($aX << 5) + ($aZ << 9))]);
 		}else{ //php8 fix
 			$b = 0;
 		}
@@ -357,9 +358,9 @@ class PMFLevel extends PMF{
 			return false;
 		}
 		$index = $this->getIndex($X, $Z);
-		$aX = $x - ($X << 4);
-		$aZ = $z - ($Z << 4);
-		$aY = $y - ($Y << 4);
+		$aX = $x & 0xf;
+		$aZ = $z & 0xf;
+		$aY = $y & 0xf;
 		$this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))] = chr($block);
 		if(!isset($this->chunkChange[$index][$Y])){
 			$this->chunkChange[$index][$Y] = 1;
@@ -378,9 +379,9 @@ class PMFLevel extends PMF{
 		$Z = $z >> 4;
 		$Y = $y >> 4;
 		$index = $this->getIndex($X, $Z);
-		$aX = $x - ($X << 4);
-		$aZ = $z - ($Z << 4);
-		$aY = $y - ($Y << 4);
+		$aX = $x & 0xf;
+		$aZ = $z & 0xf;
+		$aY = $y & 0xf;
 		if(is_array($this->chunks) && isset($this->chunks[$index]) && is_array($this->chunks[$index]) && isset($this->chunks[$index][$Y]) && is_string($this->chunks[$index][$Y])){
 			$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
 		}else{ //php8 fix
@@ -407,9 +408,9 @@ class PMFLevel extends PMF{
 			return false;
 		}
 		$index = $this->getIndex($X, $Z);
-		$aX = $x - ($X << 4);
-		$aZ = $z - ($Z << 4);
-		$aY = $y - ($Y << 4);
+		$aX = $x & 0xf;
+		$aZ = $z & 0xf;
+		$aY = $y & 0xf;
 		$mindex = (int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9));
 		$old_m = ord($this->chunks[$index][$Y][$mindex]);
 		if(($y & 1) === 0){
@@ -446,13 +447,13 @@ class PMFLevel extends PMF{
 		}elseif($this->chunks[$index][$Y] === false){
 			return [AIR, 0];
 		}
-		$aX = $x - ($X << 4);
-		$aZ = $z - ($Z << 4);
-		$aY = $y - ($Y << 4);
+		$aX = $x & 0xf;
+		$aZ = $z & 0xf;
+		$aY = $y & 0xf;
 		#Need to fix. But idk how.
 		if(is_array($this->chunks) && is_array($this->chunks[$index]) && is_string($this->chunks[$index][$Y])){ //PHP8 warn fix
-			$b = ord($this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))]);
-			$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
+			$b = ord($this->chunks[$index][$Y][($aY + ($aX << 5) + ($aZ << 9))]);
+			$m = ord($this->chunks[$index][$Y][(($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
 		}else{
 			$b = 0;
 			$m = 0;

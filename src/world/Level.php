@@ -456,12 +456,13 @@ class Level{
 	 * @param number $x
 	 * @param number $y
 	 * @param number $z
+	 * @param boolean $positionfy assign coordinates to block or not
 	 * @return GenericBlock | false if failed
 	 */
 	
-	public function getBlockWithoutVector($x, $y, $z){
+	public function getBlockWithoutVector($x, $y, $z, $positionfy = true){
 		$b = $this->level->getBlock($x, $y, $z);
-		return BlockAPI::get($b[0], $b[1], new Position($x, $y, $z, $this));
+		return BlockAPI::get($b[0], $b[1], $positionfy ? new Position($x, $y, $z, $this) : false);
 	}
 	
 	/**
