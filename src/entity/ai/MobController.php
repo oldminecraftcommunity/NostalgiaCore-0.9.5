@@ -21,14 +21,14 @@ class MobController
 		$xf = $this->entity->x + ($this->entity->getSpeedModifer() * $ox * $this->entity->getSpeed());
 		$zf = $this->entity->z + ($this->entity->getSpeedModifer() * $oz * $this->entity->getSpeed());
 		$bs = [ //TODO simplify(somehow)
-		    $this->entity->level->getBlockWithoutVector(ceil($xf), $this->entity->y, ceil($zf)), 
-		    $this->entity->level->getBlockWithoutVector(ceil($xf), $this->entity->y, $zf), 
-		    $this->entity->level->getBlockWithoutVector($xf, $this->entity->y, ceil($zf)), 
-		    $this->entity->level->getBlockWithoutVector($xf, $this->entity->y, $zf)
+		    $this->entity->level->getBlockWithoutVector(ceil($xf), floor($this->entity->y), ceil($zf)), 
+		    $this->entity->level->getBlockWithoutVector(ceil($xf), floor($this->entity->y), $zf - ($oz < 0 ? 1 : 0)), 
+		    $this->entity->level->getBlockWithoutVector($xf - ($ox < 0 ? 1 : 0), floor($this->entity->y), $zf - ($oz < 0 ? 1 : 0)),
+		    $this->entity->level->getBlockWithoutVector($xf - ($ox < 0 ? 1 : 0), floor($this->entity->y), ceil($zf)), 
 		];
 		foreach($bs as $b){
 		    if($b->isSolid){
-		        if(!$this->entity->level->getBlock($b->getSide(1))->isSolid){
+		        if(!$b->getSide(1)->isSolid){
 		            $oy = 1;
 		            break;
 		        }
