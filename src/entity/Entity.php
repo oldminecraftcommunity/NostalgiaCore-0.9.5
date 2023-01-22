@@ -11,7 +11,7 @@ class Entity extends Position
 	public static $updateOnTick, $allowedAI;
 	public $isCollidable;
 	public $canBeAttacked;
-	public $moveTime, $lookTime, $idleTime;
+	public $moveTime, $lookTime, $idleTime, $knockbackTime = 0;
 	public $needsUpdate;
 	public $speedModifer;
 	public $hasGravity;
@@ -749,6 +749,10 @@ class Entity extends Position
 				}
 			}
 		}
+		if($this->knockbackTime > 0){
+		    --$this->knockbackTime;
+		}
+		
 		if($this->moveTime > 0){
 			-- $this->moveTime;
 		}
@@ -1272,9 +1276,9 @@ class Entity extends Position
 			for ($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01) {
 				$d = (Utils::randomFloat() - Utils::randomFloat()) * 0.01;
 			}
-
 			// attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) >
 			$this->knockBack($d, $d1);
+			$this->knockbackTime = 10;
 			$this->sendMotion();
 		}
 
@@ -1342,9 +1346,9 @@ class Entity extends Position
 
 	public function moveEntityWithOffset($oX, $oY, $oZ)
 	{
-		$oX = $oX === 0 ? $this->speedX : $this->getSpeedModifer() * $oX * $this->getSpeed();
+	    $oX = $oX === 0 ? $this->speedX : ($this->getSpeedModifer() * $oX * $this->getSpeed());
 		$oY = $oY <= 0 ? $this->speedY : (0.5);
-		$oZ = $oZ === 0 ? $this->speedZ : $this->getSpeedModifer() * $oZ * $this->getSpeed();
+		$oZ = $oZ === 0 ? $this->speedZ : ($this->getSpeedModifer() * $oZ * $this->getSpeed());
 		$this->setVelocity($oX, $oY, $oZ);
 	}
 

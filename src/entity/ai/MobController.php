@@ -34,8 +34,11 @@ class MobController
 		        }
 		    }
 		}
+		if($this->entity->knockbackTime <= 0){
+		    $this->entity->moveEntityWithOffset($ox, $oy, $oz);
+		}
 		
-		$this->entity->moveEntityWithOffset($ox, $oy, $oz);
+		
 		$this->faceEntity($this->entity->add($ox, $oy, $oz));
 		return true;
 	}
