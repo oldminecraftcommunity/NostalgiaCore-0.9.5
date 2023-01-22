@@ -6,7 +6,6 @@ class MobController
 	 * @var Entity
 	 */
 	public $entity;
-	
 	public function __construct($e){
 		$this->entity = $e;
 	}
@@ -19,6 +18,23 @@ class MobController
 		$ox = ($x > 0 ? 1 : ($x < 0 ? -1 : 0));
 		$oy = ($y > 0 ? 1 : ($y < 0 ? -1 : 0));
 		$oz = ($z > 0 ? 1 : ($z < 0 ? -1 : 0));
+		$xf = $this->entity->x + ($this->entity->getSpeedModifer() * $ox * $this->entity->getSpeed());
+		$zf = $this->entity->z + ($this->entity->getSpeedModifer() * $oz * $this->entity->getSpeed());
+		$bs = [ //TODO simplify(somehow)
+		    $this->entity->level->getBlockWithoutVector(ceil($xf), $this->entity->y, ceil($zf)), 
+		    $this->entity->level->getBlockWithoutVector(ceil($xf), $this->entity->y, $zf), 
+		    $this->entity->level->getBlockWithoutVector($xf, $this->entity->y, ceil($zf)), 
+		    $this->entity->level->getBlockWithoutVector($xf, $this->entity->y, $zf)
+		];
+		foreach($bs as $b){
+		    if($b->isSolid){
+		        if(!$this->entity->level->getBlock($b->getSide(1))->isSolid){
+		            $oy = 1;
+		            break;
+		        }
+		    }
+		}
+		
 		$this->entity->moveEntityWithOffset($ox, $oy, $oz);
 		$this->faceEntity($this->entity->add($ox, $oy, $oz));
 		return true;

@@ -71,7 +71,7 @@ class Entity extends Position
 	public $radius;
 	public $inAction = false;
 	public $hasKnockback;
-	
+	public $hasJumped;
 	public $onGround, $inWater;
 	
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array())
