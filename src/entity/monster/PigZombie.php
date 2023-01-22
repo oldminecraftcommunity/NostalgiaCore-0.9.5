@@ -9,7 +9,9 @@ class PigZombie extends Monster{
 		$this->setSpeed(0.25);
 		$this->update();
 	}
-	
+	public function getAttackDamage(){
+	    return 5;
+	}
 	public function getDrops(){
 		return [
 			[COOKED_PORKCHOP, 0, mt_rand(0,2)],

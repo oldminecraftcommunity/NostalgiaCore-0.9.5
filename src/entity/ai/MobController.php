@@ -64,7 +64,7 @@ class MobController
 		
 		if($pitch){
 			$diff = sqrt($x * $x + $z * $z);
-			$calcPitch = rad2deg(atan($y / $diff));
+			$calcPitch = $diff == 0 ? ($y < 0 ? -90 : 90) : rad2deg(atan($y / $diff));
 			$this->entity->pitch = $this->entity->type === MOB_CHICKEN ? -$calcPitch : $calcPitch;
 		}
 		

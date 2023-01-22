@@ -96,6 +96,7 @@ require_once(FILE_PATH . "/src/astarnavigator/TileNavigator.php");
 
 
 require_once(FILE_PATH . "/src/entity/ai/tasks/TaskBase.php");
+require_once(FILE_PATH. "/src/entity/ai/tasks/TaskTempt.php");
 
 require_once(FILE_PATH . "/src/entity/Rideable.php");
 require_once(FILE_PATH . "/src/entity/Attachable.php");

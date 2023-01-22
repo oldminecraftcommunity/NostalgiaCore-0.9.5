@@ -14,6 +14,9 @@ class Creeper extends Monster{
 		$this->timeUntilExplode = $this->isIgnited() ? self::EXPL_TIME : 0;
 	}
 	
+	public function getAttackDamage(){
+	    return 0; //TODO special attack
+	}
 	
 	public function setIgnited($v = null){
 		$this->setState($v === null ? !$this->getState() : $v);	

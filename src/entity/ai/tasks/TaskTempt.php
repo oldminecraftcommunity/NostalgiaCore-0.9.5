@@ -23,7 +23,6 @@ class TaskTempt extends TaskBase
 		}
 		
 		$ai->mobController->moveTo($this->target->x, floor($ai->entity->y), $this->target->z);
-		
 		$ai->mobController->lookOn($this->target);
 	}
 

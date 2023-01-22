@@ -1511,6 +1511,7 @@ class Player{
 					}else{
 						$this->entity->setPosition($newPos, $packet->yaw, $packet->pitch);
 					}
+					$this->entity->updateAABB();
 				}
 				break;
 			case ProtocolInfo::PLAYER_EQUIPMENT_PACKET:

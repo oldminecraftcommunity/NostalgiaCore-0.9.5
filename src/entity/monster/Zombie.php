@@ -30,6 +30,10 @@ class Zombie extends Monster{
 		}
 	}
 	
+	public function getAttackDamage(){
+	    return 4; //TODO vanillafy(zombies might be able to hold items)
+	}
+	
 	public function update(){
 		$this->updateBurning();
 		parent::update();

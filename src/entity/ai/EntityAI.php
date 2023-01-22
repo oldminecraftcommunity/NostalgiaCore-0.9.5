@@ -47,6 +47,7 @@ class EntityAI
 	}
 
 	public function updateTasks(){
+	    if(!($this->entity instanceof Entity)) return;
 		foreach($this->tasks as $t){
 			if(!$t->isStarted && $t->canBeExecuted($this)){
 				$t->isStarted = true;

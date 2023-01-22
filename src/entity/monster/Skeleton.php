@@ -10,6 +10,10 @@ class Skeleton extends Monster{
 		$this->update();
 	}
 	
+	public function getAttackDamage(){
+	    return 0; //TODO special attack
+	}
+	
 	public function updateBurning(){
 		if($this->fire > 0 or !$this->level->isDay()){
 			return false;

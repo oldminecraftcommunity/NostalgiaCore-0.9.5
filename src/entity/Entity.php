@@ -175,6 +175,7 @@ class Entity extends Position
 				}
 				break;
 		}
+		$this->radius = $this->width / 2;
 		$this->boundingBox = new AxisAlignedBB($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
 		$this->update();
 		$this->updateLast();
@@ -1480,6 +1481,10 @@ class Entity extends Position
 		} else{
 			$this->close();
 		}
+	}
+	
+	public function getAttackDamage(){
+	    return 0;
 	}
 	
 	public function setSpeed($s)

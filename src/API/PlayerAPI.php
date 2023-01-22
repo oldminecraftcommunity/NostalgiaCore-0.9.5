@@ -66,7 +66,7 @@ class PlayerAPI{
 								$message = " was killed by " . $e->name;
 								break;
 							default:
-								$message = " was killed";
+								$message = " was killed by {$e->getName()}";
 								break;
 						}
 					}
