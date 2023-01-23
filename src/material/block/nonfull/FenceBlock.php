@@ -7,4 +7,6 @@ class FenceBlock extends TransparentBlock{
 		$this->hardness = 15;
 	}
 	
+	
+	
 }

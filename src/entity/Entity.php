@@ -566,11 +566,11 @@ class Entity extends Position
 				$this->inWater = false;
 				if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)){
 					$aABB = $this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ);
-					$x0 = floor($aABB->minX);
+					$x0 = floor($aABB->minX - 1);
 					$x1 = ceil($aABB->maxX);
 					$y0 = floor($aABB->minY);
 					$y1 = ceil($aABB->maxY);
-					$z0 = floor($aABB->minZ);
+					$z0 = floor($aABB->minZ - 1);
 					$z1 = ceil($aABB->maxZ);
 					$x0 = $x0 < 0 ? 0 : $x0;
 					$y0 = $y0 < 0 ? 0 : $y0;
@@ -1352,7 +1352,7 @@ class Entity extends Position
 	public function moveEntityWithOffset($oX, $oY, $oZ)
 	{
 		$oX = $oX === 0 ? $this->speedX : ($this->getSpeedModifer() * $oX * $this->getSpeed());
-		$oY = $oY <= 0 ? $this->speedY : (0.5);
+		$oY = $oY <= 0 ? $this->speedY : (0.45);
 		$oZ = $oZ === 0 ? $this->speedZ : ($this->getSpeedModifer() * $oZ * $this->getSpeed());
 		$this->setVelocity($oX, $oY, $oZ);
 	}
