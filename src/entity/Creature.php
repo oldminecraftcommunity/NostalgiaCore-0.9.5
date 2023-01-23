@@ -28,7 +28,9 @@ abstract class Creature extends Living{
 	public function getSpeedModifer(){
 		return $this->speedModifer * ($this->inPanic ? 1.4 : 0.7);
 	}
-	
+	public function getArmorValue(){
+		return 2;
+	}
 	public function spawn($player){
 		if(!($player instanceof Player)){
 			$player = $this->server->api->player->get($player);

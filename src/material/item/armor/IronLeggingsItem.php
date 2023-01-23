@@ -13,4 +13,8 @@ class IronLeggingsItem extends ArmorItem{
 	public function getBaseDurability(){
 		return 15;
 	}
+	public function getDamageReduceAmount()
+	{
+		return 5;
+	}
 }

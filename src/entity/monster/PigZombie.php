@@ -10,7 +10,7 @@ class PigZombie extends Monster{
 		$this->update();
 	}
 	public function getAttackDamage(){
-	    return 5;
+		return 5;
 	}
 	public function getDrops(){
 		return [

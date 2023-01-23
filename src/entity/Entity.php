@@ -73,7 +73,7 @@ class Entity extends Position
 	public $hasKnockback;
 	public $hasJumped;
 	public $onGround, $inWater;
-	
+	public $carryoverDamage;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array())
 	{
 		$this->random = new Random();
@@ -754,7 +754,7 @@ class Entity extends Position
 			}
 		}
 		if($this->knockbackTime > 0){
-		    --$this->knockbackTime;
+			--$this->knockbackTime;
 		}
 		
 		if($this->moveTime > 0){
@@ -1272,6 +1272,7 @@ class Entity extends Position
 		if (! $this->canBeAttacked) {
 			return false;
 		}
+		$dmg = $this->applyArmor($dmg, $cause); //TODO HURTCAM
 		$ret = $this->setHealth(max(- 128, $this->getHealth() - ((int) $dmg)), $cause, $force);
 
 		if ($ret != false && $this->hasKnockback && is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false) {
@@ -1350,7 +1351,7 @@ class Entity extends Position
 
 	public function moveEntityWithOffset($oX, $oY, $oZ)
 	{
-	    $oX = $oX === 0 ? $this->speedX : ($this->getSpeedModifer() * $oX * $this->getSpeed());
+		$oX = $oX === 0 ? $this->speedX : ($this->getSpeedModifer() * $oX * $this->getSpeed());
 		$oY = $oY <= 0 ? $this->speedY : (0.5);
 		$oZ = $oZ === 0 ? $this->speedZ : ($this->getSpeedModifer() * $oZ * $this->getSpeed());
 		$this->setVelocity($oX, $oY, $oZ);
@@ -1360,7 +1361,29 @@ class Entity extends Position
 	{
 		return $this->speedModifer;
 	}
-
+	public function getArmorValue(){
+		$pnts = 0;
+		if($this->isPlayer()){
+			foreach($this->player->armor as $slot => $part){
+				if($part instanceof ArmorItem){
+					$pnts += $part->getDamageReduceAmount();
+					$this->player->damageArmorPart($slot, $part);
+				}
+			}
+			$this->player->sendArmor($this->player);
+		}
+		return $pnts;
+	}
+	public function applyArmor($damage, $cause){
+		if(is_numeric($cause)){
+			$var3 = 25 - $this->getArmorValue();
+			$var4 = $damage * $var3 + $this->carryoverDamage;
+			$damage = $var4 / 25;
+			$this->carryoverDamage = $var4 % 25;
+		}
+		return $damage;
+	}
+	
 	public function setHealth($health, $cause = "generic", $force = false)
 	{
 		$health = (int) $health;
@@ -1368,42 +1391,6 @@ class Entity extends Position
 		if($health < $this->health){
 			$harm = true;
 			$dmg = $this->health - $health;
-			if($this->class === ENTITY_PLAYER and ($this->player instanceof Player)){
-				$points = 0;
-				$values = array(
-					LEATHER_CAP => 1,
-					LEATHER_TUNIC => 3,
-					LEATHER_PANTS => 2,
-					LEATHER_BOOTS => 1,
-					CHAIN_HELMET => 1,
-					CHAIN_CHESTPLATE => 5,
-					CHAIN_LEGGINGS => 4,
-					CHAIN_BOOTS => 1,
-					GOLDEN_HELMET => 1,
-					GOLDEN_CHESTPLATE => 5,
-					GOLDEN_LEGGINGS => 3,
-					GOLDEN_BOOTS => 1,
-					IRON_HELMET => 2,
-					IRON_CHESTPLATE => 6,
-					IRON_LEGGINGS => 5,
-					IRON_BOOTS => 2,
-					DIAMOND_HELMET => 3,
-					DIAMOND_CHESTPLATE => 8,
-					DIAMOND_LEGGINGS => 6,
-					DIAMOND_BOOTS => 3
-				);
-				foreach($this->player->armor as $slot => $part){
-					if($part instanceof Item and isset($values[$part->getID()])){
-						if(is_numeric($cause)){ // check was entity damage by another entity
-							$points += $values[$part->getID()];
-							$this->player->damageArmorPart($slot, $part);
-						}
-					}
-				}
-				$this->player->sendArmor($this->player);
-				$dmg = (int) ($dmg - ($dmg * $points * 0.04));
-				$health = $this->health - $dmg;
-			}
 			if(($this->class !== ENTITY_PLAYER or (($this->player instanceof Player) and (($this->player->gamemode & 0x01) === 0x00 or $force === true))) and ($this->dmgcounter[0] < microtime(true) or $this->dmgcounter[1] < $dmg) and ! $this->dead){
 				$this->dmgcounter[0] = microtime(true) + 0.5;
 				$this->dmgcounter[1] = $dmg;
@@ -1492,7 +1479,7 @@ class Entity extends Position
 	}
 	
 	public function getAttackDamage(){
-	    return 0;
+		return 0;
 	}
 	
 	public function setSpeed($s)

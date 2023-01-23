@@ -32,10 +32,10 @@ class Explosion{
 		$server = ServerAPI::request();
 		if(!Explosion::$enableExplosions){ /*Disable Explosions*/
 			foreach($server->api->entity->getRadius($this->source, $radius) as $entity){
-                        	$impact = (1 - $this->source->distance($entity) / $radius) * 0.5; //pla>
-                        	$damage = (int) (($impact * $impact + $impact) * 8 * $this->size + 1);
-                        	$entity->harm($damage, "explosion");
-                	}
+							$impact = (1 - $this->source->distance($entity) / $radius) * 0.5; //pla>
+							$damage = (int) (($impact * $impact + $impact) * 8 * $this->size + 1);
+							$entity->harm($damage, "explosion");
+					}
 			return;
 		}
 		if($this->size < 0.1 or $server->api->dhandle("entity.explosion", [

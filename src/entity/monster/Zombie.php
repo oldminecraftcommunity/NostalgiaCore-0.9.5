@@ -10,6 +10,10 @@ class Zombie extends Monster{
 		$this->update();
 	}
 	
+	public function getArmorValue(){
+		return 2;
+	}
+	
 	public function updateBurning(){
 		if($this->fire > 0 or !$this->level->isDay()){
 			return false;
@@ -31,7 +35,7 @@ class Zombie extends Monster{
 	}
 	
 	public function getAttackDamage(){
-	    return 4; //TODO vanillafy(zombies might be able to hold items)
+		return 4; //TODO vanillafy(zombies might be able to hold items)
 	}
 	
 	public function update(){

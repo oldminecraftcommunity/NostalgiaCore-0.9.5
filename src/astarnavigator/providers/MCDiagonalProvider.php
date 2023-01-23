@@ -13,12 +13,12 @@ class MCDiagonalProvider implements INeighborProvider
 			foreach(MCDiagonalProvider::$neighbors as $offset){
 				$pnt = $tile->addOffset($offset);
 				if(!$tile->level->getBlockWithoutVector($pnt->x, $pnt->y, $pnt->z, false)->isSolid){
-				    if(!$tile->level->getBlockWithoutVector($pnt->x, $pnt->y - 1, $pnt->z, false)->isSolid){
+					if(!$tile->level->getBlockWithoutVector($pnt->x, $pnt->y - 1, $pnt->z, false)->isSolid){
 						--$pnt->y;
 					}
 					$pnts[] = $pnt;
 				}else{
-				    if(!$tile->level->getBlockWithoutVector($pnt->x, $pnt->y + 1, $pnt->z, false)->isSolid){
+					if(!$tile->level->getBlockWithoutVector($pnt->x, $pnt->y + 1, $pnt->z, false)->isSolid){
 						++$pnt->y;
 						$pnts[] = $pnt;
 					}

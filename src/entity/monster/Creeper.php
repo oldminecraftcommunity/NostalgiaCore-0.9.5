@@ -15,7 +15,7 @@ class Creeper extends Monster{
 	}
 	
 	public function getAttackDamage(){
-	    return 0; //TODO special attack
+		return 0; //TODO special attack
 	}
 	
 	public function setIgnited($v = null){

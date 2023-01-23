@@ -13,4 +13,8 @@ class LeatherTunicItem extends ArmorItem{
 	public function getBaseDurability(){
 		return 16;
 	}
+	public function getDamageReduceAmount()
+	{
+		return 3;
+	}
 }

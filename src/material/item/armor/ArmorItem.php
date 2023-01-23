@@ -10,6 +10,8 @@ abstract class ArmorItem extends Item{ //abstract to avoid making instances of i
 	
 	public abstract function getBaseDurability();
 	
+	public abstract function getDamageReduceAmount();
+	
 	public function getMaxDurability(){
 		return $this->getMaterialDurability() * $this->getBaseDurability();
 	}

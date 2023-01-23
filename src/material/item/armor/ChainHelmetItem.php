@@ -13,4 +13,8 @@ class ChainHelmetItem extends ArmorItem{
 	public function getBaseDurability(){
 		return 11;
 	}
+	public function getDamageReduceAmount()
+	{
+		return 1;
+	}
 }

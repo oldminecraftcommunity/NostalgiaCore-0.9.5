@@ -1,9 +1,9 @@
 <?php
 class TileNavigator implements ITileNavigator
 {
-    private $blockedProvider, $neighborProvider, $distanceAlgorithm;
+	private $blockedProvider, $neighborProvider, $distanceAlgorithm;
 
-    public static $pathfinderAccessed = 0;
+	public static $pathfinderAccessed = 0;
 
 	public function __construct(IBlockedProvider $blockedProvider, INeighborProvider $neighborProvider, IDistanceAlgorithm $distanceAlgorithm){
 		$this->blockedProvider = $blockedProvider;
