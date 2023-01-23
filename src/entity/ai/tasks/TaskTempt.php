@@ -12,6 +12,7 @@ class TaskTempt extends TaskBase
 	public function onEnd(EntityAI $ai)
 	{
 		unset($this->target);
+		unset($ai->entity->target);
 		$ai->entity->pitch = 0;
 	}
 
@@ -34,6 +35,7 @@ class TaskTempt extends TaskBase
 		$target = $this->findTarget($ai->entity, 10);
 		if($target instanceof Entity && $target->class === ENTITY_PLAYER && $target->isPlayer() && $ai->entity->isFood($target->player->getHeldItem()->getID())){
 			$this->target = $target;
+			$ai->entity->target = $target;
 			return true;
 		}
 		

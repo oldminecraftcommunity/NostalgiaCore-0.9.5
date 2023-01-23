@@ -28,7 +28,7 @@ class Creeper extends Monster{
 	 * @return boolean
 	 */
 	public function isIgnited(){
-		return (boolean)$this->getState();
+		return $this->getState() > 0;
 	}
 	
 	public function interactWith(Entity $e, $action){
@@ -50,7 +50,17 @@ class Creeper extends Monster{
 		$this->timeUntilExplode = self::EXPL_TIME;
 	}
 	
+	public function attackEntity($entity){
+		if(Utils::distance_noroot($entity, $this) <= 49 && !$this->isIgnited()){
+			$this->ignite();
+		}
+		
+	}
 	public function update(){
+		if($this->isIgnited() && $this->target instanceof Entity && Utils::distance_noroot($this->target, $this) > 49){
+			$this->setIgnited(-1); //broken in vanilla too
+			$this->timeUntilExplode = 0;
+		}
 		if($this->timeUntilExplode === 1){
 			$this->explode();
 		}

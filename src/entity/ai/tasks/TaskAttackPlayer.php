@@ -29,7 +29,8 @@ class TaskAttackPlayer extends TaskTempt
 	{
 		$target = $this->findTarget($ai->entity, 10);
 		if($target instanceof Entity && $target->class === ENTITY_PLAYER && $target->isPlayer()){
-			$this->target = $target;
+			$this->target = $target; //TODO get rid of it
+			$ai->entity->target = $target;
 			return true;
 		}
 		
