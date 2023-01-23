@@ -722,7 +722,7 @@ class Player{
 					$pk->target = $data["entity"]->eid;
 					$this->dataPacket($pk);
 					if(($this->gamemode & 0x01) === 0x00){
-						$this->addItem($data["entity"]->type, $data["entity"]->meta, $data["entity"]->stack, true);
+						$this->addItem($data["entity"]->type, $data["entity"]->meta, $data["entity"]->stack, false);
 					}
 					switch($data["entity"]->type){
 						case WOOD:
@@ -1738,12 +1738,12 @@ class Player{
 					}
 					$slot = $this->armor[$i];
 					if($slot->getID() !== AIR and $s->getID() === AIR){
-						$this->addItem($slot->getID(), $slot->getMetadata(), 1, true);
+						$this->addItem($slot->getID(), $slot->getMetadata(), 1, false);
 						$this->armor[$i] = BlockAPI::getItem(AIR, 0, 0);
 						$packet->slots[$i] = 255;
 					}elseif($s->getID() !== AIR and $slot->getID() === AIR and ($sl = $this->hasItem($s->getID())) !== false){
 						$this->armor[$i] = $this->getSlot($sl);
-						$this->setSlot($sl, BlockAPI::getItem(AIR, 0, 0), true);
+						$this->setSlot($sl, BlockAPI::getItem(AIR, 0, 0), false);
 					}elseif($s->getID() !== AIR and $slot->getID() !== AIR and ($slot->getID() !== $s->getID() or $slot->getMetadata() !== $s->getMetadata()) and ($sl = $this->hasItem($s->getID())) !== false){
 						$item = $this->armor[$i];
 						$this->armor[$i] = $this->getSlot($sl);
@@ -1853,10 +1853,10 @@ class Player{
 							$this->entity->heal($items[$slot->getID()], "eating");
 							--$slot->count;
 							if($slot->count <= 0){
-								$this->setSlot($this->slot, BlockAPI::getItem(AIR, 0, 0), true);
+								$this->setSlot($this->slot, BlockAPI::getItem(AIR, 0, 0), false);
 							}
 							if($slot->getID() === MUSHROOM_STEW or $slot->getID() === BEETROOT_SOUP){
-								$this->addItem(BOWL, 0, 1, true);
+								$this->addItem(BOWL, 0, 1, false);
 							}
 						}
 						break;
@@ -1887,7 +1887,7 @@ class Player{
 					$sZ += sin($f3) * $f1;
 					
 					$this->server->api->entity->dropRawPos(new Position($this->entity->x, $this->entity->y - 0.3 + $this->entity->height - 0.12, $this->entity->z, $this->level), $packet->item, $sX, $sY, $sZ);
-					$this->setSlot($this->slot, BlockAPI::getItem(AIR, 0, 0), true);
+					$this->setSlot($this->slot, BlockAPI::getItem(AIR, 0, 0), false);
 				}
 				if($this->entity->inAction === true){
 					$this->entity->inAction = false;
@@ -2053,17 +2053,17 @@ class Player{
 					}
 					if($item->getID() !== AIR and $slot->getID() == $item->getID()){
 						if($slot->count < $item->count){
-							if($this->removeItem($item->getID(), $item->getMetadata(), $item->count - $slot->count, true) === false){
+							if($this->removeItem($item->getID(), $item->getMetadata(), $item->count - $slot->count, false) === false){
 								break;
 							}
 						}elseif($slot->count > $item->count){
-							$this->addItem($item->getID(), $item->getMetadata(), $slot->count - $item->count, true);
+							$this->addItem($item->getID(), $item->getMetadata(), $slot->count - $item->count, false);
 						}
 					}else{
-						if($this->removeItem($item->getID(), $item->getMetadata(), $item->count, true) === false){
+						if($this->removeItem($item->getID(), $item->getMetadata(), $item->count, false) === false){
 							break;
 						}
-						$this->addItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
+						$this->addItem($slot->getID(), $slot->getMetadata(), $slot->count, false);
 					}
 					$tile->setSlot($slotn, $item, true, $offset);
 				}else{
@@ -2099,17 +2099,17 @@ class Player{
 
 					if($item->getID() !== AIR and $slot->getID() == $item->getID()){
 						if($slot->count < $item->count){
-							if($this->removeItem($item->getID(), $item->getMetadata(), $item->count - $slot->count, true) === false){
+							if($this->removeItem($item->getID(), $item->getMetadata(), $item->count - $slot->count, false) === false){
 								break;
 							}
 						}elseif($slot->count > $item->count){
-							$this->addItem($item->getID(), $item->getMetadata(), $slot->count - $item->count, true);
+							$this->addItem($item->getID(), $item->getMetadata(), $slot->count - $item->count, false);
 						}
 					}else{
-						if($this->removeItem($item->getID(), $item->getMetadata(), $item->count, true) === false){
+						if($this->removeItem($item->getID(), $item->getMetadata(), $item->count, false) === false){
 							break;
 						}
-						$this->addItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
+						$this->addItem($slot->getID(), $slot->getMetadata(), $slot->count, false);
 					}
 					$tile->setSlot($packet->slot, $item);
 				}
@@ -2252,15 +2252,15 @@ class Player{
 				$s = $this->getSlot($slot);
 				$s->count -= $item->count;
 				if($s->count <= 0){
-					$this->setSlot($slot, BlockAPI::getItem(AIR, 0, 0), true);
+					$this->setSlot($slot, BlockAPI::getItem(AIR, 0, 0), false);
 				}
 			}
 			foreach($craft as $slot => $item){
 				$s = $this->getSlot($slot);
 				if($s->count <= 0 or $s->getID() === AIR){
-					$this->setSlot($slot, BlockAPI::getItem($item->getID(), $item->getMetadata(), $item->count), true);
+					$this->setSlot($slot, BlockAPI::getItem($item->getID(), $item->getMetadata(), $item->count), false);
 				}else{
-					$this->setSlot($slot, BlockAPI::getItem($item->getID(), $item->getMetadata(), $s->count + $item->count), true);
+					$this->setSlot($slot, BlockAPI::getItem($item->getID(), $item->getMetadata(), $s->count + $item->count), false);
 				}
 				switch($item->getID()){
 					case WORKBENCH:

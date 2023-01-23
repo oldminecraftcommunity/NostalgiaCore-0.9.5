@@ -399,7 +399,7 @@ class BlockAPI{
 				return $this->cancelAction($target, $player, false);
 			}
 			if(($player->gamemode & 0x01) === 0 and $item->useOn($target) and $item->getMetadata() >= $item->getMaxDurability()){
-				$player->setSlot($player->slot, new Item(AIR, 0, 0), true);
+				$player->setSlot($player->slot, new Item(AIR, 0, 0), false);
 			}
 		}else{
 			return $this->cancelAction($target, $player, false);
@@ -469,7 +469,7 @@ class BlockAPI{
 
 		if($item->isActivable === true and $item->onActivate($player->level, $player, $block, $target, $face, $fx, $fy, $fz) === true){
 			if($item->count <= 0){
-				$player->setSlot($player->slot, BlockAPI::getItem(AIR, 0, 0), true);
+				$player->setSlot($player->slot, BlockAPI::getItem(AIR, 0, 0), false);
 			}
 			return false;
 		}
