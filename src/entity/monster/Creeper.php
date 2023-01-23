@@ -22,6 +22,8 @@ class Creeper extends Monster{
 		$this->setState($v === null ? !$this->getState() : $v);	
 	}
 	
+	
+	
 	/**
 	 * @return boolean
 	 */

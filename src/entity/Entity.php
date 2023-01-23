@@ -189,6 +189,10 @@ class Entity extends Position
 		return in_array($this->type, func_get_args());
 	}
 	
+	public function attackEntity($entity){
+
+	}
+	
 	public function addVelocity($vX, $vY = 0, $vZ = 0)
 	{
 		if($vX instanceof Vector3){
