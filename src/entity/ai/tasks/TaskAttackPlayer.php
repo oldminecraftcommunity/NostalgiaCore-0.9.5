@@ -1,4 +1,4 @@
-/*-<?php
+<?php
 /**
  * A Tempt but for Monsters
  */
