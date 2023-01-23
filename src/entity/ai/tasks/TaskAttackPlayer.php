@@ -1,4 +1,4 @@
-<?php
+/*-<?php
 /**
  * A Tempt but for Monsters
  */
@@ -11,7 +11,7 @@ class TaskAttackPlayer extends TaskTempt
 	}
 	public function onUpdate(EntityAI $ai)
 	{
-		if(($this->target instanceof Entity && !$this->target->isPlayer()) || $this->target->distanceSquared($ai->entity) > 100 || $this->target->level->getName() != $ai->entity->level->getName()){
+		if(($ai->entity instanceof Spider && $ai->entity->level->isDay()) || ($this->target instanceof Entity && !$this->target->isPlayer()) || $this->target->distanceSquared($ai->entity) > 100 || $this->target->level->getName() != $ai->entity->level->getName()){
 			$this->reset();
 			return;
 		}
@@ -28,7 +28,7 @@ class TaskAttackPlayer extends TaskTempt
 	public function canBeExecuted(EntityAI $ai)
 	{
 		$target = $this->findTarget($ai->entity, 10);
-		if($target instanceof Entity && $target->class === ENTITY_PLAYER && $target->isPlayer()){
+		if(($ai->entity instanceof Spider && !$ai->entity->level->isDay()) || $target instanceof Entity && $target->class === ENTITY_PLAYER && $target->isPlayer()){
 			$this->target = $target; //TODO get rid of it
 			$ai->entity->target = $target;
 			return true;
