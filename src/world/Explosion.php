@@ -28,11 +28,16 @@ class Explosion{
 	}
 
 	public function explode(){
+		$radius = 2 * $this->size;
+		$server = ServerAPI::request();
 		if(!Explosion::$enableExplosions){ /*Disable Explosions*/
+			foreach($server->api->entity->getRadius($this->source, $radius) as $entity){
+                        	$impact = (1 - $this->source->distance($entity) / $radius) * 0.5; //pla>
+                        	$damage = (int) (($impact * $impact + $impact) * 8 * $this->size + 1);
+                        	$entity->harm($damage, "explosion");
+                	}
 			return;
 		}
-
-		$server = ServerAPI::request();
 		if($this->size < 0.1 or $server->api->dhandle("entity.explosion", [
 				"level" => $this->level,
 				"source" => $this->source,
@@ -76,7 +81,6 @@ class Explosion{
 
 		$send = [];
 		$source = $this->source->floor();
-		$radius = 2 * $this->size;
 		foreach($server->api->entity->getRadius($this->source, $radius) as $entity){
 			$impact = (1 - $this->source->distance($entity) / $radius) * 0.5; //placeholder, 0.7 should be exposure
 			$damage = (int) (($impact * $impact + $impact) * 8 * $this->size + 1);
