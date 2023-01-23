@@ -24,6 +24,8 @@ class GrassBlock extends SolidBlock{
 			if($this->getSide(1)->isTransparent === false) return false;
 			if(($player->gamemode & 0x01) === 0){
 				$item->useOn($this);
+				if($item->getMetadata() >= $item->getMaxDurability()) $player->setSlot($player->slot, new Item(AIR, 0, 0), false);
+				else $player->setSlot($player->slot, $item, true);
 			}
 			$this->level->setBlock($this, new FarmlandBlock());
 			$this->seedsDrop();

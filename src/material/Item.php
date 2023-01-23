@@ -232,7 +232,7 @@ class Item{
 	}
 	
 	public function getMaxDurability(){
-		if(!$this->isTool() and $this->isHoe() === false and $this->id !== BOW){
+		if(!$this->isTool() and $this->id !== BOW){
 			return false;
 		}
 		
