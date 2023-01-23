@@ -24,6 +24,8 @@ Supported MCPE versions: 0.8.0, 0.8.1 (maybe 0.8.2)
 
 • PHAR plugins support
 
+• Mob AI
+
 ...and etc.
 
 <h3> Download Stable NostalgiaCore</h3>
