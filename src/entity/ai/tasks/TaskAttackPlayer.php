@@ -11,7 +11,7 @@ class TaskAttackPlayer extends TaskTempt
 	}
 	public function onUpdate(EntityAI $ai)
 	{
-		if(!($this->target instanceof Entity) ($ai->entity instanceof Spider && $ai->entity->level->isDay()) || ($this->target instanceof Entity && !$this->target->isPlayer()) || $this->target->distanceSquared($ai->entity) > 100 || $this->target->level->getName() != $ai->entity->level->getName()){
+		if(!($this->target instanceof Entity) && ($ai->entity instanceof Spider && $ai->entity->level->isDay()) || ($this->target instanceof Entity && !$this->target->isPlayer()) || $this->target->distanceSquared($ai->entity) > 100 || $this->target->level->getName() != $ai->entity->level->getName()){
 			$this->reset();
 			return;
 		}
