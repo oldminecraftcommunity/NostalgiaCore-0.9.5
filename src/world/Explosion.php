@@ -36,6 +36,13 @@ class Explosion{
 							$damage = (int) (($impact * $impact + $impact) * 8 * $this->size + 1);
 							$entity->harm($damage, "explosion");
 					}
+			$pk = new ExplodePacket; //sound fix
+			$pk->x = $this->source->x;
+			$pk->y = $this->source->y;
+			$pk->z = $this->source->z;
+			$pk->radius = $this->size;
+			$pk->records = [];
+			$server->api->player->broadcastPacket($this->level->players, $pk);
 			return;
 		}
 		if($this->size < 0.1 or $server->api->dhandle("entity.explosion", [
