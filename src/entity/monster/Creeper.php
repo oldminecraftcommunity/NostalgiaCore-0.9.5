@@ -77,8 +77,8 @@ class Creeper extends Monster{
 		}
 		$this->setIgnited(0);
 		$explosion = new Explosion($this, 3);
-		$explosion->explode();
 		$this->close();
+		$explosion->explode();
 	}
 	
 	public function getDrops(){
