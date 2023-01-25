@@ -160,26 +160,18 @@ class Player{
 					return false;
 				}
 
-				foreach($this->level->entities as $e){
+				foreach($this->level->entityList as $e){
 					if($e !== $this->entity){
 						if($e->isPlayer()){
-							$pk = new MoveEntityPacket_PosRot;
-							$pk->eid = $this->entity->eid;
-							$pk->x = -256;
-							$pk->y = 128;
-							$pk->z = -256;
-							$pk->yaw = 0;
-							$pk->pitch = 0;
-							$e->player->dataPacket($pk);
-
-							$pk = new MoveEntityPacket_PosRot;
+							$pk = new RemovePlayerPacket();
+							$pk->clientID = $e->player->clientID;
 							$pk->eid = $e->eid;
-							$pk->x = -256;
-							$pk->y = 128;
-							$pk->z = -256;
-							$pk->yaw = 0;
-							$pk->pitch = 0;
-							$this->dataPacket($pk);
+							$e->player->dataPacket($pk);
+							
+							$pk = new RemovePlayerPacket();
+							$pk->clientID = $this->clientID;
+							$pk->eid = $this->eid;
+							$e->player->dataPacket($pk);
 						}else{
 							$pk = new RemoveEntityPacket;
 							$pk->eid = $e->eid;
