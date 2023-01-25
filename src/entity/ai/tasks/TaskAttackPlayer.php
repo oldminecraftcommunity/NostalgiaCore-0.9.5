@@ -20,7 +20,6 @@ class TaskAttackPlayer extends TaskTempt
 		$ai->mobController->lookOn($this->target);
 		$mult = $ai->entity instanceof Spider ? 1 : 2;
 		$radius = ($ai->entity->width * $mult)*($ai->entity->width * $mult); 
-		console(Utils::distance_noroot($this->target, $ai->entity));
 		if(Utils::distance_noroot($this->target, $ai->entity) <= $radius && $this->attackTime <= 0){
 			$ai->entity->attackEntity($this->target);
 			$this->attackTime = 20;
