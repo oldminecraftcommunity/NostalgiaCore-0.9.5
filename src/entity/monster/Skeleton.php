@@ -6,6 +6,7 @@ class Skeleton extends Monster{
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 10, "generic");
 		$this->setName("Skeleton");
+		$this->ai->removeTask("TaskAttackPlayer");
 		$this->setSpeed(0.25);
 		$this->update();
 	}

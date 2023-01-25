@@ -11,14 +11,17 @@ class TaskAttackPlayer extends TaskTempt
 	}
 	public function onUpdate(EntityAI $ai)
 	{
-		if(!($this->target instanceof Entity) && ($ai->entity instanceof Spider && $ai->entity->level->isDay()) || ($this->target instanceof Entity && !$this->target->isPlayer()) || $this->target->distanceSquared($ai->entity) > 100 || $this->target->level->getName() != $ai->entity->level->getName()){
+		if(!($this->target instanceof Entity) || ($ai->entity instanceof Spider && $ai->entity->level->isDay()) || ($this->target instanceof Entity && !$this->target->isPlayer()) || (Utils::distance_noroot($this->target, $ai->entity) > 256) || $this->target->level->getName() != $ai->entity->level->getName()){
 			$this->reset();
 			return;
 		}
 		
 		$ai->mobController->moveTo($this->target->x, floor($ai->entity->y), $this->target->z);
 		$ai->mobController->lookOn($this->target);
-		if($ai->entity->boundingBox->intersectsWith($this->target->boundingBox) && $this->attackTime <= 0){
+		$mult = $ai->entity instanceof Spider ? 1 : 2;
+		$radius = ($ai->entity->width * $mult)*($ai->entity->width * $mult); 
+		console(Utils::distance_noroot($this->target, $ai->entity));
+		if(Utils::distance_noroot($this->target, $ai->entity) <= $radius && $this->attackTime <= 0){
 			$ai->entity->attackEntity($this->target);
 			$this->attackTime = 20;
 		}
@@ -27,7 +30,7 @@ class TaskAttackPlayer extends TaskTempt
 	}
 	public function canBeExecuted(EntityAI $ai)
 	{
-		$target = $this->findTarget($ai->entity, 10);
+		$target = $this->findTarget($ai->entity, 16);
 		if(($ai->entity instanceof Spider && !$ai->entity->level->isDay()) || $target instanceof Entity && $target->class === ENTITY_PLAYER && $target->isPlayer()){
 			$this->target = $target; //TODO get rid of it
 			$ai->entity->target = $target;

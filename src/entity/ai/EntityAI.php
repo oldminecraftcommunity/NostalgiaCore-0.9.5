@@ -32,6 +32,15 @@ class EntityAI
 		console("[DEBUG] Adding new task...",true, true, 2);
 		$this->tasks[$task->__toString()] = $task;
 	}
+	
+	public function removeTask($name){
+		if(isset($this->tasks[$name])){
+			unset($this->tasks[$name]);
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * 
 	 * @param mixed $id classname
