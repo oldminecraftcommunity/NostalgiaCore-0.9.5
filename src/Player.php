@@ -163,15 +163,23 @@ class Player{
 				foreach($this->level->entityList as $e){
 					if($e !== $this->entity){
 						if($e->isPlayer()){
-							$pk = new RemovePlayerPacket();
-							$pk->clientID = $e->player->clientID;
-							$pk->eid = $e->eid;
+							$pk = new MoveEntityPacket_PosRot;
+							$pk->eid = $this->entity->eid;
+							$pk->x = -256;
+							$pk->y = 128;
+							$pk->z = -256;
+							$pk->yaw = 0;
+							$pk->pitch = 0;
 							$e->player->dataPacket($pk);
 							
-							$pk = new RemovePlayerPacket();
-							$pk->clientID = $this->clientID;
-							$pk->eid = $this->eid;
-							$e->player->dataPacket($pk);
+							$pk = new MoveEntityPacket_PosRot;
+							$pk->eid = $e->eid;
+							$pk->x = -256;
+							$pk->y = 128;
+							$pk->z = -256;
+							$pk->yaw = 0;
+							$pk->pitch = 0;
+							$this->dataPacket($pk);
 						}else{
 							$pk = new RemoveEntityPacket;
 							$pk->eid = $e->eid;
@@ -190,7 +198,7 @@ class Player{
 				$pk->time = $this->level->getTime();
 				$this->dataPacket($pk);
 				$terrain = true;
-				foreach($this->server->api->player->getAll($this->level) as $player){
+				foreach($this->level->pla as $player){
 					if($player !== $this and $player->entity instanceof Entity){
 						$pk = new MoveEntityPacket_PosRot;
 						$pk->eid = $player->entity->eid;
