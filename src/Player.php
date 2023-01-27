@@ -198,7 +198,7 @@ class Player{
 				$pk->time = $this->level->getTime();
 				$this->dataPacket($pk);
 				$terrain = true;
-				foreach($this->level->pla as $player){
+				foreach($this->level->players as $player){
 					if($player !== $this and $player->entity instanceof Entity){
 						$pk = new MoveEntityPacket_PosRot;
 						$pk->eid = $player->entity->eid;
