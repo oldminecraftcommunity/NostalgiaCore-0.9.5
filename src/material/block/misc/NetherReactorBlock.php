@@ -70,7 +70,7 @@ class NetherReactorBlock extends SolidBlock{
 	}
 	
 	private function pigmenCheck($x,$y,$z) {
-		$pigCount = 0;
+a		$pigCount = 0;
 		$server = ServerAPI::request();
 		$allEntities = $server->api->entity->entities;
 		foreach($allEntities as $entity) {
@@ -188,7 +188,7 @@ class NetherReactorBlock extends SolidBlock{
 		foreach($this->core as $yOffset => $layer){
 			foreach($layer as $line){
 				foreach(str_split($line) as $char){
-					$b = $this->level->getBlockWithoutVector(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ));
+					$b = $this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ));
 					switch($char){
 						case "G":
 							if($b === GOLD_BLOCK){ //TODO make it use structure class
