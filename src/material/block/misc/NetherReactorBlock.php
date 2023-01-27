@@ -70,7 +70,7 @@ class NetherReactorBlock extends SolidBlock{
 	}
 	
 	private function pigmenCheck($x,$y,$z) {
-a		$pigCount = 0;
+		$pigCount = 0;
 		$server = ServerAPI::request();
 		$allEntities = $server->api->entity->entities;
 		foreach($allEntities as $entity) {
