@@ -1457,12 +1457,8 @@ class Entity extends Position
 		}else{
 			$pk = new EntityEventPacket;
 			$pk->eid = $this->eid;
-			$pk->event = 3;
+			$pk->event = EntityEventPacket::ENTITY_DEAD;
 			$this->server->api->player->broadcastPacket($this->level->players, $pk);
-			$this->server->api->dhandle("entity.event", [
-			 "entity" => $this,
-			 "event" => 3
-			 ]); // Entity dead
 		}
 		if($this->player instanceof Player){
 			$this->player->blocked = true;
@@ -1474,7 +1470,7 @@ class Entity extends Position
 				$this->server->api->ban->ban($this->player->username);
 			}
 		} else{
-			$this->close();
+			$this->server->api->schedule(40, [$this, "close"], []);
 		}
 	}
 	

@@ -5,7 +5,8 @@ class EntityEventPacket extends RakNetDataPacket{
 	public $event;
 	
 	const ENTITY_DAMAGE = 2;
-	
+	const ENTITY_DEAD = 3;
+	const ENTITY_ANIM_10 = 10;
 	public function pid(){
 		return ProtocolInfo::ENTITY_EVENT_PACKET;
 	}
