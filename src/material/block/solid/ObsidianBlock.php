@@ -11,7 +11,7 @@ class ObsidianBlock extends SolidBlock{
 			return 0.20;
 		}
 		if($item->getPickaxeLevel() >= 5){
-			return 3.5;//from wiki
+			return 2.15;
 		}else{
 			return 250;
 		}
@@ -19,11 +19,11 @@ class ObsidianBlock extends SolidBlock{
 	
 	public function getDrops(Item $item, Player $player){
 		if($item->getPickaxeLevel() >= 5){
-			return array(
-				array(OBSIDIAN, 0, 1),
-			);
+			return [
+				[OBSIDIAN, 0, 1]
+			];
 		}else{
-			return array();
+			return [];
 		}
 	}
 }
