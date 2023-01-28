@@ -511,7 +511,7 @@ class BlockAPI{
 		if(($player->gamemode & 0x01) === 0x00){
 			--$item->count;
 			if($item->count <= 0){
-				$player->setSlot($player->slot, BlockAPI::getItem(AIR, 0, 0), true);
+				$player->setSlot($player->slot, BlockAPI::getItem(AIR, 0, 0), false);
 			}
 		}
 

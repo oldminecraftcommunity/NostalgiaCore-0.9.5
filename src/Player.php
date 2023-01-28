@@ -1747,7 +1747,7 @@ class Player{
 					}elseif($s->getID() !== AIR and $slot->getID() !== AIR and ($slot->getID() !== $s->getID() or $slot->getMetadata() !== $s->getMetadata()) and ($sl = $this->hasItem($s->getID())) !== false){
 						$item = $this->armor[$i];
 						$this->armor[$i] = $this->getSlot($sl);
-						$this->setSlot($sl, $item, true);
+						$this->setSlot($sl, $item, false);
 					}else{
 						$packet->slots[$i] = 255;
 					}

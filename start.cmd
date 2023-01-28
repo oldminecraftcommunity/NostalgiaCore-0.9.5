@@ -14,4 +14,3 @@ if exist bin\php\php.exe (
 		php -d enable_dl=On PocketMine-MP.php %*
 	)
 )
-

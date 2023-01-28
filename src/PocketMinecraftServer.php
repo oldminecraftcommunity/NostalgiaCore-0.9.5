@@ -350,7 +350,7 @@ class PocketMinecraftServer{
 		$hnid = $this->handCnt++;
 		$this->handlers[$hnid] = $callable;
 		$this->query("INSERT INTO handlers (ID, name, priority) VALUES (" . $hnid . ", '" . str_replace("'", "\\'", $event) . "', " . $priority . ");");
-		console("[INTERNAL] New handler " . (is_array($callable) ? get_class($callable[0]) . "::" . $callable[1] : $callable) . " to special event " . $event . " (ID " . $hnid . ")", true, true, 3);
+		//console("[INTERNAL] New handler " . (is_array($callable) ? get_class($callable[0]) . "::" . $callable[1] : $callable) . " to special event " . $event . " (ID " . $hnid . ")", true, true, 3);
 		return $hnid;
 	}
 
@@ -596,7 +596,7 @@ class PocketMinecraftServer{
 				$this->preparedSQL->updateAction->bindValue(":time", $time, SQLITE3_FLOAT);
 				$this->preparedSQL->updateAction->bindValue(":id", $cid, SQLITE3_INTEGER);
 				$this->preparedSQL->updateAction->execute();
-				if(!@is_callable($this->schedule[$cid][0])){
+				if(!isset($this->schedule[$cid]) || !isset($this->schedule[$cid][0]) || !@is_callable($this->schedule[$cid][0])){
 					$return = false;
 				}else{
 					++$actionCount;
