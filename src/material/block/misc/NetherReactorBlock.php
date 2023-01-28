@@ -159,7 +159,7 @@ class NetherReactorBlock extends SolidBlock{
 				$this->level->setBlock(new Vector3($x-1, $y+1, $z-1),new ObsidianBlock);
 				break;
 			case 6:
-				$this->level->setBlock(new Vector3($x, $y, $z),new ObsidianBlock);
+				$this->level->setBlock(new Vector3($x, $y, $z), new NetherReactorBlock(2));
 				$this->level->setBlock(new Vector3($x+1, $y, $z),new ObsidianBlock);
 				$this->level->setBlock(new Vector3($x-1, $y, $z),new ObsidianBlock);
 				$this->level->setBlock(new Vector3($x, $y, $z+1),new ObsidianBlock);
@@ -201,7 +201,7 @@ class NetherReactorBlock extends SolidBlock{
 							}
 							return false;
 						case "R":
-							if($b === NETHER_REACTOR){
+							if($b === NETHER_REACTOR and $this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getMetadata() === 0){
 								break;
 							}
 							return false;
