@@ -222,11 +222,21 @@ class BlockAPI{
 		$this->server->schedule(1, [$this, "blockUpdateTick"], [], true);
 		$this->server->api->console->register("setblock", "<x> <y> <z> <block[:damage]>", [$this, "commandHandler"]);
 		$this->server->api->console->register("give", "<player> <item[:damage]> [amount]", [$this, "commandHandler"]);
+		$this->server->api->console->register("id", "Check id of item", [$this, "commandHandler"]);
+		$this->server->api->console->cmdWhitelist("id");
 	}
 
 	public function commandHandler($cmd, $args, $issuer, $alias){
 		$output = "";
 		switch($cmd){
+			case "id":
+				if(!($issuer instanceof Player)){
+					$output .= "Run this command in-game!";
+					break;
+				}
+				$itemheld = $issuer->getSlot($issuer->slot);
+				$output = self::getItem($itemheld->getID(), $itemheld->getMetadata())."";
+				break;
 			case "setblock":
 				if(!($issuer instanceof Player)){
 					if(count($args) < 5){
