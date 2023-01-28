@@ -64,15 +64,15 @@ class PumpkinStemBlock extends FlowableBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-		$drops = array();
+		$drops = [];
 		if($this->meta >= 0x07){
-			$drops[] = array(PUMPKIN_SEEDS, 0, mt_rand(1, 2));
+			$drops[] = [PUMPKIN_SEEDS, 0, mt_rand(1, 2)];
 		}
 		elseif($this->meta >= 0x01 and $this->meta <= 0x07){
-			$drops[] = array(PUMPKIN_SEEDS, 0, 1);
+			$drops[] = [PUMPKIN_SEEDS, 0, 1];
 		}
 		else{
-			$drops[] = array(PUMPKIN_SEEDS, 0, 0);
+			$drops[] = [PUMPKIN_SEEDS, 0, 0];
 		}
 		return $drops;
 	}

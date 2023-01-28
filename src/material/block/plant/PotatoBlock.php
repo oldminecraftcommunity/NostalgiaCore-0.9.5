@@ -54,11 +54,11 @@ class PotatoBlock extends FlowableBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-		$drops = array();
+		$drops = [];
 		if($this->meta >= 0x07){
-			$drops[] = array(POTATO, 0, mt_rand(1, 4));
+			$drops[] = [POTATO, 0, mt_rand(1, 4)];
 		}else{
-			$drops[] = array(POTATO, 0, 1);
+			$drops[] = [POTATO, 0, 1];
 		}
 		return $drops;
 	}

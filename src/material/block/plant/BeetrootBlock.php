@@ -54,13 +54,13 @@ class BeetrootBlock extends FlowableBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-		$drops = array();
+		$drops = [];
 		if($this->meta >= 0x07){
-			$drops[] = array(BEETROOT, 0, 1);
+			$drops[] = [BEETROOT, 0, 1];
 		}
 		for($i = 0; $i < 3; ++$i){
-			if(mt_rand(0,15) <= $this->meta){ //a way from 1.4.7
-				$drops[] = array(BEETROOT_SEEDS, 0, 1);
+			if(mt_rand(0, 15) <= $this->meta){ //a way from 1.4.7
+				$drops[] = [BEETROOT_SEEDS, 0, 1];
 			}
 		}
 		return $drops;
