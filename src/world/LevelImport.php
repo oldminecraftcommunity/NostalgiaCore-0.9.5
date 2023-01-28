@@ -86,13 +86,13 @@ class LevelImport{
 		}
 		$chunks->map = null;
 		$chunks = null;
-		@unlink($this->path . "level.dat");
-		@unlink($this->path . "level.dat_old");
-		@unlink($this->path . "player.dat");
-		@unlink($this->path . "entities.dat");
-		@unlink($this->path . "chunks.dat");
-		@unlink($this->path . "chunks.dat.gz");
-		@unlink($this->path . "tiles.dat");
+		if(file_exists$this->path . "level.dat") @unlink($this->path . "level.dat");
+		if(file_exists$this->path . "level.dat_old") @unlink($this->path . "level.dat_old");
+		if(file_exists$this->path . "player.dat") @unlink($this->path . "player.dat");
+		if(file_exists$this->path . "entities.dat") @unlink($this->path . "entities.dat");
+		if(file_exists$this->path . "chunks.dat") @unlink($this->path . "chunks.dat");
+		if(file_exists$this->path . "chunks.dat.gz") @unlink($this->path . "chunks.dat.gz");
+		if(file_exists$this->path . "tiles.dat") @unlink($this->path . "tiles.dat");
 		unset($chunks, $level, $entities, $tiles, $nbt);
 		return true;
 	}
