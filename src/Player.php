@@ -1773,7 +1773,8 @@ class Player{
 				$target = $this->server->api->entity->get($packet->target);
 				if($target instanceof Entity and $this->entity instanceof Entity and $this->gamemode !== VIEW and $this->blocked === false and ($target instanceof Entity) and $this->entity->distance($target) <= 8){
 					$data["targetentity"] = $packet->target;
-						$data["entity"] = $this;
+					$data["entity"] = $this;
+					$data["player"] = $this;
 					if($this->server->handle("player.interact", $data) !== false){
 						$target->interactWith($this->entity, $packet->action);
 					}
