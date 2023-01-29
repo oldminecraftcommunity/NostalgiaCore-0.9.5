@@ -1319,13 +1319,9 @@ class Entity extends Position
 
 	public function linkEntity(Entity $e, $type)
 	{
-		if($e->isPlayer()){
-			$pk = new SetEntityLinkPacket();
-			$pk->rider = $this->eid;
-			$pk->riding = $type === SetEntityLinkPacket::TYPE_REMOVE ? 0 : $e->eid;
-			$pk->type = $type;
-			$e->player->dataPacket($pk);
-		}
+		//if($e->isPlayer()){
+		$this->server->api->dhandle("entity.link", ["rider" => $e->eid, "riding" => $this->eid, "type" => 0]);
+		//}
 	}
 
 	public function isPlayer()

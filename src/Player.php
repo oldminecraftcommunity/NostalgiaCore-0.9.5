@@ -668,6 +668,17 @@ class Player{
 	 */
 	public function eventHandler($data, $event){
 		switch($event){
+			case "entity.link":
+				$pk = new SetEntityLinkPacket();
+				if($data["rider"] === $this->eid){
+					$pk->rider = 0;
+				}else{
+					$pk->rider = $data["rider"];
+				}
+				$pk->riding = $data["riding"];
+				$pk->type = 0; //TODO;
+				$this->dataPacket($pk);
+				break;
 			case "tile.update":
 				if($data->level === $this->level){
 					if($data->class === TILE_FURNACE){
@@ -1425,11 +1436,13 @@ class Player{
 				$this->evid[] = $this->server->event("entity.animate", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("entity.event", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("entity.metadata", [$this, "eventHandler"]);
+				$this->evid[] = $this->server->event("entity.link", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("player.equipment.change", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("player.armor", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("player.pickup", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("tile.container.slot", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("tile.update", [$this, "eventHandler"]);
+				
 				$this->lastMeasure = microtime(true);
 				$this->server->schedule(50, [$this, "measureLag"], [], true);
 				console("[INFO] " . FORMAT_AQUA . $this->username . FORMAT_RESET . "[/" . $this->ip . ":" . $this->port . "] logged in with entity id " . $this->eid . " at (" . $this->entity->level->getName() . ", " . round($this->entity->x, 2) . ", " . round($this->entity->y, 2) . ", " . round($this->entity->z, 2) . ")");
