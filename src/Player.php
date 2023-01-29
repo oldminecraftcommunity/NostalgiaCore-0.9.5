@@ -677,6 +677,17 @@ class Player{
 					$this->useChunk(floor($data["target"]->x / 16), floor($data["target"]->z / 16));
 				}
 				break;
+			case "entity.link":
+				$pk = new SetEntityLinkPacket();
+				if($data["rider"] === $this->eid){
+					$pk->rider = 0;
+				}else{
+					$pk->rider = $data["rider"];
+				}
+				$pk->riding = $data["riding"];
+				$pk->type = 0; //TODO;
+				$this->dataPacket($pk);
+				break;
 			case "tile.update":
 				if($data->level === $this->level){
 					if($data->class === TILE_FURNACE){
@@ -1434,6 +1445,7 @@ class Player{
 				$this->evid[] = $this->server->event("entity.animate", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("entity.event", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("entity.metadata", [$this, "eventHandler"]);
+				$this->evid[] = $this->server->event("entity.link", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("player.equipment.change", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("player.armor", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("player.pickup", [$this, "eventHandler"]);
