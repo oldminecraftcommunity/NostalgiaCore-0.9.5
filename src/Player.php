@@ -237,7 +237,7 @@ class Player{
 			$this->entity->calculateVelocity();
 			if($terrain === true){
 				$this->orderChunks();
-				$this->getNextChunk();
+				$this->getNextChunk($this->level);
 			}
 			$this->entity->check = true;
 			if($force === true){
@@ -465,17 +465,16 @@ class Player{
 		if($cnt === false){
 			return false;
 		}
-
 	}
 	
-	public function getNextChunk(){
-		if($this->connected === false){
+	public function getNextChunk($world){
+		if($this->connected === false or $world != $this->level){
 			return false;
 		}
 
 		foreach($this->chunkCount as $count => $t){
 			if(isset($this->recoveryQueue[$count]) or isset($this->resendQueue[$count])){
-				$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"]);
+				$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 				return;
 			}else{
 				unset($this->chunkCount[$count]);
@@ -498,7 +497,7 @@ class Player{
 		$c = key($this->chunksOrder);
 		$d = $c != null ? $this->chunksOrder[$c] : null;
 		if($c === null or $d === null){
-			$this->server->schedule(40, [$this, "getNextChunk"]);
+			$this->server->schedule(40, [$this, "getNextChunk"], $world);
 			return false;
 		}
 
@@ -535,7 +534,7 @@ class Player{
 
 		$this->lastChunk = [$x, $z];
 
-		$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"]);
+		$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 	}
 
 	/**
@@ -668,16 +667,15 @@ class Player{
 	 */
 	public function eventHandler($data, $event){
 		switch($event){
-			case "entity.link":
-				$pk = new SetEntityLinkPacket();
-				if($data["rider"] === $this->eid){
-					$pk->rider = 0;
-				}else{
-					$pk->rider = $data["rider"];
+			case "player.touch":
+				if($data["target"]->getID() === AIR){
+					$this->useChunk(floor($data["target"]->x / 16), floor($data["target"]->z / 16));
 				}
-				$pk->riding = $data["riding"];
-				$pk->type = 0; //TODO;
-				$this->dataPacket($pk);
+				break;
+			case "player.block.break":
+				if($data["target"]->getID() === AIR){
+					$this->useChunk(floor($data["target"]->x / 16), floor($data["target"]->z / 16));
+				}
 				break;
 			case "tile.update":
 				if($data->level === $this->level){
@@ -1436,13 +1434,13 @@ class Player{
 				$this->evid[] = $this->server->event("entity.animate", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("entity.event", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("entity.metadata", [$this, "eventHandler"]);
-				$this->evid[] = $this->server->event("entity.link", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("player.equipment.change", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("player.armor", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("player.pickup", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("tile.container.slot", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("tile.update", [$this, "eventHandler"]);
-				
+				$this->evid[] = $this->server->event("player.touch", [$this, "eventHandler"]);
+				$this->evid[] = $this->server->event("player.block.break", [$this, "eventHandler"]);
 				$this->lastMeasure = microtime(true);
 				$this->server->schedule(50, [$this, "measureLag"], [], true);
 				console("[INFO] " . FORMAT_AQUA . $this->username . FORMAT_RESET . "[/" . $this->ip . ":" . $this->port . "] logged in with entity id " . $this->eid . " at (" . $this->entity->level->getName() . ", " . round($this->entity->x, 2) . ", " . round($this->entity->y, 2) . ", " . round($this->entity->z, 2) . ")");
@@ -1456,6 +1454,7 @@ class Player{
 						if($this->spawned !== false){
 							break;
 						}
+						
 						$pos = new Position($this->entity->x, $this->entity->y, $this->entity->z, $this->level);
 						$pData = $this->data->get("position");
 						$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
@@ -1476,12 +1475,9 @@ class Player{
 
 						$this->sendInventory();
 						$this->sendSettings();
-						$this->server->schedule(50, [$this, "orderChunks"], [], true);
+						$this->server->schedule(50, [$this, "orderChunks"], []);
 						$this->blocked = false;
 
-						$pk = new SetTimePacket;
-						$pk->time = $this->level->getTime();
-						$this->dataPacket($pk);
 						$this->server->handle("player.spawn", $this);
 						break;
 					case 2://Chunk loaded?
@@ -1590,7 +1586,9 @@ class Player{
 				}
 				break;
 			case ProtocolInfo::REQUEST_CHUNK_PACKET:
+				//console("request x:".$packet->chunkX.", z: ".$packet->chunkZ." chunk");
 				//$this->useChunk($packet->chunkX, $packet->chunkZ);
+				//$this->lastChunk = [$packet->chunkX, $packet->chunkZ];
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
 				if(!($this->entity instanceof Entity)){
