@@ -41,25 +41,21 @@ class EntityAPI{
 			case "summon":
 			case "spawnmob":
 				if(!($issuer instanceof Player)){
-					$output .= "Please run this command in-game.";
-					break;
+					return "Please run this command in-game.";
 				}
 				if((count($args) < 1) or (count($args) > 3)){
-					$output .= "Usage: /$cmd <mob> [amount] [baby]";
-					break;
+					return "Usage: /$cmd <mob> [amount] [baby]";
 				}
 				
 				if(is_int($args[0])) $type = $args[0];
 				else $type = $mob[strtolower($args[0])];
-				if($type != (10 or 11 or 12 or 13 or 32 or 33 or 34 or 35 or 36)){
-					$output .= "Unknown mob.";
-					break;
+				if($type < 10 || $type > 36){
+					return "Unknown mob.";
 				}
 				$mobName = ucfirst(array_flip($mob)[$type]);
 				
-				if((isset($args[1]) || isset($args[2])) && (strtolower($args[1] === "baby") or strtolower($args[2] === "baby")) and !Utils::in_range($type, 10, 13)){
-					$output .= "$mobName cannot be a baby!";
-					break;
+				if(((isset($args[1]) && strtolower($args[1]) === "baby") || (isset($args[2]) && strtolower($args[2]) === "baby")) && !Utils::in_range($type, 10, 13)){
+					return "$mobName cannot be a baby!";
 				}
 				
 				$x = round($issuer->entity->x, 2, PHP_ROUND_HALF_UP);
@@ -70,14 +66,12 @@ class EntityAPI{
 				
 				if(count($args) === 1){//summon <mob>
 					$this->summon($pos, ENTITY_MOB, $type);
-					$output .= "$mobName spawned in $x, $y, $z.";
-					break;
+					return "$mobName spawned in $x, $y, $z.";
 				}
 				elseif(is_numeric($args[1])){//summon <mob> [amount]
 					$amount = (int) $args[1];
 					if($amount > 100){
-						$output .= "Cannot spawn > 100 mobs";
-						break;
+						return "Cannot spawn > 100 mobs";
 					}
 					$isBaby = false;
 					if(isset($args[2]) and strtolower($args[2]) === 'baby'){//summon <mob> [amount] [baby]
@@ -88,13 +82,11 @@ class EntityAPI{
 						$this->summon($pos, ENTITY_MOB, $type, ["IsBaby" => $isBaby]);
 					}
 					
-					$output .= "$amount ".($isBaby === 1 ? "Baby" : "")." $mobName".(($type !== 13 || $amount > 1) ? "s" : "")." spawned in $x, $y, $z.";
-					break;
+					return "$amount ".($isBaby === 1 ? "Baby" : "")." $mobName(s) spawned in $x, $y, $z.";
 				}
 				elseif(strtolower($args[1]) == "baby"){//summon <mob> [baby]
 					$this->summon($pos, ENTITY_MOB, $type, ["IsBaby" => 1]);
-					$output .= "Baby $mobName spawned in $x, $y, $z.";
-					break;
+					return "Baby $mobName spawned in $x, $y, $z.";
 				}
 				break;
 			case "despawn":

@@ -1455,6 +1455,13 @@ class Player{
 				$this->evid[] = $this->server->event("player.block.break", [$this, "eventHandler"]);
 				$this->lastMeasure = microtime(true);
 				$this->server->schedule(50, [$this, "measureLag"], [], true);
+				
+				$pk = new SetTimePacket;
+				$pk->time = (int) $this->level->getTime();
+				$pk->started = !$this->level->isTimeStopped();
+				$this->dataPacket($pk);
+				
+				
 				console("[INFO] " . FORMAT_AQUA . $this->username . FORMAT_RESET . "[/" . $this->ip . ":" . $this->port . "] logged in with entity id " . $this->eid . " at (" . $this->entity->level->getName() . ", " . round($this->entity->x, 2) . ", " . round($this->entity->y, 2) . ", " . round($this->entity->z, 2) . ")");
 				break;
 			case ProtocolInfo::READY_PACKET:

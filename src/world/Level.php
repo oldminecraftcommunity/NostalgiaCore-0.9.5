@@ -516,7 +516,11 @@ class Level{
 			$this->time -= 20 * 13;
 		}
 	}
-
+	
+	public function isTimeStopped(){
+		return $this->stopTime;
+	}
+	
 	public function stopTime(){
 		$this->stopTime = true;
 		$this->startCheck = 0;
