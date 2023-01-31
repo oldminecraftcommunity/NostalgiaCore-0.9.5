@@ -667,16 +667,6 @@ class Player{
 	 */
 	public function eventHandler($data, $event){
 		switch($event){
-			case "player.touch":
-				if($data["target"]->getID() === AIR){
-					$this->useChunk(floor($data["target"]->x / 16), floor($data["target"]->z / 16));
-				}
-				break;
-			case "player.block.break":
-				if($data["target"]->getID() === AIR){
-					$this->useChunk(floor($data["target"]->x / 16), floor($data["target"]->z / 16));
-				}
-				break;
 			case "entity.link":
 				$pk = new SetEntityLinkPacket();
 				if($data["rider"] === $this->eid){
@@ -1451,8 +1441,6 @@ class Player{
 				$this->evid[] = $this->server->event("player.pickup", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("tile.container.slot", [$this, "eventHandler"]);
 				$this->evid[] = $this->server->event("tile.update", [$this, "eventHandler"]);
-				$this->evid[] = $this->server->event("player.touch", [$this, "eventHandler"]);
-				$this->evid[] = $this->server->event("player.block.break", [$this, "eventHandler"]);
 				$this->lastMeasure = microtime(true);
 				$this->server->schedule(50, [$this, "measureLag"], [], true);
 				

@@ -25,7 +25,7 @@ class FlintSteelItem extends ItemTool{
 			$this->meta++;
 			return true;
 		}else{
-			return parent::useOn($object, $force);
+			return $force ? parent::useOn($object, $force) : $force;
 		}
 	}
 }

@@ -288,7 +288,7 @@ class Level{
 			return false;
 		}
 		$ret = $this->level->setBlock($pos->x, $pos->y, $pos->z, $block->getID(), $block->getMetadata());
-		if($ret === true){
+		if($ret === true){ 
 			if(!($pos instanceof Position)){
 				$pos = new Position($pos->x, $pos->y, $pos->z, $this);
 			}
