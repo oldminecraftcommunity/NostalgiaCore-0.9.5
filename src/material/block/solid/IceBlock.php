@@ -4,6 +4,7 @@ class IceBlock extends TransparentBlock{
 	public function __construct(){
 		parent::__construct(ICE, 0, "Ice");
 		$this->hardness = 2.5;
+		$this->slipperiness = 0.98;
 	}
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$ret = $this->level->setBlock($this, $this, true, false, true);

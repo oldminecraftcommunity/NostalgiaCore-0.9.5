@@ -153,6 +153,8 @@ abstract class Block extends Position{
 	public $x = 0;
 	public $y = 0;
 	public $z = 0;
+	public $slipperiness;
+	
 	
 	public function __construct($id, $meta = 0, $name = "Unknown"){
 		$this->id = (int) $id;
@@ -160,6 +162,7 @@ abstract class Block extends Position{
 		$this->name = $name;
 		$this->breakTime = 0.20;
 		$this->hardness = 10;
+		$this->slipperiness = 0.6;
 		$this->boundingBox = new AxisAlignedBB($this->x, $this->y, $this->z, $this->x + 1, $this->y + 1, $this->z + 1);
 	}
 	

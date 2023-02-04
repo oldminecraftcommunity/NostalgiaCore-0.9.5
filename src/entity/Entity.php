@@ -12,7 +12,7 @@ class Entity extends Position
 	public $isCollidable;
 	public $canBeAttacked;
 	public $moveTime, $lookTime, $idleTime, $knockbackTime = 0;
-	public $needsUpdate;
+	public $needsUpdate = true;
 	public $speedModifer;
 	public $hasGravity;
 	/**
@@ -416,62 +416,60 @@ class Entity extends Position
 		$endY = $startY + 2;
 		$endZ = $startZ + 2;
 		$waterDone = false;
-		if($this->isPlayer()){
-			for($y = $startY; $y <= $endY; ++ $y){
-				for($x = $startX; $x <= $endX; ++ $x){
-					for($z = $startZ; $z <= $endZ; ++ $z){
-						$pos = new Vector3($x, $y, $z);
-						$b = $this->level->getBlock($pos);
-						switch($b->getID()) {
-							case WATER:
-							case STILL_WATER: // Drowing
-								if($this->fire > 0 and $this->inBlock($pos)){
-									$this->fire = 0;
-									$this->updateMetadata();
-								}
-								if($this->air <= 0 && !$waterDone){
-									$this->harm(2, "water");
-									$hasUpdate = true;
-									$waterDone = true;
-								} elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1 - (($b->getMetadata() % 8) / 9)) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and ! $waterDone){
-									$this->air -= 1;
-									$waterDone = true;
-									$this->updateMetadata();
-									$hasUpdate = true;
-								}
-								break;
-							case LAVA: // Lava damage
-							case STILL_LAVA:
-								if($this->inBlock($pos)){
-									$this->harm(5, "lava");
-									$this->fire = 300;
-									$this->updateMetadata();
-									$hasUpdate = true;
-								}
-								break;
-							case FIRE: // Fire block damage
-								if($this->inBlock($pos)){
-									$this->harm(1, "fire");
-									$this->fire = 300;
-									$this->updateMetadata();
-									$hasUpdate = true;
-								}
-								break;
-							case CACTUS: // Cactus damage
-								if($this->touchingBlock($pos)){
-									$this->harm(1, "cactus");
-									$hasUpdate = true;
-								}
-								break;
-							default:
-								if($this->inBlock($pos, 0.7) and $y == $endY and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)){
-									$this->harm(1, "suffocation"); // Suffocation
-									$hasUpdate = true;
-								} elseif($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1)){
-									$this->air = 200; // Breathing
-								}
-								break;
-						}
+		for ($y = $startY; $y <= $endY; ++$y){
+			for ($x = $startX; $x <= $endX; ++$x){
+				for ($z = $startZ; $z <= $endZ; ++$z){
+					$pos = new Vector3($x, $y, $z);
+					$b = $this->level->getBlock($pos);
+					switch ($b->getID()) {
+						case WATER:
+						case STILL_WATER: // Drowing
+							if ($this->fire > 0 and $this->inBlock($pos)) {
+								$this->fire = 0;
+								$this->updateMetadata();
+							}
+							if ($this->air <= 0 && ! $waterDone) {
+								$this->harm(2, "water");
+								$hasUpdate = true;
+								$waterDone = true;
+							} elseif ($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1 - (($b->getMetadata() % 8) / 9)) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and ! $waterDone) {
+								$this->air -= 1;
+								$waterDone = true;
+								$this->updateMetadata();
+								$hasUpdate = true;
+							}
+							break;
+						case LAVA: // Lava damage
+						case STILL_LAVA:
+							if ($this->inBlock($pos)) {
+								$this->harm(5, "lava");
+								$this->fire = 300;
+								$this->updateMetadata();
+								$hasUpdate = true;
+							}
+							break;
+						case FIRE: // Fire block damage
+							if ($this->inBlock($pos)) {
+								$this->harm(1, "fire");
+								$this->fire = 300;
+								$this->updateMetadata();
+								$hasUpdate = true;
+							}
+							break;
+						case CACTUS: // Cactus damage
+							if ($this->touchingBlock($pos)) {
+								$this->harm(1, "cactus");
+								$hasUpdate = true;
+							}
+							break;
+						default:
+							if ($this->inBlock($pos, 0.7) and $y == $endY and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)) {
+								$this->harm(1, "suffocation"); // Suffocation
+								$hasUpdate = true;
+							} elseif ($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1)) {
+								$this->air = 200; // Breathing
+							}
+							break;
 					}
 				}
 			}
@@ -553,7 +551,7 @@ class Entity extends Position
 			}
 			if(!$this->isPlayer()){
 				$update = false;
-				$drag = 0.2;
+				$this->inWater = false;
 				if(Utils::in_range($this->speedX, -0.01, 0.01)){
 					$this->speedX = 0;
 				}
@@ -563,7 +561,6 @@ class Entity extends Position
 				if(Utils::in_range($this->speedY, -0.007, 0.007)){
 					$this->speedY = 0;
 				}
-				$this->inWater = false;
 				if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)){
 					$aABB = $this->boundingBox->addCoord($this->speedX, $this->speedY, $this->speedZ);
 					$x0 = floor($aABB->minX);
@@ -585,58 +582,7 @@ class Entity extends Position
 							for($z = $z0; $z < $z1; ++$z){
 								$pos = new Vector3($x, $y, $z);
 								$b = $this->level->getBlock($pos);
-								switch($b->getID()) {
-									case WATER:
-									case STILL_WATER: // Drowing
-										if($this->fire > 0 and $this->inBlock($pos, $this->radius)){
-											$this->fire = 0;
-											$this->updateMetadata();
-										}
-										if($this->air <= 0 and !$waterDone){
-											$this->harm(2, "water");
-											$waterDone = true;
-											$hasUpdate = true;
-										} elseif($x == ($endX - 2) and $y == ($y1 - 1) and $z == ($endZ - 2) and ($this->class === ENTITY_MOB) and !$waterDone){ //TODO aabb
-											$this->air -= 1;
-											$waterDone = true;
-											$this->updateMetadata();
-											$this->inWater = true;
-											$hasUpdate = true;
-										}
-										break;
-									case LAVA: // Lava damage
-									case STILL_LAVA:
-										if($this->inBlock($pos, $this->radius)){
-											$this->harm(5, "lava");
-											$this->fire = 300;
-											$this->updateMetadata();
-											$hasUpdate = true;
-										}
-										break;
-									case FIRE: // Fire block damage
-										if($this->inBlock($pos, $this->radius)){
-											$this->harm(1, "fire");
-											$this->fire = 300;
-											$this->updateMetadata();
-											$hasUpdate = true;
-										}
-										break;
-									case CACTUS: // Cactus damage
-										if($this->touchingBlock($pos, $this->radius)){
-											$this->harm(1, "cactus");
-											$hasUpdate = true;
-										}
-										break;
-									default:
-										if($this->inBlock($pos, $this->radius) and $y == ($y1 - 1) and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)){
-											$this->harm(1, "suffocation"); // Suffocation
-											$hasUpdate = true;
-										} elseif($x == ($endX - 1) and $y == $y1 and $z == ($endZ - 1)){
-											$this->air = 200; // Breathing
-										}
-										break;
-								}
-								if($b != false && ($b->isSolid && $b->boundingBox->intersectsWith($aABB))){
+								if($b != false && $b->isSolid){
 									$this->speedY = $b->boundingBox->calculateYOffset($this->boundingBox, $this->speedY);
 									$this->speedX = $b->boundingBox->calculateXOffset($this->boundingBox, $this->speedX);
 									$this->speedZ = $b->boundingBox->calculateZOffset($this->boundingBox, $this->speedZ);
@@ -647,15 +593,22 @@ class Entity extends Position
 					
 					
 				}
+				
 				$support = $savedSpeedY != $this->speedY && $savedSpeedY < 0;
+				$horizontalMultiplyFactor = 0.91;
+				if($support){
+					$horizontalMultiplyFactor = 0.54;
+					$b = $this->level->getBlockWithoutVector(floor($this->x), floor($this->boundingBox->minX) - 1, floor($this->z));
+					if($b instanceof Block){
+						$horizontalMultiplyFactor = $b->slipperiness * 0.91;
+					}
+				}
 				if($this->speedX != 0){
 					$this->x += $this->speedX;
-					$this->speedX -= $this->speedX * $drag;
 					$update = true;
 				}
 				if($this->speedZ != 0){
 					$this->z += $this->speedZ;
-					$this->speedZ -= $this->speedZ * $drag;
 					$update = true;
 				}
 				if($this->speedY != 0){
@@ -667,7 +620,7 @@ class Entity extends Position
 						for($y = (int) ceil($this->y) - 1; $y >= $lim; -- $y){
 							
 							if($this->level->getBlockWithoutVector($x, $y, $z)->isSolid === true){
-								$support = true;
+								//$support = true;
 								if($this->class === ENTITY_FALLING){
 									$this->y = $ny;
 									$fall = $this->level->getBlock(new Vector3(intval($this->x - 0.5), intval(ceil($this->y)), intval($this->z - 0.5)));
@@ -687,13 +640,11 @@ class Entity extends Position
 					}
 					$this->y = $ny;
 					
-					$this->speedY -= $this->speedY * $drag;
 					$update = true;
 				}
-				
 				$this->onGround = $support;
 
-				if($this->hasGravity && $support === false){
+				if($this->hasGravity){
 					$this->speedY -= ($this->class === ENTITY_FALLING) ? 0.04 : ($this->class === ENTITY_ITEM ? 0.06 : 0.08); // TODO: replace with $gravity
 					$update = true;
 				} elseif($this->lastX != $this->x || $this->lastZ != $this->z || $this->lastY != $this->z){
@@ -712,6 +663,9 @@ class Entity extends Position
 						$this->server->api->handle("entity.motion", $this);
 					}
 				}
+				$this->speedX *= $horizontalMultiplyFactor;
+				$this->speedY *= 0.98;
+				$this->speedZ *= $horizontalMultiplyFactor;
 			} elseif($this->player instanceof Player){
 				if($isFlying === true and ($this->player->gamemode & 0x01) === 0x00){
 					if($this->fallY === false or $this->fallStart === false){
@@ -1343,7 +1297,7 @@ class Entity extends Position
 	public function moveEntityWithOffset($oX, $oY, $oZ)
 	{
 		$oX = $oX === 0 ? $this->speedX : ($this->getSpeedModifer() * $oX * $this->getSpeed());
-		$oY = $oY <= 0 ? $this->speedY : (0.45);
+		$oY = $oY <= 0 ? $this->speedY : (0.42);
 		$oZ = $oZ === 0 ? $this->speedZ : ($this->getSpeedModifer() * $oZ * $this->getSpeed());
 		$this->setVelocity($oX, $oY, $oZ);
 	}
