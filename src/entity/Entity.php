@@ -177,7 +177,7 @@ class Entity extends Position
 		}
 		$this->radius = $this->width / 2;
 		$this->boundingBox = new AxisAlignedBB($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
-		$this->update();
+		//$this->update();
 		$this->updateLast();
 		$this->updatePosition();
 		if($this->isInVoid()){
@@ -565,12 +565,12 @@ class Entity extends Position
 				}
 				$this->inWater = false;
 				if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)){
-					$aABB = $this->boundingBox->getOffsetBoundingBox($this->speedX, $this->speedY, $this->speedZ);
-					$x0 = floor($aABB->minX - 1);
+					$aABB = $this->boundingBox->addCoord($this->speedX, $this->speedY, $this->speedZ);
+					$x0 = floor($aABB->minX);
 					$x1 = ceil($aABB->maxX);
 					$y0 = floor($aABB->minY);
 					$y1 = ceil($aABB->maxY);
-					$z0 = floor($aABB->minZ - 1);
+					$z0 = floor($aABB->minZ);
 					$z1 = ceil($aABB->maxZ);
 					$x0 = $x0 < 0 ? 0 : $x0;
 					$y0 = $y0 < 0 ? 0 : $y0;
@@ -579,15 +579,16 @@ class Entity extends Position
 					$y1 = $y1 > 128 ? 128 : $y1;
 					$z1 = $z1 > 256 ? 256 : $z1;
 					$waterDone = false;
-					for($x = $x0; $x <= $x1; ++$x){
+					$savedSpeedY = $this->speedY;
+					for($x = $x0; $x < $x1; ++$x){
 						for($y = $y0; $y < $y1; ++$y){
-							for($z = $z0; $z <= $z1; ++$z){
+							for($z = $z0; $z < $z1; ++$z){
 								$pos = new Vector3($x, $y, $z);
 								$b = $this->level->getBlock($pos);
 								switch($b->getID()) {
 									case WATER:
 									case STILL_WATER: // Drowing
-										if($this->fire > 0 and $this->inBlock($pos)){
+										if($this->fire > 0 and $this->inBlock($pos, $this->radius)){
 											$this->fire = 0;
 											$this->updateMetadata();
 										}
@@ -605,7 +606,7 @@ class Entity extends Position
 										break;
 									case LAVA: // Lava damage
 									case STILL_LAVA:
-										if($this->inBlock($pos)){
+										if($this->inBlock($pos, $this->radius)){
 											$this->harm(5, "lava");
 											$this->fire = 300;
 											$this->updateMetadata();
@@ -613,7 +614,7 @@ class Entity extends Position
 										}
 										break;
 									case FIRE: // Fire block damage
-										if($this->inBlock($pos)){
+										if($this->inBlock($pos, $this->radius)){
 											$this->harm(1, "fire");
 											$this->fire = 300;
 											$this->updateMetadata();
@@ -621,7 +622,7 @@ class Entity extends Position
 										}
 										break;
 									case CACTUS: // Cactus damage
-										if($this->touchingBlock($pos)){
+										if($this->touchingBlock($pos, $this->radius)){
 											$this->harm(1, "cactus");
 											$hasUpdate = true;
 										}
@@ -636,13 +637,7 @@ class Entity extends Position
 										break;
 								}
 								if($b != false && ($b->isSolid && $b->boundingBox->intersectsWith($aABB))){
-									$lastY = $this->speedY;
 									$this->speedY = $b->boundingBox->calculateYOffset($this->boundingBox, $this->speedY);
-									if($this->speedY == 0 && $lastY != 0){
-										$support = true;
-									}elseif($this->speedY != 0){
-										$support = false;
-									}
 									$this->speedX = $b->boundingBox->calculateXOffset($this->boundingBox, $this->speedX);
 									$this->speedZ = $b->boundingBox->calculateZOffset($this->boundingBox, $this->speedZ);
 								}
@@ -652,7 +647,7 @@ class Entity extends Position
 					
 					
 				}
-				
+				$support = $savedSpeedY != $this->speedY && $savedSpeedY < 0;
 				if($this->speedX != 0){
 					$this->x += $this->speedX;
 					$this->speedX -= $this->speedX * $drag;
@@ -1371,7 +1366,7 @@ class Entity extends Position
 		return $pnts;
 	}
 	public function applyArmor($damage, $cause){
-		if(is_numeric($cause)){
+		if(is_numeric($cause) || $cause === "explosion"){
 			$var3 = 25 - $this->getArmorValue();
 			$var4 = $damage * $var3 + $this->carryoverDamage;
 			$damage = $var4 / 25;

@@ -998,7 +998,6 @@ class Player{
 		if($nametags !== false){
 			$flags |= 0x20; //Show Nametags
 		}
-
 		$pk = new AdventureSettingsPacket;
 		$pk->flags = $flags;
 		$this->dataPacket($pk);
