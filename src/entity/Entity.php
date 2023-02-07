@@ -561,6 +561,7 @@ class Entity extends Position
 				if(Utils::in_range($this->speedY, -0.007, 0.007)){
 					$this->speedY = 0;
 				}
+				$savedSpeedY = $this->speedY;
 				if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)){
 					$aABB = $this->boundingBox->addCoord($this->speedX, $this->speedY, $this->speedZ);
 					$x0 = floor($aABB->minX);
@@ -576,7 +577,6 @@ class Entity extends Position
 					$y1 = $y1 > 128 ? 128 : $y1;
 					$z1 = $z1 > 256 ? 256 : $z1;
 					$waterDone = false;
-					$savedSpeedY = $this->speedY;
 					for($x = $x0; $x < $x1; ++$x){
 						for($y = $y0; $y < $y1; ++$y){
 							for($z = $z0; $z < $z1; ++$z){
@@ -613,28 +613,24 @@ class Entity extends Position
 				}
 				if($this->speedY != 0){
 					$ny = $this->y + $this->speedY;
-					if($ny <= $this->y){
+					if($this->class === ENTITY_FALLING && $ny <= $this->y){
 						$x = (int) ($this->x - 0.5);
 						$z = (int) ($this->z - 0.5);
 						$lim = (int) floor($ny);
 						for($y = (int) ceil($this->y) - 1; $y >= $lim; -- $y){
-							
 							if($this->level->getBlockWithoutVector($x, $y, $z)->isSolid === true){
 								//$support = true;
-								if($this->class === ENTITY_FALLING){
-									$this->y = $ny;
-									$fall = $this->level->getBlock(new Vector3(intval($this->x - 0.5), intval(ceil($this->y)), intval($this->z - 0.5)));
-									$down = $this->level->getBlock(new Vector3(intval($this->x - 0.5), intval(ceil($this->y) - 1), intval($this->z - 0.5)));
-									if($fall->isFullBlock === false or $down->isFullBlock === false){
-										$this->server->api->entity->drop($this, BlockAPI::getItem($this->data["Tile"] & 0xFFFF, 0, 1), true);
-									} else{
-										$this->level->setBlock($fall, BlockAPI::get($this->data["Tile"]), true, false, true);
-									}
-									$this->server->api->handle("entity.motion", $this);
-									$this->close();
-									return false;
+								$this->y = $ny;
+								$fall = $this->level->getBlock(new Vector3(intval($this->x - 0.5), intval(ceil($this->y)), intval($this->z - 0.5)));
+								$down = $this->level->getBlock(new Vector3(intval($this->x - 0.5), intval(ceil($this->y) - 1), intval($this->z - 0.5)));
+								if($fall->isFullBlock === false or $down->isFullBlock === false){
+									$this->server->api->entity->drop($this, BlockAPI::getItem($this->data["Tile"] & 0xFFFF, 0, 1), true);
+								} else{
+									$this->level->setBlock($fall, BlockAPI::get($this->data["Tile"]), true, false, true);
 								}
-								break;
+								$this->server->api->handle("entity.motion", $this);
+								$this->close();
+								return false;
 							}
 						}
 					}
