@@ -1,12 +1,12 @@
 <?php
 
 class AchievementAPI{
-
+	
 	public static $achievements = [
 		/*"openInventory" => array(
-			"name" => "Taking Inventory",
-			"requires" => array(),
-		),*/
+		 "name" => "Taking Inventory",
+		 "requires" => array(),
+		 ),*/
 		"mineWood" => [
 			"name" => "Getting Wood",
 			"requires" => [
@@ -79,7 +79,7 @@ class AchievementAPI{
 				"buildSword",
 			],
 		],
-
+		
 	];
 	
 	private $server;
@@ -105,7 +105,7 @@ class AchievementAPI{
 		}
 		return false;
 	}
-
+	
 	public static function grantAchievement(Player $player, $achievementId){
 		if(isset(self::$achievements[$achievementId]) and !self::hasAchievement($player, $achievementId)){
 			foreach(self::$achievements[$achievementId]["requires"] as $requerimentId){
@@ -123,19 +123,19 @@ class AchievementAPI{
 		}
 		return false;
 	}
-
+	
 	public static function hasAchievement(Player $player, $achievementId){
 		if(!isset(self::$achievements[$achievementId]) or !isset($player->achievements)){
 			$player->achievements = [];
 			return false;
 		}
-
+		
 		if(!isset($player->achievements[$achievementId]) or $player->achievements[$achievementId] == false){
 			return false;
 		}
 		return true;
 	}
-
+	
 	public static function broadcastAchievement(Player $player, $achievementId){
 		if(isset(self::$achievements[$achievementId])){
 			$result = ServerAPI::request()->api->dhandle("achievement.broadcast", ["player" => $player, "achievementId" => $achievementId]);
@@ -150,19 +150,19 @@ class AchievementAPI{
 		}
 		return false;
 	}
-
+	
 	public static function removeAchievement(Player $player, $achievementId){
 		if(self::hasAchievement($player, $achievementId)){
 			$player->achievements[$achievementId] = false;
 		}
 	}
-
+	
 	public function viewAchievements($cmd, $params, $issuer, $alias)
 	{
 		if(!($issuer instanceof Player) && !isset($params[0])){
 			return "Please enter a nickname.";
 		} else{
-			if(isset($params[0]) && ($this->server->api->ban->isOp($issuer->username) || ! ($issuer instanceof Player))){
+			if(! ($issuer instanceof Player) || (isset($params[0]) && $this->server->api->ban->isOp($issuer->username))){
 				$player = $this->server->api->player->get($params[0]);
 				if($player instanceof Player){
 					$data = $player->data;
