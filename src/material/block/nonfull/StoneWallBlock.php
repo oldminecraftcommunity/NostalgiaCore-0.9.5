@@ -2,14 +2,15 @@
 
 class StoneWallBlock extends TransparentBlock{
 	public function __construct($meta = 0){
-		$meta &= 0x01;
-		parent::__construct(STONE_WALL, $meta, "Cobblestone Wall");
-		if($meta === 1){
-			$this->name = "Mossy Cobblestone Wall";
-		}
+		parent::__construct(STONE_WALL, $meta & 0x01, $meta === 1 ? "Mossy Cobblestone Wall" : "Cobblestone Wall");
 		$this->isFullBlock = false;
 		$this->isSolid = false;
 		$this->hardness = 30;
 	}
-	
+	public function getDrops(Item $item, Player $player){
+		if($item->isPickaxe()){
+			return [[STONE_WALL, $this->getMetadata(),1]];
+		}
+		return [];
+	}
 }
