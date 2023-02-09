@@ -52,9 +52,7 @@ class LeavesBlock extends TransparentBlock{
 				$this->meta &= 0x03;
 				$visited = array();
 				$check = 0;
-				if($this->findLog($this, $visited, 0) === true){
-					//$this->level->setBlock($this, $this, false, false, true); why would you set a new block when you dont delete old one? 
-				}else{
+				if($this->findLog($this, $visited, 0) !== true){
 					$this->level->setBlock($this, new AirBlock(), false, false, true);
 					if(mt_rand(1,20) === 1){ //Saplings
 						ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem(SAPLING, $this->meta & 0x03, 1));
