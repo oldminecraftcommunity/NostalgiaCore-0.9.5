@@ -1167,7 +1167,6 @@ class Player{
 			$this->resendQueue = [];
 			$this->ackQueue = [];
 			$this->server->api->player->remove($this->CID);
-			console($msg.":".$this->username.":".$this->spawned);
 			if($msg === true and $this->username != "" and $this->spawned !== false){
 				$this->server->api->chat->broadcast($this->username . " left the game: " . $reason);
 			}
