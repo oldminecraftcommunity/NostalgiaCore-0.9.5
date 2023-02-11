@@ -502,7 +502,7 @@ class Level{
 		}
 		$now = microtime(true);
 		if($this->stopTime == true){
-
+			$time = $this->startTime;
 		}else{
 			$time = $this->startTime + ($now - $this->startCheck) * 20;
 		}

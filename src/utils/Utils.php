@@ -558,7 +558,7 @@ class Utils{
 		return round($number, 0, PHP_ROUND_HALF_DOWN);
 	}
 	/**
-	 * manhattan distance, less accurate, but still useful sometimes
+	 * manhattan distance
 	 */
 	public static function manh_distance($pos1, $pos2){
 		if($pos1 instanceof Vector3){

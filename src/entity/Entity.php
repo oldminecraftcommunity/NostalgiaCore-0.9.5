@@ -409,12 +409,12 @@ class Entity extends Position
 			}
 		}
 
-		$startX = (int) (round($this->x - 0.5) - 1);
-		$startY = (int) (round($this->y) - 1);
-		$startZ = (int) (round($this->z - 0.5) - 1);
-		$endX = $startX + 2;
-		$endY = $startY + 2;
-		$endZ = $startZ + 2;
+		$startX = $this->boundingBox->minX;
+		$startY = $this->boundingBox->minY;
+		$startZ = $this->boundingBox->minZ;
+		$endX = $this->boundingBox->maxX;
+		$endY = $this->boundingBox->maxY;
+		$endZ = $this->boundingBox->maxZ;
 		$waterDone = false;
 		for ($y = $startY; $y <= $endY; ++$y){
 			for ($x = $startX; $x <= $endX; ++$x){
@@ -432,7 +432,7 @@ class Entity extends Position
 								$this->harm(2, "water");
 								$hasUpdate = true;
 								$waterDone = true;
-							} elseif ($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1 - (($b->getMetadata() % 8) / 9)) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and ! $waterDone) {
+							} elseif ($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1 - (($b->getMetadata() % 8) / 9)) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and !$waterDone) {
 								$this->air -= 1;
 								$waterDone = true;
 								$this->updateMetadata();
@@ -463,7 +463,7 @@ class Entity extends Position
 							}
 							break;
 						default:
-							if ($this->inBlock($pos, 0.7) and $y == $endY and $b->isTransparent === false and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)) {
+							if ($this->inBlock($pos, 0.7) and $y == $endY and !$b->isTransparent and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)) {
 								$this->harm(1, "suffocation"); // Suffocation
 								$hasUpdate = true;
 							} elseif ($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1)) {
@@ -576,7 +576,6 @@ class Entity extends Position
 					$x1 = $x1 > 256 ? 256 : $x1;
 					$y1 = $y1 > 128 ? 128 : $y1;
 					$z1 = $z1 > 256 ? 256 : $z1;
-					$waterDone = false;
 					for($x = $x0; $x < $x1; ++$x){
 						for($y = $y0; $y < $y1; ++$y){
 							for($z = $z0; $z < $z1; ++$z){
