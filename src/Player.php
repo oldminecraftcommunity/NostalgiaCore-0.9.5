@@ -1,5 +1,6 @@
 <?php
 
+
 class Player{
 
 	public $data;

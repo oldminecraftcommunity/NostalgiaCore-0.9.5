@@ -134,8 +134,8 @@ class Entity extends Position
 				$this->player = $this->data["player"];
 				$this->setHealth($this->health, "generic");
 				$this->speedModifer = 1;
-				$this->width = 1.2;
-				$this->height = 1.9;
+				$this->width = 0.6;
+				$this->height = 1.8;
 				$this->hasKnockback = true;
 				$this->hasGravity = true;
 				$this->canBeAttacked = true;
@@ -409,12 +409,12 @@ class Entity extends Position
 			}
 		}
 
-		$startX = $this->boundingBox->minX;
-		$startY = $this->boundingBox->minY;
-		$startZ = $this->boundingBox->minZ;
-		$endX = $this->boundingBox->maxX;
-		$endY = $this->boundingBox->maxY;
-		$endZ = $this->boundingBox->maxZ;
+		$startX = floor($this->boundingBox->minX);
+		$startY = floor($this->boundingBox->minY);
+		$startZ = floor($this->boundingBox->minZ);
+		$endX = ceil($this->boundingBox->maxX);
+		$endY = ceil($this->boundingBox->maxY);
+		$endZ = ceil($this->boundingBox->maxZ);
 		$waterDone = false;
 		for ($y = $startY; $y <= $endY; ++$y){
 			for ($x = $startX; $x <= $endX; ++$x){
@@ -463,7 +463,7 @@ class Entity extends Position
 							}
 							break;
 						default:
-							if ($this->inBlock($pos, 0.7) and $y == $endY and !$b->isTransparent and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)) {
+							if ($this->inBlock($pos, $this->radius) and $y == $endY and !$b->isTransparent and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)) {
 								$this->harm(1, "suffocation"); // Suffocation
 								$hasUpdate = true;
 							} elseif ($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1)) {
@@ -524,7 +524,7 @@ class Entity extends Position
 					for($x = $startX; $x <= $endX; ++ $x){
 						$v = new Vector3($x, $y, $z);
 						$v1 = new Vector3($x, $yC, $z);
-						if($this->isSupport($v, $this->width)){
+						if($this->isSupport($v, $this->radius)){
 							$b = $this->level->getBlock($v);
 							if($b->isSolid === true){
 								$support = true;
@@ -533,7 +533,7 @@ class Entity extends Position
 							} elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
 								$isFlying = false;
 							}
-						} elseif($this->isSupport($v1, $this->width)){
+						} elseif($this->isSupport($v1, $this->radius)){
 							$b = $this->level->getBlock($v1);
 							if($b->isSolid === true){
 								$support = true;
@@ -1229,6 +1229,7 @@ class Entity extends Position
 			$this->knockBack($d, $d1);
 			$this->knockbackTime = 10;
 			$this->sendMotion();
+			
 		}
 
 		return $ret;
