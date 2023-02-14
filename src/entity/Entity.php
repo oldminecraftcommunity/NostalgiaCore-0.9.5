@@ -125,7 +125,6 @@ class Entity extends Position
 			"yaw" => &$this->yaw,
 			"pitch" => &$this->pitch
 		);
-		$this->height = 0.98;
 		$this->moveTime = 0;
 		$this->lookTime = 0;
 		$this->onGround = false;
