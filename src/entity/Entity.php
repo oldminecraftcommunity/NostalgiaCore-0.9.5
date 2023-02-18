@@ -579,7 +579,7 @@ class Entity extends Position
 							for($z = $z0; $z < $z1; ++$z){
 								$pos = new Vector3($x, $y, $z);
 								$b = $this->level->getBlock($pos);
-								if($b->y == ($y1 - 1) && $b->getID() === WATER || $b->getID() === STILL_WATER){
+								if(($b->y == ($y1 - 1) && $b->getID() === WATER) || $b->getID() === STILL_WATER){
 									$water = true;
 								}
 								if($b != false && $b->isSolid){
