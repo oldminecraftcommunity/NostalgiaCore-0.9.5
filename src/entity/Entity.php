@@ -133,7 +133,7 @@ class Entity extends Position
 				$this->player = $this->data["player"];
 				$this->setHealth($this->health, "generic");
 				$this->speedModifer = 1;
-				$this->width = 0.6;
+				$this->width = 1.2;
 				$this->height = 1.8;
 				$this->hasKnockback = true;
 				$this->hasGravity = true;
@@ -523,7 +523,7 @@ class Entity extends Position
 					for($x = $startX; $x <= $endX; ++ $x){
 						$v = new Vector3($x, $y, $z);
 						$v1 = new Vector3($x, $yC, $z);
-						if($this->isSupport($v, $this->radius)){
+						if($this->isSupport($v, $this->width)){
 							$b = $this->level->getBlock($v);
 							if($b->isSolid === true){
 								$support = true;
@@ -532,7 +532,7 @@ class Entity extends Position
 							} elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
 								$isFlying = false;
 							}
-						} elseif($this->isSupport($v1, $this->radius)){
+						} elseif($this->isSupport($v1, $this->width)){
 							$b = $this->level->getBlock($v1);
 							if($b->isSolid === true){
 								$support = true;

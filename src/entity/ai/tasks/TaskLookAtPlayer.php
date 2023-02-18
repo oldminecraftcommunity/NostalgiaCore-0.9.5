@@ -1,32 +1,38 @@
 <?php
 
 class TaskLookAtPlayer extends TaskBase{
-	const S_LOOK = 0x1;
-	const S_STOPLOOK = 0x2;
 	public $target = false;
 	private $state, $yaw, $pitch;
 	public function canBeExecuted(EntityAI $ai){
-		return Utils::randomFloat() < 0.02 && !$ai->entity->isMovingHorizontally() && !$ai->isStarted("TaskLookAround") && !$ai->isStarted("TaskTempt") && !$ai->entity->hasPath();
+		return !$ai->entity->inPanic && Utils::randomFloat() < 0.02 && !$ai->entity->isMovingHorizontally() && !$ai->isStarted("TaskLookAround") && !$ai->isStarted("TaskTempt") && !$ai->entity->hasPath();
 	}
 
 	protected function findTarget($e, $r){
 		$svd = null;
 		$svdDist = -1;
-		foreach($e->server->api->entity->getRadius($e, $r, ENTITY_PLAYER) as $p){
+		foreach($e->level->players as $p){
+			$p = $p->entity;
+			if(Utils::distance_noroot($e, $p) > $r*$r){
+				continue;
+			}
 			if($svdDist === -1){
-				$svdDist = Utils::manh_distance($e, $p);
+				$svdDist = Utils::distance_noroot($e, $p);
 				$svd = $p;
 				continue;
 			}
 			if($svd != null && $svdDist === 0){
 				$svd = $p;
 			}
-			
-			if(($cd = Utils::manh_distance($e, $p)) < $svdDist){
+			if(($cd = Utils::distance_noroot($e, $p)) < $svdDist){
 				$svdDist = $cd;
 				$svd = $p;
 			}
 		}
+		
+		if($svd == null){
+			return null;
+		}
+		
 		return $svd;
 	}
 

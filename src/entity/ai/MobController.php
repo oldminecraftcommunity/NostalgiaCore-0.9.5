@@ -12,7 +12,7 @@ class MobController
 	
 	public function moveNonInstant($x, $y, $z){
 		if($x == 0 && $y == 0 && $z == 0){
-			return false; //failed
+			return false;
 		}
 		
 		$ox = ($x > 0 ? 1 : ($x < 0 ? -1 : 0));
@@ -58,7 +58,7 @@ class MobController
 		$tan = $dz == 0 ? ($dx < 0 ? 180 : 0) : (90 - rad2deg(atan($dx / $dz))); 
 		$thetaOffset = $dz < 0 ? 90 : 270;
 		$calcYaw = ($thetaOffset + $tan);
-		$this->entity->yaw = $this->entity->headYaw = $calcYaw;
+		$this->entity->headYaw = $this->entity->yaw = $calcYaw;
 	}
 	
 	public function lookOffset($x, $y, $z, $pitch = true){

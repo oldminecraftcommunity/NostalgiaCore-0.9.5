@@ -34,7 +34,7 @@ class TaskRandomWalk extends TaskBase
 		if(($ai->entity instanceof Creeper && $ai->entity->isIgnited()) || $ai->entity->hasPath() || $ai->isStarted("TaskTempt")) {
 			return false;
 		}
-		return !$ai->isStarted("TaskLookAround") && !$ai->isStarted("TaskLookAtPlayer") && mt_rand(0, 120) == 0;
+		return !$ai->entity->inPanic && !$ai->isStarted("TaskLookAround") && !$ai->isStarted("TaskLookAtPlayer") && mt_rand(0, 120) == 0;
 	}
 
 	

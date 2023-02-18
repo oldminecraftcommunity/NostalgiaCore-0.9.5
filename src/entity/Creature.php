@@ -26,7 +26,7 @@ abstract class Creature extends Living{
 	}
 	
 	public function getSpeedModifer(){
-		return $this->speedModifer * ($this->inPanic ? 1.4 : 0.7);
+		return $this->speedModifer * ($this->inPanic ? 1.0 : 0.7);
 	}
 	public function getArmorValue(){
 		return 2;

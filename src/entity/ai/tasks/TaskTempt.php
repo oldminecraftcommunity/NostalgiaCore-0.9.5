@@ -29,7 +29,7 @@ class TaskTempt extends TaskBase
 
 	public function canBeExecuted(EntityAI $ai)
 	{
-		if(!($ai->entity instanceof Breedable)){ //TODO Work with path
+		if(!($ai->entity instanceof Breedable) || $ai->entity->inPanic){ //TODO Work with path
 			return false;
 		}
 		$target = $this->findTarget($ai->entity, 10);
