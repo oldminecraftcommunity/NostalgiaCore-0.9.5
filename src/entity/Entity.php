@@ -473,7 +473,6 @@ class Entity extends Position
 				}
 			}
 		}
-		
 		return $hasUpdate;
 	}
 	
@@ -550,7 +549,6 @@ class Entity extends Position
 			}
 			if(!$this->isPlayer()){
 				$update = false;
-				$this->inWater = false;
 				if(Utils::in_range($this->speedX, -0.01, 0.01)){
 					$this->speedX = 0;
 				}
@@ -562,6 +560,7 @@ class Entity extends Position
 				}
 				$savedSpeedY = $this->speedY;
 				if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)){
+					$water = false;
 					$aABB = $this->boundingBox->addCoord($this->speedX, $this->speedY, $this->speedZ);
 					$x0 = floor($aABB->minX);
 					$x1 = ceil($aABB->maxX);
@@ -580,6 +579,9 @@ class Entity extends Position
 							for($z = $z0; $z < $z1; ++$z){
 								$pos = new Vector3($x, $y, $z);
 								$b = $this->level->getBlock($pos);
+								if($b->getID() === WATER || $b->getID() === STILL_WATER){
+									$water = true;
+								}
 								if($b != false && $b->isSolid){
 									$this->speedY = $b->boundingBox->calculateYOffset($this->boundingBox, $this->speedY);
 									$this->speedX = $b->boundingBox->calculateXOffset($this->boundingBox, $this->speedX);
@@ -589,7 +591,7 @@ class Entity extends Position
 						}
 					}
 					
-					
+					$this->inWater = $water;
 				}
 				
 				$support = $savedSpeedY != $this->speedY && $savedSpeedY < 0;
