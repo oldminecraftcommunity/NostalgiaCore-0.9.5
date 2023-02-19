@@ -74,7 +74,7 @@ class Creeper extends Monster{
 
 	public function explode()
 	{
-		if($this->closed){
+		if($this->closed || $this->dead){
 			return false;
 		}
 		$this->setIgnited(0);
