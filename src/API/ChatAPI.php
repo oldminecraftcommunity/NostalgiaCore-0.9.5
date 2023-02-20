@@ -72,7 +72,12 @@ class ChatAPI{
 					$target = strtolower($n);
 					if($target === "server" or $target === "console" or $target === "rcon"){
 						$target = "Console";
+					}else{
+						return "The player is offline.";
 					}
+				}
+				if(strtolower($target) === strtolower($issuer)){
+					return "You can't send message to yourself.";
 				}
 				$mes = implode(" ", $params);
 				$output .= "You're whispering to " . $target . ": " . $mes . "\n";
