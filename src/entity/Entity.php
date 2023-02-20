@@ -74,6 +74,7 @@ class Entity extends Position
 	public $hasJumped;
 	public $onGround, $inWater;
 	public $carryoverDamage;
+	public $gravity;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array())
 	{
 		$this->random = new Random();
@@ -128,6 +129,7 @@ class Entity extends Position
 		$this->moveTime = 0;
 		$this->lookTime = 0;
 		$this->onGround = false;
+		$this->gravity = 0.08;
 		switch($this->class) {
 			case ENTITY_PLAYER:
 				$this->player = $this->data["player"];
@@ -147,6 +149,7 @@ class Entity extends Position
 					$this->meta = (int) $this->data["meta"];
 					$this->stack = (int) $this->data["stack"];
 				}
+				$this->gravity = 0.06;
 				$this->hasGravity = true;
 				$this->setHealth(5, "generic");
 				$this->setSize(0.25, 0.25);
@@ -155,6 +158,7 @@ class Entity extends Position
 				$this->setHealth(PHP_INT_MAX, "generic");
 				$this->height = 0.98;
 				$this->width = 0.98;
+				$this->gravity = 0.04;
 				$this->hasGravity = true;
 				break;
 			case ENTITY_OBJECT:
@@ -641,7 +645,7 @@ class Entity extends Position
 				$this->onGround = $support;
 
 				if($this->hasGravity){
-					$this->speedY -= ($this->class === ENTITY_FALLING) ? 0.04 : ($this->class === ENTITY_ITEM ? 0.06 : 0.08); // TODO: replace with $gravity
+					$this->speedY -= $this->gravity; // TODO: replace with $gravity
 					$update = true;
 				} elseif($this->lastX != $this->x || $this->lastZ != $this->z || $this->lastY != $this->z){
 					// $this->speedX = 0;
