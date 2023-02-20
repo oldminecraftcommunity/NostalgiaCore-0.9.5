@@ -1451,45 +1451,40 @@ class Player{
 				
 				
 				console("[INFO] " . FORMAT_AQUA . $this->username . FORMAT_RESET . "[/" . $this->ip . ":" . $this->port . "] logged in with entity id " . $this->eid . " at (" . $this->entity->level->getName() . ", " . round($this->entity->x, 2) . ", " . round($this->entity->y, 2) . ", " . round($this->entity->z, 2) . ")");
-				break;
-			case ProtocolInfo::READY_PACKET:
-				if($this->loggedIn === false){
+				//spawn!
+				/*if($this->spawned !== false){
 					break;
-				}
-				switch($packet->status){
-					case 1: //Spawn!!
-						if($this->spawned !== false){
-							break;
-						}
+				}*/
 						
-						$pos = new Position($this->entity->x, $this->entity->y, $this->entity->z, $this->level);
-						$pData = $this->data->get("position");
-						$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
-						$this->entity->setHealth($this->data->get("health"), "spawn", true);
-						$this->spawned = true;
-						$this->server->api->player->spawnAllPlayers($this);
-						$this->server->api->player->spawnToAllPlayers($this);
-						$this->server->api->entity->spawnAll($this);
-						$this->server->api->entity->spawnToAll($this->entity);
+				//if($this->entity->y <= 0){// fix!!!
+					//$pos = new Position($this->entity->x, 64, $this->entity->z, $this->level);
+				//}
+				//else{
+					$pos = new Position($this->entity->x, $this->entity->y, $this->entity->z, $this->level);
+				//}
+				$pData = $this->data->get("position");
+				$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
+				$this->entity->setHealth($this->data->get("health"), "spawn", true);
+				$this->spawned = true;
+				$this->server->api->player->spawnAllPlayers($this);
+				$this->server->api->player->spawnToAllPlayers($this);
+				$this->server->api->entity->spawnAll($this);
+				$this->server->api->entity->spawnToAll($this->entity);
 
-						$this->server->schedule(5, [$this->entity, "update"], [], true);
-						$this->server->schedule(2, [$this->entity, "updateMovement"], [], true);
-						$this->sendArmor();
-						$array = explode("@n", (string)$this->server->motd);
-						foreach($array as $msg){
-							$this->sendChat($msg."\n");
-						}
-
-						$this->sendInventory();
-						$this->sendSettings();
-						$this->server->schedule(50, [$this, "orderChunks"], []);
-						$this->blocked = false;
-
-						$this->server->handle("player.spawn", $this);
-						break;
-					case 2://Chunk loaded?
-						break;
+				$this->server->schedule(5, [$this->entity, "update"], [], true);
+				$this->server->schedule(2, [$this->entity, "updateMovement"], [], true);
+				$this->sendArmor();
+				$array = explode("@n", (string)$this->server->motd);
+				foreach($array as $msg){
+					$this->sendChat($msg."\n");
 				}
+
+				$this->sendInventory();
+				$this->sendSettings();
+				$this->server->schedule(50, [$this, "orderChunks"], []);
+				$this->blocked = false;
+
+				$this->server->handle("player.spawn", $this);
 				break;
 			case ProtocolInfo::ROTATE_HEAD_PACKET:
 				if($this->spawned === false){

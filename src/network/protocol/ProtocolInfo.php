@@ -3,7 +3,7 @@
 
 abstract class ProtocolInfo{
 
-	const CURRENT_PROTOCOL = 14;
+	const CURRENT_PROTOCOL = 18;
 
 	const PING_PACKET = 0x00;
 
@@ -70,6 +70,7 @@ abstract class ProtocolInfo{
 	const ADVENTURE_SETTINGS_PACKET = 0xb7;
 	const ENTITY_DATA_PACKET = 0xb8;
 	const PLAYER_INPUT_PACKET = 0xb9;
+	//const FULL_CHUNK_DATA_PACKET = 0xba;
 
 }
 /*Unused:
