@@ -1,12 +1,10 @@
 <?php
 
-
 abstract class ProtocolInfo{
-
 	const CURRENT_PROTOCOL = 18;
-
+	
 	const PING_PACKET = 0x00;
-
+	
 	const PONG_PACKET = 0x03;
 
 	const CLIENT_CONNECT_PACKET = 0x09;
@@ -15,6 +13,9 @@ abstract class ProtocolInfo{
 	const CLIENT_HANDSHAKE_PACKET = 0x13;
 	//const SERVER_FULL_PACKET = 0x14;
 	const DISCONNECT_PACKET = 0x15;
+
+	//const BANNED_PACKET = 0x17;
+
 	const LOGIN_PACKET = 0x82;
 	const LOGIN_STATUS_PACKET = 0x83;
 	const READY_PACKET = 0x84;
@@ -71,6 +72,7 @@ abstract class ProtocolInfo{
 	const ENTITY_DATA_PACKET = 0xb8;
 	const PLAYER_INPUT_PACKET = 0xb9;
 	//const FULL_CHUNK_DATA_PACKET = 0xba;
+	//const UNLOAD_CHUNK_PACKET = 0xbb;
 
 }
 /*Unused:
@@ -80,6 +82,7 @@ abstract class ProtocolInfo{
  * 0x17
  * 0x14
  */
+
 /***REM_START***/
 require_once(FILE_PATH . "src/network/raknet/RakNetDataPacket.php");
 /***REM_END***/
