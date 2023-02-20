@@ -85,6 +85,7 @@ define("BUCKET", 325);
 define("WATER_BUCKET", "325:8");
 define("LAVA_BUCKET", "325:10");
 define("MILK_BUCKET", "325:1");
+
 define("MINECART", 328);
 define("SADDLE", 329);
 define("IRON_DOOR", 330);
@@ -109,11 +110,15 @@ define("COMPASS", 345);
 
 define("CLOCK", 347);
 define("GLOWSTONE_DUST", 348);
+
 define("DYE", 351);
 define("BONE", 352);
 define("SUGAR", 353);
 define("CAKE", 354);
 define("BED", 355);
+
+define("COOKIE", 357);
+define("COOKIES", 357);
 
 define("SHEARS", 359);
 define("MELON", 360);

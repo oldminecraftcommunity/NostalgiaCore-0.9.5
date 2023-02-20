@@ -11,11 +11,11 @@ define("VIEWER", 3);
 define("SPECTATOR", 3);
 
 //Players
-define("MAX_CHUNK_RATE", 20 / arg("max-chunks-per-second", 4)); //Default rate ~256 kB/s
+define("MAX_CHUNK_RATE", 20 / arg("max-chunks-per-second", 4));
 define("PLAYER_MAX_QUEUE", 1024);
 
 define("PLAYER_SURVIVAL_SLOTS", 36);
-define("PLAYER_CREATIVE_SLOTS", 112);
+define("PLAYER_CREATIVE_SLOTS", 112); //hum?
 
 //Block Updates
 define("BLOCK_UPDATE_NORMAL", 1);

@@ -61,7 +61,7 @@ define("MOSSY_STONE", 48);
 define("OBSIDIAN", 49);
 define("TORCH", 50);
 define("FIRE", 51);
-
+define("MONSTER_SPAWNER", 52);
 define("WOOD_STAIRS", 53);
 define("WOODEN_STAIRS", 53);
 define("OAK_WOOD_STAIRS", 53);
@@ -119,7 +119,8 @@ define("TRAPDOOR", 96);
 
 define("STONE_BRICKS", 98);
 define("STONE_BRICK", 98);
-
+define("HUGE_BROWN_MUSHROOM", 99);
+define("HUGE_RED_MUSHROOM", 100);
 define("IRON_BAR", 101);
 define("IRON_BARS", 101);
 define("GLASS_PANE", 102);
@@ -131,14 +132,21 @@ define("MELON_STEM", 105);
 define("FENCE_GATE", 107);
 define("BRICK_STAIRS", 108);
 define("STONE_BRICK_STAIRS", 109);
-
+define("MYCELIUM", 110);
+define("LILY_PAD", 111);
 define("NETHER_BRICKS", 112);
 define("NETHER_BRICK_BLOCK", 112);
 
 define("NETHER_BRICKS_STAIRS", 114);
 
-define("SANDSTONE_STAIRS", 128);
+define("END_PORTAL_FRAME", 120);
+define("END_STONE", 121);
 
+define("COCOA", 127);
+define("SANDSTONE_STAIRS", 128);
+define("EMERALD_ORE", 129);
+
+define("EMERALD_BLOCK", 133);
 define("SPRUCE_WOOD_STAIRS", 134);
 define("SPRUCE_WOODEN_STAIRS", 134);
 define("BIRCH_WOOD_STAIRS", 135);
@@ -163,12 +171,17 @@ define("WOOD_SLAB", 158);
 define("WOODEN_SLAB", 158);
 define("WOOD_SLABS", 158);
 define("WOODEN_SLABS", 158);
+define("STAINED_CLAY", 159);
+
+define("ACACIA_WOOD_STAIRS", 163);
+define("DARK_OAK_WOOD_STAIRS", 164);
 
 define("HAY_BALE", 170);
 define("CARPET", 171);
 
 define("COAL_BLOCK", 173);
 
+define("PODZOL", 243);
 define("BEETROOT_BLOCK", 244);
 define("STONECUTTER", 245);
 define("GLOWING_OBSIDIAN", 246);
