@@ -431,7 +431,7 @@ class Entity extends Position
 								$this->fire = 0;
 								$this->updateMetadata();
 							}
-							if ($this->air <= 0 && ! $waterDone) {
+							if (($this->air <= 0 && ! $waterDone) || $this->type === MOB_ENDERMAN) { //TODO check is correct
 								$this->harm(2, "water");
 								$hasUpdate = true;
 								$waterDone = true;
