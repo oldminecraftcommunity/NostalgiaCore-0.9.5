@@ -19,7 +19,7 @@ class EntityRegistry{
 		self::registerEntity(Spider::class);
 		self::registerEntity(Zombie::class);
 		self::registerEntity(SilverFish::class);
-		//self::registerEntity(Slime::class); TODO some missing property probably
+		self::registerEntity(Slime::class);
 		self::registerEntity(Enderman::class);
 		self::registerEntity(Arrow::class);
 		self::registerEntity(PrimedTNT::class);
