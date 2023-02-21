@@ -1473,7 +1473,7 @@ class Player{
 					$pos = new Position($this->entity->x, $this->entity->y, $this->entity->z, $this->level);
 				//}
 				$pData = $this->data->get("position");
-				$this->server->schedule(20, array($this, "teleport"), $pos);
+				//$this->server->schedule(20, array($this, "teleport"), $pos);
 				//$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
 				$this->entity->setHealth($this->data->get("health"), "spawn", true);
 				$this->spawned = true;
@@ -1490,11 +1490,11 @@ class Player{
 				foreach($array as $msg){
 					$this->sendChat($msg."\n");
 				}
-
-				/*$this->sendInventory();
-				$this->sendSettings();*/
 				$this->orderChunks();
-                //$this->getNextChunk($this->level);
+				//$this->getNextChunk($this->level);
+				$this->sendInventory();
+				$this->sendSettings();
+				$this->teleport($pos);
 				$this->loadAllChunks();
 				$this->blocked = false;
 
