@@ -1,8 +1,8 @@
 <?php
 
-class SpruceWoodStairsBlock extends StairBlock{
+class DarkOakWoodStairsBlock extends StairBlock{
 	public function __construct($meta = 0){
-		parent::__construct(SPRUCE_WOOD_STAIRS, $meta, "Spruce Wood Stairs");
+		parent::__construct(DARK_OAK_WOOD_STAIRS, $meta, "Dark Oak Wood Stairs");
 	}
 
 	public function getBreakTime(Item $item, Player $player){
