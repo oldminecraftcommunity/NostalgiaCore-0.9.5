@@ -5,8 +5,6 @@ class WoodBlock extends SolidBlock{
 	const SPRUCE = 1;
 	const BIRCH = 2;
 	const JUNGLE = 3;
-	const ACACIA = 4;
-	const DARK_OAK = 5;
 	
 	public function __construct($meta = 0){
 		parent::__construct(WOOD, $meta, "Log");
@@ -15,8 +13,6 @@ class WoodBlock extends SolidBlock{
 			WoodBlock::SPRUCE => "Spruce Log",
 			WoodBlock::BIRCH => "Birch Log",
 			WoodBlock::JUNGLE => "Jungle Log",
-			WoodBlock::ACACIA => "Acacia Log",
-			WoodBlock::DARK_OAK => "Dark Oak Log"
 		);
 		$this->name = $names[$this->meta & 0x03];
 		$this->hardness = 10;

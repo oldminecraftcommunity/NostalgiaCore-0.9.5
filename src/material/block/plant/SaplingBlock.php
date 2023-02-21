@@ -20,7 +20,7 @@ class SaplingBlock extends FlowableBlock{
 			4 => "Acacia Sapling",
 			5 => "Dark Oak Sapling",
 		);
-		$this->name = $names[$this->meta & 0x03];
+		$this->name = $names[$this->meta & 0x05];
 		$this->hardness = 0;
 	}
 	
@@ -38,7 +38,7 @@ class SaplingBlock extends FlowableBlock{
 		if($item->getID() === DYE and $item->getMetadata() === 0x0F){ //Bonemeal
 			TreeObject::growTree($this->level, $this, new Random(), $this->meta & 0x03);
 			if(($player->gamemode & 0x01) === 0){
-				$player->removeItem(DYE,0x0F,1);
+				$player->removeItem(DYE, 0x0F, 1);
 			}
 			return true;
 		}
@@ -52,7 +52,7 @@ class SaplingBlock extends FlowableBlock{
 				return BLOCK_UPDATE_NORMAL;
 			}
 		}elseif($type === BLOCK_UPDATE_RANDOM){ //Growth
-			if(mt_rand(1,7) === 1){
+			if(mt_rand(1, 7) === 1){
 				if(($this->meta & 0x08) === 0x08){
 					TreeObject::growTree($this->level, $this, new Random(), $this->meta & 0x03);
 				}else{
@@ -69,7 +69,7 @@ class SaplingBlock extends FlowableBlock{
 	
 	public function getDrops(Item $item, Player $player){
 		return array(
-			array($this->id, $this->meta & 0x03, 1),
+			array($this->id, $this->meta & 0x05, 1),
 		);
 	}
 }

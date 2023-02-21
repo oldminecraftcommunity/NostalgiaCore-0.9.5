@@ -134,6 +134,8 @@ define("COOKED_CHICKEN", 366);
 
 define("SPAWN_EGG", 383);
 
+define("EMERALD", 388);
+
 define("CARROT", 391);
 define("POTATO", 392);
 define("BAKED_POTATO", 393);

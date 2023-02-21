@@ -8,10 +8,10 @@ class PlanksBlock extends SolidBlock{
 			WoodBlock::SPRUCE => "Spruce Wooden Planks",
 			WoodBlock::BIRCH => "Birch Wooden Planks",
 			WoodBlock::JUNGLE => "Jungle Wooden Planks",
-			WoodBlock::ACACIA => "Acacia Wooden Planks",
-			WoodBlock::DARK_OAK => "Dark Oak Wooden Planks",
+			4 => "Acacia Wooden Planks",
+			5 => "Dark Oak Wooden Planks",
 		);
-		$this->name = $names[$this->meta & 0x03];
+		$this->name = $names[$this->meta];
 		$this->hardness = 15;
 	}
 	
