@@ -121,7 +121,7 @@ class NBT_new{
 				$tag->read($this);
 				break;
 			case NBT::TAG_Int:
-				$tag = new Int($this->getString());
+				$tag = new IntTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Long:
@@ -129,7 +129,7 @@ class NBT_new{
 				$tag->read($this);
 				break;
 			case NBT::TAG_Float:
-				$tag = new Float($this->getString());
+				$tag = new FloatTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Double:
@@ -141,7 +141,7 @@ class NBT_new{
 				$tag->read($this);
 				break;
 			case NBT::TAG_String:
-				$tag = new String($this->getString());
+				$tag = new StringTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Enum:

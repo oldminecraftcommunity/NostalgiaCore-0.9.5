@@ -1,7 +1,6 @@
 <?php
 
 class CraftingRecipes{
-
 	private static $small = [//Probably means craftable on crafting bench and in inventory. Name it better!
 							 //Building
 							 "CLAY:?x4=>CLAY_BLOCK:0x1",
