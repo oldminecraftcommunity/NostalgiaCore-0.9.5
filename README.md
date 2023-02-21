@@ -4,30 +4,12 @@
 
 NostalgiaCore is a fork of Legacy PocketMine-MP 1.3.12, which fixes bugs of Legacy PocketMine-MP, and adds new content
 
-Supported MCPE versions: 0.8.0, 0.8.1 (maybe 0.8.2)
+Supported MCPE versions: 0.9.5 and maybe other 0.9.x versions
 
 (Special thx to GullCraft Network and DartMiner43)
 
-<h2> Why should you use NostalgiaCore to run a Minecraft Pocket Edition 0.8.1 server?</h2>
-
-• Items are dropping normally.
-
-• Dupes, that were in PocketMine by mistake are fixed.
-
-• Player hotbar is saved.
-
-• Extra options (like in-game messages to discord)
-
-• Vector2 is fixed.
-
-• Working Nether Reactor.
-
-• PHAR plugins support
-
-• Mob AI
-
-...and etc.
-
+<h2> Why should you use NostalgiaCore to run a Minecraft Pocket Edition 0.9.5 server?</h2>
+You should not use it now.
 <h3> Download Stable NostalgiaCore</h3>
 
 https://github.com/kotyaralih/NostalgiaCore/releases/
