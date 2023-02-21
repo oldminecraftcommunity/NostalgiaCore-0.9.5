@@ -27,12 +27,18 @@ class EntityAPI{
 			"cow" => 11,
 			"pig" => 12,
 			"sheep" => 13,
+			"wolf" => 14,
+			"villager" => 15,
+			"mooshroom" => 16,
 			
 			"zombie" => 32,
 			"creeper" => 33,
 			"skeleton" => 34,
 			"spider" => 35,
-			"pigman" => 36
+			"pigman" => 36,
+			"slime" => 37,
+			"enderman" => 38,
+			"silverfish" => 39,
 		];
 		$output = "";
 		switch($cmd){

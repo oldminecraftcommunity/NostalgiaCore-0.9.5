@@ -10,6 +10,7 @@ define("ENTITY_MOB", 2);
 	define("MOB_SHEEP", 13);
 	define("MOB_WOLF", 14);
 	define("MOB_VILLAGER", 15);
+	define("MOB_MOOSHROOM", 16);
 
 	define("MOB_ZOMBIE", 32);
 	define("MOB_CREEPER", 33);
