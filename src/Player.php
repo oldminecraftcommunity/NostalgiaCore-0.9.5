@@ -236,10 +236,10 @@ class Player{
 			$this->entity->resetSpeed();
 			$this->entity->updateLast();
 			$this->entity->calculateVelocity();
-			/*if($terrain === true){
+			if($terrain === true){
 				$this->orderChunks();
 				$this->getNextChunk($this->level);
-			}*/
+			}
 			$this->entity->check = true;
 			if($force === true){
 				$this->forceMovement = $pos;
@@ -527,9 +527,9 @@ class Player{
 		$pk->chunkZ = $Z;
 		$pk->data = $this->level->getOrderedFullChunk($X, $Z);
 		$cnt = $this->dataPacket($pk);
-		if($cnt === false){
+		/*if($cnt === false){
 			return false;
-		}
+		}*/
 		$this->chunkCount = [];
 		foreach($cnt as $i => $count){
 			$this->chunkCount[$count] = true;
@@ -1461,12 +1461,12 @@ class Player{
 				$this->evid[] = $this->server->event("tile.update", [$this, "eventHandler"]);
 				$this->lastMeasure = microtime(true);
 				$this->server->schedule(50, [$this, "measureLag"], [], true);
-				
+				/*
 				$pk = new SetTimePacket;
 				$pk->time = (int) $this->level->getTime();
 				$pk->started = !$this->level->isTimeStopped();
 				$this->dataPacket($pk);
-				
+				*/
 				
 				console("[INFO] " . FORMAT_AQUA . $this->username . FORMAT_RESET . "[/" . $this->ip . ":" . $this->port . "] logged in with entity id " . $this->eid . " at (" . $this->entity->level->getName() . ", " . round($this->entity->x, 2) . ", " . round($this->entity->y, 2) . ", " . round($this->entity->z, 2) . ")");
 				//spawn!
@@ -1492,14 +1492,14 @@ class Player{
 
 				$this->server->schedule(5, [$this->entity, "update"], [], true);
 				$this->server->schedule(2, [$this->entity, "updateMovement"], [], true);
-				$this->sendArmor();
+				//$this->sendArmor();
 				$array = explode("@n", (string)$this->server->motd);
 				foreach($array as $msg){
 					$this->sendChat($msg."\n");
 				}
 
-				$this->sendInventory();
-				$this->sendSettings();
+				/*$this->sendInventory();
+				$this->sendSettings();*/
 				$this->orderChunks();
                                 $this->getNextChunk($this->level);
 				$this->blocked = false;
@@ -1611,6 +1611,9 @@ class Player{
 				//console("request x:".$packet->chunkX.", z: ".$packet->chunkZ." chunk");
 				//$this->useChunk($packet->chunkX, $packet->chunkZ);
 				//$this->lastChunk = [$packet->chunkX, $packet->chunkZ];
+				break;
+			case ProtocolInfo::UPDATE_BLOCK_PACKET:
+				$this->level->setBlock(new Vector3($packet->x, $packet->y, $packet->z), BlockAPI::get($packet->block, $packet->meta));
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
 				if(!($this->entity instanceof Entity)){
