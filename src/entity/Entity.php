@@ -940,10 +940,7 @@ class Entity extends Position
 				$player->dataPacket($pk);
 
 				$pk = new SetEntityMotionPacket();
-				$pk->eid = $this->eid;
-				$pk->speedX = $this->speedX;
-				$pk->speedY = $this->speedY;
-				$pk->speedZ = $this->speedZ;
+				$pk->entities = [[$this->eid, $this->speedX, $this->speedY, $this->speedZ]];
 				$player->dataPacket($pk);
 
 				$pk = new PlayerEquipmentPacket();
@@ -968,10 +965,7 @@ class Entity extends Position
 				$player->dataPacket($pk);
 
 				$pk = new SetEntityMotionPacket();
-				$pk->eid = $this->eid;
-				$pk->speedX = $this->speedX;
-				$pk->speedY = $this->speedY;
-				$pk->speedZ = $this->speedZ;
+				$pk->entities = [[$this->eid, $this->speedX, $this->speedY, $this->speedZ]];
 				$player->dataPacket($pk);
 				break;
 			case ENTITY_FALLING:
@@ -985,10 +979,7 @@ class Entity extends Position
 				$player->dataPacket($pk);
 
 				$pk = new SetEntityMotionPacket();
-				$pk->eid = $this->eid;
-				$pk->speedX = $this->speedX;
-				$pk->speedY = $this->speedY;
-				$pk->speedZ = $this->speedZ;
+				$pk->entities = [[$this->eid, $this->speedX, $this->speedY, $this->speedZ]];
 				$player->dataPacket($pk);
 				break;
 		}

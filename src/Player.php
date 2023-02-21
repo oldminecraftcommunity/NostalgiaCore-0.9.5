@@ -774,11 +774,8 @@ class Player{
 				if(($data->speedX === 0 && $data->speedY === 0 && $data->speedZ === 0) || ($data->speedX === $data->lastSpeedX && $data->speedY === $data->lastSpeedY && $data->lastSpeedZ === $data->speedZ)){ //causer of packet flood is eliminated.
 					break;
 				}
-				$pk = new SetEntityMotionPacket;
-				$pk->eid = $data->eid;
-				$pk->speedX = $data->speedX;
-				$pk->speedY = $data->speedY;
-				$pk->speedZ = $data->speedZ;
+				$pk = new SetEntityMotionPacket; //TODO one packet for all entities if possible
+				$pk->entities = [[$data->eid, $data->speedX, $data->speedY, $data->speedZ]];
 				$this->dataPacket($pk);
 				$data->lastSpeedZ = $data->speedZ;
 				$data->lastSpeedY = $data->speedY;
