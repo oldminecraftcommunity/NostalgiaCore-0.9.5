@@ -24,6 +24,7 @@ class BlockAPI{
 		[SANDSTONE, 1],
 		[SANDSTONE, 2],
 		[SAND, 0],
+		[SAND, 1],
 		[GRAVEL, 0],
 		[TRUNK, 0],
 		[TRUNK, 1],

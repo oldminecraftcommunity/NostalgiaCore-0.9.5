@@ -1484,7 +1484,7 @@ class Player{
 				$this->server->api->player->spawnToAllPlayers($this);
 				$this->server->api->entity->spawnAll($this);
 				$this->server->api->entity->spawnToAll($this->entity);
-				$this->server->api->chat->broadcast($this->username." joined the game.");
+				$this->server->api->chat->broadcast($this->username." joined the game");
 
 				$this->server->schedule(5, [$this->entity, "update"], [], true);
 				$this->server->schedule(2, [$this->entity, "updateMovement"], [], true);
@@ -1497,7 +1497,7 @@ class Player{
 				/*$this->sendInventory();
 				$this->sendSettings();*/
 				$this->orderChunks();
-                                //$this->getNextChunk($this->level);
+                //$this->getNextChunk($this->level);
 				$this->loadAllChunks();
 				$this->blocked = false;
 

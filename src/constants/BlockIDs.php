@@ -18,6 +18,7 @@ define("STILL_WATER", 9);
 define("LAVA", 10);
 define("STILL_LAVA", 11);
 define("SAND", 12);
+define("RED_SAND", "12:1");
 define("GRAVEL", 13);
 define("GOLD_ORE", 14);
 define("IRON_ORE", 15);
