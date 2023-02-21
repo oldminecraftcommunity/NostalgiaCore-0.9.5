@@ -1273,13 +1273,8 @@ class Entity extends Position
 			$this->player->teleport(new Vector3($this->x, $this->y, $this->z));
 			return;
 		}
-		$pk = new MoveEntityPacket_PosRot();
-		$pk->eid = $this->eid;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
+		$pk = new MoveEntityPacket();
+		$pk->entities = [[$this->eid, $this->x, $this->y, $this->z, $this->yaw, $this->pitch]];
 		$this->server->api->player->broadcastPacket($this->level->players, $pk);
 	}
 
