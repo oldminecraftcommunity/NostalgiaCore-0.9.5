@@ -477,7 +477,7 @@ class Player{
 
 		foreach($this->chunkCount as $count => $t){
 			if(isset($this->recoveryQueue[$count]) or isset($this->resendQueue[$count])){
-				$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
+				$this->server->schedule(1, [$this, "getNextChunk"], $world);
 				return;
 			}else{
 				unset($this->chunkCount[$count]);
@@ -500,7 +500,7 @@ class Player{
 		$c = key($this->chunksOrder);
 		$d = $c != null ? $this->chunksOrder[$c] : null;
 		if($c === null or $d === null){
-			$this->server->schedule(40, [$this, "getNextChunk"], $world);
+			$this->server->schedule(1, [$this, "getNextChunk"], $world);
 			return false;
 		}
 
@@ -537,7 +537,7 @@ class Player{
 
 		$this->lastChunk = [$x, $z];
 
-		$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
+		$this->server->schedule(1, [$this, "getNextChunk"], $world);
 	}
 
 	/**
@@ -962,10 +962,23 @@ class Player{
 			foreach($this->inventory as $slot => $item){
 				$inv[$slot] = BlockAPI::getItem(AIR, 0, 0);
 			}
-			$this->blocked = true;
 			$this->gamemode = $gm;
-			$this->sendChat("Your gamemode has been changed to " . $this->getGamemode() . ", you've to do a forced reconnect.\n");
-			$this->server->schedule(30, [$this, "close"], "gamemode change"); //Forces a kick
+			
+			$spwnPos = $this->getSpawn();
+			$pk = new StartGamePacket();
+			$pk->seed = $this->level->getSeed();
+			$pk->x = $this->x;
+			$pk->y = $this->y;
+			$pk->z = $this->z;
+			$pk->spawnX = $spwnPos->x;
+			$pk->spawnY = $spwnPos->y;
+			$pk->spwnZ = $spwnPos->z;
+			$pk->generator = 0; //TODO multiple generators
+			$pk->gamemode = $this->gamemode & 0x01;
+			$pk->eid = 0;
+			$this->dataPacket($pk);
+			$this->sendSettings();
+			
 		}
 		
 		if($this->gamemode === SPECTATOR){
