@@ -236,10 +236,10 @@ class Player{
 			$this->entity->resetSpeed();
 			$this->entity->updateLast();
 			$this->entity->calculateVelocity();
-			if($terrain === true){
+			/*if($terrain === true){
 				$this->orderChunks();
 				$this->getNextChunk($this->level);
-			}
+			}*/
 			$this->entity->check = true;
 			if($force === true){
 				$this->forceMovement = $pos;
@@ -429,7 +429,7 @@ class Player{
 		asort($this->chunksOrder);
 	}
 	
-	public function loaddAllChunks(){
+	public function loadAllChunks(){
 		for($x = 0; $x < 16; $x++){
 			for($z = 0; $z < 16; $z++){
 				$this->useChunk($x, $z);
@@ -459,11 +459,9 @@ class Player{
 		}
 		
 		$pk = new FullChunkDataPacket;
-		$pk->buffer .= Utils::writeInt($X);
-		$pk->buffer .= Utils::writeInt($Z);
 		$pk->chunkX = $X;
 		$pk->chunkZ = $Z;
-		$pk->data = $this->level->getOrderedChunk($X, $Z, $Yndex);
+		$pk->data = $this->level->getOrderedFullChunk($X, $Z);
 		$cnt = $this->dataPacket($pk);
 		if($cnt === false){
 			return false;
@@ -1481,7 +1479,8 @@ class Player{
 					$pos = new Position($this->entity->x, $this->entity->y, $this->entity->z, $this->level);
 				//}
 				$pData = $this->data->get("position");
-				$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
+				$this->server->schedule(20, array($this, "teleport"), $pos);
+				//$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
 				$this->entity->setHealth($this->data->get("health"), "spawn", true);
 				$this->spawned = true;
 				$this->server->api->player->spawnAllPlayers($this);
@@ -1501,7 +1500,8 @@ class Player{
 				/*$this->sendInventory();
 				$this->sendSettings();*/
 				$this->orderChunks();
-                                $this->getNextChunk($this->level);
+                                //$this->getNextChunk($this->level);
+				$this->loadAllChunks();
 				$this->blocked = false;
 
 				$this->server->handle("player.spawn", $this);
@@ -1608,7 +1608,7 @@ class Player{
 				}
 				break;
 			case ProtocolInfo::REQUEST_CHUNK_PACKET:
-				//console("request x:".$packet->chunkX.", z: ".$packet->chunkZ." chunk");
+				console("request x:".$packet->chunkX.", z: ".$packet->chunkZ." chunk");
 				//$this->useChunk($packet->chunkX, $packet->chunkZ);
 				//$this->lastChunk = [$packet->chunkX, $packet->chunkZ];
 				break;
