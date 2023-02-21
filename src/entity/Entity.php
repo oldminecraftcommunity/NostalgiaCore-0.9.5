@@ -628,9 +628,9 @@ class Entity extends Position
 								$fall = $this->level->getBlock(new Vector3(intval($this->x - 0.5), intval(ceil($this->y)), intval($this->z - 0.5)));
 								$down = $this->level->getBlock(new Vector3(intval($this->x - 0.5), intval(ceil($this->y) - 1), intval($this->z - 0.5)));
 								if($fall->isFullBlock === false or $down->isFullBlock === false){
-									$this->server->api->entity->drop($this, BlockAPI::getItem($this->data["Tile"] & 0xFFFF, 0, 1), true);
+								    $this->server->api->entity->drop($this, BlockAPI::getItem($this->data["Tile"] & 0xFFFF, $this->data["Metadata"], 1), true);
 								} else{
-									$this->level->setBlock($fall, BlockAPI::get($this->data["Tile"]), true, false, true);
+								    $this->level->setBlock($fall, BlockAPI::get($this->data["Tile"], $this->data["Metadata"]), true, false, true);
 								}
 								$this->server->api->handle("entity.motion", $this);
 								$this->close();
@@ -969,13 +969,13 @@ class Entity extends Position
 				$player->dataPacket($pk);
 				break;
 			case ENTITY_FALLING:
-				$pk = new AddEntityPacket();
+				$pk = new AddEntityPacket(); //TODO fix
 				$pk->eid = $this->eid;
 				$pk->type = $this->type;
 				$pk->x = $this->x;
 				$pk->y = $this->y;
 				$pk->z = $this->z;
-				$pk->did = - $this->data["Tile"];
+				$pk->did = -($this->data["Tile"] | $this->data["Metadata"] << 0x10);
 				$player->dataPacket($pk);
 
 				$pk = new SetEntityMotionPacket();
@@ -1251,10 +1251,7 @@ class Entity extends Position
 	public function sendMotion()
 	{
 		$pk = new SetEntityMotionPacket();
-		$pk->eid = $this->eid;
-		$pk->speedX = $this->speedX;
-		$pk->speedY = $this->speedY;
-		$pk->speedZ = $this->speedZ;
+		$pk->entities = [[$this->eid, $this->speedX, $this->speedY, $this->speedZ]];
 		$this->server->api->player->broadcastPacket($this->level->players, $pk);
 	}
 

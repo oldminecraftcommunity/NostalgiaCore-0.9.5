@@ -55,7 +55,7 @@ class EntityAI
 	}
 
 	public function updateTasks(){
-		if(!isset($entity) or !($this->entity instanceof Entity)){
+		if(!isset($this->entity) or !($this->entity instanceof Entity)){
 			return;
 		}
 		foreach($this->tasks as $t){
