@@ -236,10 +236,10 @@ class Player{
 			$this->entity->resetSpeed();
 			$this->entity->updateLast();
 			$this->entity->calculateVelocity();
-			if($terrain === true){
+			/*if($terrain === true){
 				$this->orderChunks();
 				$this->getNextChunk($this->level);
-			}
+			}*/
 			$this->entity->check = true;
 			if($force === true){
 				$this->forceMovement = $pos;
@@ -458,7 +458,9 @@ class Player{
 			}
 		}
 		
-		$pk = new ChunkDataPacket;
+		$pk = new FullChunkDataPacket;
+		$pk->putInt($X);
+		$pk->putInt($Z);
 		$pk->chunkX = $X;
 		$pk->chunkZ = $Z;
 		$pk->data = $this->level->getOrderedChunk($X, $Z, $Yndex);
@@ -1391,13 +1393,16 @@ class Player{
 				$pk = new LoginStatusPacket;
 				$pk->status = 0;
 				$this->dataPacket($pk);
-
+				$spawnPos = $this->getSpawn();
 				$pk = new StartGamePacket;
 				$pk->seed = $this->level->getSeed();
+				$pk->spawnX = (int) $spawnPos->x;
+				$pk->spawnY = (int) $spawnPos->y;
+				$pk->spawnZ = (int) $spawnPos->z;
 				$pk->x = $this->data->get("position")["x"];
 				$pk->y = $this->data->get("position")["y"];
 				$pk->z = $this->data->get("position")["z"];
-				$pk->generator = 0;
+				$pk->generator = 0; //1 - inf, 0 - old, 2 - flat
 				$pk->gamemode = $this->gamemode & 0x01;
 				$pk->eid = 0;
 				$this->dataPacket($pk);
@@ -1482,7 +1487,8 @@ class Player{
 
 				$this->sendInventory();
 				$this->sendSettings();
-				//$this->server->schedule(50, [$this, "orderChunks"], []);
+				$this->orderChunks();
+                                $this->getNextChunk($this->level);
 				$this->blocked = false;
 
 				$this->server->handle("player.spawn", $this);
