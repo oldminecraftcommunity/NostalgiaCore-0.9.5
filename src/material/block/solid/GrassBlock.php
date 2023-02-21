@@ -34,7 +34,7 @@ class GrassBlock extends SolidBlock{
 		return false;
 	}
 	
-	public function seedsDrop(){
+	/*public function seedsDrop(){
 		$chance = Utils::randomFloat() * 100;
 		if($chance <= 1){
 			ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y+1, $this->z+0.5, $this->level), BlockAPI::getItem(458,0,1));
@@ -45,7 +45,7 @@ class GrassBlock extends SolidBlock{
 			return;
 		}
 		return;
-	}
+	}*/
 
 	public function onUpdate($type){
 		if($type === BLOCK_UPDATE_RANDOM && !$this->getSide(1)->isTransparent && mt_rand(0, 2) == 1){
@@ -53,5 +53,4 @@ class GrassBlock extends SolidBlock{
 		}
 		return BLOCK_UPDATE_RANDOM;
 	}
-
 }

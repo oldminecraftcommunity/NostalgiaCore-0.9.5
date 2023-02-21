@@ -95,6 +95,7 @@ class Item{
 		QUARTZ => "QuartzItem",
 		CAMERA => "CameraItem",
 		BEETROOT_SEEDS => "BeetrootSeedsItem",
+		EMERALD => "EmeraldItem",
 		
 		//tool
 		IRON_SHOVEL => "IronShovelItem",
