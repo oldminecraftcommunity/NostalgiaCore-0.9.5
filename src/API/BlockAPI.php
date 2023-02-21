@@ -169,7 +169,17 @@ class BlockAPI{
 		[SPAWN_EGG, MOB_COW],
 		[SPAWN_EGG, MOB_PIG],
 		[SPAWN_EGG, MOB_SHEEP],
-
+		[SPAWN_EGG, MOB_VILLAGER],
+		[SPAWN_EGG, MOB_WOLF],
+		[SPAWN_EGG, MOB_MOOSHROOM],
+		[SPAWN_EGG, MOB_CREEPER],
+		[SPAWN_EGG, MOB_ENDERMAN],
+		[SPAWN_EGG, MOB_SILVERFISH],
+		[SPAWN_EGG, MOB_SKELETON],
+		[SPAWN_EGG, MOB_SLIME],
+		[SPAWN_EGG, MOB_SPIDER],
+		[SPAWN_EGG, MOB_ZOMBIE],
+		[SPAWN_EGG, MOB_PIGMAN],
 		//Seeds
 		[SUGARCANE, 0],
 		[WHEAT, 0],
@@ -477,7 +487,6 @@ class BlockAPI{
 		if($block->y > 127 or $block->y < 0){
 			return false;
 		}
-
 		if($item->isActivable === true and $item->onActivate($player->level, $player, $block, $target, $face, $fx, $fy, $fz) === true){
 			if($item->count <= 0){
 				$player->setSlot($player->slot, BlockAPI::getItem(AIR, 0, 0), false);
