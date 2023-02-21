@@ -459,8 +459,8 @@ class Player{
 		}
 		
 		$pk = new FullChunkDataPacket;
-		$pk->putInt($X);
-		$pk->putInt($Z);
+		$pk->buffer .= Utils::writeInt($X);
+		$pk->buffer .= Utils::writeInt($Z);
 		$pk->chunkX = $X;
 		$pk->chunkZ = $Z;
 		$pk->data = $this->level->getOrderedChunk($X, $Z, $Yndex);
@@ -522,10 +522,10 @@ class Player{
 				$Yndex |= 1 << $iY;
 			}
 		}
-		$pk = new ChunkDataPacket;
+		$pk = new FullChunkDataPacket;
 		$pk->chunkX = $X;
 		$pk->chunkZ = $Z;
-		$pk->data = $this->level->getOrderedChunk($X, $Z, $Yndex);
+		$pk->data = $this->level->getOrderedFullChunk($X, $Z);
 		$cnt = $this->dataPacket($pk);
 		if($cnt === false){
 			return false;

@@ -94,6 +94,7 @@ require_once(FILE_PATH . "/src/astarnavigator/providers/MCBlockedProvider.php");
 require_once(FILE_PATH . "/src/astarnavigator/ITileNavigator.php");
 require_once(FILE_PATH . "/src/astarnavigator/TileNavigator.php");
 
+require_once(FILE_PATH . "/src/nbt/tag/NamedTag.php");
 
 require_once(FILE_PATH . "/src/entity/ai/tasks/TaskBase.php");
 require_once(FILE_PATH. "/src/entity/ai/tasks/TaskTempt.php");
