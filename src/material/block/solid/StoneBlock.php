@@ -4,6 +4,7 @@ class StoneBlock extends SolidBlock{
 	public function __construct($meta = 0){
 		parent::__construct(STONE, $meta, "Stone");
 		$names = array(
+			0 => "Stone",
 			1 => "Granite",
 			2 => "Polished Granite",
 			3 => "Diorite",

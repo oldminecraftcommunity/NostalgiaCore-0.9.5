@@ -132,6 +132,15 @@ abstract class Block extends Position{
 		INFO_UPDATE => "InfoUpdateBlock",
 		INFO_UPDATE2 => "InfoUpdate2Block",
 		RESERVED6 => "Reserved6Block",
+
+		ACACIA_WOOD_STAIRS => "AcaciaWoodStairsBlock",
+		DARK_OAK_WOOD_STAIRS => "DarkOakWoodStairsBlock",
+		EMERALD_ORE => "EmeraldOreBlock",
+		EMERALD_BLOCK => "EmeraldBlock",
+		END_STONE => "EndStoneBlock",
+		HARDENED_CLAY => "HardenedClayBlock",
+		LOG2 => "Log2Block",
+		LEAVES2 => "Leaves2Block",
 	);
 	protected $id;
 	protected $meta;

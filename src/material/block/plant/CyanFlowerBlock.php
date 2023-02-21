@@ -1,18 +1,8 @@
 <?php
 
 class CyanFlowerBlock extends FlowableBlock{
-	const POPPY = 0;
-	const BLUE_ORCHID = 1;
-	const ALLIUM = 2;
-	const AZURE_BLUET = 3;
-	const RED_TULIP = 4;
-	const ORANGE_TULIP = 5;
-	const WHITE_TULIP = 6;
-	const PINK_TULIP = 7;
-	const OXEYE_DAISY = 8; 
-
-	public function __construct(){
-		parent::__construct(CYAN_FLOWER, 0, "Poppy");
+	public function __construct($meta = 0){
+		parent::__construct(CYAN_FLOWER, $meta, "Poppy");
 		$this->hardness = 0;
 		$names = array(
 			0 => "Poppy",

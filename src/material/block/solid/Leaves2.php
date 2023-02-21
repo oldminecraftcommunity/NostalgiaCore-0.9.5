@@ -1,18 +1,16 @@
 <?php
 
-class LeavesBlock extends TransparentBlock{
-	public function __construct($meta = 0){
-		parent::__construct(LEAVES, $meta, "Leaves");
+class Leaves2Block extends TransparentBlock{
+    public function __construct($meta = 0){
+		parent::__construct(LEAVES2, $meta, "Leaves2");
 		$names = array(
-			WoodBlock::OAK => "Oak Leaves",
-			WoodBlock::SPRUCE => "Spruce Leaves",
-			WoodBlock::BIRCH => "Birch Leaves",
-			WoodBlock::JUNGLE => "Jungle Leaves",
+			0 => "Acacia Leaves",
+			1 => "Dark Oak Leaves",
 		);
-		$this->name = $names[$this->meta & 0x03];
-		$this->hardness = 1;
+		$this->name = $names[$this->meta & 0x02];
+        $this->hardness = 1;
 	}
-
+    
 	private function createIndex($x, $y, $z){
 		return $index = $x.".".$y.".".$z;
 	}
@@ -25,7 +23,7 @@ class LeavesBlock extends TransparentBlock{
 		$visited[$index] = true;
 
 		$block = $this->level->getBlock($pos);
-		if($block instanceof WoodBlock){ //type doesn't matter
+		if($block instanceof WoodBlock or $block instanceof Log2Block){ //type doesn't matter
 			return true;
 		}
 
@@ -38,8 +36,8 @@ class LeavesBlock extends TransparentBlock{
 		}
 		return false;
 	}
-	
-	public function onUpdate($type){
+
+    public function onUpdate($type){
 		if($type === BLOCK_UPDATE_NORMAL){
 			if(($this->meta & 0b00001100) === 0){
 				$this->meta |= 0x08;
@@ -48,15 +46,15 @@ class LeavesBlock extends TransparentBlock{
 			}
 		}elseif($type === BLOCK_UPDATE_RANDOM){
 			if(($this->meta & 0b00001100) === 0x08){
-				$this->meta &= 0x03;
+				$this->meta &= 0x02;
 				$visited = array();
 				$check = 0;
 				if($this->findLog($this, $visited, 0) !== true){
 					$this->level->setBlock($this, new AirBlock(), false, false, true);
 					if(mt_rand(1, 20) === 1){ //Saplings
-						ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem(SAPLING, $this->meta & 0x03, 1));
+						ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem(SAPLING, $this->meta + 2 & 0x05, 1));
 					}
-					if(($this->meta & 0x03) === WoodBlock::OAK and mt_rand(1, 200) === 1){ //Apples
+					if(($this->meta & 0x02) === 1 and mt_rand(1, 200) === 1){ //Apples
 						ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem(APPLE, 0, 1));
 					}
 					return BLOCK_UPDATE_NORMAL;
@@ -65,8 +63,8 @@ class LeavesBlock extends TransparentBlock{
 		}
 		return false;
 	}
-	
-	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+
+    public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$this->meta |= 0x04;
 		$this->level->setBlock($this, $this, true, false, true);
 	}
@@ -74,12 +72,12 @@ class LeavesBlock extends TransparentBlock{
 	public function getDrops(Item $item, Player $player){
 		$drops = array();
 		if($item->isShears()){
-			$drops[] = array(LEAVES, $this->meta & 0x03, 1);
+			$drops[] = array(LEAVES2, $this->meta & 0x03, 1);
 		}else{
-			if(mt_rand(1,20) === 1){ //Saplings
-				$drops[] = array(SAPLING, $this->meta & 0x03, 1);
+			if(mt_rand(1, 20) === 1){ //Saplings
+				$drops[] = array(SAPLING, $this->meta + 2 & 0x05, 1);
 			}
-			if(($this->meta & 0x03) === WoodBlock::OAK and mt_rand(1,100) === 1){ //Apples
+			if(($this->meta & 0x03) === 1 and mt_rand(1, 100) === 1){ //Apples
 				$drops[] = array(APPLE, 0, 1);
 			}
 		}
