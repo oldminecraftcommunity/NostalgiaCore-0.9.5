@@ -1051,8 +1051,7 @@ class Entity extends Position
 	
 	public function sendHeadYaw(){
 		$pk = new RotateHeadPacket;
-		$pk->eid = $this->eid;
-		$pk->yaw = $this->headYaw;
+		$pk->entities = [[$this->eid, $this->headYaw]];
 		$this->server->api->player->broadcastPacket($this->level->players, $pk);
 	}
 	
@@ -1180,6 +1179,7 @@ class Entity extends Position
 		}
 		if($this->class === ENTITY_FALLING){
 			$data["Tile"] = $this->data["Tile"];
+			$data["Metadata"] = $this->data["Metadata"];
 		}
 		if($this->class === ENTITY_ITEM){
 			$data["Item"] = [

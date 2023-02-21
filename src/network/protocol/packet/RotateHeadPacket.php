@@ -1,8 +1,7 @@
 <?php
 
 class RotateHeadPacket extends RakNetDataPacket{
-	public $eid;
-	public $yaw;
+	public $entities;
 	/**
 	 * Should yaw be modifed<br>
 	 * false = <b>yaw  / 360 / 0.0039062</b><br>
@@ -22,8 +21,11 @@ class RotateHeadPacket extends RakNetDataPacket{
 	
 	public function encode(){
 		$this->reset();
-		$this->putInt($this->eid);
-		@$this->putByte($this->rawYaw ? $this->yaw : $this->yaw / 360 / 0.0039062); //dont ask me why does chr count float TODO find a better way
+		$this->putInt(count($this->entities));
+		foreach($this->entities as $d){
+		    $this->putInt($d[0]); //eid
+		    $this->putByte((int) ($d[1] / 360 / 0.0039062));
+		}
 	}
 
 }
