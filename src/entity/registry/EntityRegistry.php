@@ -11,11 +11,16 @@ class EntityRegistry{
 		self::registerEntity(Sheep::class);
 		self::registerEntity(Cow::class);
 		self::registerEntity(Mooshroom::class);
+		self::registerEntity(Villager::class);
+		self::registerEntity(Wolf::class);
 		self::registerEntity(Creeper::class);
 		self::registerEntity(PigZombie::class);
 		self::registerEntity(Skeleton::class);
 		self::registerEntity(Spider::class);
 		self::registerEntity(Zombie::class);
+		self::registerEntity(SilverFish::class);
+		//self::registerEntity(Slime::class); TODO some missing property probably
+		self::registerEntity(Enderman::class);
 		self::registerEntity(Arrow::class);
 		self::registerEntity(PrimedTNT::class);
 		self::registerEntity(Painting::class);

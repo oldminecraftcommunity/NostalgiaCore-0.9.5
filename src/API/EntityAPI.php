@@ -55,7 +55,7 @@ class EntityAPI{
 				
 				if(is_int($args[0])) $type = $args[0];
 				else $type = $mob[strtolower($args[0])];
-				if($type < 10 || $type > 36){
+				if($type < 10 || $type > 39){
 					return "Unknown mob.";
 				}
 				$mobName = ucfirst(array_flip($mob)[$type]);
