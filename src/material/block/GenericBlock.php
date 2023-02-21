@@ -61,6 +61,7 @@ class GenericBlock extends Block{
 					"y" => $this->y + 0.5,
 					"z" => $this->z + 0.5,
 					"Tile" => $this->id,
+				    "Metadata" => $this->getMetadata()
 				);
 				$server = ServerAPI::request();
 				$this->level->setBlock($this, new AirBlock(), false, false, true);

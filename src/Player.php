@@ -1266,7 +1266,6 @@ class Player{
 		if(EventHandler::callEvent(new DataPacketReceiveEvent($this, $packet)) === BaseEvent::DENY){
 			return;
 		}
-
 		switch($packet->pid()){
 			case 0x01:
 				break;
@@ -1358,8 +1357,6 @@ class Player{
 					$this->close("no config created", false);
 					return;
 				}
-
-				$this->server->send2Discord($this->username . " joined the game");
 
 				$this->auth = true;
 				if(!$this->data->exists("inventory") or ($this->gamemode & 0x01) === 0x01){
@@ -1610,7 +1607,10 @@ class Player{
 				//$this->lastChunk = [$packet->chunkX, $packet->chunkZ];
 				break;
 			case ProtocolInfo::UPDATE_BLOCK_PACKET:
-				$this->level->setBlock(new Vector3($packet->x, $packet->y, $packet->z), BlockAPI::get($packet->block, $packet->meta));
+			    if($this->gamemode & 0x01 === 0){
+			        $this->level->setBlock(new Vector3($packet->x, $packet->y, $packet->z), BlockAPI::get($packet->block, $packet->meta));
+			    }
+				
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
 				if(!($this->entity instanceof Entity)){
@@ -1658,7 +1658,6 @@ class Player{
 				$data["posX"] = $packet->posX;
 				$data["posY"] = $packet->posY;
 				$data["posZ"] = $packet->posZ;
-
 				if($packet->face >= 0 and $packet->face <= 5){ //Use Block, place
 					if($this->entity->inAction === true){
 						$this->entity->inAction = false;
