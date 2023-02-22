@@ -5,7 +5,7 @@ class TaskPanic extends TaskBase
 	protected $randX = 2, $randZ = 2;
 	public function onStart(EntityAI $ai)
 	{
-		$this->selfCounter = mt_rand(60, 120);
+		$this->selfCounter = 60;
 		$this->regenerateRandXZ();
 	}
 

@@ -497,6 +497,7 @@ class Entity extends Position
 			$this->lastUpdate = $now;
 			return;
 		}
+		
 		$tdiff = $now - $this->lastUpdate;
 		if($this->tickCounter === 0){
 			$this->tickCounter = 1;
@@ -583,7 +584,7 @@ class Entity extends Position
 							for($z = $z0; $z < $z1; ++$z){
 								$pos = new Vector3($x, $y, $z);
 								$b = $this->level->getBlock($pos);
-								if(($b->y == ($y1 - 1) && $b->getID() === WATER) || $b->getID() === STILL_WATER){
+								if($b->y == ($y1 - 1) && ($b->getID() === WATER || $b->getID() === STILL_WATER)){
 									$water = true;
 								}
 								if($b != false && $b->isSolid){
@@ -606,6 +607,16 @@ class Entity extends Position
 					if($b instanceof Block){
 						$horizontalMultiplyFactor = $b->slipperiness * 0.91;
 					}
+				}
+				
+				if($this->inWater){
+					$this->speedX *= 0.8;
+					$this->speedY *= 0.8;
+					$this->speedZ *= 0.8;
+				}else{
+					$this->speedX *= $horizontalMultiplyFactor;
+					$this->speedY *= 0.98;
+					$this->speedZ *= $horizontalMultiplyFactor;
 				}
 				if($this->speedX != 0){
 					$this->x += $this->speedX;
@@ -643,9 +654,9 @@ class Entity extends Position
 					$update = true;
 				}
 				$this->onGround = $support;
-
+				
 				if($this->hasGravity){
-					$this->speedY -= $this->gravity; // TODO: replace with $gravity
+					$this->speedY -= $this->inWater ? 0.02 : $this->gravity; // TODO: replace with $gravity
 					$update = true;
 				} elseif($this->lastX != $this->x || $this->lastZ != $this->z || $this->lastY != $this->z){
 					// $this->speedX = 0;
@@ -663,9 +674,6 @@ class Entity extends Position
 						$this->server->api->handle("entity.motion", $this);
 					}
 				}
-				$this->speedX *= $horizontalMultiplyFactor;
-				$this->speedY *= 0.98;
-				$this->speedZ *= $horizontalMultiplyFactor;
 			} elseif($this->player instanceof Player){
 				if($isFlying === true and ($this->player->gamemode & 0x01) === 0x00){
 					if($this->fallY === false or $this->fallStart === false){

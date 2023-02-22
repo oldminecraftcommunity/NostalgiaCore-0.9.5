@@ -22,6 +22,7 @@ abstract class Animal extends Creature implements Ageable, Breedable{
 	public function harm($dmg, $cause = "generic", $force = false){
 		$ret = parent::harm($dmg, $cause, $force);
 		$this->inPanic |= ($ret && is_numeric($cause));
+		$this->inLove = false;
 		return $ret;
 	}
 	
