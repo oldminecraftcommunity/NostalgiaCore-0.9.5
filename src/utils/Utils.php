@@ -39,10 +39,16 @@ class Utils{
 		return $id;
 	}
 	
-	public static function wrapAngleTo180_float($par0)
+	public static function wrapAngleTo360($angle)
 	{
-		$par0 %= 360.0;
-		return $par0 >= 180 ? $par0 - 360 : (($par0 < -180) ? ($par0 + 360) : $par0);
+		$angle %= 360;
+		return $angle < 0 ? $angle + 360 : $angle;
+	}
+	
+	public static function wrapAngleTo180($angle)
+	{
+		$angle = fmod($angle+180, 360);
+		return $angle < 0 ? $angle + 360 : $angle - 180;
 	}
 	
 	public static function getSign($v){

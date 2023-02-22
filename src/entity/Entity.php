@@ -664,7 +664,7 @@ class Entity extends Position
 					// $this->speedZ = 0;
 					$this->server->api->handle("entity.move", $this);
 					$update = true;
-				}elseif ($this->lastYaw != $this->yaw || $this->lastPitch != $this->pitch) {
+				}elseif ($this->lastYaw != $this->yaw || $this->lastPitch != $this->pitch || $this->lastHeadYaw != $this->headYaw) {
 					$update = true;
 				}
 
@@ -723,7 +723,9 @@ class Entity extends Position
 		if($this->idleTime > 0){
 			-- $this->idleTime;
 		}
-
+		if($this->lastHeadYaw != $this->headYaw){
+			$this->sendHeadYaw();
+		}
 		if($this->class !== ENTITY_PLAYER && $update){
 			$this->updateMovement();
 		}
@@ -769,9 +771,6 @@ class Entity extends Position
 				}
 			} else{
 				$this->updatePosition();
-				if($this->lastHeadYaw != $this->headYaw){
-					$this->sendHeadYaw();
-				}
 				$this->updateLast();
 			}
 			

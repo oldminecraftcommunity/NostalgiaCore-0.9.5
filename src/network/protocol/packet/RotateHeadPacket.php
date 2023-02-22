@@ -24,7 +24,7 @@ class RotateHeadPacket extends RakNetDataPacket{
 		$this->putInt(count($this->entities));
 		foreach($this->entities as $d){
 		    $this->putInt($d[0]); //eid
-		    $this->putByte((int) ($d[1] / 360 / 0.0039062));
+		    $this->putByte((int) ($d[1] / 360 / 0.0039062)); //wraps 360 angle to 0xff
 		}
 	}
 
