@@ -1,20 +1,20 @@
 <?php
 
 class CyanFlowerBlock extends FlowableBlock{
+	protected static $names = [
+		0 => "Poppy",
+		1 => "Blue Orchid",
+		2 => "Allium",
+		3 => "Azure Bluet",
+		4 => "Red Tulip",
+		5 => "Orange Tulip",
+		6 => "White Tulip",
+		7 => "Pink Tulip",
+		8 => "Oxeye Daisy",
+	];
 	public function __construct($meta = 0){
-		parent::__construct(CYAN_FLOWER, $meta, "Poppy");
+		parent::__construct(CYAN_FLOWER, $meta, nullsafe(self::$names[$meta], "Poppy"));
 		$this->hardness = 0;
-		$names = array(
-			0 => "Poppy",
-			1 => "Blue Orchid",
-			2 => "Allium",
-			3 => "Azure Bluet",
-			4 => "Red Tulip",
-			5 => "Orange Tulip",
-			6 => "White Tulip",
-			7 => "Pink Tulip",
-			8 => "Oxeye Daisy",
-		);
 	}
 
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){

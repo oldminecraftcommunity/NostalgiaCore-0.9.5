@@ -230,7 +230,7 @@ define("LEAVES2", 161);
 define("ACACIA_LEAVES", 161);
 define("DARK_OAK_LEAVES", "161:1");
 define("LOG2", 162);
-define("ACACIA_WOOD", 162);
+define("ACACIA_WOOD", "162:0");
 define("DARK_OAK_WOOD", "162:1");
 define("ACACIA_WOOD_STAIRS", 163);
 define("DARK_OAK_WOOD_STAIRS", 164);

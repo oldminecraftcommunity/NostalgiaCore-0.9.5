@@ -27,6 +27,7 @@ class SuperflatGenerator implements LevelGenerator{
 				new OreType(new DiamondOreBlock(), 1, 7, 0, 16),
 				new OreType(new DirtBlock(), 20, 32, 0, 128),
 				new OreType(new GravelBlock(), 10, 16, 0, 128),
+				new OreType(new EmeraldOreBlock(), 1, 7, 0, 16), //TODO
 			]);
 			$this->populators[] = $ores;
 		}

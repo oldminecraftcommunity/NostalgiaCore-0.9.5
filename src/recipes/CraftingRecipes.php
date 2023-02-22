@@ -68,7 +68,23 @@ class CraftingRecipes{
 		"DYE:0x1,DYE:15x1=>DYE:8x2",//Gray Dye
 		"DYE:0x1,DYE:15x2=>DYE:7x3",//Light Gray Dye
 		"DYE:0x1,DYE:8x1=>DYE:7x2",//Light Gray Dye
+		"WOOL:0x2=>CARPET:0x3",
+		"WOOL:1x2=>CARPET:1x3",
+		"WOOL:2x2=>CARPET:2x3",
+		"WOOL:3x2=>CARPET:3x3",
+		"WOOL:4x2=>CARPET:4x3",
+		"WOOL:5x2=>CARPET:5x3",
+		"WOOL:6x2=>CARPET:6x3",
+		"WOOL:7x2=>CARPET:7x3",
+		"WOOL:8x2=>CARPET:8x3",
+		"WOOL:9x2=>CARPET:9x3",
+		"WOOL:10x2=>CARPET:10x3",
+		"WOOL:11x2=>CARPET:11x3",
+		"WOOL:12x2=>CARPET:12x3",
+		"WOOL:13x2=>CARPET:13x3",
 		"WOOL:14x2=>CARPET:14x3",
+		"WOOL:15x2=>CARPET:15x3",
+		
 	];
 
 	private static $big = [//Probably means only craftable on crafting bench. Name it better!
