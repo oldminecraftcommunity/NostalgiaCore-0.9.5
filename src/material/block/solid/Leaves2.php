@@ -1,16 +1,17 @@
 <?php
 
 class Leaves2Block extends TransparentBlock{
-    public function __construct($meta = 0){
-		parent::__construct(LEAVES2, $meta, "Leaves2");
-		$names = array(
-			0 => "Acacia Leaves",
-			1 => "Dark Oak Leaves",
-		);
-		$this->name = $names[$this->meta & 0x02];
-        $this->hardness = 1;
+	
+	protected static $names = [
+		0 => "Acacia Leaves",
+		1 => "Dark Oak Leaves"
+	];
+	
+	public function __construct($meta = 0){
+		parent::__construct(LEAVES2, $meta, nullsafe(self::$names[$meta & 0x03], "Leaves"));
+        	$this->hardness = 1;
 	}
-    
+
 	private function createIndex($x, $y, $z){
 		return $index = $x.".".$y.".".$z;
 	}
@@ -37,7 +38,7 @@ class Leaves2Block extends TransparentBlock{
 		return false;
 	}
 
-    public function onUpdate($type){
+	public function onUpdate($type){
 		if($type === BLOCK_UPDATE_NORMAL){
 			if(($this->meta & 0b00001100) === 0){
 				$this->meta |= 0x08;
@@ -64,7 +65,7 @@ class Leaves2Block extends TransparentBlock{
 		return false;
 	}
 
-    public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$this->meta |= 0x04;
 		$this->level->setBlock($this, $this, true, false, true);
 	}
@@ -72,7 +73,7 @@ class Leaves2Block extends TransparentBlock{
 	public function getDrops(Item $item, Player $player){
 		$drops = array();
 		if($item->isShears()){
-			$drops[] = array(LEAVES2, $this->meta & 0x03, 1);
+			$drops[] = array(LEAVES2, $this->getMetadata(), 1);
 		}else{
 			if(mt_rand(1, 20) === 1){ //Saplings
 				$drops[] = array(SAPLING, $this->meta + 2 & 0x05, 1);
