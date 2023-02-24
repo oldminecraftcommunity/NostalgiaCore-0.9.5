@@ -72,7 +72,7 @@ abstract class ProtocolInfo{
 	const ENTITY_DATA_PACKET = 0xb8;
 	const PLAYER_INPUT_PACKET = 0xb9;
 	const FULL_CHUNK_DATA_PACKET = 0xba;
-	//const UNLOAD_CHUNK_PACKET = 0xbb;
+	const UNLOAD_CHUNK_PACKET = 0xbb;
 
 }
 /*Unused:
