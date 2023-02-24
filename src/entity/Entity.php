@@ -835,7 +835,7 @@ class Entity extends Position
 		}
 	}
 
-	/*
+	/**
 	 * METADATA VALUES(EXPEREMENTAL)
 	 * *****************
 	 * Types: Get input type of <value>
@@ -854,11 +854,10 @@ class Entity extends Position
 	 * 17 => ["type" => 6, "value" => [0, 0, 0]] --> Bed Position <?>
 	 *
 	 *
-	 * DATA FLAGS IDS
-	 * 0 - fire
-	 * 1 - crouching
-	 * 2 - riding <?> - no idea why doesnt it work
-	 * 4 - inAction(ex.: using a bow)
+	 * DATA FLAGS IDS<br>
+	 * 0 - fire<br>
+	 * 1 - crouching<br>
+	 * 4 - inAction(ex.: using a bow)<br>
 	 */
 	public function getMetadata()
 	{

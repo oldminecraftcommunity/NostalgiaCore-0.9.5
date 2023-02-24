@@ -29,6 +29,7 @@ class PocketMinecraftServer{
 		/*if(defined("DEBUG") and DEBUG >= 0){
 			@cli_set_process_title("NostalgiaCore ".MAJOR_VERSION);
 		}*/
+		
 		console("[INFO] Starting Minecraft PE server on " . ($this->serverip === "0.0.0.0" ? "*" : $this->serverip) . ":" . $this->port);
 		EntityRegistry::registerEntities();
 		define("BOOTUP_RANDOM", Utils::getRandomBytes(16));

@@ -9,7 +9,9 @@ class SetEntityDataPacket extends RakNetDataPacket{
 	}
 	
 	public function decode(){
-
+		$this->eid = $this->getInt();
+		$b = $this->get(true);
+		$this->metadata = Utils::readMetadata($b, true);
 	}
 	
 	public function encode(){
