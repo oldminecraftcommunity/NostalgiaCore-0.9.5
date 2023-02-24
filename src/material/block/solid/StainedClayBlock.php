@@ -21,7 +21,7 @@ class StainedClayBlock extends SolidBlock{
 			14 => "Red Stained Clay",
 			15 => "Black Stained Clay",
 		);
-		$this->name = $names[$this->meta & 0x03];
+		$this->name = $names[$this->meta & 0x15];
 		$this->hardness = 30;
 	}
 
@@ -48,7 +48,7 @@ class StainedClayBlock extends SolidBlock{
 	public function getDrops(Item $item, Player $player){
 		if($item->getPickaxeLevel() >= 1){
 			return array(
-				array(STAINED_CLAY, $this->meta & 0x03, 1),
+				array(STAINED_CLAY, $this->meta & 0x15, 1)
 			);
 		}else{
 			return array();

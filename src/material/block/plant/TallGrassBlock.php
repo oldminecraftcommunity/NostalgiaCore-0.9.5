@@ -9,7 +9,7 @@ class TallGrassBlock extends FlowableBlock{
 			1 => "Tall Grass",
 			2 => "Fern",
 		);
-		$this->name = $names[$this->meta & 0x03];
+		$this->name = $names[$this->meta & 0x02];
 		$this->hardness = 0;
 	}
 

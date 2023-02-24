@@ -13,7 +13,7 @@ class CyanFlowerBlock extends FlowableBlock{
 		8 => "Oxeye Daisy",
 	];
 	public function __construct($meta = 0){
-		parent::__construct(CYAN_FLOWER, $meta, nullsafe(self::$names[$meta], "Poppy"));
+		parent::__construct(CYAN_FLOWER, $meta, self::$names[$meta & 0x08]);
 		$this->hardness = 0;
 	}
 

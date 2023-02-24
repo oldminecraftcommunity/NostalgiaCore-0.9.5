@@ -141,6 +141,7 @@ abstract class Block extends Position{
 		HARDENED_CLAY => "HardenedClayBlock",
 		LOG2 => "Log2Block",
 		LEAVES2 => "Leaves2Block",
+		END_PORTAL_FRAME => "EndPortalFrameBlock",
 	);
 	protected $id;
 	protected $meta;

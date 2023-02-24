@@ -21,6 +21,6 @@ class DyeItem extends Item{
 			14 => "Orange Dye",
 			15 => "Bone Meal",
 		);
-		$this->name = $names[$this->meta];
+		$this->name = $names[$this->meta & 0x15];
 	}
 }

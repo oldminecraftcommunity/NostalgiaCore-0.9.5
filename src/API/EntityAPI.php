@@ -22,6 +22,7 @@ class EntityAPI{
 	
 	
 	public function commandHandler($cmd, $args, $issuer, $alias){
+		//todo "MOB_".strtoupper($args[0]);
 		$mob = [
 			"chicken" => 10,
 			"cow" => 11,
@@ -54,7 +55,8 @@ class EntityAPI{
 				}
 				
 				if(is_int($args[0])) $type = $args[0];
-				else $type = $mob[strtolower($args[0])];
+				elseif(isset($mob[strtolower($args[0])])) $type = $mob[strtolower($args[0])];
+				else return "Unknown mob.";
 				if($type < 10 || $type > 39){
 					return "Unknown mob.";
 				}

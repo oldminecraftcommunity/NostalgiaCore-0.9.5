@@ -1,9 +1,9 @@
 <?php
 
-class Slime extends Monster
-{
+class Slime extends Monster{
 	const TYPE = MOB_SLIME;
-	protected $size;
+	public $size;
+	
 	public function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setName("Slime");
@@ -26,9 +26,9 @@ class Slime extends Monster
 				$xOff = (($cnt % 2) - 0.5) * $s / 4;
 				$zOff = (($cnt / 2) - 0.5) * $s / 4;
 				$e = $this->server->api->entity->add($this->level, $this->class, $this->type, [
-					"x" => $this->x+$xOff,
+					"x" => $this->x + $xOff,
 					"y"=> $this->y + 1,
-					"z" => $this->z+$zOff,
+					"z" => $this->z + $zOff,
 					"Size" => (int) ($s / 2)
 				]);
 				$this->server->api->entity->spawnToAll($e);
@@ -39,7 +39,7 @@ class Slime extends Monster
 	
 	public function setSlimeSize($i){
 		$this->size = $i;
-		$this->setSize(0.6*$i, 0.6*$i);
+		$this->setSize(0.6 * $i, 0.6 * $i);
 		$this->setHealth($i * $i);
 	}
 	
@@ -49,8 +49,7 @@ class Slime extends Monster
 		return $sd;
 	}
 	
-	public function getMetadata()
-	{
+	public function getMetadata(){
 		$ret = parent::getMetadata();
 		$ret[16]["value"] = $this->size;
 		return $ret;

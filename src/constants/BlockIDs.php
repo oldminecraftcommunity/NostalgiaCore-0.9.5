@@ -10,6 +10,7 @@ define("ANDESITE", "1:5");
 define("POLISHED_ANDESITE", "1:6");
 define("GRASS", 2);
 define("DIRT", 3);
+define("GRASSLESS_DIRT", "3:1");
 define("COBBLESTONE", 4);
 define("COBBLE", 4);
 define("PLANK", 5);
@@ -83,8 +84,10 @@ define("RED_WOOL", "35:14");
 define("BLACK_WOOL", "35:15");
 
 define("DANDELION", 37);
+define("YELLOW_FLOWER", 37);
 define("ROSE", 38);
 define("CYAN_FLOWER", 38); //NO
+define("RED_FLOWER", 38);
 define("BLUE_ORCHID", "38:1");
 define("ALLIUM", "38:2");
 define("AZURE_BLUET", "38:3");
@@ -238,9 +241,10 @@ define("DARK_OAK_WOOD_STAIRS", 164);
 define("HAY_BALE", 170);
 define("CARPET", 171);
 //ANOTHER CARPET
-//DOUBLE FLOWERS
 define("HARDENED_CLAY", 172);
 define("COAL_BLOCK", 173);
+define("PACKED_ICE", 174);
+define("DOUBLE_PLANT", 175);
 
 define("PODZOL", 243);
 define("BEETROOT_BLOCK", 244);

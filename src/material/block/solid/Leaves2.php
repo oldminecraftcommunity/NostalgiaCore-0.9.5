@@ -8,7 +8,7 @@ class Leaves2Block extends TransparentBlock{
 	];
 	
 	public function __construct($meta = 0){
-		parent::__construct(LEAVES2, $meta, nullsafe(self::$names[$meta & 0x03], "Leaves"));
+		parent::__construct(LEAVES2, $meta, self::$names[$meta & 0x01]);
         	$this->hardness = 1;
 	}
 

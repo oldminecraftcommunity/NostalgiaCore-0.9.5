@@ -1,7 +1,7 @@
 <?php
 
 class TallGrassObject{
-
+	//checking biome
 	public static function growGrass(Level $level, Vector3 $pos, Random $random, $count = 15, $radius = 10){
 		$arr = [
 			BlockAPI::get(DANDELION, 0),

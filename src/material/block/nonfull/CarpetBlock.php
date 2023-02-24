@@ -21,7 +21,7 @@ class CarpetBlock extends FlowableBlock{
 			14 => "Red Carpet",
 			15 => "Black Carpet",
 		);
-		$this->name = $names[$this->meta];
+		$this->name = $names[$this->meta & 0x15];
 		$this->hardness = 0;
 		$this->isFullBlock = false;		
 		$this->isSolid = true;

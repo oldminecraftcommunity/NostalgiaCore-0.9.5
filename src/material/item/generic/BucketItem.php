@@ -11,7 +11,7 @@ class BucketItem extends Item{
 		parent::__construct(BUCKET, $meta, $count, "Bucket");
 		$this->isActivable = true;
 		$this->maxStackSize = 1;
-		$this->name = BucketItem::$possiblenames[$this->meta];
+		$this->name = isset(BucketItem::$possiblenames[$this->meta]) ? BucketItem::$possiblenames[$this->meta] : "Bucket";
 	}
 	
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){

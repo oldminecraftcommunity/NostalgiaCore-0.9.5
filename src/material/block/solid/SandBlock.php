@@ -7,7 +7,7 @@ class SandBlock extends FallableBlock{
 			0 => "Sand",
 			1 => "Red Sand"
 		];
-		$this->name = $names[$this->meta];
+		$this->name = $names[$this->meta & 0x01];
 		$this->hardness = 2.5;
 	}
 	
