@@ -12,7 +12,7 @@ class StoneBlock extends SolidBlock{
 			5 => "Andesite",
 			6 => "Polished Andesite",
 		);
-		$this->name = $names[$this->meta];
+		$this->name = $names[$this->meta & 0x06];
 		$this->hardness = 30;
 	}
 

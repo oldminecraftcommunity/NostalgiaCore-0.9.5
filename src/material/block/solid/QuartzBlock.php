@@ -7,7 +7,7 @@ class QuartzBlock extends SolidBlock{
 			0 => "Quartz Block",
 			1 => "Chiseled Quartz Block",
 			2 => "Quartz Pillar",
-			3 => "Quartz Pillar",
+			3 => "Quartz Pillar", //why 2 pillars?
 		);
 		$this->name = $names[$this->meta & 0x03];
 	}

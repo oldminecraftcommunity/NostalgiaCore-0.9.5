@@ -3,7 +3,6 @@
 class BlockAPI{
 
 	public static $creative = [
-
 		//Building
 		[STONE, 0],
 		[COBBLESTONE, 0],
@@ -165,6 +164,7 @@ class BlockAPI{
 		[CARPET, 10],
 		[CARPET, 9],
 		[CARPET, 8],
+		[END_PORTAL_FRAME, 0],
 
 		//Tools
 		[RAIL, 0],

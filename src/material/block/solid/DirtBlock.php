@@ -1,9 +1,14 @@
 <?php
 
 class DirtBlock extends SolidBlock{
-	public function __construct(){
-		parent::__construct(DIRT, 0, "Dirt");
+	public function __construct($meta = 0){
+		parent::__construct(DIRT, $meta, "Dirt");
 		$this->isActivable = true;
+		$names = array(
+			0 => "Dirt",
+			1 => "Grassless Dirt",
+		);
+		$this->name = $names[$this->meta & 0x01];
 		$this->hardness = 2.5;
 	}
 
