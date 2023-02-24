@@ -401,20 +401,18 @@ class Player{
 		}
 		$X = $this->entity->x >> 4;
 		$Z = $this->entity->z >> 4;
-		$v = new Vector2($X, $Z);
 		$this->chunksOrder = [];
 		for($x = 0; $x < 16; ++$x){
 			for($z = 0; $z < 16; ++$z){
-				$dist = $v->distance(new Vector2($x, $z));
-				for($y = 0; $y < 8; ++$y){
-					$d = $x . ":" . $y . ":" . $z;
-					if(!isset($this->chunksLoaded[$d])){
-						$this->chunksOrder[$d] = $dist;
-					}
+				$d = $x . ":" . $z;
+				//if($x < 0 || $x > 15 || $z < 0 || $z > 15) continue; //TODO infinite worlds
+				if(!isset($this->chunksLoaded[$d])){
+					$this->chunksOrder[$d] = abs($x - $X) + abs($z - $Z);
 				}
 			}
 		}
 		asort($this->chunksOrder);
+		var_dump($this->chunksOrder);
 	}
 	
 	public function loadAllChunks(){
@@ -455,7 +453,7 @@ class Player{
 			return false;
 		}
 	}
-	
+	public $reordered = false;
 	public function getNextChunk($world){
 		if($this->connected === false or $world != $this->level){
 			return false;
@@ -463,7 +461,7 @@ class Player{
 
 		foreach($this->chunkCount as $count => $t){
 			if(isset($this->recoveryQueue[$count]) or isset($this->resendQueue[$count])){
-				$this->server->schedule(1, [$this, "getNextChunk"], $world);
+				$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 				return;
 			}else{
 				unset($this->chunkCount[$count]);
@@ -486,7 +484,7 @@ class Player{
 		$c = key($this->chunksOrder);
 		$d = $c != null ? $this->chunksOrder[$c] : null;
 		if($c === null or $d === null){
-			$this->server->schedule(1, [$this, "getNextChunk"], $world);
+			$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 			return false;
 		}
 
@@ -494,20 +492,12 @@ class Player{
 		$this->chunksLoaded[$c] = true;
 		$id = explode(":", $c);
 		$X = $id[0];
-		$Z = $id[2];
-		$Y = $id[1];
+		$Z = $id[1];
 		$x = $X << 4;
 		$z = $Z << 4;
-		$y = $Y << 4;
 		$this->level->useChunk($X, $Z, $this);
-		$Yndex = 1 << $Y;
-		for($iY = 0; $iY < 8; ++$iY){
-			if(isset($this->chunksOrder["$X:$iY:$Z"])){
-				unset($this->chunksOrder["$X:$iY:$Z"]);
-				$this->chunksLoaded["$X:$iY:$Z"] = true;
-				$Yndex |= 1 << $iY;
-			}
-		}
+		$this->chunksLoaded["$X:$Z"] = true;
+		console("chunk upd nxt $X:$Z");
 		$pk = new FullChunkDataPacket;
 		$pk->chunkX = $X;
 		$pk->chunkZ = $Z;
@@ -523,7 +513,7 @@ class Player{
 
 		$this->lastChunk = [$x, $z];
 
-		$this->server->schedule(1, [$this, "getNextChunk"], $world);
+		$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 	}
 
 	/**
@@ -1245,7 +1235,7 @@ class Player{
 		$this->send($pk);
 		return [$pk->seqNumber];
 	}
-
+	
 	public function handleDataPacket(RakNetDataPacket $packet){
 		if($this->connected === false){
 			return;
@@ -1387,18 +1377,8 @@ class Player{
 				$pk->status = 0;
 				$this->dataPacket($pk);
 				$spawnPos = $this->getSpawn();
-				$pk = new StartGamePacket;
-				$pk->seed = $this->level->getSeed();
-				$pk->spawnX = (int) $spawnPos->x;
-				$pk->spawnY = (int) $spawnPos->y;
-				$pk->spawnZ = (int) $spawnPos->z;
-				$pk->x = $this->data->get("position")["x"];
-				$pk->y = $this->data->get("position")["y"];
-				$pk->z = $this->data->get("position")["z"];
-				$pk->generator = 0; //1 - inf, 0 - old, 2 - flat
-				$pk->gamemode = $this->gamemode & 0x01;
-				$pk->eid = 0;
-				$this->dataPacket($pk);
+				
+				
 
 				if(($this->gamemode & 0x01) === 0x01){
 					$this->slot = 0;
@@ -1425,6 +1405,18 @@ class Player{
 					$pk->z = (int) $this->spawnPosition->z;
 					$this->dataPacket($pk);
 				}
+				$pk = new StartGamePacket;
+				$pk->seed = $this->level->getSeed();
+				$pk->spawnX = (int) $this->entity->x;
+				$pk->spawnY = (int) $this->entity->y;
+				$pk->spawnZ = (int) $this->entity->z;
+				$pk->x = (int) $this->entity->x;
+				$pk->y = (int) $this->entity->x;
+				$pk->z = (int) $this->entity->x;
+				$pk->generator = 0; //1 - inf, 0 - old, 2 - flat
+				$pk->gamemode = $this->gamemode & 0x01;
+				$pk->eid = 0;
+				$this->dataPacket($pk);
 				$this->entity->check = false;
 				$this->entity->setName($this->username);
 				$this->entity->data["CID"] = $this->CID;
@@ -1458,13 +1450,12 @@ class Player{
 					//$pos = new Position($this->entity->x, 64, $this->entity->z, $this->level);
 				//}
 				//else{
-					$pos = new Position($this->entity->x, $this->entity->y, $this->entity->z, $this->level);
+					//$pos = new Position($this->entity->x, $this->entity->y, $this->entity->z, $this->level);
 				//}
-				$pData = $this->data->get("position");
+				//$pData = $this->data->get("position");
 				//$this->server->schedule(20, array($this, "teleport"), $pos);
 				//$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
 				$this->entity->setHealth($this->data->get("health"), "spawn", true);
-				$this->spawned = true;
 				$this->server->api->player->spawnAllPlayers($this);
 				$this->server->api->player->spawnToAllPlayers($this);
 				$this->server->api->entity->spawnAll($this);
@@ -1478,14 +1469,15 @@ class Player{
 				foreach($array as $msg){
 					$this->sendChat($msg."\n");
 				}
-				$this->orderChunks();
-				//$this->getNextChunk($this->level);
-				$this->sendInventory();
 				$this->sendSettings();
-				$this->teleport($pos);
-				$this->loadAllChunks();
+				//$this->teleport($pos);
+				$this->server->schedule(50, array($this, "orderChunks"), array(), true);
+				$this->getNextChunk($this->level);
+				$this->sendInventory();
+				
+				//$this->loadAllChunks();
 				$this->blocked = false;
-
+				$this->spawned = true;
 				$this->server->handle("player.spawn", $this);
 				break;
 			case ProtocolInfo::ROTATE_HEAD_PACKET:
