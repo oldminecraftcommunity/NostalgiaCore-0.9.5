@@ -130,10 +130,17 @@ class LevelAPI{
 		if($generator !== false and class_exists($generator)){
 			$generator = new $generator($options);
 		}else{
-			if(strtoupper($this->server->api->getProperty("level-type")) == "FLAT"){
-				$generator = new SuperflatGenerator($options);
-			}else{
-				$generator = new TemporalGenerator($options);
+			$type = strtoupper($this->server->api->getProperty("level-type"));
+			switch($type){
+				case "FLAT":
+					$generator = new SuperflatGenerator($options);
+					break;
+				case "EXPERIMENTAL":
+					$generator = new NormalGenerator($options);
+					break;
+				default:
+					$generator = new TemporalGenerator($options);
+					break;
 			}
 		}
 		$gen = new WorldGenerator($generator, $name, $seed === false ? Utils::readInt(Utils::getRandomBytes(4, false)) : (int) $seed);
