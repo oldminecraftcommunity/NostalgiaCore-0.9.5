@@ -12,7 +12,6 @@ class StartGamePacket extends RakNetDataPacket{
 	}
 	
 	public function decode(){
-
 	}	
 	
 	public function encode(){

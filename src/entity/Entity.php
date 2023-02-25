@@ -492,12 +492,12 @@ class Entity extends Position
 		if($this->closed === true){
 			return false;
 		}
+		
 		$now = microtime(true);
 		if($this->check === false){
 			$this->lastUpdate = $now;
 			return;
 		}
-		
 		$tdiff = $now - $this->lastUpdate;
 		if($this->tickCounter === 0){
 			$this->tickCounter = 1;

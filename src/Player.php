@@ -6,6 +6,9 @@ class Player{
 	public $data;
 	/** @var Entity */
 	public $entity = false;
+	
+	private $generator = 0; //TODO modify in config?
+	
 	public $auth = false;
 	public $CID;
 	public $MTU;
@@ -402,8 +405,12 @@ class Player{
 		$X = $this->entity->x >> 4;
 		$Z = $this->entity->z >> 4;
 		$this->chunksOrder = [];
-		for($x = 0; $x < 16; ++$x){
-			for($z = 0; $z < 16; ++$z){
+		$startX = $this->generator === 1 ? $X - 4 : 0;
+		$stopX = $this->generator === 1 ? $X + 4 : 15;
+		$startZ = $this->generator === 1 ? $X - 4 : 0;
+		$stopZ = $this->generator === 1 ? $X + 4 : 15;
+		for($x = $startX; $x <= $stopX; ++$x){
+			for($z = $startZ; $z <= $stopZ; ++$z){
 				$d = $x . ":" . $z;
 				//if($x < 0 || $x > 15 || $z < 0 || $z > 15) continue; //TODO infinite worlds
 				if(!isset($this->chunksLoaded[$d])){
@@ -496,7 +503,6 @@ class Player{
 		$z = $Z << 4;
 		$this->level->useChunk($X, $Z, $this);
 		$this->chunksLoaded["$X:$Z"] = true;
-		console("chunk upd nxt $X:$Z");
 		$pk = new FullChunkDataPacket;
 		$pk->chunkX = $X;
 		$pk->chunkZ = $Z;
@@ -945,7 +951,7 @@ class Player{
 			$pk->spawnX = $spwnPos->x;
 			$pk->spawnY = $spwnPos->y;
 			$pk->spawnZ = $spwnPos->z;
-			$pk->generator = 0; //TODO multiple generators
+			$pk->generator = $this->generator;
 			$pk->gamemode = $this->gamemode & 0x01;
 			$pk->eid = 0;
 			$this->dataPacket($pk);
@@ -1410,13 +1416,13 @@ class Player{
 				$pk->spawnY = (int) $spawnPos->y;
 				$pk->spawnZ = (int) $spawnPos->z;
 				$pk->x = (int) $this->entity->x;
-				$pk->y = (int) $this->entity->x;
-				$pk->z = (int) $this->entity->x;
-				$pk->generator = 0; //1 - inf, 0 - old, 2 - flat
+				$pk->y = (int) $this->entity->y;
+				$pk->z = (int) $this->entity->z;
+				$pk->generator = $this->generator; //1 - inf, 0 - old, 2 - flat
 				$pk->gamemode = $this->gamemode & 0x01;
 				$pk->eid = 0;
 				$this->dataPacket($pk);
-				$this->entity->check = false;
+				//$this->entity->check = false; whaT?
 				$this->entity->setName($this->username);
 				$this->entity->data["CID"] = $this->CID;
 				$this->evid[] = $this->server->event("server.chat", [$this, "eventHandler"]);
