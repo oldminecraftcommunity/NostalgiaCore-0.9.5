@@ -405,10 +405,10 @@ class Player{
 		$X = $this->entity->x >> 4;
 		$Z = $this->entity->z >> 4;
 		$this->chunksOrder = [];
-		$startX = $this->generator === 1 ? $X - 4 : 0;
-		$stopX = $this->generator === 1 ? $X + 4 : 15;
-		$startZ = $this->generator === 1 ? $X - 4 : 0;
-		$stopZ = $this->generator === 1 ? $X + 4 : 15;
+		$startX = $this->generator === 1 ? $X - 8 : 0;
+		$stopX = $this->generator === 1 ? $X + 8 : 15;
+		$startZ = $this->generator === 1 ? $Z - 8 : 0;
+		$stopZ = $this->generator === 1 ? $Z + 8 : 15;
 		for($x = $startX; $x <= $stopX; ++$x){
 			for($z = $startZ; $z <= $stopZ; ++$z){
 				$d = $x . ":" . $z;
@@ -1476,6 +1476,7 @@ class Player{
 				}
 				$this->sendSettings();
 				//$this->teleport($pos);
+				//$this->orderChunks();
 				$this->server->schedule(50, array($this, "orderChunks"), array(), true);
 				$this->getNextChunk($this->level);
 				$this->sendInventory();
