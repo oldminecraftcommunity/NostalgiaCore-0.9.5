@@ -412,7 +412,6 @@ class Player{
 			}
 		}
 		asort($this->chunksOrder);
-		var_dump($this->chunksOrder);
 	}
 	
 	public function loadAllChunks(){
@@ -945,7 +944,7 @@ class Player{
 			$pk->z = $this->z;
 			$pk->spawnX = $spwnPos->x;
 			$pk->spawnY = $spwnPos->y;
-			$pk->spwnZ = $spwnPos->z;
+			$pk->spawnZ = $spwnPos->z;
 			$pk->generator = 0; //TODO multiple generators
 			$pk->gamemode = $this->gamemode & 0x01;
 			$pk->eid = 0;
@@ -1407,9 +1406,9 @@ class Player{
 				}
 				$pk = new StartGamePacket;
 				$pk->seed = $this->level->getSeed();
-				$pk->spawnX = (int) $this->entity->x;
-				$pk->spawnY = (int) $this->entity->y;
-				$pk->spawnZ = (int) $this->entity->z;
+				$pk->spawnX = (int) $spawnPos->x;
+				$pk->spawnY = (int) $spawnPos->y;
+				$pk->spawnZ = (int) $spawnPos->z;
 				$pk->x = (int) $this->entity->x;
 				$pk->y = (int) $this->entity->x;
 				$pk->z = (int) $this->entity->x;

@@ -83,6 +83,8 @@ class Level{
 	
 
 	public function getOrderedFullChunk($X, $Z){
+		$X = (int)$X;
+		$Z = (int)$Z;
         //todo: make asynchronous
 		if(!isset($this->level)){
 			return false;
@@ -93,7 +95,7 @@ class Level{
 				return $cache;
 			}
 		}*/
-
+		$gen = !($X > 15 || $X < 0 || $Z > 15 || $Z < 0); //TODO inf Worlds
 		$orderedIds = "";
 		$orderedData = "";
 		$orderedSkyLight = str_repeat("\x00", 16*16*64);
@@ -101,13 +103,16 @@ class Level{
 		$orderedBiomeIds = str_repeat("\x01", 16*16); //all plains, according to PocketMine 1.4 source
 		$orderedBiomeColors = str_repeat("\x00\x85\xb2\x4a", 256); // also PM 1.4
 		$tileEntities = "";
-		$this->level->loadChunk($X, $Z);
 		
-		$miniChunks = [];
-		
-		for($y = 0; $y < 8; ++$y){
-			$miniChunks[$y] = $this->level->getMiniChunk($X, $Z, $y);
+		if($gen){
+			$this->level->loadChunk($X, $Z);
 		}
+		$miniChunks = [];
+			
+		for($y = 0; $y < 8; ++$y){
+			$miniChunks[$y] = $gen ? $this->level->getMiniChunk($X, $Z, $y) : str_repeat("\x00", 8192);
+		}
+		
 		
 		for ($i = 0; $i < 16; $i++){
 			for ($j = 0; $j < 16; $j++){
@@ -229,6 +234,7 @@ class Level{
 	}
 
 	public function useChunk($X, $Z, Player $player){
+		if($X > 15 || $X < 0 || $Z > 15 || $Z < 0) return; //TODO inf worlds
 		if(!isset($this->usedChunks[$X . "." . $Z])){
 			$this->usedChunks[$X . "." . $Z] = [];
 		}
