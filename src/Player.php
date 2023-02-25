@@ -8,7 +8,7 @@ class Player{
 	public $entity = false;
 	
 	private $generator = 0; //TODO modify in config?
-	
+	private $reload = true;
 	public $auth = false;
 	public $CID;
 	public $MTU;
@@ -405,6 +405,7 @@ class Player{
 		$X = $this->entity->x >> 4;
 		$Z = $this->entity->z >> 4;
 		$this->chunksOrder = [];
+		if($this->generator != 0) $chunkToUnload = $this->chunksLoaded;
 		$startX = $this->generator === 1 ? $X - 8 : 0;
 		$stopX = $this->generator === 1 ? $X + 8 : 15;
 		$startZ = $this->generator === 1 ? $Z - 8 : 0;
@@ -412,6 +413,7 @@ class Player{
 		for($x = $startX; $x <= $stopX; ++$x){
 			for($z = $startZ; $z <= $stopZ; ++$z){
 				$d = $x . ":" . $z;
+				if($this->generator != 0) unset($chunkToUnload[$d]);
 				//if($x < 0 || $x > 15 || $z < 0 || $z > 15) continue; //TODO infinite worlds
 				if(!isset($this->chunksLoaded[$d])){
 					$this->chunksOrder[$d] = abs($x - $X) + abs($z - $Z);
@@ -419,6 +421,19 @@ class Player{
 			}
 		}
 		asort($this->chunksOrder);
+		if($this->generator != 0){
+			foreach($chunkToUnload as $chunk => $useless){
+				$chunkI = explode(":", $chunk);
+				$cX = $chunkI[0];
+				$cZ = $chunkI[1];
+				unset($this->chunksLoaded[$chunk]);
+				$this->level->unloadChunk($cX, $cZ, true);
+				$this->dataPacket(new UnloadChunkPacket($cX, $cZ));
+			}
+		}
+		
+		$this->reload = true;
+		
 	}
 	
 	public function loadAllChunks(){
@@ -432,9 +447,9 @@ class Player{
 	public function useChunk($X, $Z){
 		$Yndex = 0;
 		for($iY = 0; $iY < 8; ++$iY){
-			if(isset($this->chunksOrder["$X:$iY:$Z"])){
-				unset($this->chunksOrder["$X:$iY:$Z"]);
-				$this->chunksLoaded["$X:$iY:$Z"] = true;
+			if(isset($this->chunksOrder["$X:$Z"])){
+				unset($this->chunksOrder["$X:$Z"]);
+				$this->chunksLoaded["$X:$Z"] = true;
 				$Yndex |= 1 << $iY;
 			}
 		}
@@ -459,7 +474,17 @@ class Player{
 			return false;
 		}
 	}
-	public $reordered = false;
+	
+	public function entityTick(){
+		if(count($this->chunksOrder) <= 0 && $this->generator != 0){
+			$this->orderChunks();
+		}
+		if($this->reload && $this->generator != 0){
+			$this->getNextChunk($this->level);
+			$this->reload = false;
+		}
+	}
+	
 	public function getNextChunk($world){
 		if($this->connected === false or $world != $this->level){
 			return false;
@@ -1477,7 +1502,8 @@ class Player{
 				$this->sendSettings();
 				//$this->teleport($pos);
 				//$this->orderChunks();
-				$this->server->schedule(50, array($this, "orderChunks"), array(), true);
+				//$this->server->schedule(50, array($this, "orderChunks"), array(), true);
+				$this->server->schedule(50, array($this, "orderChunks"), array());
 				$this->getNextChunk($this->level);
 				$this->sendInventory();
 				

@@ -730,6 +730,10 @@ class Entity extends Position
 			$this->updateMovement();
 		}
 		
+		if($this->isPlayer()){
+			$this->player->entityTick();
+		}
+		
 		$this->needsUpdate = $hasUpdate;
 		$this->lastUpdate = $now;
 	}
