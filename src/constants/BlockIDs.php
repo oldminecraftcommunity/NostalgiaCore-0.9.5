@@ -173,8 +173,8 @@ define("TRAPDOOR", 96);
 define("STONE_BRICKS", 98);
 define("STONE_BRICK", 98);
 //ANOTHER STONE BRICKS
-define("HUGE_BROWN_MUSHROOM", 99);
-define("HUGE_RED_MUSHROOM", 100);
+define("BROWN_MUSHROOM_BLOCK", 99);
+define("RED_MUSHROOM_BLOCK", 100);
 define("IRON_BAR", 101);
 define("IRON_BARS", 101);
 define("GLASS_PANE", 102);
@@ -211,7 +211,7 @@ define("JUNGLE_WOODEN_STAIRS", 136);
 define("COBBLE_WALL", 139);
 define("STONE_WALL", 139);
 define("COBBLESTONE_WALL", 139);
-//MOSSY STONE WALL?
+define("MOSSY_COBBLESTONE_WALL", "139:1");
 
 define("CARROT_BLOCK", 141);
 define("POTATO_BLOCK", 142);
