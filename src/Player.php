@@ -406,10 +406,10 @@ class Player{
 		$Z = $this->entity->z >> 4;
 		$this->chunksOrder = [];
 		if($this->generator != 0) $chunkToUnload = $this->chunksLoaded;
-		$startX = $this->generator === 1 ? $X - 8 : 0;
-		$stopX = $this->generator === 1 ? $X + 8 : 15;
-		$startZ = $this->generator === 1 ? $Z - 8 : 0;
-		$stopZ = $this->generator === 1 ? $Z + 8 : 15;
+		$startX = $this->generator === 1 ? $X - 4 : 0;
+		$stopX = $this->generator === 1 ? $X + 4 : 15;
+		$startZ = $this->generator === 1 ? $Z - 4 : 0;
+		$stopZ = $this->generator === 1 ? $Z + 4 : 15;
 		for($x = $startX; $x <= $stopX; ++$x){
 			for($z = $startZ; $z <= $stopZ; ++$z){
 				$d = $x . ":" . $z;
@@ -426,8 +426,9 @@ class Player{
 				$chunkI = explode(":", $chunk);
 				$cX = $chunkI[0];
 				$cZ = $chunkI[1];
+				//console("Unloading chunk $cX:$cZ");
 				unset($this->chunksLoaded[$chunk]);
-				$this->level->unloadChunk($cX, $cZ, true);
+				$this->level->freeChunk($cX, $cZ, $this);
 				$this->dataPacket(new UnloadChunkPacket($cX, $cZ));
 			}
 		}
@@ -476,13 +477,14 @@ class Player{
 	}
 	
 	public function entityTick(){
+		//ConsoleAPI::debug("{$this->username}, cl: ".count($this->chunksLoaded).", oc: ".count($this->chunksOrder));
 		if(count($this->chunksOrder) <= 0 && $this->generator != 0){
 			$this->orderChunks();
 		}
-		if($this->reload && $this->generator != 0){
+		//if($this->reload && $this->generator != 0){
 			$this->getNextChunk($this->level);
-			$this->reload = false;
-		}
+		//	$this->reload = false;
+		//}
 	}
 	
 	public function getNextChunk($world){
@@ -492,7 +494,7 @@ class Player{
 
 		foreach($this->chunkCount as $count => $t){
 			if(isset($this->recoveryQueue[$count]) or isset($this->resendQueue[$count])){
-				$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
+				//$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 				return;
 			}else{
 				unset($this->chunkCount[$count]);
@@ -515,7 +517,7 @@ class Player{
 		$c = key($this->chunksOrder);
 		$d = $c != null ? $this->chunksOrder[$c] : null;
 		if($c === null or $d === null){
-			$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
+			//$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 			return false;
 		}
 
@@ -543,7 +545,7 @@ class Player{
 
 		$this->lastChunk = [$x, $z];
 
-		$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
+		//$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 	}
 
 	/**
