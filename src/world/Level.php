@@ -35,6 +35,7 @@ class Level{
 		$this->mobSpawner = new MobSpawner($this);
 		$gen = $this->level->levelData["generator"];
 		$this->generator = new $gen([]);
+		$this->generator->init($this, new Random($this->getSeed()));
 	}
 
 	public function close(){
@@ -98,7 +99,7 @@ class Level{
 				return $cache;
 			}
 		}*/
-		$gen = !($X > 15 || $X < 0 || $Z > 15 || $Z < 0); //TODO inf Worlds
+		$gen = true;//!($X > 15 || $X < 0 || $Z > 15 || $Z < 0); //TODO inf Worlds
 		$orderedIds = "";
 		$orderedData = "";
 		$orderedSkyLight = str_repeat("\x00", 16*16*64);
@@ -106,8 +107,8 @@ class Level{
 		$orderedBiomeIds = str_repeat("\x01", 16*16); //all plains, according to PocketMine 1.4 source
 		$orderedBiomeColors = str_repeat("\x00\x85\xb2\x4a", 256); // also PM 1.4
 		$tileEntities = "";
-		
-		if($gen){
+		$this->level->generateChunk($X, $Z, $this->generator);
+		if(!$this->level->isChunkLoaded($X, $Z)){
 			$this->level->loadChunk($X, $Z);
 		}
 		$miniChunks = [];
@@ -237,7 +238,7 @@ class Level{
 	}
 
 	public function useChunk($X, $Z, Player $player){
-		if($X > 15 || $X < 0 || $Z > 15 || $Z < 0) return; //TODO inf worlds
+		//if($X > 15 || $X < 0 || $Z > 15 || $Z < 0) return; //TODO inf worlds
 		if(!isset($this->usedChunks[$X . "." . $Z])){
 			$this->usedChunks[$X . "." . $Z] = [];
 		}
@@ -384,7 +385,7 @@ class Level{
 	}
 	
 	public function setBlock(Vector3 $pos, Block $block, $update = true, $tiles = false, $direct = false){
-		if(!isset($this->level) or (($pos instanceof Position) and $pos->level !== $this) or $pos->x < 0 or $pos->y < 0 or $pos->z < 0){
+		if(!isset($this->level) or (($pos instanceof Position) and $pos->level !== $this) or $pos->y < 0){
 			return false;
 		}
 		$ret = $this->level->setBlock($pos->x, $pos->y, $pos->z, $block->getID(), $block->getMetadata());
