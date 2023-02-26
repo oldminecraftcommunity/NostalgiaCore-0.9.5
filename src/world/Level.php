@@ -12,14 +12,15 @@ class Level{
 	public $entityList;
 	public $tiles, $blockUpdates, $nextSave, $players = [], $level;
 	private $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
-
+	
+	private $generator;
 	public function __construct(PMFLevel $level, Config $entities, Config $tiles, Config $blockUpdates, $name){
 		$this->server = ServerAPI::request();
 		$this->level = $level;
 		$this->level->level = $this;
 		$this->entityList = [];
 		$this->entities = $entities;
-		$this->tiles = $tiles;
+		$this->tiles = $tiles; 
 		$this->blockUpdates = $blockUpdates;
 		$this->startTime = $this->time = (int) $this->level->getData("time");
 		$this->nextSave = $this->startCheck = microtime(true);
@@ -32,6 +33,8 @@ class Level{
 		$this->changedBlocks = [];
 		$this->changedCount = [];
 		$this->mobSpawner = new MobSpawner($this);
+		$gen = $this->level->levelData["generator"];
+		$this->generator = new $gen([]);
 	}
 
 	public function close(){

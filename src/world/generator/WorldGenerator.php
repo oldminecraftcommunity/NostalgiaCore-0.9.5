@@ -20,7 +20,8 @@ class WorldGenerator{
 			"spawnZ" => 128,
 			"extra" => "",
 			"width" => $this->width,
-			"height" => $this->height
+			"height" => $this->height,
+			"generator" => get_class($generator),
 		]);
 		$entities = new Config($this->path . "entities.yml", CONFIG_YAML);
 		$tiles = new Config($this->path . "tiles.yml", CONFIG_YAML);

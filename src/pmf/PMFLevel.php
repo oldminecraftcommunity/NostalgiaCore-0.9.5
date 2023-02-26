@@ -1,11 +1,11 @@
 <?php
 
-define("PMF_CURRENT_LEVEL_VERSION", 0x00);
+define("PMF_CURRENT_LEVEL_VERSION", 0x01);
 
 class PMFLevel extends PMF{
 
 	public $isLoaded = true;
-	private $levelData = [];
+	public $levelData = [];
 	private $locationTable = [];
 	private $log = 4;
 	private $payloadOffset = 0;
@@ -77,6 +77,7 @@ class PMFLevel extends PMF{
 		$this->write(Utils::writeFloat($this->levelData["spawnZ"]));
 		$this->write(chr($this->levelData["width"]));
 		$this->write(chr($this->levelData["height"]));
+		$this->write(Utils::writeShort(strlen($this->levelData["generator"])).$this->levelData["generator"]);
 		$extra = gzdeflate($this->levelData["extra"], PMF_LEVEL_DEFLATE_LEVEL);
 		$this->write(Utils::writeShort(strlen($extra)) . $extra);
 		$this->payloadOffset = ftell($this->fp);
@@ -111,7 +112,7 @@ class PMFLevel extends PMF{
 		}
 		$this->seek(5);
 		$this->levelData["version"] = ord($this->read(1));
-		if($this->levelData["version"] > PMF_CURRENT_LEVEL_VERSION){
+		if($this->levelData["version"] > PMF_CURRENT_LEVEL_VERSION){ //TODO old worlds support
 			return false;
 		}
 		$this->levelData["name"] = $this->read(Utils::readShort($this->read(2), false));
@@ -122,6 +123,7 @@ class PMFLevel extends PMF{
 		$this->levelData["spawnZ"] = Utils::readFloat($this->read(4));
 		$this->levelData["width"] = ord($this->read(1));
 		$this->levelData["height"] = ord($this->read(1));
+		$this->levelData["generator"] = $this->read(Utils::readShort($this->read(2), false));
 		if(($this->levelData["width"] !== 16 and $this->levelData["width"] !== 32) or $this->levelData["height"] !== 8){
 			return false;
 		}
@@ -293,7 +295,7 @@ class PMFLevel extends PMF{
 		@gzclose($chunk);
 		return true;
 	}
-
+	
 	protected function fillMiniChunk($X, $Z, $Y){
 		if($this->isChunkLoaded($X, $Z) === false){
 			return false;
