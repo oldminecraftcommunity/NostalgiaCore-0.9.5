@@ -7,6 +7,7 @@ class LadderBlock extends TransparentBlock{
 		$this->isFullBlock = false;
 		$this->hardness = 2;
 	}
+
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		if($face === 0 || $face === 1){
 			return false; //fix of placing invalid ids without array
@@ -20,7 +21,6 @@ class LadderBlock extends TransparentBlock{
 	}
 
 	public function onUpdate($type){
-		
 		if($type === BLOCK_UPDATE_NORMAL){
 			$side = $this->getMetadata();
 			$faces = array( //magical tranformation

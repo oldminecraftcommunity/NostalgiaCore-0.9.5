@@ -69,6 +69,8 @@ class BlockAPI{
 		[OBSIDIAN, 0],
 		[ICE, 0],
 		[SNOW_BLOCK, 0],
+		[BROWN_MUSHROOM_BLOCK, 0],
+		[RED_MUSHROOM_BLOCK, 0],
 
 		//Decoration
 		[COBBLESTONE_WALL, 0],
@@ -165,6 +167,7 @@ class BlockAPI{
 		[CARPET, 9],
 		[CARPET, 8],
 		[END_PORTAL_FRAME, 0],
+		[MONSTER_SPAWNER, 0],
 
 		//Tools
 		[RAIL, 0],

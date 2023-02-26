@@ -142,6 +142,10 @@ abstract class Block extends Position{
 		LOG2 => "Log2Block",
 		LEAVES2 => "Leaves2Block",
 		END_PORTAL_FRAME => "EndPortalFrameBlock",
+		COCOA => "CocoaBlock",
+		RED_MUSHROOM_BLOCK => "RedMushroomSolidBlock",
+		BROWN_MUSHROOM_BLOCK => "BrownMushroomSolidBlock",
+		MONSTER_SPAWNER => "MonsterSpawnerBlock",
 	);
 	protected $id;
 	protected $meta;
