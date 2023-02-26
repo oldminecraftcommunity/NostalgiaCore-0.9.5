@@ -1,18 +1,19 @@
 <?php
 
 class StoneBlock extends SolidBlock{
+	
+	protected static $names = [
+		0 => "Stone",
+		1 => "Granite",
+		2 => "Polished Granite",
+		3 => "Diorite",
+		4 => "Polished Diorite",
+		5 => "Andesite",
+		6 => "Polished Andesite",
+	];
+	
 	public function __construct($meta = 0){
-		parent::__construct(STONE, $meta, "Stone");
-		$names = array(
-			0 => "Stone",
-			1 => "Granite",
-			2 => "Polished Granite",
-			3 => "Diorite",
-			4 => "Polished Diorite",
-			5 => "Andesite",
-			6 => "Polished Andesite",
-		);
-		$this->name = $names[$this->meta & 0x06];
+		parent::__construct(STONE, $meta, nullsafe(self::$names[$meta], "Stone"));
 		$this->hardness = 30;
 	}
 

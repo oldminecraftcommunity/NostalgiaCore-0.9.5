@@ -2,6 +2,14 @@
 
 class Level{
 	/**
+	 * A generator type.
+	 * 0 - Old
+	 * 1 - Infinite
+	 * @var integer
+	 */
+	public $generatorType = 0;
+	
+	/**
 	 * @var Config
 	 */
 	public $entities;
@@ -99,7 +107,7 @@ class Level{
 				return $cache;
 			}
 		}*/
-		$gen = true;//!($X > 15 || $X < 0 || $Z > 15 || $Z < 0); //TODO inf Worlds
+		$gen = $this->generatorType === 1 || !($X > 15 || $X < 0 || $Z > 15 || $Z < 0);
 		$orderedIds = "";
 		$orderedData = "";
 		$orderedSkyLight = str_repeat("\x00", 16*16*64);
@@ -107,7 +115,7 @@ class Level{
 		$orderedBiomeIds = str_repeat("\x01", 16*16); //all plains, according to PocketMine 1.4 source
 		$orderedBiomeColors = str_repeat("\x00\x85\xb2\x4a", 256); // also PM 1.4
 		$tileEntities = "";
-		$this->level->generateChunk($X, $Z, $this->generator);
+		if($gen)$this->level->generateChunk($X, $Z, $this->generator);
 		if(!$this->level->isChunkLoaded($X, $Z)){
 			$this->level->loadChunk($X, $Z);
 		}
