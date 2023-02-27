@@ -37,22 +37,23 @@ class PMFLevel extends PMF{
 	private function createBlank(){
 		$this->saveData(false);
 		$this->locationTable = [];
-		$cnt = pow($this->levelData["width"], 2);
+		//$cnt = pow($this->levelData["width"], 2);
 		$dirname = dirname($this->file) . "/chunks/";
 		if(!is_dir($dirname)){
 			@mkdir($dirname , 0755);
 		}
 		
-		for($index = 0; $index < $cnt; ++$index){
-			$this->chunks[$index] = false;
-			$this->chunkChange[$index] = false;
-			$this->locationTable[$index] = [
-				0 => 0,
-			];
-			$this->write(Utils::writeShort(0));
-			$X = $Z = null;
-			$this->getXZ($index, $X, $Z);
-			@file_put_contents($this->getChunkPath($X, $Z), gzdeflate("", PMF_LEVEL_DEFLATE_LEVEL));
+		for($X = 0; $X < 16; ++$X){
+			for($Z = 0; $Z < 16; ++$Z){
+				$index = $this->getIndex($X, $Z);
+				$this->chunks[$index] = false;
+				$this->chunkChange[$index] = false;
+				$this->locationTable[$index] = [0 => 0,];
+				$this->write(Utils::writeShort(0));
+				//$X = $Z = null;
+				//$this->getXZ($index, $X, $Z);
+				@file_put_contents($this->getChunkPath($X, $Z), gzdeflate("", PMF_LEVEL_DEFLATE_LEVEL));
+			}
 		}
 		if(!file_exists(dirname($this->file) . "/entities.yml")){
 			$entities = new Config(dirname($this->file) . "/entities.yml", CONFIG_YAML);
@@ -88,11 +89,13 @@ class PMFLevel extends PMF{
 	}
 
 	private function writeLocationTable(){
-		$cnt = pow($this->levelData["width"], 2);
+		//$cnt = pow($this->levelData["width"], 2);
 		@ftruncate($this->fp, $this->payloadOffset);
 		$this->seek($this->payloadOffset);
-		for($index = 0; $index < $cnt; ++$index){
-			$this->write(Utils::writeShort($this->locationTable[$index][0]));
+		for($X = 0; $X < 16; ++$X){
+			for($Z = 0; $Z < 16; ++$Z){
+				$this->write(Utils::writeShort($this->locationTable[$this->getIndex($X, $Z)][0]));
+			}
 		}
 	}
 
@@ -135,9 +138,11 @@ class PMFLevel extends PMF{
 			$this->write(Utils::writeShort(strlen($c)) . $c);
 			$this->payloadOffset = ftell($this->fp);
 			$this->levelData["extra"] = "";
-			$cnt = pow($this->levelData["width"], 2);
-			for($index = 0; $index < $cnt; ++$index){
-				$this->write("\x00\xFF"); //Force index recreation
+			//$cnt = pow($this->levelData["width"], 2);
+			for($X = 0; $X < 16; ++$X){
+				for($Z = 0; $Z < 16; ++$Z){
+					$this->write("\x00\xFF"); //Force index recreation
+				}
 			}
 			fseek($this->fp, $this->payloadOffset);
 		}else{
@@ -148,14 +153,17 @@ class PMFLevel extends PMF{
 
 	private function readLocationTable(){
 		$this->locationTable = [];
-		$cnt = pow($this->levelData["width"], 2);
+		//$cnt = pow($this->levelData["width"], 2);
 		$this->seek($this->payloadOffset);
-		for($index = 0; $index < $cnt; ++$index){
-			$this->chunks[$index] = false;
-			$this->chunkChange[$index] = false;
-			$this->locationTable[$index] = [
-				0 => Utils::readShort($this->read(2)), //16 bit flags
-			];
+		for($X = 0; $X < 16; ++$X){
+			for($Z = 0; $Z < 16; ++$Z){
+				$index = $this->getIndex($X, $Z);
+				$this->chunks[$index] = false;
+				$this->chunkChange[$index] = false;
+				$this->locationTable[$index] = [
+					0 => Utils::readShort($this->read(2)), //16 bit flags
+				];
+			}
 		}
 		return true;
 	}
