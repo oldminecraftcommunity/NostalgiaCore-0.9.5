@@ -182,7 +182,7 @@ define("GLASS_PANEL", 102);
 define("MELON_BLOCK", 103);
 define("PUMPKIN_STEM", 104);
 define("MELON_STEM", 105);
-
+define("VINES", 106);
 define("FENCE_GATE", 107);
 define("BRICK_STAIRS", 108);
 define("STONE_BRICK_STAIRS", 109);

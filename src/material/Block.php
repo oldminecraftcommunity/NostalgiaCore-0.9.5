@@ -146,6 +146,8 @@ abstract class Block extends Position{
 		RED_MUSHROOM_BLOCK => "RedMushroomSolidBlock",
 		BROWN_MUSHROOM_BLOCK => "BrownMushroomSolidBlock",
 		MONSTER_SPAWNER => "MonsterSpawnerBlock",
+		VINES => "VinesBlock",
+		MYCELIUM => "MyceliumBlock",
 	);
 	protected $id;
 	protected $meta;
