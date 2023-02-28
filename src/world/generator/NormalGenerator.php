@@ -87,7 +87,8 @@ class NormalGenerator implements NewLevelGenerator{
 			for($z = 0; $z < 16; ++$z){
 				for($x = 0; $x < 16; ++$x){
 					$i = ($z << 4) + $x;
-					$height = floor($this->worldHeight + $hills[$i] * 14 + $base[$i] * 7);
+					$height = $this->worldHeight + $hills[$i] * 14 + $base[$i] * 7;
+					$height = (int) $height;
 					
 					for($y = $startY; $y < $endY; ++$y){
 						$diff = $height - $y;
