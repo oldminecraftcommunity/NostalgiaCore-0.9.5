@@ -226,10 +226,10 @@ class Player{
 			$this->entity->resetSpeed();
 			$this->entity->updateLast();
 			$this->entity->calculateVelocity();
-			/*if($terrain === true){
+			//if($terrain === true){
 				$this->orderChunks();
-				$this->getNextChunk($this->level);
-			}*/
+				//$this->getNextChunk($this->level);
+			//}*/
 			$this->entity->check = true;
 			if($force === true){
 				$this->forceMovement = $pos;
