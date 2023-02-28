@@ -32,8 +32,6 @@ class NormalGenerator implements NewLevelGenerator{
 		$this->noisePatchesSmall = new NoiseGeneratorSimplex($this->random, 2);
 		$this->noiseBase = new NoiseGeneratorSimplex($this->random, 16);
 		
-		
-		
 		$ores = new OrePopulator();
 		$ores->setOreTypes(array(
 			new OreType(new CoalOreBlock(), 20, 16, 0, 128),
@@ -43,8 +41,12 @@ class NormalGenerator implements NewLevelGenerator{
 			new OreType(new GoldOreBlock(), 2, 8, 0, 32),
 			new OreType(new DiamondOreBlock(), 1, 7, 0, 16),
 			new OreType(new EmeraldOreBlock(), 1, 7, 0, 16), //TODO vanilla
+
 			new OreType(new DirtBlock(), 20, 32, 0, 128),
 			new OreType(new GravelBlock(), 10, 16, 0, 128),
+			new OreType(new StoneBlock(1), 12, 16, 0, 128),
+			new OreType(new StoneBlock(3), 12, 16, 0, 128),
+			new OreType(new StoneBlock(5), 12, 16, 0, 128),
 		));
 		$this->populators[] = $ores;
 		
@@ -85,12 +87,11 @@ class NormalGenerator implements NewLevelGenerator{
 			for($z = 0; $z < 16; ++$z){
 				for($x = 0; $x < 16; ++$x){
 					$i = ($z << 4) + $x;
-					$height = $this->worldHeight + $hills[$i] * 14 + $base[$i] * 7;
-					$height = (int) $height;
+					$height = floor($this->worldHeight + $hills[$i] * 14 + $base[$i] * 7);
 					
 					for($y = $startY; $y < $endY; ++$y){
 						$diff = $height - $y;
-						if($y <= 4 and ($y === 0 or $this->random->nextFloat() < 0.75)){
+						if($y <= 4 and ($y === 0 or $this->random->nextFloat() < 0.33)){
 							$chunk .= "\x07"; //bedrock
 						}elseif($diff > 2){
 							$chunk .= "\x01"; //stone
@@ -106,13 +107,13 @@ class NormalGenerator implements NewLevelGenerator{
 							if(($this->waterHeight - $y) <= 1 and $diff === 0){
 								$chunk .= "\x0c"; //sand
 							}elseif($diff === 0){
-								if($patchesSmall[$i] > 0.3){
+								/*if($patchesSmall[$i] > 0.3){
 									$chunk .= "\x0d"; //gravel
 								}elseif($patchesSmall[$i] < -0.45){
 									$chunk .= "\x0c"; //sand
-								}else{
+								}else{*/
 									$chunk .= "\x03"; //dirt
-								}
+								//}
 							}else{
 								$chunk .= "\x09"; //still_water
 							}

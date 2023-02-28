@@ -7,7 +7,7 @@ class Level{
 	 * 1 - Infinite
 	 * @var integer
 	 */
-	public $generatorType = 0;
+	public $generatorType = 1;
 	
 	/**
 	 * @var Config
