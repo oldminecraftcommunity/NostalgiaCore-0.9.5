@@ -47,6 +47,7 @@ class CraftingRecipes{
 		"HAY_BALE:?x1=>WHEAT:0x9",
 
 		//Items
+		"EMERALD_BLOCK:?x1=>EMERALD:0x9",
 		"DIAMOND_BLOCK:?x1=>DIAMOND:0x9",
 		"GOLD_BLOCK:?x1=>GOLD_INGOT:0x9",
 		"IRON_BLOCK:?x1=>IRON_INGOT:0x9",
@@ -170,6 +171,7 @@ class CraftingRecipes{
 		//"FIRE:?x7=>CHAIN_LEGGINGS:0x1",
 
 		//Items
+		"EMERALD:?x9=>EMERALD_BLOCK:0x1",
 		"DIAMOND:?x9=>DIAMOND_BLOCK:0x1",
 		"GOLD_INGOT:?x9=>GOLD_BLOCK:0x1",
 		"IRON_INGOT:?x9=>IRON_BLOCK:0x1",
