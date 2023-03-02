@@ -69,7 +69,7 @@ class NormalGenerator implements NewLevelGenerator{
 		for($z = 0; $z < 16; ++$z){
 			for($x = 0; $x < 16; ++$x){
 				$i = ($z << 4) + $x;
-				$hills[$i] = $this->noiseHills->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.11, 12, true);
+				$hills[$i] = $this->noiseHills->noise3D($x + ($chunkX << 4), 0, $z + ($chunkZ << 4), 0.11, 12, true);
 				$patches[$i] = $this->noisePatches->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.03, 16, true);
 				$patchesSmall[$i] = $this->noisePatchesSmall->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.5, 4, true);
 				$base[$i] = $this->noiseBase->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.7, 16, true);
@@ -97,7 +97,7 @@ class NormalGenerator implements NewLevelGenerator{
 						}elseif($diff > 2){
 							$chunk .= "\x01"; //stone
 						}elseif($diff > 0){
-							if($patches[$i] > 0.7){
+							if($patches[$i] > 0.9){
 								$chunk .= "\x01"; //stone
 							}elseif($patches[$i] < -0.8){
 								$chunk .= "\x0d"; //gravel
