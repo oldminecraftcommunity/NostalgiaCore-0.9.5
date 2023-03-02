@@ -1,7 +1,7 @@
 <?php
 
 abstract class Biome{
-	private $topBlock, $fillerBlock;
+	protected $topBlock, $fillerBlock;
 	public function __construct($id, $name){
 		$this->name = $name;
 		self::$biomes[$id] = $this;
