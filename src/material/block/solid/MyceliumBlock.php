@@ -14,8 +14,8 @@ class MyceliumBlock extends SolidBlock{
 		return BLOCK_UPDATE_RANDOM;
 	}
 
-	public function onActivate(Item $item, Player $player){
-		//MonsterRoomStructure::buildStructure($this->level, $this->getX(), $this->getY(), $this->getZ());
+	public function onActivate(Item $item, Player $player){ //uwu
+		//StrongholdPortalRoomStructure::buildStructure($this->level, $this->getX(), $this->getY(), $this->getZ());
 	}
 
 	public function getDrops(Item $item, Player $player){

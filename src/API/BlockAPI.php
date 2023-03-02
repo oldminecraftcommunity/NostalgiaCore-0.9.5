@@ -80,6 +80,7 @@ class BlockAPI{
 		[SNOW_BLOCK, 0],
 		[BROWN_MUSHROOM_BLOCK, 0],
 		[RED_MUSHROOM_BLOCK, 0],
+		[MYCELIUM, 0],
 
 		//Decoration
 		[COBBLESTONE_WALL, 0],
