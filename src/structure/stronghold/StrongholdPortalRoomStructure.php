@@ -162,7 +162,7 @@ class StrongholdPortalRoomStructure{
 			foreach($layer as $line){
 				$line = rtrim($line); //remove useless spaces(only from right)
 				foreach(str_split($line) as $char){
-                    $vector = new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z - floor(self::$width / 2) + $offsetZ);
+                    $vector = new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z + $offsetZ);
 					switch($char){
 						case "S":
 							$level->setBlockRaw($vector, new StoneBricksBlock(0));
