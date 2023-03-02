@@ -8,10 +8,9 @@ class BucketItem extends Item{
 		10 => "Lava Bucket"
 	);
 	public function __construct($meta = 0, $count = 1){
-		parent::__construct(BUCKET, $meta, $count, "Bucket");
+		parent::__construct(BUCKET, $meta, $count, nullsafe(self::$possiblenames[$meta], "Bucket"));
 		$this->isActivable = true;
 		$this->maxStackSize = 1;
-		$this->name = isset(BucketItem::$possiblenames[$this->meta]) ? BucketItem::$possiblenames[$this->meta] : "Bucket";
 	}
 	
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
