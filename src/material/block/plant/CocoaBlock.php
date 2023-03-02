@@ -1,6 +1,12 @@
 <?php
 
 class CocoaBlock extends FlowableBlock{
+	protected static $faces = [
+		2 => 0x00,
+		3 => 0x02,
+		4 => 0x03,
+		5 => 0x01
+	];
 	public function __construct($meta = 0){
 		parent::__construct(COCOA, $meta, "tile.cocoa.name<");
 		$this->isActivable = true;
@@ -12,13 +18,7 @@ class CocoaBlock extends FlowableBlock{
 			return false; //fix of placing invalid ids without array
 		}
 		if($target->isTransparent === false){
-			$faces = array(
-				2 => 0x00,
-                3 => 0x00,
-				4 => 0x00,
-                5 => 0x00,
-			);
-			$this->level->setBlock($this, BlockAPI::get($this->id, $faces[$face]), true, false, true);
+			$this->level->setBlock($this, BlockAPI::get($this->id, self::$faces[$face]), true, false, true);
 			return true;
 		}
 		return false;
