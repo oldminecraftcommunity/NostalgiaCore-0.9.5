@@ -58,13 +58,11 @@ class WheatBlock extends FlowableBlock{
 		$drops = [];
 		if($this->meta >= 0x07){
 			$drops[] = [WHEAT, 0, 1];
-		}else{
-			for($i = 0; $i < 3; ++$i){
-				if(mt_rand(0, 15) <= $this->meta){ //a way from 1.4.7
-				  $drops[] = [WHEAT_SEEDS, 0, 1];
-				}
+		}
+		for($i = 0; $i < 3; ++$i){
+			if(mt_rand(0, 15) <= $this->meta){ //a way from 1.4.7
+			  $drops[] = [WHEAT_SEEDS, 0, 1];
 			}
-			
 		}
 		return $drops;
 	}
