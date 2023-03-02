@@ -79,8 +79,8 @@ class WoodHutStructure{
 							$level->setBlockRaw($vector, new DirtBlock());
 							break;
 						case "d":
-							if($layerCount == 1) $level->setBlockRaw($vector, new DoorBlock(WOODEN_DOOR));
-							else $level->setBlockRaw($vector, new DoorBlock(WOODEN_DOOR, 0x08));
+							if($layerCount == 1) $level->setBlockRaw($vector, new DoorBlock(64));
+							else $level->setBlockRaw($vector, new DoorBlock(64, 0x08));
 							break;
 						case "G":
 							$level->setBlockRaw($vector, new GlassPaneBlock());

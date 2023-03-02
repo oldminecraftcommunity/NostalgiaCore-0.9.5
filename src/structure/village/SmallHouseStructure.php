@@ -16,21 +16,21 @@ class SmallHouseStructure{
 			"CP PC",
 			"P   P",
 			"P   P",
-			"P L P",
+			"P   P",
 			"CPPPC",
 		],
 		2 => [
 			"CP PC",
 			"P   P",
 			"G   G",
-			"P L P",
+			"P   P",
 			"CPPPC",
 		],
 		3 => [
 			"CPPPC",
 			"P   P",
 			"P   P",
-			"P L P",
+			"P   P",
 			"CPPPC",
 		],
 		4 => [
@@ -43,15 +43,12 @@ class SmallHouseStructure{
 	];
 
 	public static function generateFence(){
-		self::$tmpStructure = self::$structure;
+		self::$tmpStructure = self::$structure; 
 		if(Utils::chance(50)){
-			self::$tmpStructure[4] = [
-				"WWWWW",
-				"WPPPW",
-				"WPPPW",
-				"WPLPW",
-				"WWWWW",
-			];
+			self::$tmpStructure[1][3] = "P L P";
+			self::$tmpStructure[2][3] = "P L P";
+			self::$tmpStructure[3][3] = "P L P";
+			self::$tmpStructure[4][3] = "WPLPW";
 			self::$tmpStructure[5] = [
 				"FFFFF",
 				"F   F",
