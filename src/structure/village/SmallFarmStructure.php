@@ -5,6 +5,9 @@ class SmallFarmStructure{
 	public static $lenght = 9;
 	public static $tmpStructure;
     public static $structure = [
+		-1 => [
+			//add sand, clay if here isn't air
+		],
 		0 => [
 			"WWWWWWW",
 			"WFFwFFW",
@@ -21,7 +24,7 @@ class SmallFarmStructure{
 	public static function generateCrops(){
 		self::$tmpStructure = self::$structure;
 		$f = Utils::randomFloat();
-		if($f <= 0.25){
+		if($f <= 0.5){
 			self::$tmpStructure[1] = [
 				"",
 				" HH HH ",
@@ -34,7 +37,7 @@ class SmallFarmStructure{
 				"",
 			];
 		}
-		elseif($f <= 0.5){
+		elseif($f <= 0.7){
 			self::$tmpStructure[1] = [
 				"",
 				" CC CC ",
@@ -47,7 +50,7 @@ class SmallFarmStructure{
 				"",
 			];
 		}
-		elseif($f <= 0.75){
+		elseif($f <= 0.9){
 			self::$tmpStructure[1] = [
 				"",
 				" PP PP ",
