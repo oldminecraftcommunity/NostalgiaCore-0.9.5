@@ -29,51 +29,47 @@ class MonsterRoomStructure{
                 else{
                     $line = self::$width == 7 ? "C     C" : "C       C";
                 }
-                if($wallsLevel == 0){
-                    self::generateChests();
-                }
                 array_push(self::$structure[$wallsLevel], $line);
             }
         }
     }
 
-    public static function generateChests(){}
+    public static function generateChests($level, $x, $y, $z){
+        $level->setBlockRaw(new Vector3($x - floor(self::$width / 3), $y, $z), new ChestBlock());
+        $level->setBlockRaw(new Vector3($x, $y, $z - floor(self::$width / 3)), new ChestBlock());
+    }
 
-    public static function getSpawnerMob(){
+    /*public static function getSpawnerMob(){
         $rand = Utils::randomFloat();
         if($rand <= 0.5) return MOB_ZOMBIE;
         elseif($rand <= 0.75) return MOB_SKELETON;
         else return MOB_SPIDER;
-    }
+    }*/
 
     public static function buildStructure($level, $x, $y, $z){ /*use CENTER positions*/
-        console("building!");
         self::getWidth();
         self::generateFloor();
         self::generateWalls();
-        //console(var_dump(self::$structure));
 		$offsetX = 0;
 		$offsetZ = 0;
 		foreach(self::$structure as $layerCount => $layer){
 			foreach($layer as $line){
 				$line = rtrim($line); //remove useless spaces(only from right)
 				foreach(str_split($line) as $char){
+                    $vector = new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z - floor(self::$width / 2) + $offsetZ);
 					switch($char){
 						case "C":
-							$level->setBlockRaw(new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z - floor(self::$width / 2) + $offsetZ), new CobblestoneBlock());
+							$level->setBlockRaw($vector, new CobblestoneBlock());
 							break;
                         case "M":
-                            $level->setBlockRaw(new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z - floor(self::$width / 2) + $offsetZ), new MossStoneBlock());
-							break;
-                        case "H":
-                            $level->setBlockRaw(new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z - floor(self::$width / 2) + $offsetZ), new ChestBlock());
+                            $level->setBlockRaw($vector, new MossStoneBlock());
 							break;
 						case " ":
-							$block = $level->getBlock(new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z - floor(self::$width / 2) + $offsetZ))->getID();
-							if($block == 0){
+							$block = $level->getBlock($vector)->getID();
+							if($block === AIR){
 								break;
 							}
-							$level->setBlockRaw(new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z - floor(self::$width / 2) + $offsetZ), new AirBlock());
+							$level->setBlockRaw($vector, new AirBlock());
 							break;
 					}
 					++$offsetX;
@@ -83,6 +79,11 @@ class MonsterRoomStructure{
 			}
 			$offsetZ = 0;
 		}
-        $level->setBlockRaw(new Vector3($x, $y, $z), new MonsterSpawnerBlock(self::getSpawnerMob()));
+        $level->setBlockRaw(new Vector3($x, $y, $z), new MonsterSpawnerBlock());
+        self::generateChests($level, $x, $y, $z);
 	}
+
+    public static $possibleLoot = [
+        "bone", "gunpowder", "string", "wheat", "bread"/*, "saddle"*/, "coal", "redstone_dust", "beetroot_seeds", "melon_seeds", "pumpkin_seeds", "iron_ingot", "bucket", "gold_ingot"
+    ];
 }
