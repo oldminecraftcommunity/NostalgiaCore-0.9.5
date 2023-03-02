@@ -24,12 +24,9 @@ class CocoaBlock extends FlowableBlock{
 		return false;
 	}
 	
-	/*public function onActivate(Item $item, Player $player){
-		if($item->getID() === DYE and $item->getMetadata() === 0x0F){ //Bonemeal
-			$this->meta++;
-			if($this->meta > 0x02){
-				$this->meta = 0x02;
-			}
+	public function onActivate(Item $item, Player $player){
+		if($this->getGrowthStage() < 0x02 && $item->getID() === DYE and $item->getMetadata() === 0x0F){ //Bonemeal
+			$this->meta += 0b0100; //TODO limit
 			$this->level->setBlock($this, $this, true, false, true);
 			if(($player->gamemode & 0x01) === 0){
 				$player->removeItem(DYE, 0x0F, 1);
@@ -42,8 +39,8 @@ class CocoaBlock extends FlowableBlock{
 	public function onUpdate($type){
 		if($type === BLOCK_UPDATE_RANDOM){
 			if(mt_rand(0, 2) == 1){
-				if($this->meta < 0x03){
-					++$this->meta;
+				if($this->getGrowthStage() < 0x02){
+					$this->meta += 0b0100;
 					$this->level->setBlock($this, $this, true, false, true);
 					return BLOCK_UPDATE_RANDOM;
 				}
@@ -52,11 +49,13 @@ class CocoaBlock extends FlowableBlock{
 			}
 		}
 		return false;
-	}*/
-	
+	}
+	public function getGrowthStage(){
+		return $this->meta >> 2;
+	}
 	public function getDrops(Item $item, Player $player){
 		$drops = [];
-		if($this->meta >= 0x02){ //hum?
+		if($this->getGrowthStage() >= 0x02){ //hum?
 			$drops[] = [DYE, 3, mt_rand(1, 4)];
 		}else{
 			$drops[] = [DYE, 3, 1];
