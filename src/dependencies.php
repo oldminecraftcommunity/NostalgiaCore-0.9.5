@@ -130,6 +130,8 @@ require_once(FILE_PATH . "/src/plugin/DummyPlugin.php");
 require_once(FILE_PATH . "/src/plugin/phar/IClassLoader.php");
 require_once(FILE_PATH . "/src/plugin/phar/PharUtils.php");
 
+require_once(FILE_PATH . "/src/world/generator/LevelGenerator.php");
+
 require_all(FILE_PATH . "src/");
 
 

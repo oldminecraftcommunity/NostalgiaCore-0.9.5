@@ -136,10 +136,14 @@ class LevelAPI{
 					$generator = new SuperflatGenerator($options);
 					break;
 				case "EXPERIMENTAL":
-					$generator = new NormalGenerator($options);
+					$generator = new ExperimentalGenerator($options);
+					break;
+				case "OLD":	
+					$generator = new TemporalGenerator();
+					ConsoleAPI::warn("You should not use OLD world type.");
 					break;
 				default:
-					$generator = new TemporalGenerator($options);
+					$generator = new NormalGenerator($options);
 					break;
 			}
 		}
