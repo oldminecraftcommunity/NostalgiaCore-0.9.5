@@ -601,14 +601,14 @@ class NetherReactorStructure{
 				foreach(str_split($line) as $char){
 					switch($char){
 						case "N": //Netherrack
-							$level->setBlockRaw(new Vector3($x - 8 + $offsetX, $y - 1 + $layerCount, $z - 8 + $offsetZ), new NetherrackBlock());
+							$level->setBlockRaw(new Vector3($x - 8 + $offsetX, $y + $layerCount, $z - 8 + $offsetZ), new NetherrackBlock());
 							break;
 						case " ":
-							$block = $level->getBlock(new Vector3($x - 8 + $offsetX, $y - 1 + $layerCount, $z - 8 + $offsetZ))->getID();
+							$block = $level->getBlock(new Vector3($x - 8 + $offsetX, $y + $layerCount, $z - 8 + $offsetZ))->getID();
 							if($block == 0){
 								break;
 							}
-							$level->setBlockRaw(new Vector3($x - 8 + $offsetX, $y - 1 + $layerCount, $z - 8 + $offsetZ), new AirBlock());
+							$level->setBlockRaw(new Vector3($x - 8 + $offsetX, $y + $layerCount, $z - 8 + $offsetZ), new AirBlock());
 							break;
 					}
 					++$offsetX;

@@ -80,6 +80,7 @@ class NetherReactorBlock extends SolidBlock{
 		}
 		return $pigCount < 3 ? $pigCount < 2 ? 2 : 1 : 0;
 	}
+
 	public function spawnItems($data) {
 		$x = $this->x;
 		$y = $this->y;
@@ -116,6 +117,7 @@ class NetherReactorBlock extends SolidBlock{
 			$server->api->entity->spawnToAll($e);
 		}
 	}
+
 	public function glow($part){
 		$x = $this->x;
 		$y = $this->y;
@@ -182,6 +184,7 @@ class NetherReactorBlock extends SolidBlock{
 				break;
 		}
 	}
+	
 	private function isCorrect($x, $y, $z){
 		$offsetX = -1;
 		$offsetZ = -1;
