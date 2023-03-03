@@ -1,6 +1,6 @@
 <?php
 
-class SmallHouseStructure{
+class SmallHouseStructure extends Structure{
     public static $width = 5;
 	public static $lenght = 5;
 	public static $tmpStructure;
@@ -39,8 +39,23 @@ class SmallHouseStructure{
 			"WPPPW",
 			"WPPPW",
 			"WWWWW",
-		]
+		],
 	];
+
+	public static $map = [
+		"C" => "CobbleStoneBlock",
+		"P" => "PlanksBlock",
+		"W" => "WoodBlock",
+		"D" => "DirtBlock",
+		"G" => "GlassPaneBlock",
+		"L" => ["LadderBlock", 2],
+		"F" => "FenceBlock",
+		" " => "AirBlock"
+	];
+
+	public function __construct($width = 0, $lenght = 0, $charToBlock = []){
+		parent::__construct(self::$width, self::$lenght, self::$map);
+	}
 
 	public static function generateFence(){
 		self::$tmpStructure = self::$structure; 
@@ -59,52 +74,9 @@ class SmallHouseStructure{
 		}
 	}
 
-    public static function buildStructure($level, $x, $y, $z){ /*use CENTER positions*/
+    public static function build($level, $x, $y, $z, $structure = []){
 		self::generateFence();
 
-		$offsetX = 0;
-		$offsetZ = 0;
-		foreach(self::$tmpStructure as $layerCount => $layer){
-			foreach($layer as $line){
-				$line = rtrim($line); //remove useless spaces(only from right)
-				foreach(str_split($line) as $char){
-                    $vector = new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z + $offsetZ);
-					switch($char){
-						case "C":
-							$level->setBlockRaw($vector, new CobbleStoneBlock());
-							break;
-						case "P":
-							$level->setBlockRaw($vector, new PlanksBlock());
-							break;
-						case "W":
-							$level->setBlockRaw($vector, new WoodBlock());
-							break;
-						case "D":
-							$level->setBlockRaw($vector, new DirtBlock());
-							break;
-						case "G":
-							$level->setBlockRaw($vector, new GlassPaneBlock());
-							break;
-						case "L":
-							$level->setBlockRaw($vector, new LadderBlock(2));
-							break;
-						case "F":
-							$level->setBlockRaw($vector, new FenceBlock());
-							break;
-						case " ":
-							$block = $level->getBlock($vector)->getID();
-							if($block === AIR){
-								break;
-							}
-							$level->setBlockRaw($vector, new AirBlock());
-							break;
-					}
-					++$offsetX;
-				}
-				++$offsetZ;
-				$offsetX = 0;
-			}
-			$offsetZ = 0;
-		}
+		parent::build($level, $x, $y, $z, self::$tmpStructure);
 	}
 }

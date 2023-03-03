@@ -15,10 +15,7 @@ class MyceliumBlock extends SolidBlock{
 	}
 
 	public function onActivate(Item $item, Player $player){ //uwu
-		/*$f = Utils::randomFloat();
-		if($f <= 0.33) VillageLibraryStructure::buildStructure($this->level, $this->getX(), $this->getY(), $this->getZ());
-		elseif($f <= 0.67) SmallHouseStructure::buildStructure($this->level, $this->getX(), $this->getY(), $this->getZ());
-		else WoodHutStructure::buildStructure($this->level, $this->getX(), $this->getY(), $this->getZ());*/
+		//(new VillageLibraryStructure())::build($this->level, $this->getX(), $this->getY(), $this->getZ());
 	}
 
 	public function getDrops(Item $item, Player $player){

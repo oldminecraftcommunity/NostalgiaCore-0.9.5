@@ -8,61 +8,60 @@
 abstract class Structure{
 	const MAP_NO_KEY = -255;
 	const LEVEL_RSV1 = 1;
-	private $structure;
+	private static $structure, $tmpStructure;
 	public $api, $pm;
-	public $mapSymToID, $width, $radius;
+	public static $map, $width, $lenght;
 	
-	public function __construct($struct, $width, $symToID = []){
-		$this->structure = $struct;
-		$this->mapSymToID = $symToID;
+	public function __construct($width, $lenght, $charToBlock = []){
 		$this->pm = ServerAPI::request();
 		$this->api = $this->pm->api;
-		$this->width = $width;
-		$this->radius = $width / 2;
-		
+		self::$width = $width;
+		self::$lenght = $lenght;
+		self::$map = $charToBlock;
+		/*foreach($charToBlock as $char => $array){
+			$this->addMapping($char, , isset($array) ? $array[1] : 0);
+		}*/
 	}
 	
-	public function addMapping($sym, $id){
-		$this->mapSymToID[$sym] = $id;
+	public function addMapping($char, $blockClass, $meta){
+		self::$map[$char] = new $blockClass($meta);
 	}
-	public function getMappingFor($sym){
-		return isset($this->mapSymToID[$sym]) ? $this->mapSymToID[$sym] : Structure::MAP_NO_KEY;
+
+	public static function getMappingFor($char){
+		return isset(self::$map[$char]) ? self::$map[$char] : Structure::MAP_NO_KEY;
 	}
 	
-	protected function placeBlock($level, $sym, &$tv){
-		//console("@@@");
+	protected static function placeBlock($level, $char, &$vector){
+		if($char == "") return;
 		if($level instanceof Level){
-			$idm = $this->getMappingFor($sym);
-			if(!isset($idm[1])) $idm[1] = 0;
-			//var_dump($idm);
-			if($idm === Structure::MAP_NO_KEY){
+			$blockClass = is_array(self::$map[$char]) ? self::$map[$char][0] : self::$map[$char];
+			$block = new $blockClass(isset(self::$map[$char]) ? self::$map[$char][1] : 0, isset(self::$map[$char][2]) ? self::$map[$char][2] : 0);
+			//var_dump($block);
+			/*if($block === Structure::MAP_NO_KEY){
 				//console("Failed to receive id");
 				return false;
-			}
-			$block = $this->api->block->get($idm[0], $idm[1], $tv); //TODO: meta
-			//console($block);
-			$level->setBlock($tv, $block, true, false, true);
+			}*/
+			$level->setBlock($vector, $block, true, false, true);
 		}
-		
 	}
 	
-	public function build($level, $centerX, $centerY, $centerZ){
+	public static function build($level, $centerX, $centerY, $centerZ, $structure){
 		//console("b");
-		$tempVector = new Vector3(0,0,0);
-		$x = $centerX - $this->radius;
-		$z = $centerZ - $this->radius;
-		foreach($this->structure as $offsetY => $blocksXZ){
+		$offsetX = 0;
+		$offsetZ = 0;
+		foreach($structure as $offsetY => $blocksXZ){
 			foreach($blocksXZ as $blocks){
+				$blocks = rtrim($blocks);
 				foreach(str_split($blocks) as $block){
-					$tempVector->setXYZ($x, $centerY + $offsetY, $z);
-					//console("6#&_+7$:373-");
-					$this->placeBlock($level, $block, $tempVector);
-					++$x;
+					$vector = new Vector3($centerX - floor(self::$width / 2) + $offsetX, $centerY + $offsetY, $centerZ + $offsetZ);
+					//$tempVector->setXYZ($x, $centerY + $offsetY, $z);
+					self::placeBlock($level, $block, $vector);
+					++$offsetX;
 				}
-				++$z;
-				$x = $centerX - $this->radius;
+				++$offsetZ;
+				$offsetX = 0;
 			}
-			$z = $centerZ - $this->radius;	
+			$offsetZ = 0;
 		}
 	}
 	

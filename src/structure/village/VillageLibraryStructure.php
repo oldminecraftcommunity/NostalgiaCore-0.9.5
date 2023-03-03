@@ -1,6 +1,6 @@
 <?php
 
-class VillageLibraryStructure{
+class VillageLibraryStructure extends Structure{
     public static $width = 9;
 	public static $lenght = 8;
     public static $structure = [
@@ -26,7 +26,7 @@ class VillageLibraryStructure{
 		],
 		2 => [
 			"",
-			"CdPPGGGPC",
+			"C8PPGGGPC",
 			"P       P",
 			"G       G",
 			"G   c c G",
@@ -96,69 +96,29 @@ class VillageLibraryStructure{
 		]
 	];
 
-    public static function buildStructure($level, $x, $y, $z){ /*use CENTER positions*/
-		$offsetX = 0;
-		$offsetZ = 0;
-		foreach(self::$structure as $layerCount => $layer){
-			foreach($layer as $line){
-				$line = rtrim($line); //remove useless spaces(only from right)
-				foreach(str_split($line) as $char){
-                    $vector = new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z + $offsetZ);
-					switch($char){
-						case "S":
-							$level->setBlockRaw($vector, new CobbleStoneStairsBlock(2));
-							break;
-						case "C":
-							$level->setBlockRaw($vector, new CobbleStoneBlock());
-							break;
-						case "P":
-							$level->setBlockRaw($vector, new PlanksBlock());
-							break;
-						case "W":
-							$level->setBlockRaw($vector, new WoodBlock());
-							break;
-						case "d":
-							if($layerCount == 1) $level->setBlockRaw($vector, new DoorBlock(64));
-							else $level->setBlockRaw($vector, new DoorBlock(64, 0x08));
-							break;
-						case "G":
-							$level->setBlockRaw($vector, new GlassPaneBlock());
-							break;
-						case "B":
-							$level->setBlockRaw($vector, new BookshelfBlock());
-							break;
-						case "F":
-							$level->setBlockRaw($vector, new FenceBlock());
-							break;
-						case "c":
-							$level->setBlockRaw($vector, new CarpetBlock(12));
-							break;
-						case "1":
-							$level->setBlockRaw($vector, new WoodStairsBlock(1));
-							break;
-						case "2":
-							$level->setBlockRaw($vector, new WoodStairsBlock(2));
-							break;
-						case "3":
-							$level->setBlockRaw($vector, new WoodStairsBlock(3));
-							break;
-						case "T":
-							$level->setBlockRaw($vector, new WorkbenchBlock());
-							break;
-						case " ":
-							$block = $level->getBlock($vector)->getID();
-							if($block === AIR){
-								break;
-							}
-							$level->setBlockRaw($vector, new AirBlock());
-							break;
-					}
-					++$offsetX;
-				}
-				++$offsetZ;
-				$offsetX = 0;
-			}
-			$offsetZ = 0;
-		}
+	public static $map = [
+		"S" => ["CobbleStoneStairsBlock", 2],
+		"C" => "CobbleStoneBlock",
+		"P" => "PlanksBlock",
+		"W" => "WoodBlock",
+		"d" => ["DoorBlock", 64],
+		"8" => ["DoorBlock", 64, 0x08],
+		"G" => "GlassPaneBlock",
+		"B" => "BookshelfBlock",
+		"F" => "FenceBlock",
+		"c" => ["CarpetBlock", 12],
+		"1" => ["WoodStairsBlock", 1],
+		"2" => ["WoodStairsBlock", 2],
+		"3" => ["WoodStairsBlock", 3],
+		"T" => "WorkbenchBlock",
+		" " => "AirBlock"
+	];
+
+	public function __construct($width = 0, $lenght = 0, $charToBlock = []){
+		parent::__construct(self::$width, self::$lenght, self::$map);
+	}
+
+    public static function build($level, $x, $y, $z, $structure = 0){
+		parent::build($level, $x, $y, $z, self::$structure);
 	}
 }
