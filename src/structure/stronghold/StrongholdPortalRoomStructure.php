@@ -1,10 +1,11 @@
 <?php
 
-class StrongholdPortalRoomStructure{
-    public static $width = 11;
-	public static $length = 16;
-	public static $tmpStructure = [];
-    public static $structure = [
+class StrongholdPortalRoomStructure extends Structure{
+    public $width = 11;
+	public $length = 16;
+	public $name = "Portal Room";
+	private static $tmpStructure;
+    private static $structure = [
 		-1 => [
 			"SSSSSSSSSSS",
 			"SSSSSSSSSSS",
@@ -66,13 +67,13 @@ class StrongholdPortalRoomStructure{
 			"I         I",
 			"S         S",
 			"I         I",
-			"S   s1s   S",
+			"S   sms   S",
 			"I   SSS   I",
-			"S   PPP   S",
-			"I  P   P  I",
-			"S  P   P  S",
-			"I  P   P  I",
-			"S   PPP   S",
+			"S   000   S",
+			"I  1   3  I",
+			"S  1   3  S",
+			"I  1   3  I",
+			"S   222   S",
 			"I         I",
 			"S         S",
 			"SSSSSSSSSSS",
@@ -132,8 +133,26 @@ class StrongholdPortalRoomStructure{
 			"SSSSSSSSSSS",
 		]
 	];
+	private $map = [
+		"S" => "StoneBricksBlock",
+		"M" => ["StoneBricksBlock", 1],
+		"C" => ["StoneBricksBlock", 2],
+		"I" => "IronBarsBlock",
+		"L" => "LavaBlock",
+		"s" => ["StoneBrickStairsBlock", 2],
+		"m" => "MonsterSpawnerBlock",
+		"0" => ["EndPortalFrameBlock", 0],
+		"1" => ["EndPortalFrameBlock", 1],
+		"2" => ["EndPortalFrameBlock", 2],
+		"3" => ["EndPortalFrameBlock", 3],
+		"4" => ["EndPortalFrameBlock", 4],
+		"5" => ["EndPortalFrameBlock", 5],
+		"6" => ["EndPortalFrameBlock", 6],
+		"7" => ["EndPortalFrameBlock", 7],
+		" " => "AirBlock",
+	];
 
-	public static function replaceStoneBricks(){
+	private function replaceStoneBricks(){
 		foreach(self::$structure as $layerInt => $layer){
 			foreach($layer as $key => $str){
 				$line = str_split($str);
@@ -153,55 +172,33 @@ class StrongholdPortalRoomStructure{
 		}
 	}
 
-    public static function buildStructure($level, $x, $y, $z){ /*use CENTER positions*/
-        self::replaceStoneBricks();
-
-		$offsetX = 0;
-		$offsetZ = 0;
-		foreach(self::$tmpStructure as $layerCount => $layer){
-			foreach($layer as $line){
-				$line = rtrim($line); //remove useless spaces(only from right)
-				foreach(str_split($line) as $char){
-                    $vector = new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z + $offsetZ);
-					switch($char){
-						case "S":
-							$level->setBlockRaw($vector, new StoneBricksBlock(0));
-							break;
-                        case "M":
-                            $level->setBlockRaw($vector, new StoneBricksBlock(1));
-							break;
-                        case "C":
-                            $level->setBlockRaw($vector, new StoneBricksBlock(2));
-							break;
-						case "I":
-							$level->setBlockRaw($vector, new IronBarsBlock());
-							break;
-						case "L":
-							$level->setBlockRaw($vector, new LavaBlock());
-							break;
-						case "s":
-							$level->setBlockRaw($vector, new StoneBrickStairsBlock(2));
-							break;
-						case "1":
-							$level->setBlockRaw($vector, new MonsterSpawnerBlock());
-							break;
-						case "P":
-							$level->setBlockRaw($vector, new EndPortalFrameBlock(mt_rand(0, 4)));
-							break;
-						case " ":
-							$block = $level->getBlock($vector)->getID();
-							if($block === AIR){
-								break;
-							}
-							$level->setBlockRaw($vector, new AirBlock());
-							break;
-					}
-					++$offsetX;
+	private function placeEyes(){
+		$lines = [
+			"S   000   S",
+			"I  1   3  I",
+			"S  1   3  S",
+			"I  1   3  I",
+			"S   222   S",
+		];
+		foreach($lines as $id => $str){
+			$line = str_split($str);
+			for($i = 0; $i < count($line); $i++){
+				if(is_numeric($line[$i]) and Utils::chance(10)){
+					$line[$i] = strval(intval($line[$i]) + 4);
 				}
-				++$offsetZ;
-				$offsetX = 0;
 			}
-			$offsetZ = 0;
+			self::$tmpStructure[2][8 + $id] = implode("", $line);
 		}
+	}
+
+	public function __construct(){
+		parent::__construct($this->width, $this->length, $this->name, $this->map);
+	}
+
+    public function build($level, $x, $y, $z, $structure = 0){
+        $this->replaceStoneBricks();
+		$this->placeEyes();
+
+		parent::build($level, $x, $y, $z, self::$tmpStructure);
 	}
 }

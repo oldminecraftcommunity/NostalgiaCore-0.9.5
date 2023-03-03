@@ -29,10 +29,22 @@ abstract class Structure{
 		$this->name = $name;
 	}
 
+	public function parseMeta($meta){
+        if(!is_numeric($meta)){
+            $arrmeta = explode(" ", $meta);
+            if($arrmeta[0] === "random"){
+                $meta = mt_rand($arrmeta[1], $arrmeta[2]);
+            }else{
+                $meta = 0; //undefined
+            }
+        }
+        return $meta;
+    }
+
 	protected function getMappingFor($char){
-		if(!isset($this->map[$char])) return MAP_NO_KEY;
+		if(!isset($this->map[$char])) return Structure::MAP_NO_KEY;
 		$blockClass = is_array($this->map[$char]) ? $this->map[$char][0] : $this->map[$char];
-		return new $blockClass(isset($this->map[$char]) ? $this->map[$char][1] : 0, isset($this->map[$char][2]) ? $this->map[$char][2] : 0);
+		return new $blockClass(isset($this->map[$char][1]) ? $this->parseMeta($this->map[$char][1]) : 0, isset($this->map[$char][2]) ? $this->map[$char][2] : 0);
 	}
 	
 	protected function placeBlock($level, $char, &$vector){
