@@ -1,9 +1,11 @@
 <?php
 
-class WoodHutStructure{
-    public static $width = 4;
-	public static $lenght = 6;
-    public static $structure = [
+class WoodHutStructure extends Structure{
+    public $width = 4;
+	public $lenght = 6;
+	public $name = "Wood Hut";
+	private static $tmpStructure;
+    private static $structure = [
 		0 => [
 			" S  ",
 			"CCCC",
@@ -17,15 +19,15 @@ class WoodHutStructure{
 			"WdPW",
 			"P  P",
 			"P  P",
-			"P FP",
+			"P  P",
 			"WPPW",
 		],
 		2 => [
 			"",
-			"WdPW",
+			"W8PW",
 			"P  P",
 			"G  G",
-			"P cP",
+			"P  P",
 			"WPPW",
 		],
 		3 => [
@@ -36,75 +38,69 @@ class WoodHutStructure{
 			"P  P",
 			"WPPW",
 		],
-		4 => [
-			"",
-			" WW ",
-			"W  W",
-			"W  W",
-			"W  W",
-			" WW ",
-		],
-		5 => [
-			"",
-			"",
-			" WW ",
-			" WW ",
-			" WW ",
-			"",
-		]
+	];
+	private $map = [
+		"S" => ["CobbleStoneStairsBlock", 2],
+		"C" => "CobbleStoneBlock",
+		"P" => "PlanksBlock",
+		"W" => "WoodBlock",
+		"D" => "DirtBlock",
+		"d" => ["DoorBlock", 64, 0x01],
+		"8" => ["DoorBlock", 64, 0x09],
+		"G" => "GlassPaneBlock",
+		"F" => "FenceBlock",
+		"c" => ["CarpetBlock", 12],
+		" " => "AirBlock"
 	];
 
-    public static function buildStructure($level, $x, $y, $z){ /*use CENTER positions*/
-		$offsetX = 0;
-		$offsetZ = 0;
-		foreach(self::$structure as $layerCount => $layer){
-			foreach($layer as $line){
-				$line = rtrim($line); //remove useless spaces(only from right)
-				foreach(str_split($line) as $char){
-                    $vector = new Vector3($x - floor(self::$width / 2) + $offsetX, $y + $layerCount, $z + $offsetZ);
-					switch($char){
-						case "S":
-							$level->setBlockRaw($vector, new CobbleStoneStairsBlock(2));
-							break;
-						case "C":
-							$level->setBlockRaw($vector, new CobbleStoneBlock());
-							break;
-						case "P":
-							$level->setBlockRaw($vector, new PlanksBlock());
-							break;
-						case "W":
-							$level->setBlockRaw($vector, new WoodBlock());
-							break;
-						case "D":
-							$level->setBlockRaw($vector, new DirtBlock());
-							break;
-						case "d":
-							if($layerCount == 1) $level->setBlockRaw($vector, new DoorBlock(64));
-							else $level->setBlockRaw($vector, new DoorBlock(64, 0x08));
-							break;
-						case "G":
-							$level->setBlockRaw($vector, new GlassPaneBlock());
-							break;
-						case "F":
-							$level->setBlockRaw($vector, new FenceBlock());
-							break;
-						case "c":
-							$level->setBlockRaw($vector, new CarpetBlock(12));
-							break;
-						case " ":
-							$block = $level->getBlock($vector)->getID();
-							if($block === AIR){
-								break;
-							}
-							$level->setBlockRaw($vector, new AirBlock());
-							break;
-					}
-					++$offsetX;
-				}
-				++$offsetZ;
-				$offsetX = 0;
-			}
-			$offsetZ = 0;
+	public function generateRoof(){
+		self::$tmpStructure = self::$structure;
+		if(Utils::chance(50)){
+			self::$tmpStructure[4] = [
+				"",
+				" WW ",
+				"W  W",
+				"W  W",
+				"W  W",
+				" WW ",
+			];
+			self::$tmpStructure[5] = [
+				"",
+				"",
+				" WW ",
+				" WW ",
+				" WW ",
+				"",
+			];
 		}
+		else{
+			self::$tmpStructure[4] = [
+				"",
+				" WW ",
+				"WWWW",
+				"WWWW",
+				"WWWW",
+				" WW ",
+			];
+		}
+	}
+
+	public function generateTable(){
+		if(Utils::chance(66)){
+			parent::setName($this->name." with Table");
+			self::$tmpStructure[1][4] = "P FP";
+			self::$tmpStructure[2][4] = "P cP";
+		}
+	}
+
+	public function __construct(){
+		parent::__construct($this->width, $this->lenght, $this->name, $this->map);
+	}
+
+    public function build($level, $x, $y, $z, $structure = 0){
+		$this->generateRoof();
+		$this->generateTable();
+
+		parent::build($level, $x, $y, $z, self::$tmpStructure);
 	}
 }

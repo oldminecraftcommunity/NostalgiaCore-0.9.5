@@ -15,7 +15,7 @@ class MyceliumBlock extends SolidBlock{
 	}
 
 	public function onActivate(Item $item, Player $player){ //uwu
-		//(new VillageLibraryStructure())::build($this->level, $this->getX(), $this->getY(), $this->getZ());
+		//(new WoodHutStructure())->build($this->level, $this->getX(), $this->getY(), $this->getZ());
 	}
 
 	public function getDrops(Item $item, Player $player){

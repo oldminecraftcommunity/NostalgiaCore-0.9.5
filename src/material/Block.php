@@ -171,7 +171,6 @@ abstract class Block extends Position{
 	public $z = 0;
 	public $slipperiness;
 	
-	
 	public function __construct($id, $meta = 0, $name = "Unknown"){
 		$this->id = (int) $id;
 		$this->meta = (int) $meta;
@@ -193,9 +192,11 @@ abstract class Block extends Position{
 	final public function getID(){
 		return $this->id;
 	}
+
 	public function setMetadata($i){
 		$this->meta = $i;
 	}
+	
 	final public function getMetadata(){
 		return $this->meta & 0x0F;
 	}

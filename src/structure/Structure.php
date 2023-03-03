@@ -9,53 +9,57 @@ abstract class Structure{
 	const MAP_NO_KEY = -255;
 	const LEVEL_RSV1 = 1;
 	private static $structure, $tmpStructure;
-	public $api, $pm;
-	public static $map, $width, $lenght;
+	private $map;
+	public $api, $pm, $width, $lenght, $name;
 	
-	public function __construct($width, $lenght, $charToBlock = []){
+	public function __construct($width = 0, $lenght = 0, $name = "Unknown", $map = []){
 		$this->pm = ServerAPI::request();
 		$this->api = $this->pm->api;
-		self::$width = $width;
-		self::$lenght = $lenght;
-		self::$map = $charToBlock;
-		/*foreach($charToBlock as $char => $array){
-			$this->addMapping($char, , isset($array) ? $array[1] : 0);
-		}*/
-	}
-	
-	public function addMapping($char, $blockClass, $meta){
-		self::$map[$char] = new $blockClass($meta);
+		$this->width = $width;
+		$this->lenght = $lenght;
+		$this->name = $name;
+		$this->map = $map;
 	}
 
-	public static function getMappingFor($char){
-		return isset(self::$map[$char]) ? self::$map[$char] : Structure::MAP_NO_KEY;
+	public function getName(){
+		return $this->name;
+	}
+
+	public function setName($name){
+		$this->name = $name;
+	}
+
+	protected function getMappingFor($char){
+		if(!isset($this->map[$char])) return MAP_NO_KEY;
+		$blockClass = is_array($this->map[$char]) ? $this->map[$char][0] : $this->map[$char];
+		return new $blockClass(isset($this->map[$char]) ? $this->map[$char][1] : 0, isset($this->map[$char][2]) ? $this->map[$char][2] : 0);
 	}
 	
-	protected static function placeBlock($level, $char, &$vector){
+	protected function placeBlock($level, $char, &$vector){
 		if($char == "") return;
 		if($level instanceof Level){
-			$blockClass = is_array(self::$map[$char]) ? self::$map[$char][0] : self::$map[$char];
-			$block = new $blockClass(isset(self::$map[$char]) ? self::$map[$char][1] : 0, isset(self::$map[$char][2]) ? self::$map[$char][2] : 0);
+			$block = $this->getMappingFor($char);
 			//var_dump($block);
-			/*if($block === Structure::MAP_NO_KEY){
-				//console("Failed to receive id");
+			if($block === Structure::MAP_NO_KEY){
+				//console("Failed to get block!");
 				return false;
-			}*/
-			$level->setBlock($vector, $block, true, false, true);
+			}
+			$level->setBlockRaw($vector, $block);
 		}
 	}
 	
-	public static function build($level, $centerX, $centerY, $centerZ, $structure){
-		//console("b");
+	public function build($level, $centerX, $centerY, $centerZ, $structure = 0){
+		//console("building ".$this->name);
 		$offsetX = 0;
 		$offsetZ = 0;
 		foreach($structure as $offsetY => $blocksXZ){
 			foreach($blocksXZ as $blocks){
 				$blocks = rtrim($blocks);
 				foreach(str_split($blocks) as $block){
-					$vector = new Vector3($centerX - floor(self::$width / 2) + $offsetX, $centerY + $offsetY, $centerZ + $offsetZ);
+					if($centerY + $offsetY == 128) return false;
+					$vector = new Vector3($centerX - floor($this->width / 2) + $offsetX, $centerY + $offsetY, $centerZ + $offsetZ);
 					//$tempVector->setXYZ($x, $centerY + $offsetY, $z);
-					self::placeBlock($level, $block, $vector);
+					$this->placeBlock($level, $block, $vector);
 					++$offsetX;
 				}
 				++$offsetZ;
@@ -63,6 +67,8 @@ abstract class Structure{
 			}
 			$offsetZ = 0;
 		}
+		//console("builded!");
+		return true;
 	}
 	
 }

@@ -1,10 +1,11 @@
 <?php
 
 class SmallHouseStructure extends Structure{
-    public static $width = 5;
-	public static $lenght = 5;
-	public static $tmpStructure;
-    public static $structure = [
+    public $width = 5;
+	public $lenght = 5;
+	public $name = "Small House";
+	private static $tmpStructure;
+    private static $structure = [
 		0 => [
 			"CCCCC",
 			"CCCCC",
@@ -41,8 +42,7 @@ class SmallHouseStructure extends Structure{
 			"WWWWW",
 		],
 	];
-
-	public static $map = [
+	private $map = [
 		"C" => "CobbleStoneBlock",
 		"P" => "PlanksBlock",
 		"W" => "WoodBlock",
@@ -53,13 +53,14 @@ class SmallHouseStructure extends Structure{
 		" " => "AirBlock"
 	];
 
-	public function __construct($width = 0, $lenght = 0, $charToBlock = []){
-		parent::__construct(self::$width, self::$lenght, self::$map);
+	public function __construct(){
+		parent::__construct($this->width, $this->lenght, $this->name, $this->map);
 	}
 
-	public static function generateFence(){
+	private function generateFence(){
 		self::$tmpStructure = self::$structure; 
 		if(Utils::chance(50)){
+			parent::setName($this->name." with Fence");
 			self::$tmpStructure[1][3] = "P L P";
 			self::$tmpStructure[2][3] = "P L P";
 			self::$tmpStructure[3][3] = "P L P";
@@ -74,8 +75,8 @@ class SmallHouseStructure extends Structure{
 		}
 	}
 
-    public static function build($level, $x, $y, $z, $structure = []){
-		self::generateFence();
+    public function build($level, $x, $y, $z, $structure = 0){
+		$this->generateFence();
 
 		parent::build($level, $x, $y, $z, self::$tmpStructure);
 	}
