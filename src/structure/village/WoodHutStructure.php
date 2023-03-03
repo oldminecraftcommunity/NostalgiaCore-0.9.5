@@ -2,7 +2,7 @@
 
 class WoodHutStructure extends Structure{
     public $width = 4;
-	public $lenght = 6;
+	public $length = 6;
 	public $name = "Wood Hut";
 	private static $tmpStructure;
     private static $structure = [
@@ -94,7 +94,7 @@ class WoodHutStructure extends Structure{
 	}
 
 	public function __construct(){
-		parent::__construct($this->width, $this->lenght, $this->name, $this->map);
+		parent::__construct($this->width, $this->length, $this->name, $this->map);
 	}
 
     public function build($level, $x, $y, $z, $structure = 0){

@@ -2,7 +2,7 @@
 
 class StrongholdPortalRoomStructure{
     public static $width = 11;
-	public static $lenght = 16;
+	public static $length = 16;
 	public static $tmpStructure = [];
     public static $structure = [
 		-1 => [

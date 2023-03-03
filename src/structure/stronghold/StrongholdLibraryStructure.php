@@ -2,7 +2,7 @@
 
 class StrongholdLibraryStructure{
     public static $width = 14;
-    public static $lenght = 15;
+    public static $length = 15;
     public static $tmpStructure;
     public static $structure = [
         -1 => [

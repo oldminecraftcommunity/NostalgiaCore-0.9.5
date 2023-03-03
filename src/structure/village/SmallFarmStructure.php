@@ -2,7 +2,7 @@
 
 class SmallFarmStructure extends Structure{
     public $width = 7;
-	public $lenght = 9;
+	public $length = 9;
 	public $name = "Small Farm";
 	private static $tmpStructure;
     private static $structure = [
@@ -94,7 +94,7 @@ class SmallFarmStructure extends Structure{
 	}
 
 	public function __construct(){
-		parent::__construct($this->width, $this->lenght, $this->name, $this->map);
+		parent::__construct($this->width, $this->length, $this->name, $this->map);
 	}
 
     public function build($level, $x, $y, $z, $structure = 0){

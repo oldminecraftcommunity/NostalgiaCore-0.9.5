@@ -2,7 +2,7 @@
 
 class SmallHouseStructure extends Structure{
     public $width = 5;
-	public $lenght = 5;
+	public $length = 5;
 	public $name = "Small House";
 	private static $tmpStructure;
     private static $structure = [
@@ -54,7 +54,7 @@ class SmallHouseStructure extends Structure{
 	];
 
 	public function __construct(){
-		parent::__construct($this->width, $this->lenght, $this->name, $this->map);
+		parent::__construct($this->width, $this->length, $this->name, $this->map);
 	}
 
 	private function generateFence(){

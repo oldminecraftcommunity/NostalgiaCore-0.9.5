@@ -10,13 +10,13 @@ abstract class Structure{
 	const LEVEL_RSV1 = 1;
 	private static $structure, $tmpStructure;
 	private $map;
-	public $api, $pm, $width, $lenght, $name;
+	public $api, $pm, $width, $length, $name;
 	
-	public function __construct($width = 0, $lenght = 0, $name = "Unknown", $map = []){
+	public function __construct($width = 0, $length = 0, $name = "Unknown", $map = []){
 		$this->pm = ServerAPI::request();
 		$this->api = $this->pm->api;
 		$this->width = $width;
-		$this->lenght = $lenght;
+		$this->length = $length;
 		$this->name = $name;
 		$this->map = $map;
 	}

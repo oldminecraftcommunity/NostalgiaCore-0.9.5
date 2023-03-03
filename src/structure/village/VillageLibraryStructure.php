@@ -2,7 +2,7 @@
 
 class VillageLibraryStructure extends Structure{
     public $width = 9;
-	public $lenght = 8;
+	public $length = 8;
 	public $name = "Library";
     private static $structure = [
 		0 => [
@@ -115,7 +115,7 @@ class VillageLibraryStructure extends Structure{
 	];
 
 	public function __construct(){
-		parent::__construct($this->width, $this->lenght, $this->name, $this->map);
+		parent::__construct($this->width, $this->length, $this->name, $this->map);
 	}
 
     public function build($level, $x, $y, $z, $structure = 0){
