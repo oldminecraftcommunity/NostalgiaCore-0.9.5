@@ -1,14 +1,10 @@
 <?php
 
 class SmallFarmStructure extends Structure{
-    public $width = 7;
-	public $length = 9;
+	public $width = 7;
+    public $length = 9;
 	public $name = "Small Farm";
-	private static $tmpStructure;
-    private static $structure = [
-		-1 => [
-			//add sand, clay if here isn't air
-		],
+	protected $structure = [
 		0 => [
 			"WWWWWWW",
 			"WFFwFFW",
@@ -19,87 +15,55 @@ class SmallFarmStructure extends Structure{
 			"WFFwFFW",
 			"WFFwFFW",
 			"WWWWWWW",
-		]
+		],
+    	1 => [
+    		"",
+    		" RR RR ",
+    		" RR RR ",
+    		" RR RR ",
+    		" RR RR ",
+    		" RR RR ",
+    		" RR RR ",
+    		" RR RR ",
+    		"",
+    	],
 	];
-	private $map = [
-		"W" => "WoodBlock",
-		"F" => "FarmlandBlock",
-		"w" => "WaterBlock",
-		"H" => ["WheatBlock", 0],
-		"C" => ["CarrotBlock", 0],
-		"P" => ["PotatoBlock", 0],
-		"B" => ["BeetrootBlock", 0],
-		" " => "AirBlock"
+	
+	protected $map = [
+		"W" => WOOD,
+		"F" => FARMLAND,
+		"w" => WATER,
+		" " => 0,
+		"D" => DIRT
 	];
-
-	private function generateCrops(){
-		self::$tmpStructure = self::$structure;
-		$f = Utils::randomFloat();
-		if($f <= 0.5){
-			parent::setName("Wheat ".$this->name);
-			self::$tmpStructure[1] = [
-				"",
-				" HH HH ",
-				" HH HH ",
-				" HH HH ",
-				" HH HH ",
-				" HH HH ",
-				" HH HH ",
-				" HH HH ",
-				"",
-			];
+	protected function getFinalStructure(Level $level, $x, $y, $z)
+	{
+		if(!$level->getBlockWithoutVector($x, $y - 1, $z)->isSolid){
+			$structCopy = $this->structure;
+			$structCopy[-1] = array_fill(0, $this->length, str_repeat("D", $this->width)); //TODO sand or clay, check for the whole row of water?
+			return $structCopy;
 		}
-		elseif($f <= 0.7){
-			parent::setName("Carrot ".$this->name);
-			self::$tmpStructure[1] = [
-				"",
-				" CC CC ",
-				" CC CC ",
-				" CC CC ",
-				" CC CC ",
-				" CC CC ",
-				" CC CC ",
-				" CC CC ",
-				"",
-			];
-		}
-		elseif($f <= 0.9){
-			parent::setName("Potato ".$this->name);
-			self::$tmpStructure[1] = [
-				"",
-				" PP PP ",
-				" PP PP ",
-				" PP PP ",
-				" PP PP ",
-				" PP PP ",
-				" PP PP ",
-				" PP PP ",
-				"",
-			];
-		}
-		else{
-			parent::setName("Beetroot ".$this->name);
-			self::$tmpStructure[1] = [
-				"",
-				" BB BB ",
-				" BB BB ",
-				" BB BB ",
-				" BB BB ",
-				" BB BB ",
-				" BB BB ",
-				" BB BB ",
-				"",
-			];
-		}
+		return parent::getFinalStructure($level, $x, $y, $z);
 	}
-
-	public function __construct(){
-		parent::__construct($this->width, $this->length, $this->name, $this->map);
+	
+	
+	protected function getMappingFor($char){
+		if($char === "R"){
+			$f = Utils::randomFloat();
+			
+			if($f <= 0.5){
+				return [WHEAT_BLOCK, 0];
+			}
+			if($f <= 0.7){
+				return [CARROT_BLOCK, 0];
+			}
+			if($f <= 0.9){
+				return [POTATO_BLOCK, 0];
+			}
+			return [BEETROOT_BLOCK, 0];
+		}
+		return parent::getMappingFor($char);
 	}
-
-    public function build($level, $x, $y, $z, $structure = 0){
-		$this->generateCrops();
-
-		parent::build($level, $x, $y, $z, self::$tmpStructure);
-	}
+	
+	
 }

@@ -1,10 +1,10 @@
 <?php
 
 class VillageLibraryStructure extends Structure{
-    public $width = 9;
-	public $length = 8;
+	public $width = 9;
+    public $length = 8;
 	public $name = "Library";
-    private static $structure = [
+    protected $structure = [
 		0 => [
 			" S       ",
 			"CCCCCCCCC",
@@ -96,7 +96,7 @@ class VillageLibraryStructure extends Structure{
 			"",
 		]
 	];
-	private $map = [
+    protected $map = [
 		"S" => ["CobbleStoneStairsBlock", 2],
 		"C" => "CobbleStoneBlock",
 		"P" => "PlanksBlock",
@@ -115,10 +115,11 @@ class VillageLibraryStructure extends Structure{
 	];
 
 	public function __construct(){
-		parent::__construct($this->width, $this->length, $this->name, $this->map);
+		parent::__construct();
 	}
-
+	/*
     public function build($level, $x, $y, $z, $structure = 0){
 		parent::build($level, $x, $y, $z, self::$structure);
 	}
+	*/
 }

@@ -1,11 +1,10 @@
 <?php
 
 class WoodHutStructure extends Structure{
-    public $width = 4;
+	public $width = 4;
 	public $length = 6;
 	public $name = "Wood Hut";
-	private static $tmpStructure;
-    private static $structure = [
+    protected $structure = [
 		0 => [
 			" S  ",
 			"CCCC",
@@ -39,7 +38,7 @@ class WoodHutStructure extends Structure{
 			"WPPW",
 		],
 	];
-	private $map = [
+    protected $map = [
 		"S" => ["CobbleStoneStairsBlock", 2],
 		"C" => "CobbleStoneBlock",
 		"P" => "PlanksBlock",
@@ -93,14 +92,10 @@ class WoodHutStructure extends Structure{
 		}
 	}
 
-	public function __construct(){
-		parent::__construct($this->width, $this->length, $this->name, $this->map);
-	}
-
-    public function build($level, $x, $y, $z, $structure = 0){
+    /*public function build($level, $x, $y, $z, $structure = 0){
 		$this->generateRoof();
 		$this->generateTable();
 
 		parent::build($level, $x, $y, $z, self::$tmpStructure);
-	}
+	}*/ //TODO
 }

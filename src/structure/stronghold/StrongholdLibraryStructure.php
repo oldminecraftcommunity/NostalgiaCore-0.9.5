@@ -1,10 +1,9 @@
 <?php
 
 class StrongholdLibraryStructure{
-    public static $width = 14;
-    public static $length = 15;
-    public static $tmpStructure;
-    public static $structure = [
+    public $width = 14;
+    public $length = 15;
+    public $structure = [
         -1 => [
             "SSSSSSSSSSSSSS",
             "SSSSSSSSSSSSSS",
@@ -194,7 +193,7 @@ class StrongholdLibraryStructure{
         ]
     ];
 
-    public static function replaceStoneBricks(){
+    public function replaceStoneBricks(){
 		foreach(self::$structure as $layerInt => $layer){
 			foreach($layer as $key => $str){
 				$line = str_split($str);
@@ -214,7 +213,7 @@ class StrongholdLibraryStructure{
 		}
 	}
     
-    public static function placeCobweb(){
+    public function placeCobweb(){
         foreach(self::$tmpStructure as $layerInt => $layer){
             if($layerInt >= 0 and $layerInt <= 3){
                 foreach($layer as $key => $str){

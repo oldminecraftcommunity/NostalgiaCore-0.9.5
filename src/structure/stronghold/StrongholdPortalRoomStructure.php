@@ -2,10 +2,9 @@
 
 class StrongholdPortalRoomStructure extends Structure{
     public $width = 11;
-	public $length = 16;
-	public $name = "Portal Room";
-	private static $tmpStructure;
-    private static $structure = [
+    public $length = 16;
+    public $name = "Portal Room";
+    protected $structure = [
 		-1 => [
 			"SSSSSSSSSSS",
 			"SSSSSSSSSSS",
@@ -133,7 +132,7 @@ class StrongholdPortalRoomStructure extends Structure{
 			"SSSSSSSSSSS",
 		]
 	];
-	private $map = [
+    protected $map = [
 		"S" => "StoneBricksBlock",
 		"M" => ["StoneBricksBlock", 1],
 		"C" => ["StoneBricksBlock", 2],
@@ -195,10 +194,10 @@ class StrongholdPortalRoomStructure extends Structure{
 		parent::__construct($this->width, $this->length, $this->name, $this->map);
 	}
 
-    public function build($level, $x, $y, $z, $structure = 0){
+    /*public function build($level, $x, $y, $z, $structure = 0){
         $this->replaceStoneBricks();
 		$this->placeEyes();
 
 		parent::build($level, $x, $y, $z, self::$tmpStructure);
-	}
+	}*/ // TODO
 }

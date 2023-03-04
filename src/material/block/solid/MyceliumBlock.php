@@ -15,6 +15,12 @@ class MyceliumBlock extends SolidBlock{
 	}
 
 	public function onActivate(Item $item, Player $player){ //uwu
+		/*if(mt_rand(0, 1) === 0){
+			Structures::$SMALLFARM_VILLAGE->rotate90deg($this->level, $this->x, $this->y, $this->z)->build($this->level, $this->x, $this->y, $this->z);
+		}else{
+			Structures::$SMALLFARM_VILLAGE->build($this->level, $this->x, $this->y, $this->z);
+		}*/
+		
 		//(new WoodHutStructure())->build($this->level, $this->getX(), $this->getY(), $this->getZ());
 	}
 

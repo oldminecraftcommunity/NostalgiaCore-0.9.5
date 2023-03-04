@@ -1,11 +1,10 @@
 <?php
 
 class SmallHouseStructure extends Structure{
-    public $width = 5;
-	public $length = 5;
+	public $width = 5;
+    public $length = 5;
 	public $name = "Small House";
-	private static $tmpStructure;
-    private static $structure = [
+    protected $structure = [
 		0 => [
 			"CCCCC",
 			"CCCCC",
@@ -42,7 +41,7 @@ class SmallHouseStructure extends Structure{
 			"WWWWW",
 		],
 	];
-	private $map = [
+    protected $map = [
 		"C" => "CobbleStoneBlock",
 		"P" => "PlanksBlock",
 		"W" => "WoodBlock",
@@ -52,10 +51,6 @@ class SmallHouseStructure extends Structure{
 		"F" => "FenceBlock",
 		" " => "AirBlock"
 	];
-
-	public function __construct(){
-		parent::__construct($this->width, $this->length, $this->name, $this->map);
-	}
 
 	private function generateFence(){
 		self::$tmpStructure = self::$structure; 
@@ -75,9 +70,9 @@ class SmallHouseStructure extends Structure{
 		}
 	}
 
-    public function build($level, $x, $y, $z, $structure = 0){
+    /*public function build($level, $x, $y, $z, $structure = 0){
 		$this->generateFence();
 
 		parent::build($level, $x, $y, $z, self::$tmpStructure);
-	}
+	}*/ //TODO
 }
