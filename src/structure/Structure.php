@@ -30,7 +30,7 @@ abstract class Structure{
 		if($char === "" || (($mk = $this->getMappingFor($char)) === self::MAP_NO_KEY)) return;
 		$id = is_array($mk) ? $mk[0] : $mk;
 		$meta = is_array($mk) ? $mk[1] : 0;
-		return $level->setBlock($vector, BlockAPI::get($id, $meta));
+		return $level->setBlockRaw($vector, BlockAPI::get($id, $meta));
 	}
 	
 	protected function init(){}
@@ -38,6 +38,7 @@ abstract class Structure{
 	protected function getFinalStructure(Level $level, $x, $y, $z){
 		return $this->structure;
 	}
+
 	public function rotate90deg(Level $level, $x, $y, $z){
 		$str = $this->getFinalStructure($level, $x, $y, $z);
 		foreach($str as &$arr){
@@ -52,13 +53,15 @@ abstract class Structure{
 		}
 		return (clone $this)->setStructure($str, $this->length, $this->width);
 	}
+
 	private function setStructure($struct, $width, $length){
 		$this->structure = $struct;
 		$this->width = $width;
 		$this->length = $length;
-		console("Modifed");
+		//console("Modifed");
 		return $this;
 	}
+
 	public function build(Level $level, $centerX, $centerY, $centerZ){
 		$offsetX = $offsetZ = 0;
 		$centWidth = floor($this->width / 2);
@@ -76,6 +79,7 @@ abstract class Structure{
 			}
 			$offsetZ = 0;
 		}
+		return microtime(1);
 	}
 	
 }

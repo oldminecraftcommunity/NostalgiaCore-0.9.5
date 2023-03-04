@@ -36,8 +36,8 @@ class SmallFarmStructure extends Structure{
 		" " => 0,
 		"D" => DIRT
 	];
-	protected function getFinalStructure(Level $level, $x, $y, $z)
-	{
+
+	protected function getFinalStructure(Level $level, $x, $y, $z){
 		if(!$level->getBlockWithoutVector($x, $y - 1, $z)->isSolid){
 			$structCopy = $this->structure;
 			$structCopy[-1] = array_fill(0, $this->length, str_repeat("D", $this->width)); //TODO sand or clay, check for the whole row of water?
@@ -45,7 +45,6 @@ class SmallFarmStructure extends Structure{
 		}
 		return parent::getFinalStructure($level, $x, $y, $z);
 	}
-	
 	
 	protected function getMappingFor($char){
 		if($char === "R"){
