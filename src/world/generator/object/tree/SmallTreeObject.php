@@ -48,9 +48,9 @@ private static $leavesHeight = 4;
 					if($xOff === $mid and $zOff === $mid and ($yOff === 0 or mt_rand(0, 1) === 0)){
 						continue;
 					}
-					if(!$level->getBlock(new Vector3($xx, $yy, $zz))->isSolid){
-						$leafpos = new Vector3($xx, $yy, $zz);
-						$level->setBlockRaw($leafpos, new LeavesBlock($this->type));
+					$b = $level->getBlock(new Vector3($xx, $yy, $zz));
+					if(($b instanceof LeavesBlock) || $b->getID() == 0){
+						$level->setBlockRaw($b, new LeavesBlock($this->type));
 					}
 				}
 			}
