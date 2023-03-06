@@ -45,7 +45,7 @@ private static $leavesHeight = 4;
 				$xOff = abs($xx - $x);
 				for($zz = $z - $mid; $zz <= $z + $mid; ++$zz){
 					$zOff = abs($zz - $z);
-					if($xOff === $mid and $zOff === $mid and ($yOff === 0 or mt_rand(0, 2) === 0)){
+					if($xOff === $mid and $zOff === $mid and ($yOff === 0 or mt_rand(0, 1) === 0)){
 						continue;
 					}
 					if(!$level->getBlock(new Vector3($xx, $yy, $zz))->isSolid){
