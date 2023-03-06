@@ -63,6 +63,4 @@ class SmallFarmStructure extends Structure{
 		}
 		return parent::getMappingFor($char);
 	}
-	
-	
 }

@@ -17,9 +17,9 @@ class MyceliumBlock extends SolidBlock{
 	public function onActivate(Item $item, Player $player){ //uwu
 		//$oldtime = microtime(true);
 		//if(mt_rand(0, 1) === 0){
-		//	Structures::$SMALLFARM_VILLAGE->rotate(Structure::DEG_240, $this->level)->build($this->level, $this->x, $this->y, $this->z);
+			//Structures::$SMALLFARM_VILLAGE->rotate(Structure::DEG_240, $this->level)->build($this->level, $this->x, $this->y, $this->z);
 		//}else{
-		//	Structures::$SMALLFARM_VILLAGE->build($this->level, $this->x, $this->y, $this->z);
+			//(new OakTreeStructure())->build($this->level, $this->x, $this->y, $this->z);
 		//}
 		//$time = microtime(true);
 		//console("builded in ".($time - $oldtime));

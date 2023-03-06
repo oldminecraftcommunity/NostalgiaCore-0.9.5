@@ -94,7 +94,7 @@ abstract class Structure{
 				ConsoleAPI::warn(self::class." tried to rotate to invalid state($rotationLevel)");
 				return $this;
 		}
-		var_dump($str);
+		//var_dump($str);
 		return (clone $this)->setStructure($str, $this->width, $this->length);
 	}
 
