@@ -134,7 +134,7 @@ class ServerAPI{
 			"rcon.password" => substr(base64_encode(Utils::getRandomBytes(20, false)), 3, 10),
 			"auto-save" => true,
 		]);
-
+		Biome::init();
 		$this->parseProperties();
 		MobSpawner::$MOB_LIMIT = $this->getProperty("mobs-amount", 50);
 		//Load advanced properties

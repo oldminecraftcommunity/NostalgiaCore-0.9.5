@@ -55,7 +55,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 		$this->noisePatches = new NoiseGeneratorSimplex($this->random, 2);
 		$this->noisePatchesSmall = new NoiseGeneratorSimplex($this->random, 2);
 		$this->noiseBase = new NoiseGeneratorPerlin($this->random, 4);
-		
+		$this->selector = new BiomeSelector($this->random, BiomeSelector::$biomes[BIOME_PLAINS]);
 		$ores = new OrePopulator();
 		$ores->setOreTypes(array(
 			new OreType(new CoalOreBlock(), 20, 16, 0, 128),
@@ -85,10 +85,25 @@ class ExperimentalGenerator implements NewLevelGenerator{
 		//$this->populators[] = $tallGrass;
 	}
 	
+	public function pickBiome($x, $z){
+		$hash = $x * 2345803 ^ $z * 9236449 ^ $this->level->getSeed();
+		$hash *= $hash + 223;
+		$xNoise = $hash >> 20 & 3;
+		$zNoise = $hash >> 22 & 3;
+		if($xNoise == 3){
+			$xNoise = 1;
+		}
+		if($zNoise == 3){
+			$zNoise = 1;
+		}
+		return $this->selector->pickBiome($x + $xNoise - 1, $z + $zNoise - 1);
+	}
+	
 	public function generateChunk($chunkX, $chunkZ){
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 		$noiseArray = ExperimentalGenerator::getFastNoise3D($this->noiseBase, 16, 128, 16, 4, 8, 4, $chunkX * 16, 0, $chunkZ * 16);
 		
+		$biomeCache = [];
 		
 		for($chunkY = 0; $chunkY < 8; ++$chunkY){
 			$chunk = "";
@@ -99,23 +114,26 @@ class ExperimentalGenerator implements NewLevelGenerator{
 					$minSum = 0;
 					$maxSum = 0;
 					$weightSum = 0;
+					
+					$biome = $this->pickBiome($chunkX * 16 + $x, $chunkZ * 16 + $z);
+					
 					for($sx = -ExperimentalGenerator::$SMOOTH_SIZE; $sx <= ExperimentalGenerator::$SMOOTH_SIZE; ++$sx){
 						for($sz = -ExperimentalGenerator::$SMOOTH_SIZE; $sz <= ExperimentalGenerator::$SMOOTH_SIZE; ++$sz){
 							$weight = ExperimentalGenerator::$GAUSSIAN_KERNEL[$sx + ExperimentalGenerator::$SMOOTH_SIZE][$sz + ExperimentalGenerator::$SMOOTH_SIZE];
 							
-							/*if($sx === 0 and $sz === 0){
-							 $adjacent = $biome;
-							 }else{
-							 $index = Level::chunkHash($chunkX * 16 + $x + $sx, $chunkZ * 16 + $z + $sz);
-							 if(isset($biomeCache[$index])){
-							 $adjacent = $biomeCache[$index];
-							 }else{
-							 $biomeCache[$index] = $adjacent = $this->pickBiome($chunkX * 16 + $x + $sx, $chunkZ * 16 + $z + $sz);
-							 }
-							 }*/
+							if($sx === 0 and $sz === 0){
+								$adjacent = $biome;
+							}else{
+								$index = ($chunkX * 16 + $x + $sx).":".($chunkZ * 16 + $z + $sz);
+								if(isset($biomeCache[$index])){
+									$adjacent = $biomeCache[$index];
+								}else{
+									$biomeCache[$index] = $adjacent = $this->pickBiome($chunkX * 16 + $x + $sx, $chunkZ * 16 + $z + $sz);
+								}
+							}
 							
-							$minSum += (63 - 1) * $weight; //TODO biomes
-							$maxSum += 127 * $weight;
+							$minSum += ($adjacent->getMin() - 1) * $weight; //TODO biomes
+							$maxSum += $adjacent->getMax() * $weight;
 							
 							$weightSum += $weight;
 						}
