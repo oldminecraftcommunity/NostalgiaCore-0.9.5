@@ -11,7 +11,7 @@ class PMFLevel extends PMF{
 	private $payloadOffset = 0;
 	private $chunks = [];
 	private $chunkChange = [];
-
+	public $chunkInfo = [];
 	public function __construct($file, $blank = false){
 		if(is_array($blank)){
 			$this->create($file, 0);
@@ -188,7 +188,32 @@ class PMFLevel extends PMF{
 		unset($chunks, $chunkChange, $locationTable);
 		parent::close();
 	}
-
+	
+	public function getBiomeId($x, $z){
+		$X = $x >> 4;
+		$Z = $z >> 4;
+		$index = self::getIndex($X, $Z);
+		if(!isset($this->chunkInfo[$index])){
+			return 0;
+		}
+		$aX = $x & 15;
+		$aZ = $z & 15;
+		
+		return ord($this->chunkInfo[$index][0][$aX + ($aZ << 4)]);
+	}
+	
+	public function setBiomeId($x, $z, $id){
+		$X = $x >> 4;
+		$Z = $z >> 4;
+		$index = self::getIndex($X, $Z);
+		if(!isset($this->chunks[$index])){
+			return 0;
+		}
+		$aX = $x & 15;
+		$aZ = $z & 15;
+		$this->chunkInfo[$index][0][$aX + ($aZ << 4)] = chr($id);
+	}
+	
 	public function unloadChunk($X, $Z, $save = true){
 		$X = (int) $X;
 		$Z = (int) $Z;
@@ -229,6 +254,7 @@ class PMFLevel extends PMF{
 
 		$chunk = @gzopen($this->getChunkPath($X, $Z), "wb" . PMF_LEVEL_DEFLATE_LEVEL);
 		$bitmap = 0;
+		gzwrite($chunk, $this->chunkInfo[$index][0]);
 		for($Y = 0; $Y < $this->levelData["height"]; ++$Y){
 			if($this->chunks[$index][$Y] !== false and ((isset($this->chunkChange[$index][$Y]) and $this->chunkChange[$index][$Y] === 0) or !$this->isMiniChunkEmpty($X, $Z, $Y))){
 				gzwrite($chunk, $this->chunks[$index][$Y]);
@@ -296,26 +322,30 @@ class PMFLevel extends PMF{
 
 		$info = $this->locationTable[$index];
 		$this->seek($info[0]);
-
-		$chunk = @gzopen($this->getChunkPath($X, $Z), "rb");
+		$cp = $this->getChunkPath($X, $Z);
+		$chunk = file_get_contents($cp);
 		if($chunk === false){
 			return false;
 		}
+		$chunk = zlib_decode($chunk);
+		$offset = 0;
 		$this->chunks[$index] = [];
 		$this->chunkChange[$index] = [-1 => false];
+		$this->chunkInfo[$index][0] = substr($chunk, $offset, 256); //Biome data
+		$offset += 256;
 		for($Y = 0; $Y < $this->levelData["height"]; ++$Y){
 			$t = 1 << $Y;
 			if(($info[0] & $t) === $t){
-				// 4096 + 2048 + 2048, Block Data, Meta, Light
-				if(strlen($this->chunks[$index][$Y] = gzread($chunk, 16384)) < 16384){
+				// 4096 + 4096 + 4096 + 4096, Id, Meta, BlockLight, Skylight
+				if(strlen($this->chunks[$index][$Y] = substr($chunk, $offset, 16384)) < 16384){
 					console("[NOTICE] Empty corrupt chunk detected [$X,$Z,:$Y], recovering contents", true, true, 2);
 					$this->fillMiniChunk($X, $Z, $Y);
 				}
+				$offset += 16384;
 			}else{
 				$this->chunks[$index][$Y] = false;
 			}
 		}
-		@gzclose($chunk);
 		return true;
 	}
 	
@@ -356,8 +386,7 @@ class PMFLevel extends PMF{
 				7 => 16384,
 			);
 			$this->chunkInfo[$index] = array(
-				0 => 0,
-				1 => 0,
+				0 => str_repeat("\x00", 256)
 			);
 			$this->locationTable[$index] = array(0);
 		}
@@ -381,6 +410,13 @@ class PMFLevel extends PMF{
 		var_dump(func_get_args());
 		console("[NOTICE] If you see this message, you should send the log with error to the devs.");
 	}
+	public function getBlockIDsXZ($x, $z){
+		$X = $x >> 4;
+		$Z = $z >> 4;
+		$index = $this->getIndex($X, $Z);
+		return nullsafe($this->chunks[$index], 0);
+	}
+	
 	public function getBlockID($x, $y, $z){
 		if($y > 127 or $y < 0){
 			return 0;

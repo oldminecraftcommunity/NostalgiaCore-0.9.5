@@ -112,7 +112,7 @@ class Level{
 		$orderedData = "";
 		$orderedSkyLight = ""; //str_repeat("\xff", 16*16*64);
 		$orderedLight = ""; //str_repeat("\xff", 16*16*64);
-		$orderedBiomeIds = str_repeat("\x0f", 16*16); //all plains, according to PocketMine 1.4 source
+		$orderedBiomeIds = $this->level->chunkInfo[$this->level->getIndex($X, $Z)][0];
 		$orderedBiomeColors = str_repeat("\x00\x85\xb2\x4a", 256); // also PM 1.4
 		$tileEntities = "";
 		if($gen)$this->level->generateChunk($X, $Z, $this->generator);

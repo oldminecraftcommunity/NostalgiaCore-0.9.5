@@ -28,6 +28,13 @@ class BiomeSelector
 		ConsoleAPI::debug("Registered $b");
 		self::$biomes[$b->getID()] = $b;
 	}
+	/**
+	 * @param int $id
+	 * @return Biome | false
+	 */
+	public static function get($id){
+		return nullsafe(self::$biomes[$id], false);
+	}
 	
 	public function generateBiomeLookup(){
 		for($t = 0; $t < 64; ++$t){

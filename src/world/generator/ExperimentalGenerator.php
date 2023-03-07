@@ -7,8 +7,14 @@ require_once("NewLevelGenerator.php");
  * Thank You <3
  */
 class ExperimentalGenerator implements NewLevelGenerator{
-	
+	/**
+	 * @var Populator[]
+	 */
 	private $populators = array();
+	/**
+	 * @var Populator[]
+	 */
+	private $genPopulators = array();
 	private $level;
 	private $random;
 	private $worldHeight = 65;
@@ -73,7 +79,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 			new OreType(new StoneBlock(5), 12, 16, 0, 128),
 		));
 		$this->populators[] = $ores;
-		
+		$this->genPopulators[] = new GroundCover();
 		$trees = new TreePopulator();
 		$trees->setBaseAmount(3);
 		$trees->setRandomAmount(0);
@@ -116,7 +122,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 					$weightSum = 0;
 					
 					$biome = $this->pickBiome($chunkX * 16 + $x, $chunkZ * 16 + $z);
-					
+					$this->level->level->setBiomeId(($chunkX << 4) + $x, ($chunkZ << 4) + $z, $biome->getID());
 					for($sx = -ExperimentalGenerator::$SMOOTH_SIZE; $sx <= ExperimentalGenerator::$SMOOTH_SIZE; ++$sx){
 						for($sz = -ExperimentalGenerator::$SMOOTH_SIZE; $sz <= ExperimentalGenerator::$SMOOTH_SIZE; ++$sz){
 							$weight = ExperimentalGenerator::$GAUSSIAN_KERNEL[$sx + ExperimentalGenerator::$SMOOTH_SIZE][$sz + ExperimentalGenerator::$SMOOTH_SIZE];
@@ -138,7 +144,6 @@ class ExperimentalGenerator implements NewLevelGenerator{
 							$weightSum += $weight;
 						}
 					}
-					
 					$minSum /= $weightSum;
 					$maxSum /= $weightSum;
 					
@@ -163,12 +168,17 @@ class ExperimentalGenerator implements NewLevelGenerator{
 					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 					//$chunk .= str_repeat("\xff", 16);
 					//$chunk .= str_repeat("\xff", 16);
-					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"; //light
+					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"; //more light
 				}
 			}
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
+		
+		foreach($this->genPopulators as $pop){
+			$pop->populate($this->level, $chunkX, $chunkZ, $this->random);
+		}
+		
 		
 	}
 	

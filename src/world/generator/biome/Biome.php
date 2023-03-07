@@ -1,14 +1,14 @@
 <?php
 
 abstract class Biome{
-	protected $id, $topBlock, $fillerBlock, $name, $minY, $maxY;
+	protected $id, $topBlocks, $fillerBlock, $name, $minY, $maxY;
 	public function __construct($id, $name){
 		$this->name = $name;
 		$this->id = $id;
 	}
 	
-	public function setTopBlock($id){
-		$this->topBlock = $id;
+	public function setTopBlocks($id){
+		$this->topBlocks = $id;
 	}
 	
 	public function getID(){
@@ -22,6 +22,10 @@ abstract class Biome{
 	
 	public function getMin(){
 		return $this->minY;
+	}
+	
+	public function getTopBlocks(){
+		return $this->topBlocks;
 	}
 	
 	public function getMax(){

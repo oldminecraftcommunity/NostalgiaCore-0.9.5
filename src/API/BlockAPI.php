@@ -245,7 +245,12 @@ class BlockAPI{
 	function __construct(){
 		$this->server = ServerAPI::request();
 	}
-
+	/**
+	 * @param integer $id
+	 * @param number $meta
+	 * @param boolean $v
+	 * @return GenericBlock
+	 */
 	public static function get($id, $meta = 0, $v = false){
 		if(isset(Block::$class[$id])){
 			$classname = Block::$class[$id];
