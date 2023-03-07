@@ -192,7 +192,7 @@ class PMFLevel extends PMF{
 	public function getBiomeId($x, $z){
 		$X = $x >> 4;
 		$Z = $z >> 4;
-		$index = self::getIndex($X, $Z);
+		$index = $this->getIndex($X, $Z);
 		if(!isset($this->chunkInfo[$index])){
 			return 0;
 		}
@@ -205,7 +205,7 @@ class PMFLevel extends PMF{
 	public function setBiomeId($x, $z, $id){
 		$X = $x >> 4;
 		$Z = $z >> 4;
-		$index = self::getIndex($X, $Z);
+		$index = $this->getIndex($X, $Z);
 		if(!isset($this->chunks[$index])){
 			return 0;
 		}
@@ -311,7 +311,7 @@ class PMFLevel extends PMF{
 	
 	public function loadChunk($X, $Z){
 
-		$index = self::getIndex($X, $Z);
+		$index = $this->getIndex($X, $Z);
 
 		if($this->isChunkLoaded($X, $Z)){
 			return true;
@@ -359,10 +359,11 @@ class PMFLevel extends PMF{
 		$this->chunkChange[$index][-1] = true;
 		$this->chunkChange[$index][$Y] = 16384;
 		$this->locationTable[$index][0] |= 1 << $Y;
+		$this->chunkInfo[$index][0] = str_repeat("\x00", 256);
 		return true;
 	}
 	public function initCleanChunk($X, $Z){
-		$index = self::getIndex($X, $Z);
+		$index = $this->getIndex($X, $Z);
 		if(!isset($this->chunks[$index])){
 			$this->chunks[$index] = array(
 				0 => false,
