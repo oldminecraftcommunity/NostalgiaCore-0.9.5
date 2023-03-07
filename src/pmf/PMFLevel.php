@@ -206,7 +206,7 @@ class PMFLevel extends PMF{
 		$X = $x >> 4;
 		$Z = $z >> 4;
 		$index = $this->getIndex($X, $Z);
-		if(!isset($this->chunks[$index])){
+		if(!isset($this->chunkInfo[$index])){
 			return 0;
 		}
 		$aX = $x & 15;
@@ -254,7 +254,9 @@ class PMFLevel extends PMF{
 
 		$chunk = @gzopen($this->getChunkPath($X, $Z), "wb" . PMF_LEVEL_DEFLATE_LEVEL);
 		$bitmap = 0;
-		gzwrite($chunk, $this->chunkInfo[$index][0]);
+		$biomedata = $this->chunkInfo[$index][0];
+		if(strlen($biomedata) < 256) $biomedata = str_repeat("\x01", 256);
+		gzwrite($chunk, $biomedata);
 		for($Y = 0; $Y < $this->levelData["height"]; ++$Y){
 			if($this->chunks[$index][$Y] !== false and ((isset($this->chunkChange[$index][$Y]) and $this->chunkChange[$index][$Y] === 0) or !$this->isMiniChunkEmpty($X, $Z, $Y))){
 				gzwrite($chunk, $this->chunks[$index][$Y]);

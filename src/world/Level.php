@@ -447,6 +447,7 @@ class Level{
 		if(!isset($this->level)){
 			return false;
 		}
+		if(strlen($data) != 16384) console(strlen($data));
 		$this->changedCount[$X . ":" . $Y . ":" . $Z] = 4096;
 		if(ADVANCED_CACHE == true){
 			Cache::remove("world:{$this->name}:$X:$Z");
