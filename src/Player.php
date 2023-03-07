@@ -191,13 +191,8 @@ class Player{
 				$terrain = true;
 				foreach($this->level->players as $player){
 					if($player !== $this and $player->entity instanceof Entity){
-						$pk = new MoveEntityPacket_PosRot;
-						$pk->eid = $player->entity->eid;
-						$pk->x = $player->entity->x;
-						$pk->y = $player->entity->y;
-						$pk->z = $player->entity->z;
-						$pk->yaw = $player->entity->yaw;
-						$pk->pitch = $player->entity->pitch;
+						$pk = new MovePlayerPacket();
+						$pk->entities = [[$player->entity->eid, $player->entity->x, $player->entity->y, $player->entity->z, $player->entity->yaw, $player->entity->pitch]];
 						$this->dataPacket($pk);
 
 						$pk = new PlayerEquipmentPacket;
