@@ -18,6 +18,7 @@ class LevelAPI{
 		$this->server->api->console->register("save-on", "", [$this, "commandHandler"]);
 		$this->server->api->console->register("save-off", "", [$this, "commandHandler"]);
 		$this->server->api->console->register("setwspawn", "Set the spawn position for your current world. ", [$this, "commandHandler"]);
+		$this->server->api->console->register("place", "", [$this, "commandHandler"]);
 		$this->default = $this->server->api->getProperty("level-name");
 		if($this->loadLevel($this->default) === false){
 			$this->generateLevel($this->default, $this->server->seed);
@@ -160,6 +161,11 @@ class LevelAPI{
 	public function commandHandler($cmd, $params, $issuer, $alias){
 		$output = "";
 		switch($cmd){
+			case "place":
+				if(!isset($params[0]) or $params[0] == "") return "/$cmd <feature class>";
+				$class = $params[0];
+				(new $class())->build($issuer->entity->level, $issuer->entity->x, $issuer->entity->y, $issuer->entity->z);
+				break;
 			case "setwspawn":
 				if(!($issuer instanceof Player)){
 					return ("Please run this command in-game. ");

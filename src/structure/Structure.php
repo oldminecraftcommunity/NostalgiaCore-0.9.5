@@ -123,6 +123,7 @@ abstract class Structure{
 			}
 			$offsetZ = 0;
 		}
+		console("builded! ".$this->name);
 	}
 	
 }

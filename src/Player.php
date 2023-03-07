@@ -1482,11 +1482,10 @@ class Player{
 				//$this->server->schedule(20, array($this, "teleport"), $pos);
 				//$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
 				$this->entity->setHealth($this->data->get("health"), "spawn", true);
-				$this->server->api->player->spawnAllPlayers($this);
-				$this->server->api->player->spawnToAllPlayers($this);
+				$this->server->api->chat->broadcast($this->username." joined the game");
+
 				$this->server->api->entity->spawnAll($this);
 				$this->server->api->entity->spawnToAll($this->entity);
-				$this->server->api->chat->broadcast($this->username." joined the game");
 
 				$this->server->schedule(5, [$this->entity, "update"], [], true);
 				$this->server->schedule(2, [$this->entity, "updateMovement"], [], true);
@@ -1507,6 +1506,8 @@ class Player{
 				$this->blocked = false;
 				$this->spawned = true;
 				$this->server->handle("player.spawn", $this);
+				$this->server->api->player->spawnAllPlayers($this);
+				$this->server->api->player->spawnToAllPlayers($this);
 				break;
 			case ProtocolInfo::ROTATE_HEAD_PACKET:
 				if($this->spawned === false){
