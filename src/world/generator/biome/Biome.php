@@ -49,6 +49,13 @@ abstract class Biome{
 		BiomeSelector::registerBiome(new BiomePlains(BIOME_PLAINS, "Plains"));
 		BiomeSelector::registerBiome(new BiomeExtremeHillsEdge(BIOME_EXTREME_HILLS_EDGE, "Extreme Hills Edge"));
 		BiomeSelector::registerBiome(new BiomeRiver(BIOME_RIVER, "River"));
+		BiomeSelector::registerBiome(new BiomeOcean(BIOME_OCEAN, "Ocean"));
+		BiomeSelector::registerBiome(new BiomeSwamp(BIOME_SWAMP, "Swamp"));
+		BiomeSelector::registerBiome(new BiomeIcePlains(BIOME_ICE_PLAINS, "Ice Plains"));
+		BiomeSelector::registerBiome(new BiomeDesert(BIOME_DESERT, "Desert"));
+		BiomeSelector::registerBiome(new BiomeTaiga(BIOME_TAIGA, "Taiga"));
+		BiomeSelector::registerBiome(new BiomeForest(BIOME_FOREST, "Forest"));
+		BiomeSelector::registerBiome(new BiomeForest(BIOME_BIRCH_FOREST, "Birch Forest"));
 	}
 
 	private static $initialized = false;
