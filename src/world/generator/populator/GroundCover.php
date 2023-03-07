@@ -4,8 +4,7 @@ class GroundCover extends Populator
 {
 	public function populate(Level $level, $chunkX, $chunkZ, Random $random)
 	{
-		console("gcpop: $chunkX $chunkZ");
-		$waterHeight = 0; //TODO
+		$waterHeight = 63;
 		for($x = 0; $x < 16; ++$x){
 			for($z = 0; $z < 16; ++$z){
 				$pcx = ($chunkX << 4) + $x;

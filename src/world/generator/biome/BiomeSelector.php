@@ -48,8 +48,12 @@ class BiomeSelector
 		if($r < 0.60){
 			return BIOME_PLAINS;
 		}else{
-			if($t < 0.70){
+			if($t < 0.25){
 				return BIOME_EXTREME_HILLS;
+			}else if($t < 0.70){
+				return BIOME_EXTREME_HILLS_EDGE;
+			}else{
+				return BIOME_RIVER;
 			}
 		}
 	}

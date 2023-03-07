@@ -146,7 +146,6 @@ class ExperimentalGenerator implements NewLevelGenerator{
 					}
 					$minSum /= $weightSum;
 					$maxSum /= $weightSum;
-					
 					for($y = $startY; $y < $endY; ++$y){
 						if($y === 0){
 							$chunk .= "\x07";
@@ -161,6 +160,8 @@ class ExperimentalGenerator implements NewLevelGenerator{
 						
 						if($noiseValue > 0){
 							$chunk .= "\x01";
+						}elseif($y <= $this->waterHeight){
+							$chunk .= "\x09";
 						}else{
 							$chunk .= "\x00";
 						}

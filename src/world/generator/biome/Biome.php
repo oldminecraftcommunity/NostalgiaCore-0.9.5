@@ -47,6 +47,8 @@ abstract class Biome{
 	public static function init(){
 		BiomeSelector::registerBiome(new BiomeExtremeHills(BIOME_EXTREME_HILLS, "Extreme Hills"));
 		BiomeSelector::registerBiome(new BiomePlains(BIOME_PLAINS, "Plains"));
+		BiomeSelector::registerBiome(new BiomeExtremeHillsEdge(BIOME_EXTREME_HILLS_EDGE, "Extreme Hills Edge"));
+		BiomeSelector::registerBiome(new BiomeRiver(BIOME_RIVER, "River"));
 	}
 
 	private static $initialized = false;

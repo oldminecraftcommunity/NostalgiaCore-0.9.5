@@ -134,6 +134,7 @@ require_once(FILE_PATH . "/src/world/generator/LevelGenerator.php");
 require_once(FILE_PATH . "/src/world/generator/biome/Biome.php");
 require_once(FILE_PATH . "/src/world/generator/biome/BiomeSelector.php");
 require_once(FILE_PATH . "/src/world/generator/biome/biomes/BiomeWithGrass.php");
+require_once(FILE_PATH . "/src/world/generator/biome/biomes/BiomeExtremeHills.php");
 
 require_all(FILE_PATH . "src/");
 
