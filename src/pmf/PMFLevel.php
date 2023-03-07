@@ -248,7 +248,7 @@ class PMFLevel extends PMF{
 	protected function isMiniChunkEmpty($X, $Z, $Y){
 		$index = $this->getIndex($X, $Z);
 		if($this->chunks[$index][$Y] !== false){
-			if(substr_count($this->chunks[$index][$Y], "\x00") < 8192){
+			if(substr_count($this->chunks[$index][$Y], "\x00") < 16384){
 				return false;
 			}
 		}
@@ -257,11 +257,11 @@ class PMFLevel extends PMF{
 
 	public function getMiniChunk($X, $Z, $Y){
 		if($this->loadChunk($X, $Z) === false){
-			return str_repeat("\x00", 8192);
+			return str_repeat("\x00", 16384);
 		}
 		$index = $this->getIndex($X, $Z);
 		if(!isset($this->chunks[$index][$Y]) or $this->chunks[$index][$Y] === false){
-			return str_repeat("\x00", 8192);
+			return str_repeat("\x00", 16384);
 		}
 		return $this->chunks[$index][$Y];
 	}
@@ -307,7 +307,7 @@ class PMFLevel extends PMF{
 			$t = 1 << $Y;
 			if(($info[0] & $t) === $t){
 				// 4096 + 2048 + 2048, Block Data, Meta, Light
-				if(strlen($this->chunks[$index][$Y] = gzread($chunk, 8192)) < 8192){
+				if(strlen($this->chunks[$index][$Y] = gzread($chunk, 16384)) < 16384){
 					console("[NOTICE] Empty corrupt chunk detected [$X,$Z,:$Y], recovering contents", true, true, 2);
 					$this->fillMiniChunk($X, $Z, $Y);
 				}
@@ -325,9 +325,9 @@ class PMFLevel extends PMF{
 		}
 		$index = $this->getIndex($X, $Z);
 		
-		$this->chunks[$index][$Y] = str_repeat("\x00", 8192);
+		$this->chunks[$index][$Y] = str_repeat("\x00", 16384);
 		$this->chunkChange[$index][-1] = true;
-		$this->chunkChange[$index][$Y] = 8192;
+		$this->chunkChange[$index][$Y] = 16384;
 		$this->locationTable[$index][0] |= 1 << $Y;
 		return true;
 	}
@@ -346,14 +346,14 @@ class PMFLevel extends PMF{
 			);
 			$this->chunkChange[$index] = array(
 				-1 => true,
-				0 => 8192,
-				1 => 8192,
-				2 => 8192,
-				3 => 8192,
-				4 => 8192,
-				5 => 8192,
-				6 => 8192,
-				7 => 8192,
+				0 => 16384,
+				1 => 16384,
+				2 => 16384,
+				3 => 16384,
+				4 => 16384,
+				5 => 16384,
+				6 => 16384,
+				7 => 16384,
 			);
 			$this->chunkInfo[$index] = array(
 				0 => 0,
@@ -366,13 +366,13 @@ class PMFLevel extends PMF{
 		if($this->isChunkLoaded($X, $Z) === false){
 			$this->loadChunk($X, $Z);
 		}
-		if(strlen($data) !== 8192){
+		if(strlen($data) !== 16384){
 			return false;
 		}
 		$index = $this->getIndex($X, $Z);
 		$this->chunks[$index][$Y] = (string) $data;
 		$this->chunkChange[$index][-1] = true;
-		$this->chunkChange[$index][$Y] = 8192;
+		$this->chunkChange[$index][$Y] = 16384;
 		$this->locationTable[$index][0] |= 1 << $Y;
 		return true;
 	}
@@ -394,7 +394,7 @@ class PMFLevel extends PMF{
 		$aY = $y & 0xf;
 		
 		if(is_array($this->chunks) && isset($this->chunks[$index]) && is_array($this->chunks[$index]) && isset($this->chunks[$index][$Y]) && is_string($this->chunks[$index][$Y])){
-			$b = ord($this->chunks[$index][$Y][($aY + ($aX << 5) + ($aZ << 9))]);
+			$b = ord($this->chunks[$index][$Y][($aY + ($aX << 6) + ($aZ << 10))]);
 		}else{ //php8 fix
 			$b = 0;
 		}
@@ -417,7 +417,7 @@ class PMFLevel extends PMF{
 		$aX = $x & 0xf;
 		$aZ = $z & 0xf;
 		$aY = $y & 0xf;
-		$this->chunks[$index][$Y][(int) ($aY + ($aX << 5) + ($aZ << 9))] = chr($block);
+		$this->chunks[$index][$Y][(int) ($aY + ($aX << 6) + ($aZ << 10))] = chr($block);
 		if(!isset($this->chunkChange[$index][$Y])){
 			$this->chunkChange[$index][$Y] = 1;
 		}else{
@@ -439,7 +439,7 @@ class PMFLevel extends PMF{
 		$aZ = $z & 0xf;
 		$aY = $y & 0xf;
 		if(is_array($this->chunks) && isset($this->chunks[$index]) && is_array($this->chunks[$index]) && isset($this->chunks[$index][$Y]) && is_string($this->chunks[$index][$Y])){
-			$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
+			$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 6) + ($aZ << 10))]);
 		}else{ //php8 fix
 			$m = 0;
 		}
@@ -464,7 +464,7 @@ class PMFLevel extends PMF{
 		$aX = $x & 0xf;
 		$aZ = $z & 0xf;
 		$aY = $y & 0xf;
-		$mindex = (int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9));
+		$mindex = (int) (($aY >> 1) + 16 + ($aX << 6) + ($aZ << 10));
 		$old_m = ord($this->chunks[$index][$Y][$mindex]);
 		if(($y & 1) === 0){
 			$m = ($old_m & 0xF0) | $damage;
@@ -505,8 +505,8 @@ class PMFLevel extends PMF{
 		$aY = $y & 0xf;
 		#Need to fix. But idk how.
 		if(is_array($this->chunks) && is_array($this->chunks[$index]) && is_string($this->chunks[$index][$Y])){ //PHP8 warn fix
-			$b = ord($this->chunks[$index][$Y][($aY + ($aX << 5) + ($aZ << 9))]);
-			$m = ord($this->chunks[$index][$Y][(($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9))]);
+			$b = ord($this->chunks[$index][$Y][($aY + ($aX << 6) + ($aZ << 10))]);
+			$m = ord($this->chunks[$index][$Y][(($aY >> 1) + 16 + ($aX << 6) + ($aZ << 10))]);
 		}else{
 			$b = 0;
 			$m = 0;
@@ -540,8 +540,8 @@ class PMFLevel extends PMF{
 		$aX = $x - ($X << 4);
 		$aZ = $z - ($Z << 4);
 		$aY = $y - ($Y << 4);
-		$bindex = (int) ($aY + ($aX << 5) + ($aZ << 9));
-		$mindex = (int) (($aY >> 1) + 16 + ($aX << 5) + ($aZ << 9));
+		$bindex = (int) ($aY + ($aX << 6) + ($aZ << 10));
+		$mindex = (int) (($aY >> 1) + 16 + ($aX << 6) + ($aZ << 10));
 		$old_b = ord($this->chunks[$index][$Y][$bindex]);
 		$old_m = ord($this->chunks[$index][$Y][$mindex]);
 		if(($y & 1) === 0){

@@ -110,9 +110,9 @@ class Level{
 		$gen = $this->generatorType === 1 || !($X > 15 || $X < 0 || $Z > 15 || $Z < 0);
 		$orderedIds = "";
 		$orderedData = "";
-		$orderedSkyLight = str_repeat("\x00", 16*16*64);
-		$orderedLight = str_repeat("\x00", 16*16*64);
-		$orderedBiomeIds = str_repeat("\x01", 16*16); //all plains, according to PocketMine 1.4 source
+		$orderedSkyLight = ""; //str_repeat("\xff", 16*16*64);
+		$orderedLight = ""; //str_repeat("\xff", 16*16*64);
+		$orderedBiomeIds = str_repeat("\x0f", 16*16); //all plains, according to PocketMine 1.4 source
 		$orderedBiomeColors = str_repeat("\x00\x85\xb2\x4a", 256); // also PM 1.4
 		$tileEntities = "";
 		if($gen)$this->level->generateChunk($X, $Z, $this->generator);
@@ -128,16 +128,17 @@ class Level{
 		
 		for ($i = 0; $i < 16; $i++){
 			for ($j = 0; $j < 16; $j++){
-				$bIndex = ($i << 5) + ($j << 9);
+				$bIndex = ($i << 6) + ($j << 10);
 				foreach($miniChunks as $chunk){
 					$orderedIds .= substr($chunk, $bIndex, 16);
 					$orderedData .= substr($chunk, $bIndex + 16, 8);
+					$orderedLight .= substr($chunk, $bIndex + 32, 8);
+					$orderedSkyLight .= substr($chunk, $bIndex + 48, 8);
 				}
 			}
 		}
-		
 		$chunkTiles = [];
-		
+		console(strlen($orderedLight));
 		$tiles = $this->server->query("SELECT ID FROM tiles WHERE spawnable = 1 AND level = '".$this->getName()."' AND x >= ".($X * 16 - 1)." AND x < ".($X * 16 + 17)." AND z >= ".($Z * 16 - 1)." AND z < ".($Z * 16 + 17).";");
 		if($tiles !== false and $tiles !== true){
 			while(($tile = $tiles->fetchArray(SQLITE3_ASSOC)) !== false){
@@ -149,7 +150,7 @@ class Level{
 		}
 
 		$nbt = new NBT_new(NBT_new::LITTLE_ENDIAN);
-        foreach($chunkTiles as $tile){
+        	foreach($chunkTiles as $tile){
 			switch($tile->class){
 				case "Sign":
 					$text = $tile->getText();

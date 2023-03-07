@@ -28,7 +28,7 @@ class GrassBlock extends SolidBlock{
 				else $player->setSlot($player->slot, $item, true);
 			}
 			$this->level->setBlock($this, new FarmlandBlock());
-			$this->seedsDrop();
+			//$this->seedsDrop();
 			return true;
 		}
 		return false;

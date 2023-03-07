@@ -143,6 +143,10 @@ class ExperimentalGenerator implements NewLevelGenerator{
 						}
 					}
 					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+					//$chunk .= str_repeat("\xff", 16);
+					//$chunk .= str_repeat("\xff", 16);
+					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 				}
 			}
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
