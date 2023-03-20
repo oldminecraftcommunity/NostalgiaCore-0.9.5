@@ -68,7 +68,6 @@ class NormalGenerator implements NewLevelGenerator{
 		$base = array();
 		for($z = 0; $z < 16; ++$z){
 			for($x = 0; $x < 16; ++$x){
-				$this->level->level->setBiomeId($x + ($chunkX << 4), $z + ($chunkZ << 4), BIOME_PLAINS);
 				$i = ($z << 4) + $x;
 				$hills[$i] = $this->noiseHills->noise3D($x + ($chunkX << 4), 0, $z + ($chunkZ << 4), 0.11, 12, true);
 				$patches[$i] = $this->noisePatches->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.03, 16, true);
@@ -135,6 +134,7 @@ class NormalGenerator implements NewLevelGenerator{
 					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"; //skylight/light
 				}
 			}
+			$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, str_repeat(chr(BIOME_PLAINS), 256));
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
 		

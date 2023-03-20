@@ -1,12 +1,11 @@
 <?php
 
-//from HellGenerator for PocketMine mcpe 0.11 by 星云
+//from HellGenerator for PocketMine mcpe 0.11 by ж�џдє‘
 
 class HellGenerator implements NewLevelGenerator{
 
 	/** @var Populator[] */
 	private $populators = [];
-	/** @var ChunkManager */
 	private $level;
 	/** @var Random */
 	private $random;
@@ -18,10 +17,9 @@ class HellGenerator implements NewLevelGenerator{
 
 	/** @var Populator[] */
 	private $generationPopulators = [];
-	/** @var Simplex */
 	private $noiseBase;
 
-	private static $GAUSSIAN_KERNEL = null;
+	private static $GAUSSIAN_KERNEL = null; 
 	private static $SMOOTH_SIZE = 2;
 
 	public function __construct(array $options = []){
@@ -79,7 +77,6 @@ class HellGenerator implements NewLevelGenerator{
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 
 		$noise = ExperimentalGenerator::getFastNoise3D($this->noiseBase, 16, 128, 16, 4, 8, 4, $chunkX * 16, 0, $chunkZ * 16);
-
 		for($chunkY = 0; $chunkY < 8; ++$chunkY){
 			$chunk = "";
 			$startY = $chunkY << 4;
@@ -108,17 +105,16 @@ class HellGenerator implements NewLevelGenerator{
 							$chunk .= "\x00";
 						}
 					}
-					$chunk .= str_repeat(chr(BIOME_HELL), 16); //biome
+					$chunk .= str_repeat("\x00", 16); //meta
 					$chunk .= $lightChunk; //blocklight
 					$chunk .= str_repeat("\x00", 16); //skylight
-					$lightChunk = "";
 					//$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"; //light
 					//$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"; //more light
 				}
 			}
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
-
+		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, str_repeat(chr(BIOME_HELL), 256));
 		foreach($this->generationPopulators as $populator){
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}

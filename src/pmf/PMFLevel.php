@@ -201,7 +201,9 @@ class PMFLevel extends PMF{
 		
 		return ord($this->chunkInfo[$index][0][$aX + ($aZ << 4)]);
 	}
-	
+	public function setBiomeIdArrayForChunk($x, $z, $biomeIds){
+		$this->chunkInfo[$this->getIndex($x, $z)][0] = $biomeIds;
+	}
 	public function setBiomeId($x, $z, $id){
 		$X = $x >> 4;
 		$Z = $z >> 4;
@@ -255,7 +257,9 @@ class PMFLevel extends PMF{
 		$chunk = @gzopen($this->getChunkPath($X, $Z), "wb" . PMF_LEVEL_DEFLATE_LEVEL);
 		$bitmap = 0;
 		$biomedata = $this->chunkInfo[$index][0];
-		if(strlen($biomedata) < 256) $biomedata = str_repeat("\x01", 256);
+		if(strlen($biomedata) < 256){
+			$biomedata = str_repeat("\x01", 256);
+		}
 		gzwrite($chunk, $biomedata);
 		for($Y = 0; $Y < $this->levelData["height"]; ++$Y){
 			if($this->chunks[$index][$Y] !== false and ((isset($this->chunkChange[$index][$Y]) and $this->chunkChange[$index][$Y] === 0) or !$this->isMiniChunkEmpty($X, $Z, $Y))){

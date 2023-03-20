@@ -144,6 +144,7 @@ class LevelAPI{
 					ConsoleAPI::warn("You should not use OLD world type.");
 					break;
 				case "HELL":
+				case "NETHER":
 					$generator = new HellGenerator();
 					break;
 				default:
