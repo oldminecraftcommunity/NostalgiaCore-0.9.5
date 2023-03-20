@@ -143,6 +143,9 @@ class LevelAPI{
 					$generator = new TemporalGenerator();
 					ConsoleAPI::warn("You should not use OLD world type.");
 					break;
+				case "HELL":
+					$generator = new HellGenerator();
+					break;
 				default:
 					$generator = new NormalGenerator($options);
 					break;
