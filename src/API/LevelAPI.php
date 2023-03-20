@@ -147,6 +147,9 @@ class LevelAPI{
 				case "NETHER":
 					$generator = new HellGenerator();
 					break;
+				case "END":
+					$generator = new EndGenerator();
+					break;
 				default:
 					$generator = new NormalGenerator($options);
 					break;
