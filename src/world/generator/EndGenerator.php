@@ -104,7 +104,7 @@ class EndGenerator implements NewLevelGenerator{
 			}
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
-		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, str_repeat(chr(BIOME_END), 256));
+		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, str_repeat(chr(9), 256));
 		foreach($this->generationPopulators as $populator){
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
