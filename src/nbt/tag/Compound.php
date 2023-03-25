@@ -28,10 +28,12 @@ class Compound extends NamedTag implements \ArrayAccess{
 		}
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetExists($offset){
 		return isset($this->{$offset});
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetGet($offset){
 		if($this->{$offset} instanceof Tag){
 			if($this->{$offset} instanceof \ArrayAccess){
@@ -44,6 +46,7 @@ class Compound extends NamedTag implements \ArrayAccess{
 		return null;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetSet($offset, $value){
 		if($value instanceof Tag){
 			$this->{$offset} = $value;
@@ -52,6 +55,7 @@ class Compound extends NamedTag implements \ArrayAccess{
 		}
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetUnset($offset){
 		unset($this->{$offset});
 	}

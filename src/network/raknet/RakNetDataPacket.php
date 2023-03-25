@@ -139,7 +139,7 @@ abstract class RakNetDataPacket extends stdClass{
 	}
 
 	protected function putByte($v){
-		$this->buffer .= chr($v);
+		$this->buffer .= chr((int)$v);
 	}
 
 	protected function getString(){

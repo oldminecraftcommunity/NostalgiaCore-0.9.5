@@ -25,6 +25,8 @@ class EntityRegistry{
 		self::registerEntity(PrimedTNT::class);
 		self::registerEntity(Painting::class);
 		self::registerEntity(Minecart::class);
+		self::registerEntity(Snowball::class);
+		//self::registerEntity(Egg::class);
 	}
 	
 	/*Register an Entity*/

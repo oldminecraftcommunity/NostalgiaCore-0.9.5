@@ -245,7 +245,7 @@ class Item{
 			5 => 1561, //DIAMOND(called EMERALD in disassembled code)
 			FLINT_STEEL => 65, //lets assume it is correct
 			SHEARS => 239, //x2
-			BOW => 385 //x3
+			BOW => 2 //x3
 		];
 
 		if(($type = $this->getLevel()) === false){

@@ -6,12 +6,12 @@ class RakNetCodec{
 
 	public function __construct(RakNetPacket $packet){
 		$this->packet = $packet;
-		$this->buffer =& $this->packet->buffer;
+		$this->buffer = &$this->packet->buffer;
 		$this->encode();
 	}
 
 	private function encode(){
-		if(strlen($this->packet->buffer) > 0){
+		if($this->packet->buffer != null && strlen($this->packet->buffer) > 0){
 			return;
 		}
 		$this->buffer .= chr($this->packet->pid());

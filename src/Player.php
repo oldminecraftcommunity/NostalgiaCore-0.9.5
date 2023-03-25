@@ -1717,7 +1717,7 @@ class Player{
 				switch($packet->action){
 					case 5: //Shot arrow
 						if($this->entity->inAction === true){
-							if($this->getSlot($this->slot)->getID() === BOW){
+							if($this->getSlot($this->slot)->getID() === BOW){ // and player had arrow){
 								if($this->startAction !== false){
 									$time = microtime(true) - $this->startAction;
 									$d = [
@@ -1727,12 +1727,15 @@ class Player{
 										"yaw" => $this->entity->yaw,
 										"pitch" => $this->entity->pitch
 									];
-									$e = $this->server->api->entity->add($this->level, ENTITY_OBJECT, OBJECT_ARROW, $d);
+									$e = $this->server->api->entity->add($this->level, ENTITY_OBJECT, OBJECT_SNOWBALL, $d);
 									$e->speedX = -sin(($e->yaw / 180) * M_PI) * cos(($e->pitch / 180) * M_PI);
 									$e->speedZ = cos(($e->yaw / 180) * M_PI) * cos(($e->pitch / 180) * M_PI);
 									$e->speedY = -sin(($e->pitch / 180) * M_PI);
 									$e->shoot($e->speedX, $e->speedY, $e->speedZ, 1.5, 1.0);
-									$this->server->api->entity->spawnToAll($e);
+									//$this->server->api->entity->spawnToAll($e);
+									$e->spawn($this);
+									$this->getSlot($this->slot)->useOn("shooting", true);
+									$this->removeItem(ARROW, 0, 1);
 								}
 							}
 						}

@@ -40,7 +40,7 @@ class Arrow extends Projectile{
 	}
 	
 	public function spawn($player){
-		if($this->type === OBJECT_ARROW){
+		//if($this->type === OBJECT_ARROW){
 			$pk = new AddEntityPacket;
 			$pk->eid = $this->eid;
 			$pk->type = $this->type;
@@ -56,6 +56,6 @@ class Arrow extends Projectile{
 			$pk = new SetEntityMotionPacket;
 			$pk->entities = [[$this->eid, $this->speedX, $this->speedY, $this->speedZ]];
 			$player->dataPacket($pk);
-		}
+		//}
 	}
 }

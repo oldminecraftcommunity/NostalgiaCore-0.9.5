@@ -25,7 +25,7 @@ class BiomeSelector
 	}
 	
 	public static function registerBiome(Biome $b){
-		ConsoleAPI::debug("Registered $b");
+		//ConsoleAPI::debug("Registered $b");
 		self::$biomes[$b->getID()] = $b;
 	}
 	/**
