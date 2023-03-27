@@ -1482,7 +1482,6 @@ class Player{
 				//$this->server->schedule(20, array($this, "teleport"), $pos);
 				//$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
 				$this->entity->setHealth($this->data->get("health"), "spawn", true);
-				$this->server->api->chat->broadcast($this->username." joined the game");
 
 				$this->server->api->entity->spawnAll($this);
 				$this->server->api->entity->spawnToAll($this->entity);
@@ -1506,6 +1505,7 @@ class Player{
 				$this->blocked = false;
 				$this->spawned = true;
 				$this->server->handle("player.spawn", $this);
+				$this->server->api->chat->broadcast($this->username." joined the game");
 				$this->server->api->player->spawnAllPlayers($this);
 				$this->server->api->player->spawnToAllPlayers($this);
 				break;
@@ -1727,14 +1727,14 @@ class Player{
 										"yaw" => $this->entity->yaw,
 										"pitch" => $this->entity->pitch
 									];
-									$e = $this->server->api->entity->add($this->level, ENTITY_OBJECT, OBJECT_SNOWBALL, $d);
+									$e = $this->server->api->entity->add($this->level, ENTITY_OBJECT, OBJECT_ARROW, $d);
 									$e->speedX = -sin(($e->yaw / 180) * M_PI) * cos(($e->pitch / 180) * M_PI);
 									$e->speedZ = cos(($e->yaw / 180) * M_PI) * cos(($e->pitch / 180) * M_PI);
 									$e->speedY = -sin(($e->pitch / 180) * M_PI);
 									$e->shoot($e->speedX, $e->speedY, $e->speedZ, 1.5, 1.0);
 									//$this->server->api->entity->spawnToAll($e);
 									$e->spawn($this);
-									$this->getSlot($this->slot)->useOn("shooting", true);
+									//$this->getSlot($this->slot)->useOn("shooting", true);
 									$this->removeItem(ARROW, 0, 1);
 								}
 							}

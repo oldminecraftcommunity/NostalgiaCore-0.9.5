@@ -28,14 +28,13 @@ class PluginAPI extends stdClass{
 				foreach($this->getList() as $plugin){
 					$output .= $plugin["name"] . " v" . $plugin["version"] . ", ";
 				}
-				$output = $output === "Plugins (0): " ? "No plugins installed.\n" : substr($output, 0, -2) . "\n";
+				$output = $output === "Plugins (0): " ? "No plugins installed." : substr($output, 0, -2);
 				break;
 			case "version":
-				$output = "This server is running NostalgiaCore version " . MAJOR_VERSION . "\nCODENAME: 「 " . CODENAME . " 」\n(Implementing API version #" . CURRENT_API_VERSION . " for Minecraft: PE " . CURRENT_MINECRAFT_VERSION . ")";
+				$output = "This server is running NostalgiaCore version: " . MAJOR_VERSION .", PHP version: ". PHP_VERSION . "\n(Implementing API version #" . CURRENT_API_VERSION . " for Minecraft: PE " . CURRENT_MINECRAFT_VERSION . ")";
 				if(GIT_COMMIT !== str_repeat("00", 20)){
 					$output .= " (git " . GIT_COMMIT . ")";
 				}
-				$output .= "\n";
 				break;
 		}
 		return $output;
