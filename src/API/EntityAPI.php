@@ -185,7 +185,7 @@ class EntityAPI{
 				$pk = new RemovePlayerPacket;
 				$pk->eid = $eid;
 				$pk->clientID = 0;
-				$this->server->api->player->broadcastPacket($this->entities[$eid]->level->players, $pk);
+				$this->server->api->player->broadcastPacket($this->server->api->player->getAll(), $pk);
 			}else{
 				$pk = new RemoveEntityPacket;
 				$pk->eid = $eid;

@@ -147,7 +147,7 @@ class PluginAPI extends stdClass{
 					console("[INFO] Loading PHAR plugin \"".FORMAT_GREEN.$pluginInfo["name"].FORMAT_RESET."\" ".FORMAT_AQUA.$pluginInfo["version"].FORMAT_RESET." by ".FORMAT_AQUA.$pluginInfo["author"].FORMAT_RESET);
 					
 					$aver = CURRENT_API_VERSION;
-					if($pluginInfo["api"] != $aver){
+					if(!in_array((string) CURRENT_API_VERSION, $pluginInfo["api"])){
 						console("[WARNING] API is not the same as Core, might cause bugs({$pluginInfo["api"]} != {$aver})");
 					}
 					

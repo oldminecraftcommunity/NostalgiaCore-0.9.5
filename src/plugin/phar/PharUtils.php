@@ -19,7 +19,7 @@ class PharUtils{
 		$pluginData["version"] = trim($content["version"]);
 		$pluginData["author"] = trim($content["author"]);
 		$pluginData["mainFile"] = trim($content["mainFile"]);
-		$pluginData["api"] = trim($content["api"]);
+		$pluginData["api"] = explode(",", trim($content["api"]));
 		$pluginData["classLoader"] = trim($content["classLoader"]);
 		$pluginData["CLClass"] = self::getNameSpaceClass($pluginData["classLoader"]);
 		return $pluginData;
