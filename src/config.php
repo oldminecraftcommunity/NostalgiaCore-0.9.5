@@ -51,7 +51,7 @@ define("START_TIME", microtime(true));
 define("MAJOR_VERSION", "2.0.0dev");
 define("CODENAME", "Breadfence"); //i'm not very creative - kotyaralih
 define("CURRENT_MINECRAFT_VERSION", "v0.9.5 alpha");
-define("CURRENT_API_VERSION", '12.1');
+define("CURRENT_API_VERSION", '13.1');
 define("CURRENT_PHP_VERSION", "5.5");
 $gitsha1 = false;
 if(file_exists(FILE_PATH . ".git/refs/heads/master")){ //Found Git information!
