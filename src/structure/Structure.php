@@ -95,7 +95,8 @@ abstract class Structure{
 				return $this;
 		}
 		//var_dump($str);
-		return (clone $this)->setStructure($str, $this->width, $this->length);
+		$s = (clone $this);
+		return $s->setStructure($str, $this->width, $this->length);
 	}
 
 	private function setStructure($struct, $width, $length){
