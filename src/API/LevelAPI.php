@@ -139,10 +139,6 @@ class LevelAPI{
 				case "EXPERIMENTAL":
 					$generator = new ExperimentalGenerator($options);
 					break;
-				case "OLD":	
-					$generator = new TemporalGenerator();
-					ConsoleAPI::warn("You should not use OLD world type.");
-					break;
 				case "HELL":
 				case "NETHER":
 					$generator = new HellGenerator();
