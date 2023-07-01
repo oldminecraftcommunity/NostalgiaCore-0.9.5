@@ -246,7 +246,7 @@ class Level{
 	}
 
 	public function useChunk($X, $Z, Player $player){
-		//if($X > 15 || $X < 0 || $Z > 15 || $Z < 0) return; //TODO inf worlds
+		//ConsoleAPI::debug("$player uses $X $Z");
 		if(!isset($this->usedChunks[$X . "." . $Z])){
 			$this->usedChunks[$X . "." . $Z] = [];
 		}
@@ -390,6 +390,29 @@ class Level{
 		if(Entity::$updateOnTick && $server->ticks % 40 === 0){ //40 ticks delay
 			$this->mobSpawner->handle();
 		}
+		
+		if($this->generatorType !== 0){ //chunk unloading
+			foreach($this->usedChunks as $c => $eids){
+				$xz = explode(".", $c); //bad idea, TODO use better indexes
+				foreach($eids as $cid => $_){
+					$p = nullsafe($this->server->clients[$cid], false);
+					if($p instanceof Player){
+						$dist = abs($xz[0] - ($p->entity->x >> 4)) + abs($xz[1] - ($p->entity->z >> 4));
+						if($dist > 8){
+							//ConsoleAPI::debug("{$p->player} freeing chunk: {$xz[0]} {$xz[1]}");
+							$this->freeChunk($xz[0], $xz[1], $p);
+							$p->stopUsingChunk($xz[0], $xz[1]);
+						}
+					}
+				}
+				if(count($eids) <= 0){
+					$outcome = $this->unloadChunk($xz[0], $xz[1], true);
+					unset($this->usedChunks[$c]);
+					//ConsoleAPI::debug("Unloading: {$xz[0]} {$xz[1]}, status: $outcome");
+				}
+			}
+		}
+		
 	}
 	
 	public function setBlock(Vector3 $pos, Block $block, $update = true, $tiles = false, $direct = false){

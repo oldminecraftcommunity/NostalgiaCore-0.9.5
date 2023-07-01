@@ -54,7 +54,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 	
 	public function init(Level $level, Random $random){
 		$this->level = $level;
-		$this->random = $random;
+		$this->random = $random;//new MersenneTwister();
 		$this->random->setSeed($this->level->level->getSeed());
 		$this->noiseBase = new NoiseGeneratorPerlin($this->random, 4);
 		$this->selector = new BiomeSelector($this->random, BiomeSelector::$biomes[BIOME_PLAINS]);

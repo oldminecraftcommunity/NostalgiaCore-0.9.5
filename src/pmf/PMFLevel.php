@@ -219,7 +219,14 @@ class PMFLevel extends PMF{
 		$aZ = $z & 15;
 		$this->chunkInfo[$index][0][$aX + ($aZ << 4)] = chr($id);
 	}
-	
+	public function forceUnloadChunk($X, $Z, $save = true){
+		$X = (int) $X;
+		$Z = (int) $Z;
+		$index = $this->getIndex($X, $Z);
+		$this->chunks[$index] = null;
+		$this->chunkChange[$index] = null;
+		unset($this->chunks[$index], $this->chunkChange[$index]);
+	}
 	public function unloadChunk($X, $Z, $save = true){
 		$X = (int) $X;
 		$Z = (int) $Z;

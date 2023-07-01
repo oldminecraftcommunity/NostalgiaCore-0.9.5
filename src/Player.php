@@ -391,15 +391,21 @@ class Player{
 			$this->server->api->dhandle("player.armor", $data);
 		}
 	}
-
+	public function stopUsingChunk($X, $Z){
+		$ind = "$X:$Z";
+		if(isset($this->chunksLoaded[$ind])) unset($this->chunksLoaded[$ind]);
+		if(isset($this->chunksOrder[$ind])) unset($this->chunksOrder[$ind]);
+		
+		$this->dataPacket(new UnloadChunkPacket($X, $Z));
+	}
 	public function orderChunks(){
 		if(!($this->entity instanceof Entity) or $this->connected === false){
 			return false;
 		}
-		$X = $this->entity->x >> 4;
-		$Z = $this->entity->z >> 4;
+		$X = ((int)$this->entity->x) >> 4;
+		$Z = ((int)$this->entity->z) >> 4;
 		$this->chunksOrder = [];
-		if($this->level->generatorType != 0) $chunkToUnload = $this->chunksLoaded;
+		//if($this->level->generatorType != 0) $chunkToUnload = $this->chunksLoaded;
 		$startX = $this->level->generatorType === 1 ? $X - 4 : 0;
 		$stopX = $this->level->generatorType === 1 ? $X + 4 : 15;
 		$startZ = $this->level->generatorType === 1 ? $Z - 4 : 0;
@@ -407,15 +413,15 @@ class Player{
 		for($x = $startX; $x <= $stopX; ++$x){
 			for($z = $startZ; $z <= $stopZ; ++$z){
 				$d = $x . ":" . $z;
-				if($this->level->generatorType != 0) unset($chunkToUnload[$d]);
-				//if($x < 0 || $x > 15 || $z < 0 || $z > 15) continue; //TODO infinite worlds
+				//if($this->level->generatorType != 0) unset($chunkToUnload[$d]);
+				//if($x < 0 || $x > 15 || $z < 0 || $z > 15) continue; 
 				if(!isset($this->chunksLoaded[$d])){
 					$this->chunksOrder[$d] = abs($x - $X) + abs($z - $Z);
 				}
 			}
 		}
 		asort($this->chunksOrder);
-		arsort($chunkToUnload);
+		/*arsort($chunkToUnload);
 		if($this->level->generatorType != 0){
 			foreach($chunkToUnload as $chunk => $useless){
 				$chunkI = explode(":", $chunk);
@@ -426,7 +432,7 @@ class Player{
 				$this->level->freeChunk($cX, $cZ, $this);
 				$this->dataPacket(new UnloadChunkPacket($cX, $cZ));
 			}
-		}
+		}*/
 		
 		$this->reload = true;
 		
@@ -460,7 +466,7 @@ class Player{
 				}
 			}
 		}
-		
+		$this->stopUsingChunk($X, $Z); //just in case
 		$pk = new FullChunkDataPacket;
 		$pk->chunkX = $X;
 		$pk->chunkZ = $Z;
@@ -476,10 +482,7 @@ class Player{
 		if(count($this->chunksOrder) <= 0 && $this->level->generatorType != 0){
 			$this->orderChunks();
 		}
-		//if($this->reload && $this->level->generatorType != 0){
-			$this->getNextChunk($this->level);
-		//	$this->reload = false;
-		//}
+		$this->getNextChunk($this->level);
 	}
 	
 	public function getNextChunk($world){

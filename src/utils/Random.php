@@ -3,9 +3,9 @@
 //Unsecure, not used for "Real Randomness"
 class Random{
 
-	private $x, $y, $z, $w;
-	private $haveNextNextGaussian = false;
-	private $nextNextGaussian = 0;
+	public $x, $y, $z, $w;
+	public $haveNextNextGaussian = false;
+	public $nextNextGaussian = 0;
 
 	public function __construct($seed = false){
 		$this->setSeed($seed);
