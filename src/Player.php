@@ -415,6 +415,7 @@ class Player{
 			}
 		}
 		asort($this->chunksOrder);
+		arsort($chunkToUnload);
 		if($this->level->generatorType != 0){
 			foreach($chunkToUnload as $chunk => $useless){
 				$chunkI = explode(":", $chunk);

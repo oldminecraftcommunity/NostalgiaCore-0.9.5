@@ -1,7 +1,7 @@
 <?php
 
 abstract class Biome{
-	protected $id, $topBlocks, $fillerBlock, $name, $minY, $maxY;
+	public $id, $topBlocks, $fillerBlock, $name, $minY, $maxY;
 	public function __construct($id, $name){
 		$this->name = $name;
 		$this->id = $id;
@@ -45,6 +45,7 @@ abstract class Biome{
 	}
 	
 	public static function init(){
+		ConsoleAPI::debug("Init Biomes");
 		BiomeSelector::registerBiome(new BiomeExtremeHills(BIOME_EXTREME_HILLS, "Extreme Hills"));
 		BiomeSelector::registerBiome(new BiomePlains(BIOME_PLAINS, "Plains"));
 		BiomeSelector::registerBiome(new BiomeExtremeHillsEdge(BIOME_EXTREME_HILLS_EDGE, "Extreme Hills Edge"));
@@ -56,6 +57,7 @@ abstract class Biome{
 		BiomeSelector::registerBiome(new BiomeTaiga(BIOME_TAIGA, "Taiga"));
 		BiomeSelector::registerBiome(new BiomeForest(BIOME_FOREST, "Forest"));
 		BiomeSelector::registerBiome(new BiomeForest(BIOME_BIRCH_FOREST, "Birch Forest"));
+
 	}
 
 	private static $initialized = false;

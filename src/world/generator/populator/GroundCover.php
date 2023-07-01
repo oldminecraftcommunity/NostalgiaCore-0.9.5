@@ -36,13 +36,15 @@ class GroundCover extends Populator
 							break;
 						}
 						if($y <= $waterHeight and $b->getID() == GRASS and $level->level->getBlockID($pcx, $y + 1, $pcz) == STILL_WATER){
-							$b = BlockAPI::get(DIRT);
+							//$b = BlockAPI::get(DIRT);
+							$level->level->setBlock($pcx, $y, $pcz, DIRT, 0);
+							continue;
 						}
-						if($b->getMetadata() === 0){
-							$level->level->setBlockId($pcx, $y, $pcz, $b->getID());
-						}else{
-							$level->level->setBlock($pcx, $y, $pcz, $b->getID(), $b->getMetadata());
-						}
+						//if($b->getMetadata() === 0){
+						//	$level->level->setBlockId($pcx, $y, $pcz, $b->getID());
+						//}else{
+						$level->level->setBlock($pcx, $y, $pcz, $b->getID(), $b->getMetadata());
+						//}
 					}
 				}
 			}

@@ -26,10 +26,6 @@ abstract class NoiseGenerator{
 	protected $offsetY = 0;
 	protected $offsetZ = 0;
 	protected $octaves = 8;
-
-	public static function floor($x){
-		return $x >= 0 ? (int) $x : (int) ($x - 1);
-	}
 	
 	public static function fade($x){
 		return $x * $x * $x * ($x * ($x * 6 - 15) + 10);

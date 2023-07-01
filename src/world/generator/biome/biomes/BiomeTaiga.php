@@ -7,7 +7,7 @@ class BiomeTaiga extends BiomeWithSnow
 		
 		$this->setMinMax(63, 81);
 		$this->setTopBlocks([
-			[PODZOL, 0],
+			[GRASS, 0],
 			[DIRT, 0],
 			[DIRT, 0],
 			[DIRT, 0],

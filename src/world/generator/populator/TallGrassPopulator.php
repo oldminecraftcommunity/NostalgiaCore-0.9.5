@@ -42,12 +42,11 @@ class TallGrassPopulator extends Populator{
 				$xx = $x - 7 + $random->nextRange(0, 15);
 				$zz = $z - 7 + $random->nextRange(0, 15);
 				$yy = $this->getHighestWorkableBlock($xx, $zz);
-				$vector = new Vector3($xx, $yy, $zz);
-				if($yy !== -1 and $this->canTallGrassStay($this->level->getBlockRaw($vector))){
+				if($yy !== -1 and $this->canTallGrassStay($this->level->level->getBlockID($xx, $yy, $zz),$this->level->level->getBlockID($xx, $yy - 1, $zz))){
 					if(mt_rand(1,4) == 1){
-						$this->level->setBlockRaw($vector,  new TallGrassBlock(2));
+						$this->level->level->setBlock($xx, $yy, $zz, TALL_GRASS, 2);
 					}else{
-						$this->level->setBlockRaw($vector, new TallGrassBlock(1));
+						$this->level->level->setBlock($xx, $yy, $zz, TALL_GRASS, 1);
 					}
 					
 				}
@@ -55,14 +54,14 @@ class TallGrassPopulator extends Populator{
 		}
 	}
 	
-	private function canTallGrassStay(Block $block){
-		return $block->getID() === AIR and $block->getSide(0)->getID() === GRASS;
+	private function canTallGrassStay($id, $idbottom){
+		return $id === AIR and $idbottom === GRASS;
 	}
 	
 	private function getHighestWorkableBlock($x, $z){
 		for($y = 128; $y > 0; --$y){
-			$b = $this->level->getBlockRaw(new Vector3($x, $y, $z));
-			if($b->getID() === AIR or $b->getID() === LEAVES){
+			$b = $this->level->level->getBlockID($x, $y, $z);
+			if($b !== DIRT and $b !== GRASS){
 				if(--$y <= 0){
 					return -1;
 				}

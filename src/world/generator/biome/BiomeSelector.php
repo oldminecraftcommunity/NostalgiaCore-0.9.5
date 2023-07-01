@@ -25,8 +25,8 @@ class BiomeSelector
 	}
 	
 	public static function registerBiome(Biome $b){
-		//ConsoleAPI::debug("Registered $b");
-		self::$biomes[$b->getID()] = $b;
+		ConsoleAPI::debug("Registered $b");
+		self::$biomes[$b->id] = $b;
 	}
 	/**
 	 * @param int $id
@@ -81,11 +81,11 @@ class BiomeSelector
 	}
 	
 	public function getTemperature($x, $z){ //TODO cache
-		return ($this->temperature->noise2D($x * (1/512), $z * (1/512), 2, 1 / 16, true) + 1) / 2;
+		return ($this->temperature->noise2D($x * 0.001953125, $z * 0.001953125, 2, 0.0625, true) + 1) / 2;
 	}
 	
 	public function getRainfall($x, $z){
-		return ($this->rainfall->noise2D($x * (1/512), $z * (1/512), 2, 1 / 16, true) + 1) / 2;
+		return ($this->rainfall->noise2D($x * 0.001953125, $z * 0.001953125, 2, 0.0625, true) + 1) / 2;
 	}
 	
 	public function pickBiome($x, $z){

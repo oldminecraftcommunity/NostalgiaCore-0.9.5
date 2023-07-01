@@ -7,7 +7,7 @@ class Level{
 	 * 1 - Infinite
 	 * @var integer
 	 */
-	public $generatorType = 0;
+	public $generatorType = 1;
 	
 	/**
 	 * @var Config
@@ -447,7 +447,6 @@ class Level{
 		if(!isset($this->level)){
 			return false;
 		}
-		if(strlen($data) != 16384) console(strlen($data));
 		$this->changedCount[$X . ":" . $Y . ":" . $Z] = 4096;
 		if(ADVANCED_CACHE == true){
 			Cache::remove("world:{$this->name}:$X:$Z");
@@ -647,7 +646,7 @@ class Level{
 		if(!isset($this->level)){
 			return false;
 		}
-		return (int) $this->level->getData("seed");
+		return (int) $this->level->getSeed();
 	}
 
 	public function setSeed($seed){

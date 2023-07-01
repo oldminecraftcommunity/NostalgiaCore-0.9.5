@@ -167,7 +167,11 @@ class PMFLevel extends PMF{
 		}
 		return true;
 	}
-
+	
+	public function getSeed(){
+		return $this->levelData["seed"];
+	}
+	
 	public function getData($index){
 		if(!isset($this->levelData[$index])){
 			return false;
@@ -432,15 +436,13 @@ class PMFLevel extends PMF{
 		$Z = $z >> 4;
 		$Y = $y >> 4;
 		$index = $this->getIndex($X, $Z);
+		if(!isset($this->chunks[$index]) || $this->chunks[$index] === false || ($this->chunks[$index][$Y] === false)){
+			return 0;
+		}
 		$aX = $x & 0xf;
 		$aZ = $z & 0xf;
 		$aY = $y & 0xf;
-		
-		if(is_array($this->chunks) && isset($this->chunks[$index]) && is_array($this->chunks[$index]) && isset($this->chunks[$index][$Y]) && is_string($this->chunks[$index][$Y])){
-			$b = ord($this->chunks[$index][$Y][($aY + ($aX << 6) + ($aZ << 10))]);
-		}else{ //php8 fix
-			$b = 0;
-		}
+		$b = ord($this->chunks[$index][$Y][($aY + ($aX << 6) + ($aZ << 10))]);
 		
 		return $b;
 	}
@@ -478,14 +480,17 @@ class PMFLevel extends PMF{
 		$Z = $z >> 4;
 		$Y = $y >> 4;
 		$index = $this->getIndex($X, $Z);
+		if(!isset($this->chunks[$index]) || $this->chunks[$index] === false || ($this->chunks[$index][$Y] === false)){
+			return 0;
+		}
 		$aX = $x & 0xf;
 		$aZ = $z & 0xf;
 		$aY = $y & 0xf;
-		if(is_array($this->chunks) && isset($this->chunks[$index]) && is_array($this->chunks[$index]) && isset($this->chunks[$index][$Y]) && is_string($this->chunks[$index][$Y])){
-			$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 6) + ($aZ << 10))]);
-		}else{ //php8 fix
-			$m = 0;
-		}
+		//if(is_array($this->chunks) && isset($this->chunks[$index]) && is_array($this->chunks[$index]) && isset($this->chunks[$index][$Y]) && is_string($this->chunks[$index][$Y])){
+		$m = ord($this->chunks[$index][$Y][(int) (($aY >> 1) + 16 + ($aX << 6) + ($aZ << 10))]);
+		//}else{ //php8 fix
+		//	$m = 0;
+		//}
 		
 		if(($y & 1) === 0){
 			$m = $m & 0x0F;
@@ -540,20 +545,21 @@ class PMFLevel extends PMF{
 			if($this->loadChunk($X, $Z) === false){
 				return [AIR, 0];
 			}
-		}elseif($this->chunks[$index][$Y] === false){
+		}
+		if($this->chunks[$index][$Y] === false){
 			return [AIR, 0];
 		}
 		$aX = $x & 0xf;
 		$aZ = $z & 0xf;
 		$aY = $y & 0xf;
 		#Need to fix. But idk how.
-		if(is_array($this->chunks) && is_array($this->chunks[$index]) && is_string($this->chunks[$index][$Y])){ //PHP8 warn fix
+		//if(is_array($this->chunks) && is_array($this->chunks[$index]) && is_string($this->chunks[$index][$Y])){ //PHP8 warn fix
 			$b = ord($this->chunks[$index][$Y][($aY + ($aX << 6) + ($aZ << 10))]);
 			$m = ord($this->chunks[$index][$Y][(($aY >> 1) + 16 + ($aX << 6) + ($aZ << 10))]);
-		}else{
-			$b = 0;
-			$m = 0;
-		}
+		//}else{
+		//	$b = 0;
+		//	$m = 0;
+		//}
 
 		if(($y & 1) === 0){
 			$m = $m & 0x0F;

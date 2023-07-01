@@ -61,9 +61,9 @@ class NoiseGeneratorPerlin extends NoiseGenerator{
 		$y += $this->offsetY;
 		$z += $this->offsetZ;
 		
-		$floorX = self::floor($x);
-		$floorY = self::floor($y);
-		$floorZ = self::floor($z);
+		$floorX = floor($x); //normal floor is faster
+		$floorY = floor($y);
+		$floorZ = floor($z);
 		
 		$X = $floorX & 0xFF;
 		$Y = $floorY & 0xFF;
@@ -86,14 +86,16 @@ class NoiseGeneratorPerlin extends NoiseGenerator{
 		$BA = $this->perm[$B] + $Z;
 		$BB = $this->perm[$B + 1] + $Z;
 		
-		return self::lerp($fZ, self::lerp($fY, self::lerp($fX, self::grad($this->perm[$AA], $x, $y, $z),
-			self::grad($this->perm[$BA], $x - 1, $y, $z)),
-			self::lerp($fX, self::grad($this->perm[$AB], $x, $y - 1, $z),
-				self::grad($this->perm[$BB], $x - 1, $y - 1, $z))),
-			self::lerp($fY, self::lerp($fX, self::grad($this->perm[$AA + 1], $x, $y, $z - 1),
-				self::grad($this->perm[$BA + 1], $x - 1, $y, $z - 1)),
-				self::lerp($fX, self::grad($this->perm[$AB + 1], $x, $y - 1, $z - 1),
-					self::grad($this->perm[$BB + 1], $x - 1, $y - 1, $z - 1))));
+		return self::lerp($fZ, 
+			self::lerp($fY, 
+				self::lerp($fX, self::grad($this->perm[$AA], $x, $y, $z), self::grad($this->perm[$BA], $x - 1, $y, $z)), 
+				self::lerp($fX, self::grad($this->perm[$AB], $x, $y - 1, $z), self::grad($this->perm[$BB], $x - 1, $y - 1, $z))
+			), 
+			self::lerp($fY, 
+				self::lerp($fX, self::grad($this->perm[$AA + 1], $x, $y, $z - 1), self::grad($this->perm[$BA + 1], $x - 1, $y, $z - 1)), 
+				self::lerp($fX, self::grad($this->perm[$AB + 1], $x, $y - 1, $z - 1), self::grad($this->perm[$BB + 1], $x - 1, $y - 1, $z - 1))
+			)
+		);
 	}
 	
 	public function getNoise2D($x, $y){

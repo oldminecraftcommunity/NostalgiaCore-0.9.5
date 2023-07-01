@@ -12,7 +12,7 @@ class OrePopulator extends Populator{
 				$y = $random->nextRange($ore->type->minHeight, $ore->type->maxHeight);
 				$z = $random->nextRange($chunkZ << 4, ($chunkZ << 4) + 16);
 				if($ore->canPlaceObject($level, $x, $y, $z)){
-					$ore->placeObject($level, new Vector3($x, $y, $z));
+					$ore->placeObject($level, $x, $y, $z);
 				}
 			}
 		}

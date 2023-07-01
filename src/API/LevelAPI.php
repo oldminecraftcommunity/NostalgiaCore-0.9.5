@@ -141,10 +141,10 @@ class LevelAPI{
 					break;
 				case "HELL":
 				case "NETHER":
-					$generator = new HellGenerator();
+					$generator = new HellGenerator($options);
 					break;
 				case "END":
-					$generator = new EndGenerator();
+					$generator = new EndGenerator($options);
 					break;
 				default:
 					$generator = new NormalGenerator($options);
