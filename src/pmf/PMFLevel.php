@@ -12,6 +12,8 @@ class PMFLevel extends PMF{
 	private $chunks = [];
 	private $chunkChange = [];
 	public $chunkInfo = [];
+	public $placeBlocksOnNextGen = [];
+	
 	public function __construct($file, $blank = false){
 		if(is_array($blank)){
 			$this->create($file, 0);
@@ -600,7 +602,8 @@ class PMFLevel extends PMF{
 			if($this->loadChunk($X, $Z) === false){
 				return false;
 			}
-		}elseif($this->chunks[$index][$Y] === false){
+		}
+		if($this->chunks[$index][$Y] === false){
 			$this->fillMiniChunk($X, $Z, $Y);
 		}
 		$aX = $x - ($X << 4);

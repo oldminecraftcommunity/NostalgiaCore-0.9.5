@@ -74,9 +74,9 @@ class NoiseGeneratorPerlin extends NoiseGenerator{
 		$z -= $floorZ;
 		
 		//Fade curves
-		$fX = self::fade($x);
-		$fY = self::fade($y);
-		$fZ = self::fade($z);
+		$fX = $x * $x * $x * ($x * ($x * 6 - 15) + 10);
+		$fY = $y * $y * $y * ($y * ($y * 6 - 15) + 10);
+		$fZ = $z * $z * $z * ($z * ($z * 6 - 15) + 10);
 		
 		//Cube corners
 		$A = $this->perm[$X] + $Y;

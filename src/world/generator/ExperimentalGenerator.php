@@ -103,10 +103,11 @@ class ExperimentalGenerator implements NewLevelGenerator{
 	
 	public function generateChunk($chunkX, $chunkZ){
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->level->getSeed());
+		
 		$noiseArray = ExperimentalGenerator::getFastNoise3D($this->noiseBase, 16, 128, 16, 4, 8, 4, $chunkX * 16, 0, $chunkZ * 16);
 		
 		$biomeCache = [];
-		
+		$t = microtime(true);
 		for($chunkY = 0; $chunkY < 8; ++$chunkY){
 			$chunk = "";
 			$startY = $chunkY << 4;
@@ -171,6 +172,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
 		
+		
 		foreach($this->genPopulators as $pop){
 			$pop->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
@@ -196,7 +198,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 		for($xx = 0; $xx < $xSize; ++$xx){
 			for($zz = 0; $zz < $zSize; ++$zz){
 				for($yy = 0; $yy < $ySize; ++$yy){
-					if($xx % $xSamplingRate !== 0 or $zz % $zSamplingRate !== 0 or $yy % $ySamplingRate !== 0){
+					if($xx % $xSamplingRate != 0 or $zz % $zSamplingRate != 0 or $yy % $ySamplingRate != 0){
 						$nx = (int) ($xx / $xSamplingRate) * $xSamplingRate;
 						$ny = (int) ($yy / $ySamplingRate) * $ySamplingRate;
 						$nz = (int) ($zz / $zSamplingRate) * $zSamplingRate;
@@ -215,7 +217,8 @@ class ExperimentalGenerator implements NewLevelGenerator{
 								$dy1 * ($dx1 * $noiseArray[$nx][$nz][$ny] + $dx2 * $noiseArray[$nnx][$nz][$ny]) + 
 								$dy2 * ($dx1 * $noiseArray[$nx][$nz][$nny] + $dx2 * $noiseArray[$nnx][$nz][$nny])
 							) + 
-							(($zz - $nz) / ($nnz - $nz)) * (
+							(($zz - $nz) / ($nnz - $nz)) * 
+							(
 								$dy1 * ($dx1 * $noiseArray[$nx][$nnz][$ny] + $dx2 * $noiseArray[$nnx][$nnz][$ny]) + 
 								$dy2 * ($dx1 * $noiseArray[$nx][$nnz][$nny] + $dx2 * $noiseArray[$nnx][$nnz][$nny])
 							);
