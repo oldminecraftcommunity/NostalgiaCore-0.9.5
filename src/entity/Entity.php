@@ -135,8 +135,8 @@ class Entity extends Position
 				$this->player = $this->data["player"];
 				$this->setHealth($this->health, "generic");
 				$this->speedModifer = 1;
-				$this->width = 1.4;
-				$this->height = 1.9;
+				$this->width = 0.6;
+				$this->height = 1.8;
 				$this->hasKnockback = true;
 				$this->hasGravity = true;
 				$this->canBeAttacked = true;
@@ -418,6 +418,24 @@ class Entity extends Position
 		$endX = ceil($this->boundingBox->maxX);
 		$endY = ceil($this->boundingBox->maxY);
 		$endZ = ceil($this->boundingBox->maxZ);
+		
+		for($i = 0; $i < 8; ++$i){
+			$x = ((($i >> 0) % 2) - 0.5) * $this->width * 0.8;
+			$y= ((($i >> 1) % 2) - 0.5) * 0.1;
+			$z = ((($i >> 2) % 2) - 0.5) * $this->width * 0.8;
+			
+			$blockX = floor($this->x + $x);
+			$blockY = floor($this->y + $this->getEyeHeight() + $y);
+			$blockZ = floor($this->z + $z);
+			
+			if($this->level->getBlockWithoutVector($blockX, $blockY, $blockZ)->isSolid){
+				$this->harm(1, "suffocation"); // Suffocation
+				$hasUpdate = true;
+				break;
+			}
+		}
+		
+		
 		$waterDone = false;
 		for ($y = $startY; $y <= $endY; ++$y){
 			for ($x = $startX; $x <= $endX; ++$x){
@@ -463,14 +481,6 @@ class Entity extends Position
 							if ($this->touchingBlock($pos)) {
 								$this->harm(1, "cactus");
 								$hasUpdate = true;
-							}
-							break;
-						default:
-							if ($this->inBlock($pos, $this->radius) and $y == $endY and !$b->isTransparent and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER)) {
-								$this->harm(1, "suffocation"); // Suffocation
-								$hasUpdate = true;
-							} elseif ($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1)) {
-								$this->air = 200; // Breathing
 							}
 							break;
 					}
