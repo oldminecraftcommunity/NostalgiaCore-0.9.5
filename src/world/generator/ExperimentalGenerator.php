@@ -121,7 +121,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 					$this->level->level->setBiomeId(($chunkX << 4) + $x, ($chunkZ << 4) + $z, $biome->id);
 					for($sx = -ExperimentalGenerator::$SMOOTH_SIZE; $sx <= ExperimentalGenerator::$SMOOTH_SIZE; ++$sx){
 						for($sz = -ExperimentalGenerator::$SMOOTH_SIZE; $sz <= ExperimentalGenerator::$SMOOTH_SIZE; ++$sz){
-							$weight = ExperimentalGenerator::$GAUSSIAN_KERNEL[0][0];
+							$weight = ExperimentalGenerator::$GAUSSIAN_KERNEL[$sx + ExperimentalGenerator::$SMOOTH_SIZE][$sz + ExperimentalGenerator::$SMOOTH_SIZE];
 							
 							if($sx === 0 and $sz === 0){
 								$adjacent = $biome;
