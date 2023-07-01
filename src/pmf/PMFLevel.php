@@ -46,10 +46,11 @@ class PMFLevel extends PMF{
 		for($X = 0; $X < 16; ++$X){
 			for($Z = 0; $Z < 16; ++$Z){
 				$index = $this->getIndex($X, $Z);
-				$this->chunks[$index] = false;
-				$this->chunkChange[$index] = false;
-				$this->locationTable[$index] = [0 => 0,];
-				$this->write(Utils::writeShort(0));
+				$this->initCleanChunk($X, $Z);
+				//$this->chunks[$index] = false;
+				//$this->chunkChange[$index] = false;
+				//$this->locationTable[$index] = [0 => 0,];
+				//$this->write(Utils::writeShort(0));
 				//$X = $Z = null;
 				//$this->getXZ($index, $X, $Z);
 				@file_put_contents($this->getChunkPath($X, $Z), gzdeflate("", PMF_LEVEL_DEFLATE_LEVEL));
@@ -84,7 +85,7 @@ class PMFLevel extends PMF{
 		$this->payloadOffset = ftell($this->fp);
 
 		if($locationTable !== false){
-			$this->writeLocationTable();
+			//$this->writeLocationTable();
 		}
 	}
 
@@ -152,19 +153,20 @@ class PMFLevel extends PMF{
 	}
 
 	private function readLocationTable(){
-		$this->locationTable = [];
+		//$this->locationTable = [];
 		//$cnt = pow($this->levelData["width"], 2);
-		$this->seek($this->payloadOffset);
+		//$this->seek($this->payloadOffset);
 		for($X = 0; $X < 16; ++$X){
 			for($Z = 0; $Z < 16; ++$Z){
 				$index = $this->getIndex($X, $Z);
 				$this->chunks[$index] = false;
 				$this->chunkChange[$index] = false;
-				$this->locationTable[$index] = [
-					0 => Utils::readShort($this->read(2)), //16 bit flags
-				];
+				//$this->locationTable[$index] = [
+				//	0 => Utils::readShort($this->read(2)), //16 bit flags
+				//];
 			}
 		}
+		//var_dump($this->locationTable);
 		return true;
 	}
 	
@@ -267,24 +269,28 @@ class PMFLevel extends PMF{
 
 		$chunk = @gzopen($this->getChunkPath($X, $Z), "wb" . PMF_LEVEL_DEFLATE_LEVEL);
 		$bitmap = 0;
+		for($Y = 0; $Y < 8; ++$Y){
+			$bitmap |= ($this->chunks[$index][$Y] !== false and ((isset($this->chunkChange[$index][$Y]) and $this->chunkChange[$index][$Y] === 0) or !$this->isMiniChunkEmpty($X, $Z, $Y))) << $Y;
+		}
+		gzwrite($chunk, Utils::writeShort($bitmap), 2); //2 bytes locmap
 		$biomedata = $this->chunkInfo[$index][0];
 		if(strlen($biomedata) < 256){
 			$biomedata = str_repeat("\x01", 256);
 		}
+		
 		gzwrite($chunk, $biomedata);
-		for($Y = 0; $Y < $this->levelData["height"]; ++$Y){
+		for($Y = 0; $Y < 8; ++$Y){
 			if($this->chunks[$index][$Y] !== false and ((isset($this->chunkChange[$index][$Y]) and $this->chunkChange[$index][$Y] === 0) or !$this->isMiniChunkEmpty($X, $Z, $Y))){
 				gzwrite($chunk, $this->chunks[$index][$Y]);
-				$bitmap |= 1 << $Y;
 			}else{
 				$this->chunks[$index][$Y] = false;
 			}
 			$this->chunkChange[$index][$Y] = 0;
 		}
 		$this->chunkChange[$index][-1] = false;
-		$this->locationTable[$index][0] = $bitmap;
-		$this->seek($this->payloadOffset + ($index << 1));
-		$this->write(Utils::writeShort($this->locationTable[$index][0]));
+		//$this->locationTable[$index][0] = $bitmap;
+		//$this->seek($this->payloadOffset + ($index << 1));
+		//$this->write(Utils::writeShort($this->locationTable[$index][0]));
 		return true;
 	}
 
@@ -311,7 +317,7 @@ class PMFLevel extends PMF{
 	
 	public function generateChunk($X, $Z, LevelGenerator $generator){
 		$index = $this->getIndex($X, $Z);
-		if(isset($this->locationTable[$index])){
+		if(isset($this->chunks[$index])){
 			return false;
 		}
 		$this->initCleanChunk($X, $Z);
@@ -333,19 +339,23 @@ class PMFLevel extends PMF{
 		if($this->isChunkLoaded($X, $Z)){
 			return true;
 
-		}elseif(!isset($this->locationTable[$index])){
-			return false;
-		}
+		}//elseif(!isset($this->locationTable[$index])){
+		//	return false;
+		//}
 
-		$info = $this->locationTable[$index];
-		$this->seek($info[0]);
+		//$info = $this->locationTable[$index];
+		//$this->seek($info[0]);
 		$cp = $this->getChunkPath($X, $Z);
+		if(!is_file($cp)) return false;
 		$chunk = file_get_contents($cp);
 		if($chunk === false){
 			return false;
 		}
 		$chunk = zlib_decode($chunk);
 		$offset = 0;
+		if(strlen($chunk) === 0) return false;
+		$info = [0 => Utils::readShort(substr($chunk, $offset, 2))];
+		$offset+=2;
 		$this->chunks[$index] = [];
 		$this->chunkChange[$index] = [-1 => false];
 		$this->chunkInfo[$index][0] = substr($chunk, $offset, 256); //Biome data
