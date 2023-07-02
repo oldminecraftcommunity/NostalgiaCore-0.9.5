@@ -64,7 +64,6 @@ class NormalGenerator implements NewLevelGenerator{
 	public function generateChunk($chunkX, $chunkZ){
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 		$hills = array();
-		$patchesSmall = array();
 		$base = array();
 		for($z = 0; $z < 16; ++$z){
 			for($x = 0; $x < 16; ++$x){
@@ -137,7 +136,6 @@ class NormalGenerator implements NewLevelGenerator{
 			$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, str_repeat(chr(BIOME_PLAINS), 256));
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
-		
 	}
 	
 	public function populateChunk($chunkX, $chunkZ){

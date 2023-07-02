@@ -387,7 +387,7 @@ class PMFLevel extends PMF{
 		$this->chunks[$index][$Y] = str_repeat("\x00", 16384);
 		$this->chunkChange[$index][-1] = true;
 		$this->chunkChange[$index][$Y] = 16384;
-		$this->locationTable[$index][0] |= 1 << $Y;
+		//$this->locationTable[$index][0] |= 1 << $Y;
 		$this->chunkInfo[$index][0] = str_repeat("\x00", 256);
 		return true;
 	}

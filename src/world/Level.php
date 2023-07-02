@@ -377,7 +377,7 @@ class Level{
 	
 	public function onTick(PocketMinecraftServer $server){
 		//$ents = $server->api->entity->getAll($this);
-		if(!$this->stopTime) ++$this->time;
+		if(!$this->stopTime) $this->time+=2;
 		foreach($this->entityList as $k => $e){
 			if(!($e instanceof Entity)){
 				unset($this->entityList[$k]);
@@ -629,7 +629,7 @@ class Level{
 	}
 
 	public function checkTime(){
-		if(!isset($this->level)){
+		/*if(!isset($this->level)){
 			return false;
 		}
 		$now = microtime(true);
@@ -642,11 +642,16 @@ class Level{
 			$this->time = $time;
 			$pk = new SetTimePacket;
 			$pk->time = (int) $this->time;
+			console($pk->time);
 			$pk->started = $this->stopTime == false;
 			$this->server->api->player->broadcastPacket($this->players, $pk);
 		}else{
 			$this->time -= 20 * 13;
-		}
+		}*/
+		$pk = new SetTimePacket;
+		$pk->time = (int) $this->time;
+		$pk->started = $this->stopTime == false;
+		$this->server->api->player->broadcastPacket($this->players, $pk);
 	}
 	
 	public function isTimeStopped(){
