@@ -602,7 +602,7 @@ class PMFLevel extends PMF{
 			if($this->loadChunk($X, $Z) === false){
 				return false;
 			}
-		}
+		}else
 		if($this->chunks[$index][$Y] === false){
 			$this->fillMiniChunk($X, $Z, $Y);
 		}
