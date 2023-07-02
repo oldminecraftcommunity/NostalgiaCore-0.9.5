@@ -35,7 +35,7 @@ class Level{
 		$this->nextSave += 90;
 		$this->stopTime = false;
 		$this->server->schedule(15, [$this, "checkThings"], [], true);
-		$this->server->schedule(20 * 13, [$this, "checkTime"], [], true);
+		$this->server->schedule(20 * 7, [$this, "checkTime"], [], true);
 		$this->name = $name;
 		$this->usedChunks = [];
 		$this->changedBlocks = [];

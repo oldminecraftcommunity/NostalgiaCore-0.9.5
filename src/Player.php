@@ -1314,7 +1314,7 @@ class Player{
 					$this->close("server is full!", false);
 					return;
 				}
-				if($packet->protocol1 !== ProtocolInfo::CURRENT_PROTOCOL){
+				if($packet->protocol1 !== 17 && $packet->protocol1 !== ProtocolInfo::CURRENT_PROTOCOL){
 					if($packet->protocol1 < ProtocolInfo::CURRENT_PROTOCOL){
 						$pk = new LoginStatusPacket;
 						$pk->status = 1;
