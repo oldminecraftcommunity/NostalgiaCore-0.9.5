@@ -1490,8 +1490,8 @@ class Player{
 				$this->server->api->entity->spawnAll($this);
 				$this->server->api->entity->spawnToAll($this->entity);
 
-				$this->server->schedule(5, [$this->entity, "update"], [], true);
-				$this->server->schedule(2, [$this->entity, "updateMovement"], [], true);
+				//$this->server->schedule(5, [$this->entity, "update"], [], true);
+				//$this->server->schedule(2, [$this->entity, "updateMovement"], [], true);
 				//$this->sendArmor();
 				$array = explode("@n", (string)$this->server->motd);
 				foreach($array as $msg){
@@ -1507,11 +1507,6 @@ class Player{
 				
 				//$this->loadAllChunks();
 				$this->blocked = false;
-				$this->spawned = true;
-				$this->server->handle("player.spawn", $this);
-				$this->server->api->chat->broadcast($this->username." joined the game");
-				$this->server->api->player->spawnAllPlayers($this);
-				$this->server->api->player->spawnToAllPlayers($this);
 				break;
 			case ProtocolInfo::ROTATE_HEAD_PACKET:
 				if($this->spawned === false){
@@ -1529,7 +1524,11 @@ class Player{
 				break;
 			case ProtocolInfo::MOVE_PLAYER_PACKET:
 				if($this->spawned === false){
-					break;
+					$this->spawned = true;
+					$this->server->handle("player.spawn", $this);
+					$this->server->api->chat->broadcast($this->username." joined the game");
+					$this->server->api->player->spawnAllPlayers($this);
+					$this->server->api->player->spawnToAllPlayers($this);
 				}
 				if(($this->entity instanceof Entity) and $packet->messageIndex > $this->lastMovement){
 					$this->lastMovement = $packet->messageIndex;

@@ -715,6 +715,8 @@ class Entity extends Position
 				if($this->speed <= 9 or ($this->speed <= 20 and ($this->player->gamemode & 0x01) === 0x01)){
 					$this->player->lastCorrect = new Vector3($this->last[0], $this->last[1], $this->last[2]);
 				}
+				
+				$hasUpdate = true;
 			}
 		}
 		if($this->knockbackTime > 0){
