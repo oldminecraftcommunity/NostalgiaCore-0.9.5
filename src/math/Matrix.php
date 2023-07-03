@@ -21,23 +21,19 @@ class Matrix implements ArrayAccess{
 		}
 	}
 	
-	#[\ReturnTypeWillChange]
-	public function offsetExists($offset){ 
+	public function offsetExists(mixed $offset): mixed{ 
 		return isset($this->matrix[(int) $offset]);
 	}
 
-	#[\ReturnTypeWillChange]
-	public function offsetGet($offset){
+	public function offsetGet(mixed $offset): mixed{
 		return $this->matrix[(int) $offset];
 	}
 
-	#[\ReturnTypeWillChange]
-	public function offsetSet($offset, $value){
+	public function offsetSet(mixed $offset, mixed $value): mixed{
 		$this->matrix[(int) $offset] = $value;
 	}
 
-	#[\ReturnTypeWillChange]
-	public function offsetUnset($offset){
+	public function offsetUnset(mixed $offset): mixed{
 		unset($this->matrix[(int) $offset]);
 	}
 
