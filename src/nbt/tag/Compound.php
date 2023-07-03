@@ -28,7 +28,7 @@ class Compound extends NamedTag implements \ArrayAccess{
 		}
 	}
 
-	public function offsetExists(mixed $offset): mixed{
+	public function offsetExists(mixed $offset): bool{
 		return isset($this->{$offset});
 	}
 
@@ -44,7 +44,7 @@ class Compound extends NamedTag implements \ArrayAccess{
 		return null;
 	}
 
-	public function offsetSet(mixed $offset, mixed $value): mixed{
+	public function offsetSet(mixed $offset, mixed $value): void{
 		if($value instanceof Tag){
 			$this->{$offset} = $value;
 		}elseif(isset($this->{$offset}) and $this->{$offset} instanceof Tag){
@@ -52,7 +52,7 @@ class Compound extends NamedTag implements \ArrayAccess{
 		}
 	}
 
-	public function offsetUnset(mixed $offset): mixed{
+	public function offsetUnset(mixed $offset): void{
 		unset($this->{$offset});
 	}
 

@@ -21,7 +21,7 @@ class Matrix implements ArrayAccess{
 		}
 	}
 	
-	public function offsetExists(mixed $offset): mixed{ 
+	public function offsetExists(mixed $offset): bool{ 
 		return isset($this->matrix[(int) $offset]);
 	}
 
@@ -29,11 +29,11 @@ class Matrix implements ArrayAccess{
 		return $this->matrix[(int) $offset];
 	}
 
-	public function offsetSet(mixed $offset, mixed $value): mixed{
+	public function offsetSet(mixed $offset, mixed $value): void{
 		$this->matrix[(int) $offset] = $value;
 	}
 
-	public function offsetUnset(mixed $offset): mixed{
+	public function offsetUnset(mixed $offset): void{
 		unset($this->matrix[(int) $offset]);
 	}
 

@@ -173,7 +173,7 @@ class PMFLevel extends PMF{
 		return true;
 	}
 	
-	public function getSeed(){
+	public function getSeed(): int{
 		return $this->levelData["seed"];
 	}
 	

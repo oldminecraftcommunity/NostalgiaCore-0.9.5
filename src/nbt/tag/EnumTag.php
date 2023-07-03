@@ -40,7 +40,7 @@ class EnumTag extends NamedTag implements \ArrayAccess, \Countable{
 		return $value;
 	}
 
-	public function offsetExists(mixed $offset): mixed{
+	public function offsetExists(mixed $offset): bool{
 		return isset($this->{$offset});
 	}
 
@@ -56,7 +56,7 @@ class EnumTag extends NamedTag implements \ArrayAccess, \Countable{
 		return null;
 	}
 
-	public function offsetSet(mixed $offset, mixed $value): mixed{
+	public function offsetSet(mixed $offset, mixed $value): void{
 		if($value instanceof Tag){
 			$this->{$offset} = $value;
 		}elseif($this->{$offset} instanceof Tag){
@@ -64,11 +64,11 @@ class EnumTag extends NamedTag implements \ArrayAccess, \Countable{
 		}
 	}
 
-	public function offsetUnset(mixed $offset): mixed{
+	public function offsetUnset(mixed $offset): void{
 		unset($this->{$offset});
 	}
 
-	public function count(mixed $mode = COUNT_NORMAL): mixed{
+	public function count(mixed $mode = COUNT_NORMAL): int{
 		for($i = 0; true; $i++){
 			if(!isset($this->{$i})){
 				return $i;
