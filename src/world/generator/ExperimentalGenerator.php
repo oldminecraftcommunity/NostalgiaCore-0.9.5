@@ -90,8 +90,8 @@ class ExperimentalGenerator implements NewLevelGenerator{
 	public function pickBiome(int $x, int $z){
 		$hash = $x * 2345803 ^ $z * 9236449 ^ $this->level->level->getSeed();
 		$hash *= $hash + 223;
-		$xNoise = $hash >> 20 & 3;
-		$zNoise = $hash >> 22 & 3;
+		$xNoise = ((int)$hash) >> 20 & 3; //why dont u have types for local variables??
+		$zNoise = ((int)$hash) >> 22 & 3;
 		if($xNoise == 3){
 			$xNoise = 1;
 		}

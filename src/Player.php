@@ -67,7 +67,7 @@ class Player{
 	private $packetStats;
 	private $chunkCount = [];
 	private $received = [];
-
+	public $cratingItems;
 	/**
 	 * @param integer $clientID
 	 * @param string $ip
@@ -1274,7 +1274,6 @@ class Player{
 		if(EventHandler::callEvent(new DataPacketReceiveEvent($this, $packet)) === BaseEvent::DENY){
 			return;
 		}
-		console($packet->pid());
 		switch($packet->pid()){
 			case 0x01:
 				break;
