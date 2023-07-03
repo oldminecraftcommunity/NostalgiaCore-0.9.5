@@ -18,7 +18,7 @@ class Level{
 	 * @var Entity[]
 	 */
 	public $entityList;
-	public $tiles, $blockUpdates, $nextSave, $players = [], $level;
+	public $tiles, $blockUpdates, $nextSave, $players = [], $level, $mobSpawner;
 	private $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
 	
 	private $generator;
@@ -397,7 +397,7 @@ class Level{
 				foreach($eids as $cid => $_){
 					$p = $this->server->clients[$cid] ?? false;
 					if($p instanceof Player){
-						$dist = abs($xz[0] - ($p->entity->x >> 4)) + abs($xz[1] - ($p->entity->z >> 4));
+						$dist = abs($xz[0] - (((int)$p->entity->x) >> 4)) + abs($xz[1] - (((int)$p->entity->z) >> 4));
 						if($dist > 8){
 							//ConsoleAPI::debug("{$p->player} freeing chunk: {$xz[0]} {$xz[1]}");
 							$this->freeChunk($xz[0], $xz[1], $p);

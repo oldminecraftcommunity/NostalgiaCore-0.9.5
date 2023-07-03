@@ -9,7 +9,7 @@ class PocketMinecraftServer{
 	 */
 	public $api;
 	private $serverip, $evCnt, $handCnt, $events, $eventsID, $handlers, $serverType, $lastTick, $memoryStats, $async = [], $asyncID = 0;
-
+	public $levelData, $doTick, $difficulty, $tiles, $entities, $schedule, $scheduleCnt, $whitelist, $spawn, $asyncThread, $stop;
 	function __construct($name, $gamemode = SURVIVAL, $seed = false, $port = 19132, $serverip = "0.0.0.0"){
 		$this->port = (int) $port;
 		$this->doTick = true;

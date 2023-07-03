@@ -4,6 +4,7 @@
 class Random{
 
 	public $x, $y, $z, $w;
+	public $i, $j, $state;
 	public $haveNextNextGaussian = false;
 	public $nextNextGaussian = 0;
 

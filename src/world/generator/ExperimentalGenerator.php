@@ -10,28 +10,28 @@ class ExperimentalGenerator implements NewLevelGenerator{
 	/**
 	 * @var Populator[]
 	 */
-	private $populators = array();
+	public $populators = array();
 	/**
 	 * @var Populator[]
 	 */
-	private $genPopulators = array();
-	private $level;
-	private $random;
-	private $waterHeight = 63;
-	private $noiseHills;
-	private $noisePatches;
-	private $noisePatchesSmall;
-	private $noiseBase;
+	public $genPopulators = array();
+	public $level;
+	public $random;
+	public $waterHeight = 63;
+	public $noiseHills;
+	public $noisePatches;
+	public $noisePatchesSmall;
+	public $noiseBase;
+	public $selector;
 	
-	
-	private static $GAUSSIAN_KERNEL = null;
-	private static $SMOOTH_SIZE = 2;
+	public static $GAUSSIAN_KERNEL = null;
+	public static $SMOOTH_SIZE = 2;
 	
 	public function __construct(array $options = array()){
 		ExperimentalGenerator::generateKernel();
 	}
 	
-	private static function generateKernel(){
+	public static function generateKernel(){
 		ExperimentalGenerator::$GAUSSIAN_KERNEL = [];
 		
 		$bellSize = 1 / ExperimentalGenerator::$SMOOTH_SIZE;
@@ -88,10 +88,10 @@ class ExperimentalGenerator implements NewLevelGenerator{
 	}
 	
 	public function pickBiome($x, $z){
-		$hash = $x * 2345803 ^ $z * 9236449 ^ $this->level->level->getSeed();
+		$hash = (int) ($x * 2345803 ^ $z * 9236449 ^ $this->level->level->getSeed());
 		$hash *= $hash + 223;
-		$xNoise = $hash >> 20 & 3;
-		$zNoise = $hash >> 22 & 3;
+		$xNoise = ((int)$hash) >> 20 & 3;
+		$zNoise = ((int)$hash) >> 22 & 3;
 		if($xNoise == 3){
 			$xNoise = 1;
 		}

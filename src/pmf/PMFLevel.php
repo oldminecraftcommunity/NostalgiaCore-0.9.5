@@ -5,6 +5,7 @@ define("PMF_CURRENT_LEVEL_VERSION", 0x01);
 class PMFLevel extends PMF{
 
 	public $isLoaded = true;
+	public $level;
 	public $levelData = [];
 	private $locationTable = [];
 	private $log = 4;

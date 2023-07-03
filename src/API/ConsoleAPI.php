@@ -3,7 +3,7 @@
 class ConsoleAPI{
 
 	private $loop, $server, $event, $help, $cmds, $alias;
-
+	public $last;
 	function __construct(){
 		$this->help = [];
 		$this->cmds = [];

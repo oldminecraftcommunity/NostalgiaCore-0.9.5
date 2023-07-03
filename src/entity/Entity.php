@@ -7,7 +7,7 @@ class Entity extends Position
 	const CLASS_TYPE = - 1;
 	
 	public $counter = 0;
-	
+	public $invincible, $status, $health, $fire, $crouched, $position, $meta, $stack;
 	public static $updateOnTick, $allowedAI;
 	public $isCollidable;
 	public $canBeAttacked;
