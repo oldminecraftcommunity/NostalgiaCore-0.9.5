@@ -444,7 +444,7 @@ class PMFLevel extends PMF{
 		$X = $x >> 4;
 		$Z = $z >> 4;
 		$index = $this->getIndex($X, $Z);
-		return nullsafe($this->chunks[$index], 0);
+		return $this->chunks[$index] ?? 0;
 	}
 	
 	public function getBlockID($x, $y, $z){

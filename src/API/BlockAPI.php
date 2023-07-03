@@ -339,10 +339,10 @@ class BlockAPI{
 				}
 				break;
 			case "give":
-				$player = $this->server->api->player->get(nullsafe($args[0], ""));
+				$player = $this->server->api->player->get($args[0] ?? "");
 				
 				if($player instanceof Player){			
-					$item = self::fromString(nullsafe($args[1], ""));
+					$item = self::fromString($args[1] ?? "");
 					if(($player->gamemode & 0x01) === 0x01){
 						$output .= "Player is in creative mode.";
 						break;
@@ -362,7 +362,7 @@ class BlockAPI{
 					$output .= "Giving ".$item->count." of ".$item->getName()." (".$item->getID().":".$item->getMetadata().") to ".$player->username;
 					break;
 				}else{
-					$item = self::fromString(nullsafe($args[0], ""));	
+					$item = self::fromString($args[0] ?? "");	
 					if(!($issuer instanceof Player)){
 						return "You cant give an item to a non-player.";
 					}

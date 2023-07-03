@@ -8,7 +8,7 @@ class BucketItem extends Item{
 		10 => "Lava Bucket"
 	);
 	public function __construct($meta = 0, $count = 1){
-		parent::__construct(BUCKET, $meta, $count, nullsafe(self::$possiblenames[$meta], "Bucket"));
+		parent::__construct(BUCKET, $meta, $count, self::$possiblenames[$meta] ?? "Bucket");
 		$this->isActivable = true;
 		$this->maxStackSize = 1;
 	}

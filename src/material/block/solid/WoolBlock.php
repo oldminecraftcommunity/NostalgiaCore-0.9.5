@@ -22,7 +22,7 @@ class WoolBlock extends SolidBlock{
 	);
 	
 	public function __construct($meta = 0){
-		parent::__construct(WOOL, $meta, nullsafe(self::$names[$meta], "Wool"));
+		parent::__construct(WOOL, $meta, self::$names[$meta] ?? "Wool");
 		$this->hardness = 4;
 	}
 	

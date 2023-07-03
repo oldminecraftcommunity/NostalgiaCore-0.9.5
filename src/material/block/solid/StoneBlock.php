@@ -13,7 +13,7 @@ class StoneBlock extends SolidBlock{
 	];
 	
 	public function __construct($meta = 0){
-		parent::__construct(STONE, $meta, nullsafe(self::$names[$meta], "Stone"));
+		parent::__construct(STONE, $meta, self::$names[$meta] ?? "Stone");
 		$this->hardness = 30;
 	}
 

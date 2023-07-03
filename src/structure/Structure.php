@@ -27,7 +27,7 @@ abstract class Structure{
 	}
 	
 	protected function getMappingFor($char){
-		return nullsafe($this->map[$char], self::MAP_NO_KEY);
+		return $this->map[$char] ?? self::MAP_NO_KEY;
 	}
 	
 	protected function placeBlock(Level $level, $char, $vector){

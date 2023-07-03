@@ -33,7 +33,7 @@ class BiomeSelector
 	 * @return Biome | false
 	 */
 	public static function get($id){
-		return nullsafe(self::$biomes[$id], false);
+		return self::$biomes[$id] ?? false;
 	}
 	
 	public function generateBiomeLookup(){
@@ -92,8 +92,8 @@ class BiomeSelector
 		$temperature = (int) ($this->getTemperature($x, $z) * 63);
 		$rainfall = (int) ($this->getRainfall($x, $z) * 63);
 
-		$biomeId = nullsafe($this->map[$temperature + ($rainfall << 6)], -1);
-		return nullsafe(self::$biomes[$biomeId], $this->fallback);
+		$biomeId = $this->map[$temperature + ($rainfall << 6)] ?? -1;
+		return self::$biomes[$biomeId] ?? $this->fallback;
 	}
 }
 

@@ -11,7 +11,7 @@ class Slime extends Monster{
 		 * SlimeSize = Slime::getSlimeSize(this);
   		 * return SlimeSize * SlimeSize;
 		 */
-		$this->setSlimeSize(nullsafe($data["Size"], (1 << mt_rand(0, 2))));
+		$this->setSlimeSize($data["Size"] ?? (1 << mt_rand(0, 2)));
 	}
 	
 	public function getSlimeSize(){

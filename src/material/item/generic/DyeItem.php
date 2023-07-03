@@ -21,6 +21,6 @@ class DyeItem extends Item{
 	);
 
 	public function __construct($meta = 0, $count = 1){
-		parent::__construct(DYE, $meta, $count, nullsafe(self::$names[$meta], "Dye"));
+		parent::__construct(DYE, $meta, $count, self::$names[$meta] ?? "Dye");
 	}
 }

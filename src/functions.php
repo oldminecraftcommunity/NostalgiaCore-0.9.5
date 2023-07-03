@@ -61,19 +61,11 @@ function kill($pid){
 	}
 }
 
-if(version_compare(PHP_VERSION, '7.0.0') >= 0){ //php > 7.0
-	eval('
-	function nullsafe(&$a, $null){
-		return $a ?? $null;
-	}
-	');
-	
-}else{
-	eval('
-	function nullsafe(&$value, $null){
-		return isset($value) ? $value : $null;
-	}
-	'); //behavior will change if you replace ' with ".
+/**
+ * @deprecated Use $expr ?? $null
+ */
+function nullsafe(&$a, $null){
+	return $a ?? $null;
 }
 
 

@@ -395,7 +395,7 @@ class Level{
 			foreach($this->usedChunks as $c => $eids){
 				$xz = explode(".", $c); //bad idea, TODO use better indexes
 				foreach($eids as $cid => $_){
-					$p = nullsafe($this->server->clients[$cid], false);
+					$p = $this->server->clients[$cid] ?? false;
 					if($p instanceof Player){
 						$dist = abs($xz[0] - ($p->entity->x >> 4)) + abs($xz[1] - ($p->entity->z >> 4));
 						if($dist > 8){

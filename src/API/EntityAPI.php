@@ -175,7 +175,7 @@ class EntityAPI{
 	}
 	
 	public function get($eid){
-		return nullsafe($this->entities[$eid], false);
+		return $this->entities[$eid] ?? false;
 	}
 	
 	public function remove($eid){
