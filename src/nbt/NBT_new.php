@@ -145,7 +145,7 @@ class NBT_new{
 				$tag->read($this);
 				break;
 			case NBT::TAG_Enum:
-				$tag = new Enum($this->getString());
+				$tag = new EnumTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Compound:

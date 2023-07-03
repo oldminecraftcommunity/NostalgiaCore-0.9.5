@@ -20,7 +20,7 @@ class Matrix implements ArrayAccess{
 			}
 		}
 	}
-
+	
 	#[\ReturnTypeWillChange]
 	public function offsetExists($offset){ 
 		return isset($this->matrix[(int) $offset]);
