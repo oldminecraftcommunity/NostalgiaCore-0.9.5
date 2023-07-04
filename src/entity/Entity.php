@@ -508,6 +508,12 @@ class Entity extends Position
 			$this->lastUpdate = $now;
 			return;
 		}
+		
+		if(!$this->isPlayer() && !isset($this->level->usedChunks[((int)$this->x >> 4).".".((int)$this->z >> 4)])){
+			$this->close();
+			return false;
+		}
+		
 		$tdiff = $now - $this->lastUpdate;
 		if($this->tickCounter === 0){
 			$this->tickCounter = 1;
@@ -1003,6 +1009,10 @@ class Entity extends Position
 	{
 		if($this->closed === false){
 			$this->closed = true;
+			if($this?->linkedEntity?->linkedEntity?->eid === $this->eid){
+				$this->linkedEntity->linkedEntity = false;
+			}
+			$this->linkedEntity = false;
 			$this->server->api->entity->remove($this->eid);
 		}
 	}

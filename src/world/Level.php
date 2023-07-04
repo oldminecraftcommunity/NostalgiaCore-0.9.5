@@ -19,7 +19,7 @@ class Level{
 	 */
 	public $entityList;
 	public $tiles, $blockUpdates, $nextSave, $players = [], $level, $mobSpawner;
-	private $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
+	public $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
 	
 	private $generator;
 	public function __construct(PMFLevel $level, Config $entities, Config $tiles, Config $blockUpdates, $name){
@@ -593,7 +593,7 @@ class Level{
 	 */
 	
 	public function getBlockWithoutVector($x, $y, $z, $positionfy = true){
-		$b = $this->level->getBlock($x, $y, $z);
+		$b = $this->level->getBlock((int)$x, (int)$y, (int)$z);
 		return BlockAPI::get($b[0], $b[1], $positionfy ? new Position($x, $y, $z, $this) : false);
 	}
 	

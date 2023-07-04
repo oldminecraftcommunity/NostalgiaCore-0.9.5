@@ -27,10 +27,10 @@ class NormalGenerator implements NewLevelGenerator{
 		$this->level = $level;
 		$this->random = $random;
 		$this->random->setSeed($this->level->getSeed());
-		$this->noiseHills = new NoiseGeneratorSimplex($this->random, 3);
-		$this->noisePatches = new NoiseGeneratorSimplex($this->random, 2);
-		$this->noisePatchesSmall = new NoiseGeneratorSimplex($this->random, 2);
-		$this->noiseBase = new NoiseGeneratorSimplex($this->random, 16);
+		$this->noiseHills = new NoiseGeneratorPerlin($this->random, 3);
+		$this->noisePatches = new NoiseGeneratorPerlin($this->random, 2);
+		$this->noisePatchesSmall = new NoiseGeneratorPerlin($this->random, 2);
+		$this->noiseBase = new NoiseGeneratorPerlin($this->random, 16);
 		
 		$ores = new OrePopulator();
 		$ores->setOreTypes(array(
@@ -72,7 +72,6 @@ class NormalGenerator implements NewLevelGenerator{
 				$patches[$i] = $this->noisePatches->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.03, 16, true);
 				$patchesSmall[$i] = $this->noisePatchesSmall->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.5, 4, true);
 				$base[$i] = $this->noiseBase->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.7, 16, true);
-				
 				if($base[$i] < 0){
 					$base[$i] *= 0.5;
 				}

@@ -29,7 +29,6 @@ class EntityAI
 	 * @param TaskBase $task
 	 */
 	public function addTask(TaskBase $task){
-		console("[DEBUG] Adding new task...",true, true, 2);
 		$this->tasks[$task->__toString()] = $task;
 	}
 	public function removeTask($name){

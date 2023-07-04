@@ -38,8 +38,9 @@ class MobSpawner{
 		}else{
 			return false;
 		}
-		$x = mt_rand(0,255);
-		$z = mt_rand(0,255);
+		$chunk = explode(".", array_rand($this->level->usedChunks, 1));
+		$x = $chunk[0] * 16;
+		$z = $chunk[1] * 16;
 		$y = $this->getSafeY($x, $z, $grassOnly, $type >= 32 && $type <= 36 && $type != 35);
 		if(!$y || $y < 0){
 			return false;

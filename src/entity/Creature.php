@@ -7,7 +7,7 @@ abstract class Creature extends Living{
 	const CLASS_TYPE = ENTITY_MOB;
 	
 	public $inPanic;
-	
+	public $ignited;
 	public function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 		$this->inPanic = false; //force for now
 		parent::__construct($level, $eid, $class, $type, $data);

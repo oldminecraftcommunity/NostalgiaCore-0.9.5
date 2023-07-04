@@ -41,7 +41,7 @@ class Utils{
 	
 	public static function wrapAngleTo360($angle)
 	{
-		$angle %= 360;
+		$angle = (int)$angle % 360;
 		return $angle < 0 ? $angle + 360 : $angle;
 	}
 	
