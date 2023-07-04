@@ -222,7 +222,7 @@ class Player{
 			$this->entity->updateLast();
 			$this->entity->calculateVelocity();
 			//if($terrain === true){
-				$this->orderChunks();
+				
 				//$this->getNextChunk($this->level);
 			//}*/
 			$this->entity->check = true;
@@ -230,7 +230,8 @@ class Player{
 				$this->forceMovement = $pos;
 			}
 		}
-
+		$this->orderChunks();
+		$this->getNextChunk($this->level);
 		$pk = new MovePlayerPacket;
 		$pk->eid = 0;
 		$pk->x = $pos->x;
