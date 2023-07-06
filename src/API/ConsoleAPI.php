@@ -22,6 +22,9 @@ class ConsoleAPI{
 		$this->register("difficulty", "<0|1|2|3>", [$this, "defaultCommands"]);
 		$this->register("stop", "", [$this, "defaultCommands"]);
 		$this->register("defaultgamemode", "<mode>", [$this, "defaultCommands"]);
+
+		$this->server->api->console->alias("tps", "status");
+  
 		$this->cmdWhitelist("help");
 		$this->cmdWhitelist("status");
 	}
