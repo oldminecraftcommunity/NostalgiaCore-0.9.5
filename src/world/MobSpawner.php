@@ -38,6 +38,7 @@ class MobSpawner{
 		}else{
 			return false;
 		}
+		if(empty($this->level->usedChunks)) return false;
 		$chunk = explode(".", array_rand($this->level->usedChunks, 1));
 		$x = $chunk[0] * 16;
 		$z = $chunk[1] * 16;

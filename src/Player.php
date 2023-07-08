@@ -156,7 +156,7 @@ class Player{
 				$this->entity->check = true;
 				return false;
 			}
-
+			
 			if($pos instanceof Position and $pos->level instanceof Level and $pos->level !== $this->level){
 				if($this->server->api->dhandle("player.teleport.level", ["player" => $this, "origin" => $this->level, "target" => $pos->level]) === false){
 					$this->entity->check = true;
@@ -178,7 +178,6 @@ class Player{
 						}
 					}
 				}
-
 				$this->level->freeAllChunks($this);
 				$this->level = $pos->level;
 				$this->chunksLoaded = [];
@@ -217,10 +216,6 @@ class Player{
 			$this->lastCorrect = $pos;
 			$this->entity->fallY = false;
 			$this->entity->fallStart = false;
-			$this->entity->setPosition($pos, $yaw, $pitch);
-			$this->entity->resetSpeed();
-			$this->entity->updateLast();
-			$this->entity->calculateVelocity();
 			//if($terrain === true){
 				
 				//$this->getNextChunk($this->level);
@@ -230,6 +225,13 @@ class Player{
 				$this->forceMovement = $pos;
 			}
 		}
+		if($this->spawned){
+			$this->entity->setPosition($pos, $yaw, $pitch);
+			$this->entity->resetSpeed();
+			$this->entity->updateLast();
+			$this->entity->calculateVelocity();
+		}
+		
 		$this->orderChunks();
 		$this->getNextChunk($this->level);
 		$pk = new MovePlayerPacket;
@@ -240,6 +242,7 @@ class Player{
 		$pk->bodyYaw = $yaw;
 		$pk->pitch = $pitch;
 		$pk->yaw = $yaw;
+		$pk->teleport = true;
 		$this->dataPacket($pk);
 	}
 
@@ -1427,15 +1430,6 @@ class Player{
 				$this->entity->x = $this->data->get("position")["x"];
 				$this->entity->y = $this->data->get("position")["y"];
 				$this->entity->z = $this->data->get("position")["z"];
-				if(($level = $this->server->api->level->get($this->data->get("spawn")["level"])) !== false){
-					$this->spawnPosition = new Position($this->data->get("spawn")["x"], $this->data->get("spawn")["y"], $this->data->get("spawn")["z"], $level);
-
-					$pk = new SetSpawnPositionPacket;
-					$pk->x = (int) $this->spawnPosition->x;
-					$pk->y = (int) $this->spawnPosition->y;
-					$pk->z = (int) $this->spawnPosition->z;
-					$this->dataPacket($pk);
-				}
 				$pk = new StartGamePacket;
 				$pk->seed = $this->level->getSeed();
 				$pk->spawnX = (int) $spawnPos->x;
@@ -1448,6 +1442,17 @@ class Player{
 				$pk->gamemode = $this->gamemode & 0x01;
 				$pk->eid = 0;
 				$this->dataPacket($pk);
+				
+				if(($level = $this->server->api->level->get($this->data->get("spawn")["level"])) !== false){
+					$this->spawnPosition = new Position($this->data->get("spawn")["x"], $this->data->get("spawn")["y"], $this->data->get("spawn")["z"], $level);
+					
+					$pk = new SetSpawnPositionPacket;
+					$pk->x = (int) $this->spawnPosition->x;
+					$pk->y = (int) $this->spawnPosition->y;
+					$pk->z = (int) $this->spawnPosition->z;
+					$this->dataPacket($pk);
+				}
+				
 				//$this->entity->check = false; whaT?
 				$this->entity->setName($this->username);
 				$this->entity->data["CID"] = $this->CID;
@@ -1551,6 +1556,9 @@ class Player{
 					}
 					$this->entity->updateAABB();
 				}
+				break;
+			case 0xa7:
+				//TODO 0xa7
 				break;
 			case ProtocolInfo::PLAYER_EQUIPMENT_PACKET:
 				if($this->spawned === false){
