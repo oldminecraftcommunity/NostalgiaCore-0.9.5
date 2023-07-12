@@ -1432,9 +1432,9 @@ class Player{
 				$this->entity->z = $this->data->get("position")["z"];
 				$pk = new StartGamePacket;
 				$pk->seed = $this->level->getSeed();
-				$pk->spawnX = (int) $spawnPos->x;
-				$pk->spawnY = (int) $spawnPos->y;
-				$pk->spawnZ = (int) $spawnPos->z;
+				$pk->spawnX = (int) $this->spawnPosition->x;
+				$pk->spawnY = (int) $this->spawnPosition->y;
+				$pk->spawnZ = (int) $this->spawnPosition->z;
 				$pk->x = (int) $this->entity->x;
 				$pk->y = (int) $this->entity->y;
 				$pk->z = (int) $this->entity->z;

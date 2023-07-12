@@ -36,6 +36,7 @@ class Tile extends Position{
 		switch($this->class){
 			case TILE_CHEST:
 			case TILE_SIGN:
+			case TILE_MOB_SPAWNER:
 				$this->server->query("UPDATE tiles SET spawnable = 1 WHERE ID = " . $this->id . ";");
 				break;
 			case TILE_FURNACE:
@@ -336,6 +337,67 @@ class Tile extends Position{
 			$player = $this->server->api->player->get($player);
 		}
 		switch($this->class){
+			case TILE_MOB_SPAWNER:
+				$nbt = new NBT(); //TODO fix
+				$nbt->write(chr(NBT::TAG_COMPOUND) . "\x00\x00");
+				
+				$nbt->write(chr(NBT::TAG_STRING));
+				$nbt->writeTAG_String("id");
+				$nbt->writeTAG_String($this->class);
+				
+				$nbt->write(chr(NBT::TAG_INT));
+				$nbt->writeTAG_String("x");
+				$nbt->writeTAG_Int((int) $this->x);
+				
+				$nbt->write(chr(NBT::TAG_INT));
+				$nbt->writeTAG_String("y");
+				$nbt->writeTAG_Int((int) $this->y);
+				
+				$nbt->write(chr(NBT::TAG_INT));
+				$nbt->writeTAG_String("z");
+				$nbt->writeTAG_Int((int) $this->z);
+				
+				$nbt->write(chr(NBT::TAG_INT));
+				$nbt->writeTAG_String("EntityId");
+				$nbt->writeTAG_Int((int) $this->data["EntityId"]);
+				
+				$nbt->write(chr(NBT::TAG_SHORT));
+				$nbt->writeTAG_String("Delay");
+				$nbt->writeTAG_SHORT((int) $this->data["Delay"]);
+				
+				$nbt->write(chr(NBT::TAG_SHORT));
+				$nbt->writeTAG_String("MinSpawnDelay");
+				$nbt->writeTAG_SHORT((int) $this->data["MinSpawnDelay"]);
+				
+				$nbt->write(chr(NBT::TAG_SHORT));
+				$nbt->writeTAG_String("MaxSpawnDelay");
+				$nbt->writeTAG_SHORT((int) $this->data["MaxSpawnDelay"]);
+				
+				$nbt->write(chr(NBT::TAG_SHORT));
+				$nbt->writeTAG_String("SpawnCount");
+				$nbt->writeTAG_SHORT((int) $this->data["SpawnCount"]);
+				
+				$nbt->write(chr(NBT::TAG_SHORT));
+				$nbt->writeTAG_String("MaxNearbyEntities");
+				$nbt->writeTAG_SHORT((int) $this->data["MaxNearbyEntities"]);
+				
+				$nbt->write(chr(NBT::TAG_SHORT));
+				$nbt->writeTAG_String("RequiredPlayerRange");
+				$nbt->writeTAG_SHORT((int) $this->data["RequiredPlayerRange"]);
+				
+				$nbt->write(chr(NBT::TAG_SHORT));
+				$nbt->writeTAG_String("SpawnRange");
+				$nbt->writeTAG_SHORT((int) $this->data["SpawnRange"]);
+				
+				//console(bin2hex($nbt->binary));
+				
+				$pk = new EntityDataPacket;
+				$pk->x = $this->x;
+				$pk->y = $this->y;
+				$pk->z = $this->z;
+				$pk->namedtag = $nbt->binary;
+				$player->dataPacket($pk);
+				break;
 			case TILE_CHEST:
 				$nbt = new NBT();
 				$nbt->write(chr(NBT::TAG_COMPOUND) . "\x00\x00");

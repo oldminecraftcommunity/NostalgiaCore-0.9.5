@@ -145,7 +145,7 @@ abstract class Block extends Position{
 		COCOA => "CocoaBlock",
 		RED_MUSHROOM_BLOCK => "RedMushroomSolidBlock",
 		BROWN_MUSHROOM_BLOCK => "BrownMushroomSolidBlock",
-		MONSTER_SPAWNER => "MonsterSpawnerBlock",
+		MONSTER_SPAWNER => "MobSpawnerBlock",
 		VINES => "VinesBlock",
 		MYCELIUM => "MyceliumBlock",
 	);
