@@ -21,7 +21,7 @@ class Log2Block extends SolidBlock{
 			5 => 0b0100,
 		);
 
-		$this->meta = ($this->meta & 0x02) | $faces[$face];
+		$this->meta = ($this->meta & 0x03) | $faces[$face];
 		$this->level->setBlock($block, $this, true, false, true);
 		return true;
 	}

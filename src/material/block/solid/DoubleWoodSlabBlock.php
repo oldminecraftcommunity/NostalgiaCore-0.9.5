@@ -8,6 +8,8 @@ class DoubleWoodSlabBlock extends SolidBlock{
 			1 => "Spruce",
 			2 => "Birch",
 			3 => "Jungle",
+			4 => "Acacia",
+			5 => "Dark Oak",
 		);
 		$this->name = "Double " . $names[$this->meta & 0x07] . " Wooden Slab";
 		$this->hardness = 15;

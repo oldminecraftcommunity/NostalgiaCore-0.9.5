@@ -8,6 +8,8 @@ class WoodSlabBlock extends TransparentBlock{
 			1 => "Spruce",
 			2 => "Birch",
 			3 => "Jungle",
+			4 => "Acacia",
+			5 => "Dark Oak"
 		);
 		$this->name = (($this->meta & 0x08) === 0x08 ? "Upper ":"") . $names[$this->meta & 0x07] . " Wooden Slab";	
 		if(($this->meta & 0x08) === 0x08){
