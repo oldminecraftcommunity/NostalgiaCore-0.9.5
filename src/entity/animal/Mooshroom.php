@@ -1,5 +1,7 @@
 <?php
 
+require_once("Cow.php");
+
 class Mooshroom extends Cow{
 	const TYPE = MOB_MOOSHROOM;
 	function __construct(Level $level, $eid, $class, $type = 0, $data = []){
