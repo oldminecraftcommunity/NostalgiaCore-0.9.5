@@ -101,12 +101,7 @@ class Level{
 		if(!isset($this->level)){
 			return false;
 		}
-		/*if(ADVANCED_CACHE == true){
-			$identifier = "world:{$this->name}:$X:$Z";
-			if(($cache = Cache::get($identifier)) !== false){
-				return $cache;
-			}
-		}*/
+		
 		$gen = $this->generatorType === 1 || !($X > 15 || $X < 0 || $Z > 15 || $Z < 0);
 		$orderedIds = "";
 		$orderedData = "";
@@ -149,7 +144,7 @@ class Level{
 		}
 
 		$nbt = new NBT_new(NBT_new::LITTLE_ENDIAN);
-        	foreach($chunkTiles as $tile){
+        foreach($chunkTiles as $tile){ //TODO non-hardcoded nbt data
 			switch($tile->class){
 				case "Sign":
 					$text = $tile->getText();
@@ -183,9 +178,6 @@ class Level{
 		$orderedIds . $orderedData . $orderedSkyLight . $orderedLight .
 		$orderedBiomeIds . $orderedBiomeColors . $tileEntities;
 		$ordered = zlib_encode($orderedUncompressed, ZLIB_ENCODING_DEFLATE, 6);
-		/*if(ADVANCED_CACHE == true){
-			Cache::add($identifier, $ordered, 60);
-		}*/
 		return $ordered;
 	}
 	

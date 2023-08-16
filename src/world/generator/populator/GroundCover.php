@@ -14,7 +14,7 @@ class GroundCover extends Populator
 				if(count($cover) > 0){
 					$diffY = 0;
 					
-					if(!BlockAPI::get($cover[0][0], $cover[0][1])->isSolid){
+					if(!StaticBlock::getIsSolid($cover[0][0])){
 						$diffY = 1;
 					}
 					
@@ -22,7 +22,7 @@ class GroundCover extends Populator
 					for($y = 127; $y > 0; --$y){
 						$chunkY = $y >> 4;
 						$b = $column[$chunkY][(($y & 0xf) + ($x << 6) + ($z << 10))];
-						if($b !== "\x00" and !BlockAPI::get(ord($b))->isTransparent){
+						if($b !== "\x00" and !StaticBlock::getIsTransparent(ord($b))){
 							break;
 						}
 					}
@@ -31,20 +31,17 @@ class GroundCover extends Populator
 					for($y = $startY; $y > $endY and $y >= 0; --$y){
 						$chunkY = $y >> 4;
 						$pair = $cover[$startY - $y];
-						$b = BlockAPI::get($pair[0], $pair[1]);
-						if($column[$chunkY][(($y & 0xf) + ($x << 6) + ($z << 10))] === "\x00" and $b->isSolid){
+						//$b = BlockAPI::get($pair[0], $pair[1]);
+						$bid = $pair[0];
+						$bmeta = $pair[1];
+						if($column[$chunkY][(($y & 0xf) + ($x << 6) + ($z << 10))] === "\x00" and StaticBlock::getIsSolid($bid)){
 							break;
 						}
-						if($y <= $waterHeight and $b->getID() == GRASS and $level->level->getBlockID($pcx, $y + 1, $pcz) == STILL_WATER){
-							//$b = BlockAPI::get(DIRT);
+						if($y <= $waterHeight and $bid == GRASS and $level->level->getBlockID($pcx, $y + 1, $pcz) == STILL_WATER){
 							$level->level->setBlock($pcx, $y, $pcz, DIRT, 0);
 							continue;
 						}
-						//if($b->getMetadata() === 0){
-						//	$level->level->setBlockId($pcx, $y, $pcz, $b->getID());
-						//}else{
-						$level->level->setBlock($pcx, $y, $pcz, $b->getID(), $b->getMetadata());
-						//}
+						$level->level->setBlock($pcx, $y, $pcz, $bid, $bmeta);
 					}
 				}
 			}

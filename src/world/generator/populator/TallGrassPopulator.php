@@ -48,7 +48,6 @@ class TallGrassPopulator extends Populator{
 					}else{
 						$this->level->level->setBlock($xx, $yy, $zz, TALL_GRASS, 1);
 					}
-					
 				}
 			}
 		}
@@ -59,7 +58,6 @@ class TallGrassPopulator extends Populator{
 	}
 	
 	private function getHighestWorkableBlock($x, $z){
-		
 		for($y = 128; $y > 0; --$y){
 			$b = $this->level->level->getBlockID($x, $y, $z);
 			if($b == GRASS){
