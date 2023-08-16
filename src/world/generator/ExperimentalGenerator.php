@@ -107,7 +107,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 		$noiseArray = ExperimentalGenerator::getFastNoise3D($this->noiseBase, 16, 128, 16, 4, 8, 4, $chunkX * 16, 0, $chunkZ * 16);
 		
 		$biomeCache = [];
-		$t = microtime(true);
+		
 		for($chunkY = 0; $chunkY < 8; ++$chunkY){
 			$chunk = "";
 			$startY = $chunkY << 4;
@@ -144,7 +144,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 					$minSum /= $weightSum;
 					$maxSum /= $weightSum;
 					for($y = $startY; $y < $endY; ++$y){
-						if($y === 0){
+						if($y == 0){
 							$chunk .= "\x07";
 							continue;
 						}
@@ -154,13 +154,6 @@ class ExperimentalGenerator implements NewLevelGenerator{
 						$noiseAdjustment = ($noiseAdjustment < (0.4 + ($distAboveCaveLevel / 10))) ? $noiseAdjustment : (0.4 + ($distAboveCaveLevel / 10)); //min($noiseAdjustment, 0.4 + ($distAboveCaveLevel / 10));
 						$noiseValue = $noiseArray[$x][$z][$y] + $noiseAdjustment;
 						$chunk .= (($noiseValue > 0) ? "\x01" : (($y <= $this->waterHeight) ? "\x09" : "\x00"));
-						/*if($noiseValue > 0){
-							$chunk .= "\x01";
-						}elseif($y <= $this->waterHeight){
-							$chunk .= "\x09";
-						}else{
-							$chunk .= "\x00";
-						}*/
 					}
 					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 					//$chunk .= str_repeat("\xff", 16);
