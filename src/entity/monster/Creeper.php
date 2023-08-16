@@ -6,7 +6,7 @@ class Creeper extends Monster{
 	function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 		$this->setSize(0.6, 1.7);
 		parent::__construct($level, $eid, $class, $type, $data);
-		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 16, "generic");
+		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 20, "generic");
 		$this->setName("Creeper");
 		$this->ignited = 0;
 		$this->setSpeed(0.25);
@@ -21,8 +21,6 @@ class Creeper extends Monster{
 	public function setIgnited($v = null){
 		$this->setState($v === null ? !$this->getState() : $v);	
 	}
-	
-	
 	
 	/**
 	 * @return boolean
