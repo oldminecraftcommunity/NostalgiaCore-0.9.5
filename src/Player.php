@@ -1442,7 +1442,7 @@ class Player{
 				$pk->gamemode = $this->gamemode & 0x01;
 				$pk->eid = 0;
 				$this->dataPacket($pk);
-				
+				$this->lastCorrect = new Vector3($this->entity->x, $this->entity->y, $this->entity->z);
 				if(($level = $this->server->api->level->get($this->data->get("spawn")["level"])) !== false){
 					$this->spawnPosition = new Position($this->data->get("spawn")["x"], $this->data->get("spawn")["y"], $this->data->get("spawn")["z"], $level);
 					
