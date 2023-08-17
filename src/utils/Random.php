@@ -50,7 +50,10 @@ class Random{
 		return $this->nextInt() / 0x7FFFFFFF;
 	}
 
-	public function nextInt(){
+	public function nextInt($n = -1){
+		if($n > 0){
+			return Utils::readInt($this->nextBytes(4)) & 0x7FFFFFFF % $n;
+		}
 		return Utils::readInt($this->nextBytes(4)) & 0x7FFFFFFF;
 	}
 

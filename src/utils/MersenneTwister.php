@@ -1,7 +1,5 @@
 <?php
-/***REM_START***/
-require_once("Random.php");
-/***REM_END***/
+
 /*
  Mersenne Twister, 1.1.0
  -----------------------
@@ -45,11 +43,16 @@ $val = MASK31 | (MASK31 << 1);
 define("MASK32", $val);
 
 
-class MersenneTwister extends Random{
+class MersenneTwister{
+	
+	
+	static $MAG_01 = [0, MATRIX_A];
 	
 	const N = N;
-	# the class constant is not used anywhere in this namespace,
-	# but it makes the API cleaner.
+	//the class constant is not used anywhere in this namespace,
+	//but it makes the API cleaner.
+	
+	//^^ u probably wanted to say makes code look weirder
 	
 	function __construct(){
 		$this->bits32 = PHP_INT_MAX == 2147483647;
@@ -59,75 +62,12 @@ class MersenneTwister extends Random{
 		}
 	}
 	
-	/**RANDOM IMPL START**/
-	
-	public function setSeed($seed = false){
-		$this->init_with_integer($seed === false ? Utils::getRandomBytes(4, false) : $seed);
-	}
-	
-	public function nextGaussian(){
-		if($this->haveNextNextGaussian){
-			$this->haveNextNextGaussian = false;
-			return $this->nextNextGaussian;
-		}else{
-			$v1 = $v2 = $s = null;
-			do{
-				$v1 = 2 * $this->nextFloat() - 1;   // between -1.0 and 1.0
-				$v2 = 2 * $this->nextFloat() - 1;   // between -1.0 and 1.0
-				$s = $v1 * $v1 + $v2 * $v2;
-			}while($s >= 1 || $s == 0);
-			$multiplier = sqrt(-2 * log($s) / $s);
-			$this->nextNextGaussian = $v2 * $multiplier;
-			$this->haveNextNextGaussian = true;
-			return $v1 * $multiplier;
-		}
-	}
-	
-	function nextInt(){
-		return ($this->int32() >> 1);
-	}
-	
-	function nextFloat(){
-		return $this->int32() * 2.3283064365386963E-010;
-	}
-	
-	function nextBytes($byteCount){
-		return 0; //idc, not implemented
-	}
-	
-	function nextSignedFloat(){
-		return $this->nextFloat(); //idc, not implemented
-	}
-	function nextSignedInt(){ //TODO
-		return $this->int31();
-	}
-	
-	public function nextBoolean(){
-		return 0; //idc not implemented
-	}
-	
-	public function nextRange($start = 0, $end = PHP_INT_MAX){
-		return $end === 0 ? 0 : (($this->int32() + $start) % $end);
-	}
-	/**RANDOM IMPL END**/
-	
 	function init_with_integer($integer_seed){
 		$integer_seed = force_32_bit_int($integer_seed);
-		
-		$mt = &$this->mt;
-		$mti = &$this->mti;
-		
-		$mt = array_fill(0, N, 0);
-		
-		$mt[0] = $integer_seed;
-		
-		for($mti = 1; $mti < N; $mti++){
-			$mt[$mti] = add_2(mul(1812433253,
-				($mt[$mti - 1] ^ (($mt[$mti - 1] >> 30) & 3))), $mti);
-			/*
-			 mt[mti] =
-			 (1812433253UL * (mt[mti-1] ^ (mt[mti-1] >> 30)) + mti);
-			 */
+		$this->mt = array_fill(0, N, 0);
+		$this->mt[0] = $integer_seed;
+		for($this->mti = 1; $this->mti < N; ++$this->mti){
+			$this->mt[$this->mti] = add_2(mul(1812433253, ($this->mt[$this->mti - 1] ^ (($this->mt[$this->mti - 1] >> 30) & 3))), $this->mti);
 		}
 	}
 	
@@ -179,7 +119,6 @@ class MersenneTwister extends Random{
 		array_map("force_32_bit_int", $integer_array);
 		
 		$mt = &$this->mt;
-		$mti = &$this->mti;
 		
 		$key_length = count($integer_array);
 		
@@ -227,28 +166,22 @@ class MersenneTwister extends Random{
 	}
 	
 	function int32(){
-		static $mag01 = [0, MATRIX_A];
-		
-		$mt = &$this->mt;
-		$mti = &$this->mti;
-		
-		if($mti >= N){ /* generate N words all at once */
-			for($kk = 0; $kk < N - M; $kk++){
-				$y = ($mt[$kk] & UPPER_MASK) | ($mt[$kk + 1] & LOWER_MASK);
-				$mt[$kk] = $mt[$kk + M] ^ (($y >> 1) & MASK31) ^ $mag01[$y & 1];
+		if($this->mti >= N){ /* generate N words all at once */
+			for($kk = 0; $kk < N - M; ++$kk){
+				$y = ($this->mt[$kk] & UPPER_MASK) | ($this->mt[$kk + 1] & LOWER_MASK);
+				$this->mt[$kk] = $this->mt[$kk + M] ^ (($y >> 1) & MASK31) ^ self::$MAG_01[$y & 1];
 			}
-			for(; $kk < N - 1; $kk++){
-				$y = ($mt[$kk] & UPPER_MASK) | ($mt[$kk + 1] & LOWER_MASK);
-				$mt[$kk] =
-				$mt[$kk + (M - N)] ^ (($y >> 1) & MASK31) ^ $mag01[$y & 1];
+			for(; $kk < N - 1; ++$kk){
+				$y = ($this->mt[$kk] & UPPER_MASK) | ($this->mt[$kk + 1] & LOWER_MASK);
+				$this->mt[$kk] = $this->mt[$kk + (M - N)] ^ (($y >> 1) & MASK31) ^ self::$MAG_01[$y & 1];
 			}
-			$y = ($mt[N - 1] & UPPER_MASK) | ($mt[0] & LOWER_MASK);
-			$mt[N - 1] = $mt[M - 1] ^ (($y >> 1) & MASK31) ^ $mag01[$y & 1];
+			$y = ($this->mt[N - 1] & UPPER_MASK) | ($this->mt[0] & LOWER_MASK);
+			$this->mt[N - 1] = $this->mt[M - 1] ^ (($y >> 1) & MASK31) ^ self::$MAG_01[$y & 1];
 			
-			$mti = 0;
+			$this->mti = 0;
 		}
 		
-		$y = $mt[$mti++];
+		$y = $this->mt[$this->mti++];
 		
 		/* Tempering */
 		$y ^= ($y >> 11) & MASK21;
@@ -256,7 +189,7 @@ class MersenneTwister extends Random{
 		$y ^= ($y << 15) & (0xefc6 << 16);
 		$y ^= ($y >> 18) & MASK14;
 		
-		return $y;
+		return $y & 0xFFFFFFFF;
 	}
 	
 	/* generates a random number on [0,1]-real-interval */
@@ -385,6 +318,20 @@ class MersenneTwister extends Random{
 		return ((($this->int32() & MASK27) * 67108864.0) +
 			($this->int32() & MASK26)) *
 			(1.0 / 9007199254740992.0);
+	}
+	function nextIntBndn($bound){
+		return ($this->int32() % $bound);
+	}
+	function nextInt($bound = null){
+		return $bound == null ? ($this->int32() >> 1) : ($this->int32() % $bound);
+	}
+	
+	function nextFloat(){
+		return $this->int32() * 2.32830644e-10;
+	}
+	
+	function setSeed($seed){
+		$this->init_with_integer($seed);
 	}
 	
 }

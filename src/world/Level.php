@@ -84,6 +84,20 @@ class Level{
 		return $aABBs;
 	}
 	
+	public function fastSetBlockUpdate($x, $y, $z, $id, $meta, $updateBlocksAround = false){
+		$this->level->setBlock($x, $y, $z, $id, $meta);
+		$pk = new UpdateBlockPacket;
+		$pk->x = $x;
+		$pk->y = $y;
+		$pk->z = $z;
+		$pk->block = $id;
+		$pk->meta = $meta;
+		$this->server->api->player->broadcastPacket($this->players, $pk);
+		if($updateBlocksAround){
+			$this->server->api->block->blockUpdateAround(new Position($x, $y, $z, $this), BLOCK_UPDATE_NORMAL, 1);
+		}
+	}
+	
 	public function __destruct(){
 		if(isset($this->level)){
 			$this->save(false, false);

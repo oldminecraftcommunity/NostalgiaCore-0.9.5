@@ -7,9 +7,12 @@ class TreeObject{
 		6 => true,
 		18 => true,
 	];
-
+	public function isBlockCorrect(int $id)
+	{
+		return $id == 0 || ($id == LEAVES || $id == LEAVES2) || $id == GRASS || $id == DIRT || $id == TRUNK || $id == TRUNK2 || $id == SAPLING || $id == VINES;
+	}
 	public static function growTree(Level $level, Vector3 $pos, Random $random, $type = 0){
-		switch($type & 0x03){
+		switch($type & 0xf){
 			case SaplingBlock::SPRUCE:
 				if($random->nextRange(0, 1) === 1){
 					$tree = new SpruceTreeObject();
@@ -24,6 +27,13 @@ class TreeObject{
 			case SaplingBlock::JUNGLE:
 				$tree = new SmallTreeObject();
 				$tree->type = SaplingBlock::JUNGLE;
+				break;
+			case SaplingBlock::ACACIA:
+				console("acacia");
+				$tree = new AcaciaTreeObject();
+				break;
+			case SaplingBlock::DARK_OAK:
+				
 				break;
 			default:
 			case SaplingBlock::OAK:

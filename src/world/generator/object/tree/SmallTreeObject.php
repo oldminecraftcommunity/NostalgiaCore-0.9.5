@@ -2,8 +2,8 @@
 
 /***REM_START***/
 require_once("TreeObject.php");
-
 /***REM_END***/
+
 class SmallTreeObject extends TreeObject{
 
 private static $leavesHeight = 4;
