@@ -692,11 +692,6 @@ class Entity extends Position
 					if($this->fallY === false or $this->fallStart === false){
 						$this->fallY = $y;
 						$this->fallStart = microtime(true);
-					} elseif($this->class === ENTITY_PLAYER and ($this->fallStart + 5) < microtime(true)){
-						if($this->server->api->getProperty("allow-flight") !== true and $this->server->handle("player.flying", $this->player) !== true and $this->isRiding === false){
-							$this->player->close("flying");
-							return;
-						}
 					} elseif($y > $this->fallY){
 						$this->fallY = $y;
 					}
