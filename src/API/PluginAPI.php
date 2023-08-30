@@ -148,7 +148,8 @@ class PluginAPI extends stdClass{
 					
 					$aver = CURRENT_API_VERSION;
 					if(!in_array((string) CURRENT_API_VERSION, $pluginInfo["api"])){
-						$s = implode(", ", $pluginInfo["api"]);
+						if(is_array($pluginInfo)) $s = implode(",",$pluginInfo["api"]);
+						else $s = $pluginInfo["api"];
 						console("[WARNING] API is not the same as Core, might cause bugs({$s} != {$aver})");
 					}
 					
