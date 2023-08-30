@@ -103,11 +103,9 @@ class ExperimentalGenerator implements NewLevelGenerator{
 	
 	public function generateChunk($chunkX, $chunkZ){
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->level->getSeed());
-		
 		$noiseArray = ExperimentalGenerator::getFastNoise3D($this->noiseBase, 16, 128, 16, 4, 8, 4, $chunkX * 16, 0, $chunkZ * 16);
-		
 		$biomeCache = [];
-		
+		$t = microtime(1);
 		for($chunkY = 0; $chunkY < 8; ++$chunkY){
 			$chunk = "";
 			$startY = $chunkY << 4;
@@ -164,6 +162,8 @@ class ExperimentalGenerator implements NewLevelGenerator{
 			}
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
+		$t = microtime(1) - $t;
+		console("gen:".$t);
 		
 		
 		foreach($this->genPopulators as $pop){

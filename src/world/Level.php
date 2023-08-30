@@ -477,7 +477,7 @@ class Level{
 			return false;
 		}
 		$this->changedCount[$X . ":" . $Y . ":" . $Z] = 4096;
-		if(ADVANCED_CACHE == true){
+		if(ADVANCED_CACHE){
 			Cache::remove("world:{$this->name}:$X:$Z");
 		}
 		return $this->level->setMiniChunk($X, $Z, $Y, $data);

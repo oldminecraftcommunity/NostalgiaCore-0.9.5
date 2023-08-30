@@ -148,7 +148,8 @@ class PluginAPI extends stdClass{
 					
 					$aver = CURRENT_API_VERSION;
 					if(!in_array((string) CURRENT_API_VERSION, $pluginInfo["api"])){
-						console("[WARNING] API is not the same as Core, might cause bugs({$pluginInfo["api"]} != {$aver})");
+						$s = implode(", ", $pluginInfo["api"]);
+						console("[WARNING] API is not the same as Core, might cause bugs({$s} != {$aver})");
 					}
 					
 					$phr = "phar://$filePath/";
