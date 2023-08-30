@@ -736,7 +736,7 @@ class Entity extends Position
 		if($this->lastHeadYaw != $this->headYaw){
 			$this->sendHeadYaw();
 		}
-		if($this->class !== ENTITY_PLAYER && $update){
+		if($this->class === ENTITY_PLAYER || $update){
 			$this->updateMovement();
 		}
 		
