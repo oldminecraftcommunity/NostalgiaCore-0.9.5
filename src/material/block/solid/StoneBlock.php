@@ -40,7 +40,7 @@ class StoneBlock extends SolidBlock{
 	public function getDrops(Item $item, Player $player){
 		if($item->getPickaxeLevel() >= 1){
 			return array(
-				array(COBBLESTONE, 0, 1),
+				array($this->meta == 0 ? COBBLESTONE : $this->id, $this->meta, 1),
 			);
 		}else{
 			return array();
