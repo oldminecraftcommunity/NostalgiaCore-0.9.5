@@ -470,7 +470,7 @@ class Player{
 				}
 			}
 		}
-		$this->stopUsingChunk($X, $Z); //just in case
+		//$this->stopUsingChunk($X, $Z); //just in case
 		$pk = new FullChunkDataPacket;
 		$pk->chunkX = $X;
 		$pk->chunkZ = $Z;
@@ -480,13 +480,16 @@ class Player{
 			return false;
 		}
 	}
-	
+	public $chunkTicker = 0;
 	public function entityTick(){
 		//ConsoleAPI::debug("{$this->username}, cl: ".count($this->chunksLoaded).", oc: ".count($this->chunksOrder));
 		if(count($this->chunksOrder) <= 0 && $this->level->generatorType != 0){
 			$this->orderChunks();
 		}
-		$this->getNextChunk($this->level);
+		if($this->chunkTicker++ > 5){
+			$this->getNextChunk($this->level);
+			$this->chunkTicker = 0;
+		}
 	}
 	
 	public function getNextChunk($world){
@@ -1533,6 +1536,7 @@ class Player{
 					$this->spawned = true;
 					$this->server->handle("player.spawn", $this);
 					$this->server->api->chat->broadcast($this->username." joined the game");
+					//console("Current position: {$this->entity}");
 					$this->server->api->player->spawnAllPlayers($this);
 					$this->server->api->player->spawnToAllPlayers($this);
 				}
@@ -1543,15 +1547,18 @@ class Player{
 						if($this->forceMovement->distance($newPos) <= 0.7){
 							$this->forceMovement = false;
 						}else{
+							//console("force");
 							$this->teleport($this->forceMovement, $this->entity->yaw, $this->entity->pitch, false);
 						}
 					}
 					$speed = $this->entity->getSpeedMeasure();
 					if($this->blocked === true or ($this->server->api->getProperty("allow-flight") !== true and (($speed > 9 and ($this->gamemode & 0x01) === 0x00) or $speed > 20 or $this->entity->distance($newPos) > 7)) or $this->server->api->handle("player.move", $this->entity) === false){
 						if($this->lastCorrect instanceof Vector3){
+							//console("last");
 							$this->teleport($this->lastCorrect, $this->entity->yaw, $this->entity->pitch, false);
 						}
 					}else{
+						//console("New Pos: $newPos");
 						$this->entity->setPosition($newPos, $packet->yaw, $packet->pitch);
 					}
 					$this->entity->updateAABB();

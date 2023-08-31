@@ -766,12 +766,12 @@ class Entity extends Position
 					$this->updateLast();
 					$players = $this->server->api->player->getAll($this->level);
 					if($this->player instanceof Player){
-						console("gujnbguib");
+						//console("gujnbguib");
 						unset($players[$this->player->CID]);
 						$pk = new MovePlayerPacket();
 						$pk->eid = $this->eid;
 						$pk->x = $this->x;
-						$pk->y = $this->y + $this->getEyeHeight();
+						$pk->y = $this->y;
 						$pk->z = $this->z;
 						$pk->yaw = $this->yaw;
 						$pk->pitch = $this->pitch;
