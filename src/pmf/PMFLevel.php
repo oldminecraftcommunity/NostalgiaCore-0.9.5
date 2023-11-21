@@ -1,10 +1,13 @@
 <?php
 
-define("PMF_CURRENT_LEVEL_VERSION", 0x01);
+define("PMF_CURRENT_LEVEL_VERSION", 0x02);
 
 class PMFLevel extends PMF{
 
 	public $isLoaded = true;
+	/**
+	 * @var $level Level
+	 */
 	public $level;
 	public $levelData = [];
 	private $locationTable = [];
@@ -13,8 +16,8 @@ class PMFLevel extends PMF{
 	private $chunks = [];
 	private $chunkChange = [];
 	public $chunkInfo = [];
-	public $placeBlocksOnNextGen = [];
-	
+	public $populated = [];
+	public $fakeLoaded = [];
 	public function __construct($file, $blank = false){
 		if(is_array($blank)){
 			$this->create($file, 0);
@@ -36,7 +39,11 @@ class PMFLevel extends PMF{
 			}
 		}
 	}
-
+	
+	public function setPopulated($X, $Z, $bool = true){
+		$this->populated[self::getIndex($X, $Z)] = $bool;
+	}
+	
 	private function createBlank(){
 		$this->saveData(false);
 		$this->locationTable = [];
@@ -119,7 +126,9 @@ class PMFLevel extends PMF{
 		}
 		$this->seek(5);
 		$this->levelData["version"] = ord($this->read(1));
-		if($this->levelData["version"] > PMF_CURRENT_LEVEL_VERSION){ //TODO old worlds support
+		if($this->levelData["version"] != PMF_CURRENT_LEVEL_VERSION){ //TODO old worlds support
+			$cv = PMF_CURRENT_LEVEL_VERSION;
+			ConsoleAPI::warn("The level version does not match current. ({$this->levelData["version"]} != {$cv})");
 			return false;
 		}
 		$this->levelData["name"] = $this->read(Utils::readShort($this->read(2), false));
@@ -275,7 +284,8 @@ class PMFLevel extends PMF{
 		for($Y = 0; $Y < 8; ++$Y){
 			$bitmap |= ($this->chunks[$index][$Y] !== false and ((isset($this->chunkChange[$index][$Y]) and $this->chunkChange[$index][$Y] === 0) or !$this->isMiniChunkEmpty($X, $Z, $Y))) << $Y;
 		}
-		gzwrite($chunk, Utils::writeShort($bitmap), 2); //2 bytes locmap
+		gzwrite($chunk, Utils::writeShort($bitmap), 2); //2 bytes locmap(actually it should be only 1)
+		gzwrite($chunk, chr($this->populated[$index]), 1); //isPopulated
 		$biomedata = $this->chunkInfo[$index][0];
 		if(strlen($biomedata) < 256){
 			$biomedata = str_repeat("\x01", 256);
@@ -335,7 +345,7 @@ class PMFLevel extends PMF{
 		}
 	}
 	
-	public function loadChunk($X, $Z){
+	public function loadChunk($X, $Z, $populate = false){
 
 		$index = $this->getIndex($X, $Z);
 
@@ -359,6 +369,8 @@ class PMFLevel extends PMF{
 		if(strlen($chunk) === 0) return false;
 		$info = [0 => Utils::readShort(substr($chunk, $offset, 2))];
 		$offset+=2;
+		$populated = ord($chunk[$offset]) > 0;
+		++$offset;
 		$this->chunks[$index] = [];
 		$this->chunkChange[$index] = [-1 => false];
 		$this->chunkInfo[$index][0] = substr($chunk, $offset, 256); //Biome data
@@ -375,6 +387,10 @@ class PMFLevel extends PMF{
 			}else{
 				$this->chunks[$index][$Y] = false;
 			}
+		}
+		$this->setPopulated($X, $Z, $populated);
+		if($populate && !$populated){
+			$this->level->generator->populateChunk($X, $Z);
 		}
 		return true;
 	}
@@ -420,6 +436,7 @@ class PMFLevel extends PMF{
 				0 => str_repeat("\x00", 256)
 			);
 			$this->locationTable[$index] = array(0);
+			$this->setPopulated($X, $Z, false);
 		}
 	}
 	public function setMiniChunk($X, $Z, $Y, $data){
@@ -588,7 +605,13 @@ class PMFLevel extends PMF{
 		}
 		return [$b, $m];
 	}
-
+	
+	public function createUnpopulatedChunk($X, $Z){
+		$this->initCleanChunk($X, $Z);
+		$this->level->generator->generateChunk($X, $Z);
+		$this->fakeLoaded[self::getIndex($X, $Z)] = "$X.$Z"; //TODO do not use string
+	}
+	
 	public function setBlock($x, $y, $z, $block, $meta = 0){
 		$X = $x >> 4;
 		$Z = $z >> 4;
@@ -598,12 +621,14 @@ class PMFLevel extends PMF{
 		if($Y >= 128 or $y < 0){
 			return false;
 		}
+		$loaded = false;
 		$index = $this->getIndex($X, $Z);
 		if(!isset($this->chunks[$index]) or $this->chunks[$index] === false){
-			if($this->loadChunk($X, $Z) === false){
-				return false;
+			if($this->loadChunk($X, $Z, false) === false){
+				$this->createUnpopulatedChunk($X, $Z);
 			}
-		}else
+			$loaded = true;
+		}
 		if($this->chunks[$index][$Y] === false){
 			$this->fillMiniChunk($X, $Z, $Y);
 		}

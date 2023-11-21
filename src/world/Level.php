@@ -21,7 +21,7 @@ class Level{
 	public $tiles, $blockUpdates, $nextSave, $players = [], $level, $mobSpawner;
 	public $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
 	
-	private $generator;
+	public $generator;
 	public function __construct(PMFLevel $level, Config $entities, Config $tiles, Config $blockUpdates, $name){
 		$this->server = ServerAPI::request();
 		$this->level = $level;
@@ -140,7 +140,7 @@ class Level{
 		$tileEntities = "";
 		if($gen) $this->level->generateChunk($X, $Z, $this->generator);
 		if(!$this->level->isChunkLoaded($X, $Z)){
-			$this->level->loadChunk($X, $Z);
+			$this->level->loadChunk($X, $Z, true);
 		}
 		$miniChunks = [];
 			
@@ -431,6 +431,13 @@ class Level{
 					//ConsoleAPI::debug("Unloading: {$xz[0]} {$xz[1]}, status: $outcome");
 				}
 			}
+		}
+		
+		foreach($this->level->fakeLoaded as $ind => $val){
+			$xz = explode(".", $val);
+			$this->level->unloadChunk($xz[0], $xz[1]);
+			ConsoleAPI::info("unloading feke chunk: {$xz[0]} {$xz[1]}");
+			unset($this->level->fakeLoaded[$ind]);
 		}
 		
 	}

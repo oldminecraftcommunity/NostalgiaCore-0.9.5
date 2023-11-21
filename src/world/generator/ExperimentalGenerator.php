@@ -172,6 +172,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 	}
 	
 	public function populateChunk($chunkX, $chunkZ){
+		$this->level->level->setPopulated($chunkX, $chunkZ, true);
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->level->getSeed());
 		foreach($this->populators as $populator){
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);

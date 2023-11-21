@@ -1,6 +1,6 @@
 <?php
 
-//from HellGenerator for PocketMine mcpe 0.11 by ж�џдє‘
+//from HellGenerator for PocketMine mcpe 0.11 by Р¶пїЅСџРґС”вЂ�
 
 class HellGenerator implements NewLevelGenerator{
 
@@ -121,6 +121,7 @@ class HellGenerator implements NewLevelGenerator{
 	}
 
 	public function populateChunk($chunkX, $chunkZ){
+		$this->level->level->setPopulated($chunkX, $chunkZ, true); 
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 		foreach($this->populators as $populator){
 			$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
