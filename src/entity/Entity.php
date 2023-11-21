@@ -418,20 +418,21 @@ class Entity extends Position
 		$endX = ceil($this->boundingBox->maxX);
 		$endY = ceil($this->boundingBox->maxY);
 		$endZ = ceil($this->boundingBox->maxZ);
-		
-		for($i = 0; $i < 8; ++$i){
-			$x = ((($i >> 0) % 2) - 0.5) * $this->width * 0.8;
-			$y= ((($i >> 1) % 2) - 0.5) * 0.1;
-			$z = ((($i >> 2) % 2) - 0.5) * $this->width * 0.8;
+		if(!($this instanceof Painting) && !($this->isPlayer() && $this->player->isSleeping !== false)){
+			for($i = 0; $i < 8; ++$i){
+				$x = ((($i >> 0) % 2) - 0.5) * $this->width * 0.8;
+				$y= ((($i >> 1) % 2) - 0.5) * 0.1;
+				$z = ((($i >> 2) % 2) - 0.5) * $this->width * 0.8;
+				
+				$blockX = floor($this->x + $x);
+				$blockY = floor($this->y + $this->getEyeHeight() + $y);
+				$blockZ = floor($this->z + $z);
 			
-			$blockX = floor($this->x + $x);
-			$blockY = floor($this->y + $this->getEyeHeight() + $y);
-			$blockZ = floor($this->z + $z);
-			
-			if($this->level->getBlockWithoutVector($blockX, $blockY, $blockZ)->isSolid){
-				$this->harm(1, "suffocation"); // Suffocation
-				$hasUpdate = true;
-				break;
+				if($this->level->getBlockWithoutVector($blockX, $blockY, $blockZ)->isSolid){
+					$this->harm(1, "suffocation"); // Suffocation
+					$hasUpdate = true;
+					break;
+				}
 			}
 		}
 		

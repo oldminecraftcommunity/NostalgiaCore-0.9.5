@@ -49,11 +49,11 @@ class Player{
 	private $ip;
 	private $port;
 	private $counter = [0, 0, 0, 0];
-	private $username;
-	private $iusername;
+	public $username;
+	public $iusername;
 	private $eid = false;
 	private $startAction = false;
-	private $isSleeping = false;
+	public $isSleeping = false;
 	private $chunksOrder = [];
 	private $lastMeasure = 0;
 	private $bandwidthRaw = 0;
@@ -68,6 +68,9 @@ class Player{
 	private $chunkCount = [];
 	private $received = [];
 	public $cratingItems;
+	
+	public $sleepingTime = 0;
+	
 	/**
 	 * @param integer $clientID
 	 * @param string $ip
@@ -130,7 +133,7 @@ class Player{
 			$this->entity->updateMetadata();
 		}
 		$this->setSpawn($pos);
-		$this->server->schedule(60, [$this, "checkSleep"]);
+	
 		return true;
 	}
 
@@ -486,6 +489,8 @@ class Player{
 		if(count($this->chunksOrder) <= 0 && $this->level->generatorType != 0){
 			$this->orderChunks();
 		}
+	
+		if($this->isSleeping) ++$this->sleepingTime;
 		if($this->chunkTicker++ > 5){
 			$this->getNextChunk($this->level);
 			$this->chunkTicker = 0;
@@ -605,22 +610,6 @@ class Player{
 		$pk->slots = $this->inventory;
 		$pk->hotbar = $hotbar;
 		$this->dataPacket($pk);
-	}
-
-	public function checkSleep(){
-		if($this->isSleeping !== false){
-			if($this->server->api->time->getPhase($this->level) === "night"){
-				foreach($this->server->api->player->getAll($this->level) as $p){
-					if($p->isSleeping === false){
-						return false;
-					}
-				}
-				$this->server->api->time->set("day", $this->level);
-				foreach($this->server->api->player->getAll($this->level) as $p){
-					$p->stopSleep();
-				}
-			}
-		}
 	}
 
 	/**
@@ -1540,6 +1529,7 @@ class Player{
 					$this->server->api->player->spawnAllPlayers($this);
 					$this->server->api->player->spawnToAllPlayers($this);
 				}
+				if($this->isSleeping) break;
 				if(($this->entity instanceof Entity) and $packet->messageIndex > $this->lastMovement){
 					$this->lastMovement = $packet->messageIndex;
 					$newPos = new Vector3($packet->x, $packet->y, $packet->z);
@@ -2224,6 +2214,7 @@ class Player{
 	
 	public function stopSleep(){
 		$this->isSleeping = false;
+		$this->sleepingTime = 0;
 		if($this->entity instanceof Entity){
 			$this->entity->updateMetadata();
 		}

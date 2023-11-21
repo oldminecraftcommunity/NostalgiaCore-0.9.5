@@ -107,7 +107,21 @@ class Level{
 		unset($this->mobSpawner->level);
 	}
 	
-
+	public function checkSleep(){ //TODO events?
+		if(count($this->players) == 0) return false;
+		if($this->server->api->time->getPhase($this->level)  === "night"){ //TODO vanilla
+			foreach($this->players as $p){
+				if($p->isSleeping == false || $p->sleepingTime < 100){
+					return false;
+				}
+			}
+			$this->server->api->time->set("day", $this->level);
+		}
+		foreach($this->players as $p){
+			$p->stopSleep();
+		}
+	}
+	
 	public function getOrderedFullChunk($X, $Z){
 		$X = (int)$X;
 		$Z = (int)$Z;
@@ -293,7 +307,7 @@ class Level{
 		}
 		$now = microtime(true);
 		$this->players = $this->server->api->player->getAll($this);
-		
+		$this->checkSleep();
 		if(count($this->changedCount) > 0){
 			arsort($this->changedCount);
 			$resendChunks = [];
