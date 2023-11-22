@@ -1387,6 +1387,7 @@ class Entity extends Position
 	}
 	
 	public function makeDead($cause){
+		if($this->server->api->dhandle("entity.death", ["entity" => $this, "cause" => $cause]) === false) return false;
 		$this->spawnDrops();
 		$this->air = 200;
 		$this->fire = 0;
