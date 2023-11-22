@@ -436,7 +436,6 @@ class Level{
 		foreach($this->level->fakeLoaded as $ind => $val){
 			$xz = explode(".", $val);
 			$this->level->unloadChunk($xz[0], $xz[1]);
-			ConsoleAPI::info("unloading feke chunk: {$xz[0]} {$xz[1]}");
 			unset($this->level->fakeLoaded[$ind]);
 		}
 		
