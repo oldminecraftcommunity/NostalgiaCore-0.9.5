@@ -28,7 +28,7 @@ class PMFLevel extends PMF{
 		}else{
 			if($this->load($file) !== false){
 				$this->parseInfo();
-				if($this->parseLevel() === false){
+				if($this->parseLevel($file) === false){
 					$this->isLoaded = false;
 				}else{
 					$this->isLoaded = true;
@@ -119,8 +119,55 @@ class PMFLevel extends PMF{
 	private function getChunkPath($X, $Z){
 		return dirname($this->file) . "/chunks/" . $Z . "." . $X . ".pmc";
 	}
-
-	protected function parseLevel(){
+	
+	public function loadNCPMF1Chunk($X, $Z){
+		$index = $this->getIndex($X, $Z);
+		
+		if($this->isChunkLoaded($X, $Z)){
+			return true;
+			
+		}//elseif(!isset($this->locationTable[$index])){
+		//	return false;
+		//}
+		
+		//$info = $this->locationTable[$index];
+		//$this->seek($info[0]);
+		$cp = $this->getChunkPath($X, $Z);
+		if(!is_file($cp)) return false;
+		$chunk = file_get_contents($cp);
+		if($chunk === false){
+			return false;
+		}
+		$chunk = zlib_decode($chunk);
+		$offset = 0;
+		if(strlen($chunk) === 0) return false;
+		$info = [0 => Utils::readShort(substr($chunk, $offset, 2))];
+		$offset+=2;
+		$this->chunks[$index] = [];
+		$this->chunkChange[$index] = [-1 => false];
+		$this->chunkInfo[$index][0] = substr($chunk, $offset, 256); //Biome data
+		$offset += 256;
+		for($Y = 0; $Y < $this->levelData["height"]; ++$Y){
+			$t = 1 << $Y;
+			if(($info[0] & $t) === $t){
+				// 4096 + 4096 + 4096 + 4096, Id, Meta, BlockLight, Skylight
+				if(strlen($this->chunks[$index][$Y] = substr($chunk, $offset, 16384)) < 16384){
+					console("[NOTICE] Empty corrupt chunk detected [$X,$Z,:$Y], recovering contents", true, true, 2);
+					$this->fillMiniChunk($X, $Z, $Y);
+				}
+				$offset += 16384;
+			}else{
+				$this->chunks[$index][$Y] = false;
+			}
+		}
+		
+		$this->setPopulated($X, $Z, true);
+		
+		$this->chunkChange[$index][-1] = true; //force save
+		return true;
+	}
+	
+	protected function parseLevel($worldFile){
 		if($this->getType() !== 0x00){
 			return false;
 		}
@@ -129,8 +176,66 @@ class PMFLevel extends PMF{
 		if($this->levelData["version"] != PMF_CURRENT_LEVEL_VERSION){ //TODO old worlds support
 			$cv = PMF_CURRENT_LEVEL_VERSION;
 			ConsoleAPI::warn("The level version does not match current. ({$this->levelData["version"]} != {$cv})");
+			
+			switch($this->levelData["version"]){
+				case 1:
+					ConsoleAPI::notice("Converting the world from NCPMF-{$this->levelData["version"]} to NCPMF-$cv...");
+					$worldDir = substr($worldFile, 0, -strlen("/level.pmf"));
+					$backupDir = "auto-world-backup-".microtime(true);
+					ConsoleAPI::info("Creating backup in $backupDir...");
+					copydir($worldDir, $backupDir);
+					ConsoleAPI::info("Started converting...");
+					$this->levelData["name"] = $this->read(Utils::readShort($this->read(2), false));
+					$this->levelData["seed"] = Utils::readInt($this->read(4));
+					$this->levelData["time"] = Utils::readInt($this->read(4));
+					$this->levelData["spawnX"] = Utils::readFloat($this->read(4));
+					$this->levelData["spawnY"] = Utils::readFloat($this->read(4));
+					$this->levelData["spawnZ"] = Utils::readFloat($this->read(4));
+					$this->levelData["width"] = ord($this->read(1));
+					$this->levelData["height"] = ord($this->read(1));
+					$this->levelData["generator"] = $this->read(Utils::readShort($this->read(2), false));
+					$lastseek = ftell($this->fp);
+					if(($len = $this->read(2)) === false or ($this->levelData["extra"] = @gzinflate($this->read(Utils::readShort($len, false)))) === false){ //Corruption protection
+						console("[NOTICE] Empty/corrupt location table detected, forcing recovery");
+						fseek($this->fp, $lastseek);
+						$c = gzdeflate("");
+						$this->write(Utils::writeShort(strlen($c)) . $c);
+						$this->payloadOffset = ftell($this->fp);
+						$this->levelData["extra"] = "";
+						//$cnt = pow($this->levelData["width"], 2);
+						for($X = 0; $X < 16; ++$X){
+							for($Z = 0; $Z < 16; ++$Z){
+								$this->write("\x00\xFF"); //Force index recreation
+							}
+						}
+						fseek($this->fp, $this->payloadOffset);
+					}else{
+						$this->payloadOffset = ftell($this->fp);
+					}
+					
+					
+					foreach(scandir("$worldDir/chunks/") as $f){
+						if($f != "." && $f != ".."){
+							$xz = explode(".", $f);
+							$X = (int) $xz[0];
+							$Z = (int) $xz[1];
+							ConsoleAPI::info("Converting $X-$Z...");
+							$this->loadNCPMF1Chunk($X, $Z);
+							$this->unloadChunk($X, $Z);
+						}
+					}
+					
+					ConsoleAPI::notice("Modifying level.pmf...");
+					$this->saveData(false);
+					ConsoleAPI::notice("World converted. Reloading...");
+					break;
+			}
+			
 			return false;
 		}
+		
+		
+		
 		$this->levelData["name"] = $this->read(Utils::readShort($this->read(2), false));
 		$this->levelData["seed"] = Utils::readInt($this->read(4));
 		$this->levelData["time"] = Utils::readInt($this->read(4));

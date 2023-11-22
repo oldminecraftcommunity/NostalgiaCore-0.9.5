@@ -275,6 +275,9 @@ class ConsoleAPI{
 	public static function debug($msg){
 		console("[DEBUG] ".$msg, true, true, 2);
 	}
+	public static function notice($msg){
+		console("[NOTICE] ".$msg);
+	}
 	public static function info($msg){
 		console("[INFO] ".$msg);
 	}
