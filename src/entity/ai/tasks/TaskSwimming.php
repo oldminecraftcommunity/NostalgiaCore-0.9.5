@@ -18,7 +18,7 @@ class TaskSwimming extends TaskBase
 			$this->reset();
 		}
 		
-		if(Utils::randomFloat() < 0.8){ #1.5.2 method
+		if(lcg_value() < 0.8){ #1.5.2 method
 			$ai->entity->speedY = 0.42;
 		}
 		

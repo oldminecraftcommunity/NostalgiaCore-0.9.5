@@ -4,7 +4,7 @@ class TaskLookAtPlayer extends TaskBase{
 	public $target = false;
 	private $state, $yaw, $pitch;
 	public function canBeExecuted(EntityAI $ai){
-		return !$ai->entity->inPanic && Utils::randomFloat() < 0.02 && !$ai->entity->isMovingHorizontally() && !$ai->isStarted("TaskLookAround") && !$ai->isStarted("TaskTempt") && !$ai->entity->hasPath();
+		return !$ai->entity->inPanic && lcg_value() < 0.02 && !$ai->entity->isMovingHorizontally() && !$ai->isStarted("TaskLookAround") && !$ai->isStarted("TaskTempt") && !$ai->entity->hasPath();
 	}
 
 	protected function findTarget($e, $r){

@@ -40,7 +40,7 @@ class NormalGenerator implements NewLevelGenerator{
 			new OreType(new LapisOreBlock(), 1, 6, 0, 32),
 			new OreType(new GoldOreBlock(), 2, 8, 0, 32),
 			new OreType(new DiamondOreBlock(), 1, 7, 0, 16),
-			new OreType(new EmeraldOreBlock(), 1, 7, 0, 16), //TODO vanilla
+			new OreType(new EmeraldOreBlock(), 1, 2, 0, 16), //TODO vanilla
 
 			new OreType(new DirtBlock(), 20, 32, 0, 128),
 			new OreType(new GravelBlock(), 10, 16, 0, 128),
@@ -70,7 +70,7 @@ class NormalGenerator implements NewLevelGenerator{
 				$i = ($z << 4) + $x;
 				$hills[$i] = $this->noiseHills->noise3D($x + ($chunkX << 4), 0, $z + ($chunkZ << 4), 0.11, 12, true);
 				$patches[$i] = $this->noisePatches->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.03, 16, true);
-				$patchesSmall[$i] = $this->noisePatchesSmall->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.5, 4, true);
+				//$patchesSmall[$i] = $this->noisePatchesSmall->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.5, 4, true);
 				$base[$i] = $this->noiseBase->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.7, 16, true);
 				if($base[$i] < 0){
 					$base[$i] *= 0.5;

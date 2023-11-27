@@ -48,7 +48,7 @@ class SmallFarmStructure extends Structure{
 	
 	protected function getMappingFor($char){
 		if($char === "R"){
-			$f = Utils::randomFloat();
+			$f = lcg_value();
 			
 			if($f <= 0.5){
 				return [WHEAT_BLOCK, 0];

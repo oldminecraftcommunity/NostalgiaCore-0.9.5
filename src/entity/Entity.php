@@ -1239,8 +1239,8 @@ class Entity extends Position
 		if ($ret != false && $this->hasKnockback && is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false) {
 			$d = $entity->x - $this->x;
 
-			for ($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (Utils::randomFloat() - Utils::randomFloat()) * 0.01) {
-				$d = (Utils::randomFloat() - Utils::randomFloat()) * 0.01;
+			for ($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (lcg_value() - lcg_value()) * 0.01) {
+				$d = (lcg_value() - lcg_value()) * 0.01;
 			}
 			// attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) >
 			$this->knockBack($d, $d1);

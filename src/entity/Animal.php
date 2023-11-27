@@ -60,9 +60,9 @@ abstract class Animal extends Creature implements Ageable, Breedable{
 	public function spawnChild()
 	{
 		return $this->server->api->entity->add($this->level, $this->class, $this->type, [
-			"x" => $this->x + Utils::randomFloat() * mt_rand(-1, 1),
+			"x" => $this->x + lcg_value() * mt_rand(-1, 1),
 			"y" => $this->y,
-			"z" => $this->z + Utils::randomFloat() * mt_rand(-1, 1),
+			"z" => $this->z + lcg_value() * mt_rand(-1, 1),
 			"IsBaby" => true,
 			"Age" => -24000,
 		]);

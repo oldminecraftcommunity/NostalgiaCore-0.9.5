@@ -66,7 +66,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 			new OreType(new LapisOreBlock(), 1, 6, 0, 32),
 			new OreType(new GoldOreBlock(), 2, 8, 0, 32),
 			new OreType(new DiamondOreBlock(), 1, 7, 0, 16),
-			new OreType(new EmeraldOreBlock(), 1, 7, 0, 16), //TODO vanilla
+			new OreType(new EmeraldOreBlock(), 1, 2, 0, 16), //TODO vanilla
 			
 			new OreType(new DirtBlock(), 20, 32, 0, 128),
 			new OreType(new GravelBlock(), 10, 16, 0, 128),
