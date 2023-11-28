@@ -1,8 +1,8 @@
 <?php
 class TreePopulator extends Populator{
-	private $level;
-	private $randomAmount;
-	private $baseAmount;
+	public $level;
+	public $randomAmount;
+	public $baseAmount;
 	
 	public function setRandomAmount($amount){
 		$this->randomAmount = $amount;
@@ -33,7 +33,7 @@ class TreePopulator extends Populator{
 		}
 	}
 	
-	private function getHighestWorkableBlock($x, $z){
+	public function getHighestWorkableBlock($x, $z){
 		for($y = 128; $y > 0; --$y){
 			$b = $this->level->level->getBlockID($x, $y, $z);
 			if($b !== DIRT and $b !== GRASS){

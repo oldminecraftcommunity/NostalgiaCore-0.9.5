@@ -123,6 +123,8 @@ require_once(FILE_PATH . "/src/material/item/base/ItemSword.php");
 require_once(FILE_PATH . "/src/material/item/armor/ArmorItem.php");
 
 require_once(FILE_PATH . "/src/structure/Structure.php");
+require_once(FILE_PATH . "/src/world/generator/Populator.php");
+require_once(FILE_PATH . "/src/world/generator/LevelGenerator.php");
 
 require_once(FILE_PATH . "/src/plugin/Plugin.php");
 require_once(FILE_PATH . "/src/plugin/OtherPluginRequirement.php");
@@ -134,10 +136,17 @@ require_once(FILE_PATH . "/src/world/generator/LevelGenerator.php");
 require_once(FILE_PATH . "/src/world/generator/NewLevelGenerator.php");
 require_once(FILE_PATH . "/src/world/generator/biome/Biome.php");
 require_once(FILE_PATH . "/src/world/generator/biome/BiomeSelector.php");
+require_once(FILE_PATH . "/src/world/generator/biome/NormalGeneratorBiomeSelector.php");
 require_once(FILE_PATH . "/src/world/generator/biome/biomes/BiomeWithGrass.php");
 require_once(FILE_PATH . "/src/world/generator/biome/biomes/BiomeWithSand.php");
 require_once(FILE_PATH . "/src/world/generator/biome/biomes/BiomeWithSnow.php");
 require_once(FILE_PATH . "/src/world/generator/biome/biomes/BiomeExtremeHills.php");
+
+
+require_once(FILE_PATH . "/src/world/generator/populator/TreePopulator.php");
+
+
+
 
 require_all(FILE_PATH . "src/");
 

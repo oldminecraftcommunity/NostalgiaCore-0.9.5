@@ -14,7 +14,7 @@ class NormalGenerator implements NewLevelGenerator{
 	private $noisePatches;
 	private $noisePatchesSmall;
 	private $noiseBase;
-	
+	private $biomeSelector;
 	public function __construct(array $options = array()){
 		
 	}
@@ -31,6 +31,7 @@ class NormalGenerator implements NewLevelGenerator{
 		$this->noisePatches = new NoiseGeneratorPerlin($this->random, 2);
 		$this->noisePatchesSmall = new NoiseGeneratorPerlin($this->random, 2);
 		$this->noiseBase = new NoiseGeneratorPerlin($this->random, 16);
+		$this->biomeSelector = new NormalGeneratorBiomeSelector($this->random, BiomeSelector::$biomes[BIOME_PLAINS]);
 		
 		$ores = new OrePopulator();
 		$ores->setOreTypes(array(
@@ -50,23 +51,42 @@ class NormalGenerator implements NewLevelGenerator{
 		));
 		$this->populators[] = $ores;
 		
-		$trees = new TreePopulator();
-		$trees->setBaseAmount(3);
-		$trees->setRandomAmount(0);
+		$trees = new BiomeBasedTreePopulator();
+		$trees->setBaseAmount(8);
+		$trees->setRandomAmount(2);
 		$this->populators[] = $trees;
+		
+		$this->populators[] = new FlowerPatchPopulator();
 		
 		$tallGrass = new TallGrassPopulator();
 		$tallGrass->setBaseAmount(5);
 		$tallGrass->setRandomAmount(0);
 		$this->populators[] = $tallGrass;
+
+	}
+	
+	public function pickBiome(int $x, int $z){
+		$hash = $x * 2345803 ^ $z * 9236449 ^ $this->level->level->getSeed();
+		$hash *= $hash + 223;
+		$xNoise = ((int)$hash) >> 20 & 3; //why dont u have types for local variables??
+		$zNoise = ((int)$hash) >> 22 & 3;
+		if($xNoise == 3){
+			$xNoise = 1;
+		}
+		if($zNoise == 3){
+			$zNoise = 1;
+		}
+		return $this->biomeSelector->pickBiome($x + $xNoise - 1, $z + $zNoise - 1);
 	}
 	
 	public function generateChunk($chunkX, $chunkZ){
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 		$hills = array();
 		$base = array();
+		$biomes = str_repeat(chr(BIOME_PLAINS), 256);
 		for($z = 0; $z < 16; ++$z){
 			for($x = 0; $x < 16; ++$x){
+				$biomes[($z << 4) + $x] = chr($this->pickBiome($chunkX * 16 + $x, $chunkZ * 16 + $z)->id);
 				$i = ($z << 4) + $x;
 				$hills[$i] = $this->noiseHills->noise3D($x + ($chunkX << 4), 0, $z + ($chunkZ << 4), 0.11, 12, true);
 				$patches[$i] = $this->noisePatches->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.03, 16, true);
@@ -86,7 +106,7 @@ class NormalGenerator implements NewLevelGenerator{
 					$i = ($z << 4) + $x;
 					$height = $this->worldHeight + $hills[$i] * 14 + $base[$i] * 7;
 					$height = (int) $height;
-					
+					$biomeID = ord($biomes[$i]);
 					for($y = $startY; $y < $endY; ++$y){
 						$diff = $height - $y;
 						if($y <= 4 and ($y === 0 or $this->random->nextFloat() < 0.33)){
@@ -99,7 +119,7 @@ class NormalGenerator implements NewLevelGenerator{
 							}elseif($patches[$i] < -0.8){
 								$chunk .= "\x0d"; //gravel
 							}else{
-								$chunk .= "\x03"; //dirt
+								$chunk .= $biomeID === BIOME_DESERT ? chr(SANDSTONE) : chr(DIRT);
 							}
 						}elseif($y <= $this->waterHeight){
 							if(($this->waterHeight - $y) <= 1 and $diff === 0){
@@ -121,7 +141,7 @@ class NormalGenerator implements NewLevelGenerator{
 							}elseif($patches[$i] < -0.8){
 								$chunk .= "\x0d"; //gravel
 							}else{
-								$chunk .= "\x02"; //grass
+								$chunk .= $biomeID === BIOME_DESERT ? chr(SAND) : chr(GRASS); //grass
 							}
 						}else{
 							$chunk .= "\x00";
@@ -132,7 +152,7 @@ class NormalGenerator implements NewLevelGenerator{
 					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"; //skylight/light
 				}
 			}
-			$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, str_repeat(chr(BIOME_PLAINS), 256));
+			$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, $biomes);
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
 	}

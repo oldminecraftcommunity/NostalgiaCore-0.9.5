@@ -91,7 +91,6 @@ class BiomeSelector
 	public function pickBiome($x, $z){
 		$temperature = (int) ($this->getTemperature($x, $z) * 63);
 		$rainfall = (int) ($this->getRainfall($x, $z) * 63);
-
 		$biomeId = $this->map[$temperature + ($rainfall << 6)] ?? -1;
 		return self::$biomes[$biomeId] ?? $this->fallback;
 	}
