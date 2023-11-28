@@ -19,7 +19,6 @@ class BiomeBasedTreePopulator extends \TreePopulator
 					}
 					break;
 				case BIOME_JUNGLE:
-					cosnole("placing jungle wood on $x $z");
 					$meta = SaplingBlock::JUNGLE;
 					break;
 				case BIOME_TAIGA:

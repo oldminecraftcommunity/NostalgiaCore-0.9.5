@@ -88,9 +88,8 @@ class NormalGenerator implements NewLevelGenerator{
 			for($x = 0; $x < 16; ++$x){
 				$biomes[($z << 4) + $x] = chr($this->pickBiome($chunkX * 16 + $x, $chunkZ * 16 + $z)->id);
 				$i = ($z << 4) + $x;
-				$hills[$i] = $this->noiseHills->noise3D($x + ($chunkX << 4), 0, $z + ($chunkZ << 4), 0.11, 12, true);
+				$hills[$i] = $this->noiseHills->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.11, 12, true);
 				$patches[$i] = $this->noisePatches->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.03, 16, true);
-				//$patchesSmall[$i] = $this->noisePatchesSmall->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.5, 4, true);
 				$base[$i] = $this->noiseBase->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.7, 16, true);
 				if($base[$i] < 0){
 					$base[$i] *= 0.5;
@@ -139,7 +138,7 @@ class NormalGenerator implements NewLevelGenerator{
 							}elseif($patches[$i] < -0.8){
 								$chunk .= "\x0d"; //gravel
 							}else{
-								$chunk .= $biomeID === BIOME_DESERT ? chr(SAND) : chr(GRASS); //grass
+								$chunk .= $biomeID === BIOME_DESERT ? chr(SAND) : chr(GRASS);
 							}
 						}else{
 							$chunk .= "\x00";
