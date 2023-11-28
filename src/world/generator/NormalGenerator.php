@@ -50,7 +50,7 @@ class NormalGenerator implements NewLevelGenerator{
 			new OreType(new StoneBlock(5), 12, 16, 0, 128),
 		));
 		$this->populators[] = $ores;
-		
+		$this->populators[] = new DesertPopulator(); //TODO biome populators
 		$trees = new BiomeBasedTreePopulator();
 		$trees->setBaseAmount(8);
 		$trees->setRandomAmount(2);
@@ -123,17 +123,15 @@ class NormalGenerator implements NewLevelGenerator{
 							}
 						}elseif($y <= $this->waterHeight){
 							if(($this->waterHeight - $y) <= 1 and $diff === 0){
-								$chunk .= "\x0c"; //sand
+								$chunk .= ($biomeID === BIOME_TAIGA) ? chr(GRASS) : chr(SAND);
 							}elseif($diff === 0){
-								/*if($patchesSmall[$i] > 0.3){
-									$chunk .= "\x0d"; //gravel
-								}elseif($patchesSmall[$i] < -0.45){
-									$chunk .= "\x0c"; //sand
-								}else{*/
-									$chunk .= "\x03"; //dirt
-								//}
+								$chunk .= "\x03"; //dirt
 							}else{
+								//if($y === $this->waterHeight && $biomeID == BIOME_TAIGA){
+								//	$chunk .= chr(ICE);
+								///}else{
 								$chunk .= "\x09"; //still_water
+								//}
 							}
 						}elseif($diff === 0){
 							if($patches[$i] > 0.7){
@@ -161,7 +159,6 @@ class NormalGenerator implements NewLevelGenerator{
 		$this->level->level->setPopulated($chunkX, $chunkZ, true);
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 		foreach($this->populators as $populator){
-			$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
 	}
