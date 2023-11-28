@@ -491,7 +491,7 @@ class Player{
 		}
 	
 		if($this->isSleeping) ++$this->sleepingTime;
-		if($this->chunkTicker++ > 5){
+		if($this->chunkTicker++ > PocketMinecraftServer::$chukSendDelay){
 			$this->getNextChunk($this->level);
 			$this->chunkTicker = 0;
 		}
