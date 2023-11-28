@@ -580,6 +580,25 @@ class Entity extends Position
 				if(Utils::in_range($this->speedY, -0.007, 0.007)){
 					$this->speedY = 0;
 				}
+				
+				$horizontalMultiplyFactor = 0.91;
+				if($this->onGround){
+					$horizontalMultiplyFactor = 0.54;
+					$b = $this->level->level->getBlockID(floor($this->x), floor($this->boundingBox->minX) - 1, floor($this->z));
+					if($b > 0){
+						$horizontalMultiplyFactor = StaticBlock::getSlipperiness($b) * 0.91;
+					}
+				}
+				if($this->inWater){
+					$this->speedX *= 0.8;
+					$this->speedY *= 0.8;
+					$this->speedZ *= 0.8;
+				}else{
+					$this->speedX *= $horizontalMultiplyFactor;
+					$this->speedY *= 0.98;
+					$this->speedZ *= $horizontalMultiplyFactor;
+				}
+				
 				$savedSpeedY = $this->speedY;
 				if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)){
 					$water = false;
@@ -614,24 +633,7 @@ class Entity extends Position
 				}
 				
 				$support = $savedSpeedY != $this->speedY && $savedSpeedY < 0;
-				$horizontalMultiplyFactor = 0.91;
-				if($support){
-					$horizontalMultiplyFactor = 0.54;
-					$b = $this->level->getBlockWithoutVector(floor($this->x), floor($this->boundingBox->minX) - 1, floor($this->z));
-					if($b instanceof Block){
-						$horizontalMultiplyFactor = $b->slipperiness * 0.91;
-					}
-				}
 				
-				if($this->inWater){
-					$this->speedX *= 0.8;
-					$this->speedY *= 0.8;
-					$this->speedZ *= 0.8;
-				}else{
-					$this->speedX *= $horizontalMultiplyFactor;
-					$this->speedY *= 0.98;
-					$this->speedZ *= $horizontalMultiplyFactor;
-				}
 				if($this->speedX != 0){
 					$this->x += $this->speedX;
 					$update = true;
