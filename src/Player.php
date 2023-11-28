@@ -97,7 +97,7 @@ class Player{
 		$this->packetStats = [0, 0];
 		$this->buffer = new RakNetPacket(RakNetInfo::DATA_PACKET_0);
 		$this->buffer->data = [];
-		$this->server->schedule(2, [$this, "handlePacketQueues"], [], true);
+		$this->server->schedule(1, [$this, "handlePacketQueues"], [], true);
 		$this->server->schedule(20 * 60, [$this, "clearQueue"], [], true);
 		$this->evid[] = $this->server->event("server.close", [$this, "close"]);
 		console("[DEBUG] New Session started with " . $ip . ":" . $port . ". MTU " . $this->MTU . ", Client ID " . $this->clientID, true, true, 2);
@@ -334,7 +334,7 @@ class Player{
 		$this->bufferLen = 0;
 		$this->buffer = new RakNetPacket(RakNetInfo::DATA_PACKET_0);
 		$this->buffer->data = [];
-		$this->nextBuffer = microtime(true) + 0.1;
+		$this->nextBuffer = microtime(true) + 0.05;
 	}
 
 	/**
@@ -781,9 +781,6 @@ class Player{
 				$pk = new SetEntityMotionPacket; //TODO one packet for all entities if possible
 				$pk->entities = [[$data->eid, $data->speedX, $data->speedY, $data->speedZ]];
 				$this->dataPacket($pk);
-				$data->lastSpeedZ = $data->speedZ;
-				$data->lastSpeedY = $data->speedY;
-				$data->lastSpeedX = $data->speedX;
 				break;
 			case "entity.animate":
 

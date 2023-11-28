@@ -5,6 +5,7 @@ class Entity extends Position
 
 	const TYPE = - 1;
 	const CLASS_TYPE = - 1;
+	const MIN_POSSIBLE_SPEED = 1/8000; //anything below will send 0 to player
 	
 	public $counter = 0;
 	public $invincible, $status, $health, $fire, $crouched, $position, $meta, $stack;
@@ -207,11 +208,11 @@ class Entity extends Position
 	}
 	public function isMovingHorizontally()
 	{
-		return ($this->speedX > 0.01 || $this->speedX < - 0.01) || ($this->speedZ > 0.01 || $this->speedZ < - 0.01);
+		return ($this->speedX >= self::MIN_POSSIBLE_SPEED || $this->speedX <= -self::MIN_POSSIBLE_SPEED) || ($this->speedZ >= self::MIN_POSSIBLE_SPEED || $this->speedZ <= -self::MIN_POSSIBLE_SPEED);
 	}
 	public function isMoving()
 	{
-		return  $this->isMovingHorizontally() || ($this->speedY > 0.007 || $this->speedY < - 0.007);
+		return $this->isMovingHorizontally() || ($this->speedY > self::MIN_POSSIBLE_SPEED || $this->speedY < -self::MIN_POSSIBLE_SPEED);
 	}
 
 	public function setVelocity($vX, $vY = 0, $vZ = 0)
@@ -571,13 +572,13 @@ class Entity extends Position
 			}
 			if(!$this->isPlayer()){
 				$update = false;
-				if(Utils::in_range($this->speedX, -0.01, 0.01)){
+				if($this->speedX > -self::MIN_POSSIBLE_SPEED && $this->speedX < self::MIN_POSSIBLE_SPEED){
 					$this->speedX = 0;
 				}
-				if(Utils::in_range($this->speedZ, -0.01, 0.01)){
+				if($this->speedZ > -self::MIN_POSSIBLE_SPEED && $this->speedZ < self::MIN_POSSIBLE_SPEED){
 					$this->speedZ = 0;
 				}
-				if(Utils::in_range($this->speedY, -0.007, 0.007)){
+				if($this->speedY > -self::MIN_POSSIBLE_SPEED && $this->speedY < self::MIN_POSSIBLE_SPEED){
 					$this->speedY = 0;
 				}
 				
@@ -672,7 +673,7 @@ class Entity extends Position
 				$this->onGround = $support;
 				
 				if($this->hasGravity){
-					$this->speedY -= $this->inWater ? 0.02 : $this->gravity; // TODO: replace with $gravity
+					$this->speedY -= $this->inWater ? 0.02 : $this->gravity; // TODO: fix packet spam
 					$update = true;
 				} elseif($this->lastX != $this->x || $this->lastZ != $this->z || $this->lastY != $this->z){
 					// $this->speedX = 0;
@@ -688,6 +689,9 @@ class Entity extends Position
 					$hasUpdate = true;
 					if(($this->server->ticks % 4 === 0 && $this->class === ENTITY_ITEM) || $this->class != ENTITY_ITEM){ //update item speed every 4 ticks
 						$this->server->api->handle("entity.motion", $this);
+						$this->lastSpeedZ = $this->speedZ;
+						$this->lastSpeedY = $this->speedY;
+						$this->lastSpeedX = $this->speedX;
 					}
 				}
 			} elseif($this->player instanceof Player){
