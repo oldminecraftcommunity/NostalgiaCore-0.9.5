@@ -608,9 +608,9 @@ class PMFLevel extends PMF{
 				$this->createUnpopulatedChunk($X, $Z);
 			}
 		}
-		if($this->chunks[$index][$Y] === false){
-			$this->fillMiniChunk($X, $Z, $Y);
-		}
+		//if($this->chunks[$index][$Y] === false){
+		//	$this->fillMiniChunk($X, $Z, $Y);
+		//}
 		
 		$aX = $x & 0xf;
 		$aZ = $z & 0xf;

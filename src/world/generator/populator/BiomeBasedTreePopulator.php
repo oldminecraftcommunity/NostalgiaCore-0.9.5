@@ -12,9 +12,6 @@ class BiomeBasedTreePopulator extends \TreePopulator
 			$biome = BiomeSelector::get($biomeID);
 			$treeFeature = null;
 			if($biome instanceof Biome){
-				if($biome->id === BIOME_JUNGLE){
-					console("JUNGLE AT $chunkX $chunkZ");
-				}
 				$treeFeature = $biome->getTree($random);
 			}
 			

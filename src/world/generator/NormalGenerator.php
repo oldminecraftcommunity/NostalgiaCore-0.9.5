@@ -15,6 +15,7 @@ class NormalGenerator implements NewLevelGenerator{
 	private $noisePatchesSmall;
 	private $noiseBase;
 	private $biomeSelector;
+	private $caveGenerator;
 	public function __construct(array $options = array()){
 		
 	}
@@ -61,7 +62,7 @@ class NormalGenerator implements NewLevelGenerator{
 		$tallGrass->setBaseAmount(5);
 		$tallGrass->setRandomAmount(0);
 		$this->populators[] = $tallGrass;
-
+		$this->caveGenerator = new CaveGenerator($this->level->getSeed());
 	}
 	
 	public function pickBiome(int $x, int $z){
@@ -151,6 +152,9 @@ class NormalGenerator implements NewLevelGenerator{
 			$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, $biomes);
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
+		//$this->caveGenerator->curChunkX = $chunkX;
+		//$this->caveGenerator->curChunkZ = $chunkZ;
+		//$this->caveGenerator->generate($this->level, $chunkX, $chunkZ);
 	}
 	
 	public function populateChunk($chunkX, $chunkZ){
