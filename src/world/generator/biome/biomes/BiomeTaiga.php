@@ -13,5 +13,13 @@ class BiomeTaiga extends BiomeWithSnow
 			[DIRT, 0],
 		]);
 	}
+	
+	public function getTree(Random $random){
+		$n = $random->nextInt(3);
+		if($n == 0){
+			return new PineTreeObject();
+		}
+		return new SpruceTreeObject();
+	}
 }
 

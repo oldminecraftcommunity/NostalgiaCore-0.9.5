@@ -134,6 +134,9 @@ require_once(FILE_PATH . "/src/plugin/phar/PharUtils.php");
 
 require_once(FILE_PATH . "/src/world/generator/LevelGenerator.php");
 require_once(FILE_PATH . "/src/world/generator/NewLevelGenerator.php");
+
+require_once(FILE_PATH . "/src/world/generator/biome/BiomeDecorator.php");
+
 require_once(FILE_PATH . "/src/world/generator/biome/Biome.php");
 require_once(FILE_PATH . "/src/world/generator/biome/BiomeSelector.php");
 require_once(FILE_PATH . "/src/world/generator/biome/NormalGeneratorBiomeSelector.php");

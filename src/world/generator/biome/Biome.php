@@ -2,13 +2,25 @@
 
 abstract class Biome{
 	public $id, $topBlocks, $fillerBlock, $name, $minY, $maxY;
+	
+	public $decorator = false;
+	
 	public function __construct($id, $name){
 		$this->name = $name;
 		$this->id = $id;
+		$this->decorator = $this->createBiomeDecorator();
 	}
 	
 	public function setTopBlocks($id){
 		$this->topBlocks = $id;
+	}
+	
+	public function createBiomeDecorator(){
+		return new BiomeDecorator();
+	}
+	
+	public function getTree(Random $random){
+		return null;
 	}
 	
 	public function getID(){
@@ -57,6 +69,7 @@ abstract class Biome{
 		BiomeSelector::registerBiome(new BiomeTaiga(BIOME_TAIGA, "Taiga"));
 		BiomeSelector::registerBiome(new BiomeForest(BIOME_FOREST, "Forest"));
 		BiomeSelector::registerBiome(new BiomeForest(BIOME_BIRCH_FOREST, "Birch Forest"));
+		BiomeSelector::registerBiome(new BiomeJungle(BIOME_JUNGLE, "Jungle"));
 
 	}
 

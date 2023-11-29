@@ -6,5 +6,9 @@ class BiomeDesert extends BiomeWithSand
 		parent::__construct($id, $name);
 		$this->setMinMax(63, 74);
 	}
+	
+	public function createBiomeDecorator(){
+		return new DesertBiomeDecorator();
+	}
 }
 

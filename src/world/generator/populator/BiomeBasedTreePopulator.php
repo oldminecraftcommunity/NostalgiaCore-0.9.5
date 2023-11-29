@@ -9,36 +9,27 @@ class BiomeBasedTreePopulator extends \TreePopulator
 			$x = $random->nextRange($chunkX << 4, ($chunkX << 4) + 15);
 			$z = $random->nextRange($chunkZ << 4, ($chunkZ << 4) + 15);
 			$biomeID = $level->level->getBiomeId($x, $z);
-			switch($biomeID){
-				case BIOME_FOREST:
-					$f = $random->nextFloat();
-					if($f > 0.75){
-						$meta = SaplingBlock::BIRCH;
-					}else{
-						$meta = SaplingBlock::OAK;
-					}
-					break;
-				case BIOME_JUNGLE:
-					$meta = SaplingBlock::JUNGLE;
-					break;
-				case BIOME_TAIGA:
-					$meta = SaplingBlock::SPRUCE;
-					break;
-				case BIOME_PLAINS:
-					$f = $random->nextFloat();
-					if($f > 0.9){
-						$meta = SaplingBlock::OAK;
-						break;
-					}
-					return;
-				default:
-					return;
+			$biome = BiomeSelector::get($biomeID);
+			$treeFeature = null;
+			if($biome instanceof Biome){
+				if($biome->id === BIOME_JUNGLE){
+					console("JUNGLE AT $chunkX $chunkZ");
+				}
+				$treeFeature = $biome->getTree($random);
 			}
-			$y = $this->getHighestWorkableBlock($x, $z);
-			if($y === -1){
+			
+			if($treeFeature instanceof TreeObject){
+				$y = $this->getHighestWorkableBlock($x, $z);
+				if($y === -1){
+					continue;
+				}
+				$v3 = new Vector3($x, $y, $z); //TODO no v3
+				if($treeFeature->canPlaceObject($level, $v3, $random)){
+					$treeFeature->placeObject($level, $v3, $random);
+				}
+			}else{
 				continue;
 			}
-			TreeObject::growTree($this->level, new Vector3($x, $y, $z), $random, $meta);
 		}
 	}
 }

@@ -50,10 +50,9 @@ class NormalGenerator implements NewLevelGenerator{
 			new OreType(new StoneBlock(5), 12, 16, 0, 128),
 		));
 		$this->populators[] = $ores;
-		$this->populators[] = new DesertPopulator(); //TODO biome populators
 		$trees = new BiomeBasedTreePopulator();
-		$trees->setBaseAmount(8);
-		$trees->setRandomAmount(2);
+		$trees->setBaseAmount(8); //TODO biome based amount?
+		$trees->setRandomAmount(4);
 		$this->populators[] = $trees;
 		
 		$this->populators[] = new FlowerPatchPopulator();
@@ -157,6 +156,16 @@ class NormalGenerator implements NewLevelGenerator{
 	public function populateChunk($chunkX, $chunkZ){
 		$this->level->level->setPopulated($chunkX, $chunkZ, true);
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
+		
+		$biomeID = $this->level->level->getBiomeId($chunkX*16, $chunkZ*16);
+		$biome = BiomeSelector::get($biomeID);
+		if($biome === false){
+			ConsoleAPI::warn("Failed to get Biome with id {$biomeID} at $chunkX, $chunkZ");
+		}else{
+			$biome->decorator->decorate($this->level, $chunkX, $chunkZ, $this->random);	
+		}
+		
+		
 		foreach($this->populators as $populator){
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}

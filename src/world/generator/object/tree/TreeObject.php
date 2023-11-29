@@ -1,7 +1,7 @@
 <?php
 
 class TreeObject{
-
+	public function __construct(){}
 	public $overridable = [
 		0 => true,
 		6 => true,
@@ -21,15 +21,12 @@ class TreeObject{
 				}
 				break;
 			case SaplingBlock::BIRCH:
-				$tree = new SmallTreeObject();
-				$tree->type = SaplingBlock::BIRCH;
+				$tree = new SmallTreeObject(SaplingBlock::BIRCH);
 				break;
 			case SaplingBlock::JUNGLE:
-				$tree = new SmallTreeObject();
-				$tree->type = SaplingBlock::JUNGLE;
+				$tree = new SmallTreeObject(SaplingBlock::JUNGLE);
 				break;
 			case SaplingBlock::ACACIA:
-				console("acacia");
 				$tree = new AcaciaTreeObject();
 				break;
 			case SaplingBlock::DARK_OAK:

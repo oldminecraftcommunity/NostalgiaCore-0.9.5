@@ -8,13 +8,16 @@ class SmallTreeObject extends TreeObject{
 
 private static $leavesHeight = 4;
 	private static $leafRadii = [1, 1.41, 2.83, 2.24];
-		public $type = 0; // All trees appear to be 4 tall
+	public $type = 0;
 	public $treeHeight = 7;
 	private $trunkHeight = 5;
 	private $addLeavesVines = false;
 	private $addLogVines = false;
 	private $addCocoaPlants = false;
-
+	public function __construct($treeType = 0){
+		parent::__construct();
+		$this->type = $treeType;
+	}
 	public function canPlaceObject(Level $level, Vector3 $pos, Random $random){
 		$radiusToCheck = 0;
 		for($yy = 0; $yy < $this->trunkHeight + 3; ++$yy){
