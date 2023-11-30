@@ -152,9 +152,7 @@ class NormalGenerator implements NewLevelGenerator{
 			$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, $biomes);
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
-		//$this->caveGenerator->curChunkX = $chunkX;
-		//$this->caveGenerator->curChunkZ = $chunkZ;
-		//$this->caveGenerator->generate($this->level, $chunkX, $chunkZ);
+		//$this->caveGenerator->generate($this->level, $chunkX, $chunkZ); TODO speedup
 	}
 	
 	public function populateChunk($chunkX, $chunkZ){

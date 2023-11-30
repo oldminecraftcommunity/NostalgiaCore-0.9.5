@@ -44,29 +44,22 @@ define("MASK32", $val);
 
 
 class MersenneTwister{
-	
-	
+	public $mt;
+	public $mti = 0;
 	static $MAG_01 = [0, MATRIX_A];
 	
-	const N = N;
 	//the class constant is not used anywhere in this namespace,
 	//but it makes the API cleaner.
 	
 	//^^ u probably wanted to say makes code look weirder
 	
-	function __construct(){
-		$this->bits32 = PHP_INT_MAX == 2147483647;
-		
-		if(func_num_args() == 1){
-			$this->init_with_integer(func_get_arg(0));
-		}
+	public function __construct($seed = null){
+		$this->init_with_integer($seed == null ? ((int)microtime(1) & 0xffffffff) : $seed);
 	}
 	
 	function init_with_integer($integer_seed){
-		$integer_seed = force_32_bit_int($integer_seed);
-		$this->mt = array_fill(0, N, 0);
 		$this->mt[0] = $integer_seed;
-		for($this->mti = 1; $this->mti < N; ++$this->mti){
+		for($this->mti = 1; $this->mti < 624; ++$this->mti){
 			$this->mt[$this->mti] = add_2(mul(1812433253, ($this->mt[$this->mti - 1] ^ (($this->mt[$this->mti - 1] >> 30) & 3))), $this->mti);
 		}
 	}

@@ -49,7 +49,14 @@ class Random{
 	public function nextFloat(){
 		return $this->nextInt() / 0x7FFFFFFF;
 	}
-
+	
+	public function nextLong($n = -1){
+		if($n > 0){
+			return Utils::readLong($this->nextBytes(8)) & 0x7FFFFFFF % $n;
+		}
+		return Utils::readLong($this->nextBytes(8)) & 0x7FFFFFFF;
+	}
+	
 	public function nextInt($n = -1){
 		if($n > 0){
 			return Utils::readInt($this->nextBytes(4)) & 0x7FFFFFFF % $n;

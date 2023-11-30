@@ -600,17 +600,15 @@ class PMFLevel extends PMF{
 		$Z = $z >> 4;
 		$Y = $y >> 4;
 		$block &= 0xFF;
-		
-		$index = $this->getIndex($X, $Z);
 		$index = $this->getIndex($X, $Z);
 		if(!isset($this->chunks[$index]) or $this->chunks[$index] === false){
 			if($this->loadChunk($X, $Z, false) === false){
 				$this->createUnpopulatedChunk($X, $Z);
 			}
 		}
-		//if($this->chunks[$index][$Y] === false){
-		//	$this->fillMiniChunk($X, $Z, $Y);
-		//}
+		if($this->chunks[$index][$Y] === false){
+			$this->fillMiniChunk($X, $Z, $Y);
+		}
 		
 		$aX = $x & 0xf;
 		$aZ = $z & 0xf;
