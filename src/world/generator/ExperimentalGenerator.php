@@ -85,6 +85,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 		$tallGrass->setBaseAmount(5);
 		$tallGrass->setRandomAmount(0);
 		$this->populators[] = $tallGrass;
+		$this->caveGenerator = new CaveGenerator($this->level->getSeed());
 	}
 	
 	public function pickBiome(int $x, int $z){
