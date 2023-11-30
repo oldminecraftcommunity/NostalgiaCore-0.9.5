@@ -23,3 +23,11 @@ define("BLOCK_UPDATE_RANDOM", 2);
 define("BLOCK_UPDATE_SCHEDULED", 3);
 define("BLOCK_UPDATE_WEAK", 4);
 define("BLOCK_UPDATE_TOUCH", 5);
+
+//Block Sides
+define("SIDE_DOWN", 0);
+define("SIDE_UP", 1);
+define("SIDE_ZNEG", 2);
+define("SIDE_ZPOS", 3);
+define("SIDE_XNEG", 4);
+define("SIDE_XPOS", 5);

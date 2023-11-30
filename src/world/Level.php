@@ -122,6 +122,20 @@ class Level{
 		}
 	}
 	
+	public function fastSetBlockUpdateMeta($x, $y, $z, $meta, $updateBlock = false){
+		$this->level->setBlockDamage($x, $y, $z, $meta);
+		$pk = new UpdateBlockPacket;
+		$pk->x = $x;
+		$pk->y = $y;
+		$pk->z = $z;
+		$pk->block = $this->level->getBlockID($x, $y, $z);
+		$pk->meta = $meta;
+		$this->server->api->player->broadcastPacket($this->players, $pk);
+		if($updateBlock){
+			$this->server->api->block->blockUpdateAround(new Position($x, $y, $z, $this), BLOCK_UPDATE_NORMAL, 1);
+		}
+	}
+	
 	public function getOrderedFullChunk($X, $Z){
 		$X = (int)$X;
 		$Z = (int)$Z;
