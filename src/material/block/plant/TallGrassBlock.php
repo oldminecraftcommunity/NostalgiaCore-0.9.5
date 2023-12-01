@@ -2,11 +2,11 @@
 
 class TallGrassBlock extends FlowableBlock{
 	public function __construct($meta = 1){
-		parent::__construct(TALL_GRASS, $meta, "Tall Grass");
+		parent::__construct(TALL_GRASS, $meta, "Grass");
 		$this->isReplaceable = true;
 		$names = array(
 			0 => "Dead Shrub",
-			1 => "Tall Grass",
+			1 => "Grass",
 			2 => "Fern",
 		);
 		$this->name = $names[$this->meta & 0x02];
@@ -15,7 +15,7 @@ class TallGrassBlock extends FlowableBlock{
 
 	public function onUpdate($type){
 		if($type === BLOCK_UPDATE_NORMAL){
-			if($this->getSide(0)->isTransparent === true){//Replace with common break method
+			if($this->getSide(0)->isTransparent === true){ //Replace with common break method
 				$this->level->setBlock($this, new AirBlock(), false, false, true);
 			  	if(Utils::chance(15)) ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem(WHEAT_SEEDS));
 				return BLOCK_UPDATE_NORMAL;

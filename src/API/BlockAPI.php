@@ -263,7 +263,8 @@ class BlockAPI{
 		[DOUBLE_PLANT, 1],
 		[DOUBLE_PLANT, 2],
 		[DOUBLE_PLANT, 3],
-
+		[DOUBLE_PLANT, 4],
+		[DOUBLE_PLANT, 5],
 	];
 	private $server;
 	private $scheduledUpdates = [];
