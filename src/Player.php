@@ -492,7 +492,7 @@ class Player{
 			}
 		}
 		
-		$tiles = $this->server->query("SELECT ID FROM tiles WHERE spawnable = 1 AND level = '" . $this->level->getName() . "' AND x >= " . (($X << 4) - 1) . " AND x < " . (($X << 4) + 17) . " AND z >= " . (($Z << 4) - 1) . " AND z < " . (($Z << 4) + 17) . ";");
+		/*$tiles = $this->server->query("SELECT ID FROM tiles WHERE spawnable = 1 AND level = '" . $this->level->getName() . "' AND x >= " . (($X << 4) - 1) . " AND x < " . (($X << 4) + 17) . " AND z >= " . (($Z << 4) - 1) . " AND z < " . (($Z << 4) + 17) . ";");
 		$this->lastChunk = false;
 		if($tiles !== false and $tiles !== true){
 			while(($tile = $tiles->fetchArray(SQLITE3_ASSOC)) !== false){
@@ -501,7 +501,7 @@ class Player{
 					$tile->spawn($this);
 				}
 			}
-		}
+		}*/
 		//$this->stopUsingChunk($X, $Z); //just in case
 		$pk = new FullChunkDataPacket;
 		$pk->chunkX = $X;

@@ -186,33 +186,44 @@ class Level{
 		}
 
 		$nbt = new NBT_new(NBT_new::LITTLE_ENDIAN);
-        foreach($chunkTiles as $tile){ //TODO non-hardcoded nbt data
+        foreach($chunkTiles as $tile){ //TODO rewrite TileEntity system
 			switch($tile->class){
 				case "Sign":
 					$text = $tile->getText();
-						$nbt->setData(new Compound("", array(
-							new StringTag("Text1", $text[0]),
-							new StringTag("Text2", $text[1]),
-							new StringTag("Text3", $text[2]),
-							new StringTag("Text4", $text[3]),
-							new StringTag("id", "Sign"),
-							new IntTag("x", (int) $tile->x),
-							new IntTag("y", (int) $tile->y),
-							new IntTag("z", (int) $tile->z)
-						)));
-						$tileEntities .= $nbt->write();
+					$nbt->setData(new Compound("", array(
+						new StringTag("Text1", $text[0]),
+						new StringTag("Text2", $text[1]),
+						new StringTag("Text3", $text[2]),
+						new StringTag("Text4", $text[3]),
+						new StringTag("id", "Sign"),
+						new IntTag("x", (int) $tile->x),
+						new IntTag("y", (int) $tile->y),
+						new IntTag("z", (int) $tile->z)
+					)));
+					$tileEntities .= $nbt->write();
 					break;
 				case "Furnace":
-						//nutting, not spawnable :D
+					//nutting, not spawnable :D
 					break;
 				case "Chest":
+					if($tile->isPaired()){
 						$nbt->setData(new Compound("", array(
 							new StringTag("id", "Chest"),
 							new IntTag("x", (int) $tile->x),
 							new IntTag("y", (int) $tile->y),
-							new IntTag("z", (int) $tile->z)
+							new IntTag("z", (int) $tile->z),
+							new IntTag("pairx", (int) $tile->x),
+							new IntTag("pairz", (int) $tile->z)
 						)));
-						$tileEntities .= $nbt->write();
+					}else{
+						$nbt->setData(new Compound("", array(
+							new StringTag("id", "Chest"),
+							new IntTag("x", (int) $tile->x),
+							new IntTag("y", (int) $tile->y),
+							new IntTag("z", (int) $tile->z),
+						)));
+					}
+					$tileEntities .= $nbt->write();
 					break;
 			}
 		}
