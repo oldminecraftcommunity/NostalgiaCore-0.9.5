@@ -52,7 +52,7 @@ define("MAJOR_VERSION", "2.0.0dev");
 define("CODENAME", "Breadfence"); //i'm not very creative - kotyaralih
 define("CURRENT_MINECRAFT_VERSION", "v0.9.5 alpha");
 define("CURRENT_API_VERSION", '13.1');
-define("CURRENT_PHP_VERSION", "5.5");
+define("CURRENT_PHP_VERSION", "8.0");
 $gitsha1 = false;
 if(file_exists(FILE_PATH . ".git/refs/heads/master")){ //Found Git information!
 	define("GIT_COMMIT", strtolower(trim(file_get_contents(FILE_PATH . ".git/refs/heads/master"))));

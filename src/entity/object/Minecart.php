@@ -15,11 +15,8 @@ class Minecart extends Vehicle{
 		$this->z = isset($this->data["TileZ"]) ? $this->data["TileZ"]:$this->z;
 		$this->setHealth(3, "generic");
 		//$this->setName((isset($objects[$this->type]) ? $objects[$this->type]:$this->type));
-		$this->width = 1;
-		/*$this->moveVector[Entity::NORTH] = new Vector3(-1, 0, 0);
-		$this->moveVector[Entity::SOUTH] = new Vector3(1, 0, 0);
-		$this->moveVector[Entity::EAST] = new Vector3(0, 0, -1);
-		$this->moveVector[Entity::WEST] = new Vector3(0, 0, 1);*/
+		$this->width = 0.98;
+		$this->height = 0.7;
 		$this->update();
 	}
 	
