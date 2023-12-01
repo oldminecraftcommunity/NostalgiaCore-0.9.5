@@ -151,6 +151,7 @@ abstract class Block extends Position{
 		PODZOL => "PodzolBlock",
 		STAINED_CLAY => "StainedClayBlock",
 		LILY_PAD => "LilypadBlock",
+		DOUBLE_PLANT => "DoubleTallGrass",
 	);
 	protected $id;
 	protected $meta;

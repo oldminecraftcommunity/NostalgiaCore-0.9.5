@@ -258,7 +258,11 @@ class BlockAPI{
 		[DYE, 11],
 		[DYE, 10],
 		[DYE, 9],
-		[DYE, 8]
+		[DYE, 8],
+		[DOUBLE_PLANT, 0],
+		[DOUBLE_PLANT, 1],
+		[DOUBLE_PLANT, 2],
+		[DOUBLE_PLANT, 3],
 
 	];
 	private $server;
