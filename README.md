@@ -13,13 +13,10 @@ You should not use it now.
 <h3> Download Stable NostalgiaCore</h3>
 
 https://github.com/kotyaralih/NostalgiaCore/releases/
-
 <h3> PHP binaries download</h3>
 
-* https://sourceforge.net/projects/pocketmine/files/builds/ - PHP for old PocketMine
-* https://owouwu.ru/NCArm_bin.tar.gz - PHP binaries for ARM
-* https://jenkins.pmmp.io/job/PHP-8.0-Aggregate/ PHP8(core should have php8 support as of now)
-
+* https://github.com/pmmp/PHP-Binaries/releases/tag/php-8.0-latest PHP8 (Use PM4 version)
+* https://github.com/DaisukeDaisuke/AndroidPHP/releases/tag/8.0.28 PHP8 for ARMv8
 <h3> How to use auto-restart?</h3>
 
 Simply start your server using ./start.sh -l
