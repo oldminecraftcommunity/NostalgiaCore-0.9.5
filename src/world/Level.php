@@ -20,7 +20,7 @@ class Level{
 	public $entityList;
 	public $tiles, $blockUpdates, $nextSave, $players = [], $level, $mobSpawner;
 	public $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
-	
+	public $resendBlocksToPlayers = [];
 	public $generator;
 	public function __construct(PMFLevel $level, Config $entities, Config $tiles, Config $blockUpdates, $name){
 		$this->server = ServerAPI::request();
@@ -452,7 +452,34 @@ class Level{
 			$this->level->unloadChunk($xz[0], $xz[1]);
 			unset($this->level->fakeLoaded[$ind]);
 		}
-		
+		foreach($this->resendBlocksToPlayers as $playerCID => $blockz){
+			/**
+			 * @var Player $player
+			 */
+			$player = $this->server->clients[$playerCID] ?? false;
+			if($player instanceof Player){
+				foreach($blockz as $xyz => $_){
+					$xyzz = explode(".", $xyz);
+					if(count($xyzz) == 3){
+						$x = (int) $xyzz[0];
+						$y = (int) $xyzz[1];
+						$z = (int) $xyzz[2];
+						$idm = $this->level->getBlock($x, $y, $z);
+						//$player->addToBlockSendQueue(new UpdateBlockPacket($x, $y, $z, $idm[0], $idm[1]));
+						$pk = new UpdateBlockPacket;
+						$pk->x = $x;
+						$pk->y = $y;
+						$pk->z = $z;
+						$pk->block = $idm[0] & 0xff;
+						$pk->meta = $idm[1] & 0xff;
+						$player->addToBlockSendQueue($pk);
+					}
+					unset($blockz[$xyz]);
+				}
+				$player->sendBlockUpdateQueue();
+			}
+			unset($this->resendBlocksToPlayers[$playerCID]);
+		}
 	}
 	
 	public function setBlock(Vector3 $pos, Block $block, $update = true, $tiles = false, $direct = false){

@@ -12,6 +12,11 @@ class UpdateBlockPacket extends RakNetDataPacket{
 	}
 	
 	public function decode(){
+		$this->x = $this->getInt();
+		$this->z = $this->getInt();
+		$this->y = $this->getByte();
+		$this->block = $this->getByte();
+		$this->meta = $this->getByte();
 	}
 	
 	public function encode(){

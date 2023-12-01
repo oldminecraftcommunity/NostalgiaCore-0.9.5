@@ -68,9 +68,10 @@ class Player{
 	private $chunkCount = [];
 	private $received = [];
 	public $cratingItems;
-	
 	public $sleepingTime = 0;
 	
+	public $blockSendQueue;
+	public $blockSendQueueLength = 0;
 	/**
 	 * @param integer $clientID
 	 * @param string $ip
@@ -97,6 +98,8 @@ class Player{
 		$this->packetStats = [0, 0];
 		$this->buffer = new RakNetPacket(RakNetInfo::DATA_PACKET_0);
 		$this->buffer->data = [];
+		$this->blockSendQueue = new RakNetPacket(RakNetInfo::DATA_PACKET_0);
+		$this->blockSendQueue->data = [];
 		$this->server->schedule(1, [$this, "handlePacketQueues"], [], true);
 		$this->server->schedule(20 * 60, [$this, "clearQueue"], [], true);
 		$this->evid[] = $this->server->event("server.close", [$this, "close"]);
@@ -248,7 +251,23 @@ class Player{
 		$pk->teleport = true;
 		$this->dataPacket($pk);
 	}
-
+	public function addToBlockSendQueue(RakNetDataPacket $packet){
+		if($this->connected === false) return false;
+		
+		$packet->encode();
+		$len = strlen($packet->buffer) + 1;
+		$MTU = $this->MTU - 24;
+		
+		
+		if(($this->blockSendQueueLength + $len) >= $MTU){
+			$this->sendBlockUpdateQueue();
+		}
+		
+		$packet->messageIndex = $this->counter[3]++;
+		$packet->reliability = 2;
+		@$this->blockSendQueue->data[] = $packet;
+		$this->blockSendQueueLength += 6 + $len;
+	}
 	/**
 	 * @param integer $id
 	 * @param array $data
@@ -325,7 +344,17 @@ class Player{
 			$this->bandwidthRaw += $this->server->send($packet);
 		}
 	}
-
+	
+	
+	public function sendBlockUpdateQueue(){
+		if($this->blockSendQueueLength > 0 and $this->blockSendQueue instanceof RakNetPacket){
+			$this->blockSendQueue->seqNumber = $this->counter[0]++;
+			$this->send($this->blockSendQueue);
+		}
+		$this->blockSendQueueLength = 0;
+		$this->blockSendQueue = new RakNetPacket(RakNetInfo::DATA_PACKET_0);
+		$this->blockSendQueue->data = [];
+	}
 	public function sendBuffer(){
 		if($this->bufferLen > 0 and $this->buffer instanceof RakNetPacket){
 			$this->buffer->seqNumber = $this->counter[0]++;
@@ -1622,10 +1651,10 @@ class Player{
 				//$this->lastChunk = [$packet->chunkX, $packet->chunkZ];
 				break;
 			case ProtocolInfo::UPDATE_BLOCK_PACKET:
-			    if($this->gamemode & 0x01 === 0){
+			    if($this->gamemode & 0x01 === 1){
 			        $this->level->setBlock(new Vector3($packet->x, $packet->y, $packet->z), BlockAPI::get($packet->block, $packet->meta));
 			    }
-				
+			    $this->level->resendBlocksToPlayers[$this->CID]["{$packet->x}.{$packet->y}.{$packet->z}"] = true; //bad client i hate u
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
 				if(!($this->entity instanceof Entity)){
