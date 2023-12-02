@@ -7,7 +7,7 @@ require_once("LevelGenerator.php");
 class SuperflatGenerator implements LevelGenerator{
 
 	private $level, $random, $structure, $chunks, $options, $floorLevel, $populators = [];
-
+	public $preset;
 	public function __construct(array $options = []){
 		$this->preset = "2;7,59x1,3x3,2;1;spawn(radius=10 block=89),decoration(treecount=80 grasscount=45)";
 		$this->options = $options;
@@ -78,9 +78,9 @@ class SuperflatGenerator implements LevelGenerator{
 					$metas = "";
 					for($y = $startY; $y < $endY; ++$y){
 						$blocks .= chr($this->structure[$y]->getID());
-						$metas .= substr(dechex($this->structure[$y]->getMetadata()), -1);
+						$metas .= chr($this->structure[$y]->getMetadata());
 					}
-					$this->chunks[$Y] .= $blocks . hex2bin($metas) . "\x00\x00\x00\x00\x00\x00\x00\x00";
+					$this->chunks[$Y] .= $blocks . $metas . "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" . "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 				}
 			}
 		}
@@ -111,6 +111,7 @@ class SuperflatGenerator implements LevelGenerator{
 		for($Y = 0; $Y < 8; ++$Y){
 			$this->level->setMiniChunk($chunkX, $chunkZ, $Y, $this->chunks[$Y]);
 		}
+		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, str_repeat(chr(BIOME_PLAINS), 256));
 	}
 
 	public function populateChunk($chunkX, $chunkZ){

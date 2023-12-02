@@ -151,9 +151,9 @@ class NormalGenerator implements NewLevelGenerator{
 					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"; //skylight/light
 				}
 			}
-			$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, $biomes);
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
+		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, $biomes);
 		if(self::HIDDEN_FEATURES) $this->caveGenerator->generate($this->level, $chunkX, $chunkZ); //TODO speedup
 	}
 	
