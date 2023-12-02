@@ -43,7 +43,7 @@ class AcaciaTreeObject extends TreeObject{
 				
 				$var17 = $level->level->getBlockID($var23, $var16, $var13);
 				
-				if ($var17 == AIR || $var17 == LEAVES || $var17 == LEAVES2)
+				if ($var17 == AIR || $var17 == LEAVES || $var17 == LEAVES2 || $var17 == SAPLING)
 				{
 					$level->fastSetBlockUpdate($var23, $var16, $var13, TRUNK2, 0);
 					$var14 = $var16;
@@ -95,7 +95,7 @@ class AcaciaTreeObject extends TreeObject{
 						$var13 += Direction::offsetZ[$var15];
 						$var20 = $level->level->getBlockID($var23, $var19, $var13);
 						
-						if ($var20 == AIR || $var20 == LEAVES || $var20 == LEAVES2)
+						if ($var20 == AIR || $var20 == LEAVES || $var20 == LEAVES2 || $var20 == SAPLING)
 						{
 							$level->fastSetBlockUpdate($var23, $var19, $var13, TRUNK2, 0);
 							$var14 = $var19;

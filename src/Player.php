@@ -1651,10 +1651,7 @@ class Player{
 				//$this->lastChunk = [$packet->chunkX, $packet->chunkZ];
 				break;
 			case ProtocolInfo::UPDATE_BLOCK_PACKET:
-			    if($this->gamemode & 0x01 === 1){
-			        $this->level->setBlock(new Vector3($packet->x, $packet->y, $packet->z), BlockAPI::get($packet->block, $packet->meta));
-			    }
-			    $this->level->resendBlocksToPlayers[$this->CID]["{$packet->x}.{$packet->y}.{$packet->z}"] = true; //bad client i hate u
+			    $this->level->resendBlocksToPlayers[$this->CID]["{$packet->x}.{$packet->y}.{$packet->z}"] = true;
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
 				if(!($this->entity instanceof Entity)){
