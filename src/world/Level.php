@@ -226,7 +226,6 @@ class Level{
 					$tileEntities .= $nbt->write();
 					break;
 				case TILE_MOB_SPAWNER:
-					console("mobspawner spawn {$tile->data["EntityId"]}");
 					$nbt->setData(new Compound("", array(
 						new StringTag("id", TILE_MOB_SPAWNER),
 						new IntTag("x", (int) $tile->x),

@@ -8,6 +8,18 @@ class SpawnEggItem extends Item{
 	}
 	
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+		
+		if($target instanceof MonsterSpawnerBlock){
+			$tile = ServerAPI::request()->api->tile->get($target);
+			if($tile instanceof Tile){
+				$tile->data["EntityId"] = $this->meta;
+				//TODO update tile somehow
+			}else{
+				ConsoleAPI::warn("No tile was found at $target!");
+			}
+			return false;
+		}
+		
 		$ageable = $this->meta === MOB_CHICKEN || $this->meta === MOB_COW || $this->meta === MOB_SHEEP || $this->meta === MOB_PIG;
 		$data = array(
 			"x" => $block->x + 0.5,

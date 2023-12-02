@@ -185,7 +185,7 @@ class NormalGenerator implements NewLevelGenerator{
 			}
 		}
 		foreach($this->populators as $populator){
-			$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed()); //ty shoghicp for 250k bytes of randomness
+			$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed()); //ty shoghicp for 250k bytes of randomness (where ~65536 are usable)
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
 	}
