@@ -112,6 +112,7 @@ define("BRICKS_BLOCK", 45);
 define("TNT", 46);
 define("BOOKSHELF", 47);
 define("MOSS_STONE", 48);
+define("MOSSY_COBBLESTONE", 48);
 define("MOSSY_STONE", 48);
 define("OBSIDIAN", 49);
 define("TORCH", 50);

@@ -13,6 +13,8 @@ class Tile extends Position{
 	public $attach;
 	public $metadata;
 	public $closed;
+	public $scheduledUpdate;
+	public $lastUpdate;
 	private $server;
 
 	function __construct(Level $level, $id, $class, $x, $y, $z, $data = []){
@@ -361,7 +363,7 @@ class Tile extends Position{
 				$nbt->writeTAG_String("EntityId");
 				$nbt->writeTAG_Int((int) $this->data["EntityId"]);
 				
-				$nbt->write(chr(NBT::TAG_SHORT));
+				/*$nbt->write(chr(NBT::TAG_SHORT));
 				$nbt->writeTAG_String("Delay");
 				$nbt->writeTAG_SHORT((int) $this->data["Delay"]);
 				
@@ -387,7 +389,7 @@ class Tile extends Position{
 				
 				$nbt->write(chr(NBT::TAG_SHORT));
 				$nbt->writeTAG_String("SpawnRange");
-				$nbt->writeTAG_SHORT((int) $this->data["SpawnRange"]);
+				$nbt->writeTAG_SHORT((int) $this->data["SpawnRange"]);*/
 				
 				//console(bin2hex($nbt->binary));
 				

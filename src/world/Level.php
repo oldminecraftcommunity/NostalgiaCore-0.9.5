@@ -92,7 +92,7 @@ class Level{
 		$pk->z = $z;
 		$pk->block = $id;
 		$pk->meta = $meta;
-		$this->server->api->player->broadcastPacket($this->players, $pk);
+		$this->server->api->player->broadcastPacket($this->players, $pk); //TODO broadcast in another queue?
 		if($updateBlocksAround){
 			$this->server->api->block->blockUpdateAround(new Position($x, $y, $z, $this), BLOCK_UPDATE_NORMAL, 1);
 		}
@@ -188,41 +188,52 @@ class Level{
 		$nbt = new NBT_new(NBT_new::LITTLE_ENDIAN);
         foreach($chunkTiles as $tile){ //TODO rewrite TileEntity system
 			switch($tile->class){
-				case "Sign":
+				case TILE_SIGN:
 					$text = $tile->getText();
 					$nbt->setData(new Compound("", array(
 						new StringTag("Text1", $text[0]),
 						new StringTag("Text2", $text[1]),
 						new StringTag("Text3", $text[2]),
 						new StringTag("Text4", $text[3]),
-						new StringTag("id", "Sign"),
+						new StringTag("id", TILE_SIGN),
 						new IntTag("x", (int) $tile->x),
 						new IntTag("y", (int) $tile->y),
 						new IntTag("z", (int) $tile->z)
 					)));
 					$tileEntities .= $nbt->write();
 					break;
-				case "Furnace":
+				case TILE_FURNACE:
 					//nutting, not spawnable :D
 					break;
-				case "Chest":
+				case TILE_CHEST:
 					if($tile->isPaired()){
 						$nbt->setData(new Compound("", array(
 							new StringTag("id", "Chest"),
 							new IntTag("x", (int) $tile->x),
 							new IntTag("y", (int) $tile->y),
 							new IntTag("z", (int) $tile->z),
-							new IntTag("pairx", (int) $tile->x),
-							new IntTag("pairz", (int) $tile->z)
+							new IntTag("pairx", (int) $tile->getPair()->x),
+							new IntTag("pairz", (int) $tile->getPair()->z)
 						)));
 					}else{
 						$nbt->setData(new Compound("", array(
-							new StringTag("id", "Chest"),
+							new StringTag("id", TILE_CHEST),
 							new IntTag("x", (int) $tile->x),
 							new IntTag("y", (int) $tile->y),
 							new IntTag("z", (int) $tile->z),
 						)));
 					}
+					$tileEntities .= $nbt->write();
+					break;
+				case TILE_MOB_SPAWNER:
+					console("mobspawner spawn {$tile->data["EntityId"]}");
+					$nbt->setData(new Compound("", array(
+						new StringTag("id", TILE_MOB_SPAWNER),
+						new IntTag("x", (int) $tile->x),
+						new IntTag("y", (int) $tile->y),
+						new IntTag("z", (int) $tile->z),
+						new IntTag("EntityId", (int) $tile->data["EntityId"]),
+					)));
 					$tileEntities .= $nbt->write();
 					break;
 			}

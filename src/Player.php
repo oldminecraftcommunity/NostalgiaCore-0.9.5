@@ -540,7 +540,7 @@ class Player{
 			}
 		}
 
-		if(is_array($this->lastChunk)){
+		/*if(is_array($this->lastChunk)){
 			$tiles = $this->server->query("SELECT ID FROM tiles WHERE spawnable = 1 AND level = '" . $this->level->getName() . "' AND x >= " . ($this->lastChunk[0] - 1) . " AND x < " . ($this->lastChunk[0] + 17) . " AND z >= " . ($this->lastChunk[1] - 1) . " AND z < " . ($this->lastChunk[1] + 17) . ";");
 			$this->lastChunk = false;
 			if($tiles !== false and $tiles !== true){
@@ -551,7 +551,7 @@ class Player{
 					}
 				}
 			}
-		}
+		}*/
 
 		$c = key($this->chunksOrder);
 		$d = $c != null ? $this->chunksOrder[$c] : null;

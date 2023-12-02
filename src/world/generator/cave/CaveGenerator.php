@@ -56,7 +56,6 @@ class CaveGenerator
 	}
 	
 	public function generateLargeCaveNode(Level $level, $xCenter, $zCenter, $x, $y, $z){
-		//generate(xCenter, zCenter, tileIdArray, x, y, z, 1.0f + (this.rand.nextFloat() * 6.0f), 0.0f, 0.0f, -1, -1, 0.5d); gen4
 		$this->generateCaveNode($level, $xCenter, $zCenter, $x, $y, $z, 1 + ($this->rand->nextFloat() * 6), 0, 0, -1, -1, 0.5);
 	}
 	
@@ -78,8 +77,8 @@ class CaveGenerator
 		
 		$var27 = $random->nextInt((int)($unk_2 / 2)) + ($unk_2 / 4);
 		for($var28 = ($random->nextInt(6) == 0); $unk_1 < $unk_2; ++$unk_1){
-			$var29 = 1.5 + sin($unk_1 * M_PI / $unk_2) * $randFloat /* * 1 */;
-			$var31 = $var29 * $d3;
+			$horizontalDiff = 1.5 + sin($unk_1 * M_PI / $unk_2) * $randFloat /* * 1 */;
+			$verticalDiff = $horizontalDiff * $d3;
 			$var33 = cos($f2);
 			$var34 = sin($f2);
 			$x += cos($f1) * $var33;
@@ -115,13 +114,13 @@ class CaveGenerator
 					return;
 				}
 				//if (x >= chunkCenterX - 16.0D - var29 * 2.0D && z >= chunkCenterZ - 16.0D - var29 * 2.0D && x <= chunkCenterX + 16.0D + var29 * 2.0D && z <= chunkCenterZ + 16.0D + var29 * 2.0D)
-				if($x >= $chunkCenterX - 16 - $var29*2 && $z >= $chunkCenterZ - 16 - $var29*2 && $x <= $chunkCenterX + 16 + $var29*2 && $z <= $chunkCenterZ + 16 + $var29*2){
-					$minX = floor($x - $var29) - $chunkX*16 - 1;
-					$maxX = floor($x + $var29) - $chunkX*16 + 1;
-					$minY = floor($y - $var31) - 1;
-					$maxY = floor($y + $var31) + 1;
-					$minZ = floor($z - $var29) - $chunkZ*16 - 1;
-					$maxZ = floor($z + $var29) - $chunkZ*16 + 1;
+				if($x >= $chunkCenterX - 16 - $horizontalDiff*2 && $z >= $chunkCenterZ - 16 - $horizontalDiff*2 && $x <= $chunkCenterX + 16 + $horizontalDiff*2 && $z <= $chunkCenterZ + 16 + $horizontalDiff*2){
+					$minX = floor($x - $horizontalDiff) - $chunkX*16 - 1;
+					$maxX = floor($x + $horizontalDiff) - $chunkX*16 + 1;
+					$minY = floor($y - $verticalDiff) - 1;
+					$maxY = floor($y + $verticalDiff) + 1;
+					$minZ = floor($z - $horizontalDiff) - $chunkZ*16 - 1;
+					$maxZ = floor($z + $horizontalDiff) - $chunkZ*16 + 1;
 					
 					if($minX < 0) $minX = 0;
 					if($maxX > 16) $maxX = 16;
@@ -150,15 +149,15 @@ class CaveGenerator
 					
 					if(!$hasWater){
 						for($blockX = $minX; $blockX < $maxX; ++$blockX){
-							$var59 = (($blockX + $chunkX*16) + 0.5 - $x) / $var29;
+							$var59 = (($blockX + $chunkX*16) + 0.5 - $x) / $horizontalDiff;
 							for($blockZ = $minZ; $blockZ < $maxZ; ++$blockZ){
-								$var46 = (($blockZ + $chunkZ*16) + 0.5 - $z) / $var29;
+								$var46 = (($blockZ + $chunkZ*16) + 0.5 - $z) / $horizontalDiff;
 								$yPosition = $maxY;
 								$hasGrass = false;
 								
 								if($var59*$var59 + $var46*$var46 < 1){
 									for($blockY = $maxY - 1; $blockY >= $minY; --$blockY){
-										$var51 = ($blockY + 0.5 - $y) / $var31;
+										$var51 = ($blockY + 0.5 - $y) / $verticalDiff;
 										if($var51 > -0.7 && $var59*$var59 + $var51*$var51 + $var46*$var46 < 1){
 											$blockID = $level->level->getBlockID($blockX + $chunkX*16, $yPosition, $blockZ + $chunkZ * 16);
 											$hasGrass = $blockID == GRASS;
