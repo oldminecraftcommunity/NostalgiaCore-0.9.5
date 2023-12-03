@@ -60,7 +60,7 @@ class AxisAlignedBB{
 	public function grow($x, $y, $z){
 		return new AxisAlignedBB($this->minX - $x, $this->minY - $y, $this->minZ - $z, $this->maxX + $x, $this->maxY + $y, $this->maxZ + $z);
 	}
-
+	
 	public function expand($x, $y, $z){
 		$this->minX -= $x;
 		$this->minY -= $y;
@@ -71,7 +71,8 @@ class AxisAlignedBB{
 
 		return $this;
 	}
-
+	
+	
 	public function offset($x, $y, $z){
 		$this->minX += $x;
 		$this->minY += $y;
@@ -304,6 +305,28 @@ class AxisAlignedBB{
 
 		return MovingObjectPosition::fromBlock(0, 0, 0, $f, $vector);
 	}
+	
+	public function expandTo(AxisAlignedBB $bb){
+		$this->minX = min($this->minX, $bb->minX);
+		$this->minY = min($this->minY, $bb->minY);
+		$this->minZ = min($this->minZ, $bb->minZ);
+		$this->maxX = max($this->maxX, $bb->maxX);
+		$this->maxY = max($this->maxY, $bb->maxY);
+		$this->maxZ = max($this->maxZ, $bb->maxZ);
+	}
+	
+	public function getXSize(){
+		return $this->maxX - $this->minX + 1;
+	}
+	
+	public function getYSize(){
+		return $this->maxY - $this->minY + 1;
+	}
+	
+	public function getZSize(){
+		return $this->maxZ - $this->minZ + 1;
+	}
+	
 	
 	public function __toString(){
 		return "min: {$this->minX}, {$this->minY}, {$this->minZ}, max:  {$this->maxX}, {$this->maxY}, {$this->maxZ}";

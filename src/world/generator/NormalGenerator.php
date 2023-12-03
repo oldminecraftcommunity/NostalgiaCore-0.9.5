@@ -17,6 +17,7 @@ class NormalGenerator implements NewLevelGenerator{
 	private $noiseBase;
 	private $biomeSelector;
 	private $caveGenerator;
+	private $mineshaftGenerator;
 	public function __construct(array $options = array()){
 		
 	}
@@ -65,6 +66,7 @@ class NormalGenerator implements NewLevelGenerator{
 		$tallGrass->setRandomAmount(0);
 		$this->populators[] = $tallGrass;
 		$this->caveGenerator = new CaveGenerator($this->level->getSeed());
+		$this->mineshaftGenerator = new MineshaftGenerator($this->level->getSeed());
 	}
 	
 	public function pickBiome(int $x, int $z){
@@ -154,7 +156,10 @@ class NormalGenerator implements NewLevelGenerator{
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
 		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, $biomes);
-		if(self::HIDDEN_FEATURES) $this->caveGenerator->generate($this->level, $chunkX, $chunkZ); //TODO speedup
+		if(self::HIDDEN_FEATURES) {
+			$this->caveGenerator->generate($this->level, $chunkX, $chunkZ); //TODO speedup
+			$this->mineshaftGenerator->generate($this->level, $chunkX, $chunkZ);
+		}
 	}
 	
 	public function populateChunk($chunkX, $chunkZ){
@@ -175,6 +180,8 @@ class NormalGenerator implements NewLevelGenerator{
 		}
 
 		if(self::HIDDEN_FEATURES) {
+			//this.mineshaftGenerator.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
+			$this->mineshaftGenerator->generateStructuresInChunk($this->level, $this->mtrandom, $chunkX, $chunkZ);
 			for ($i = 0; $i < 8; ++$i){
 				$x = $blockX + $this->mtrandom->nextInt(16) + 8;
 				$y = $this->mtrandom->nextInt(128);

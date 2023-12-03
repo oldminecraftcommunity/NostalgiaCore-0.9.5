@@ -45,6 +45,10 @@ class Utils{
 		return $angle < 0 ? $angle + 360 : $angle;
 	}
 	
+	public static function chunkPos2Int($x, $z){
+		return ($x & 0xFFFFFFFF) | (($z & 0xFFFFFFFF) << 32);
+	}
+	
 	public static function wrapAngleTo180($angle)
 	{
 		$angle = fmod($angle+180, 360);

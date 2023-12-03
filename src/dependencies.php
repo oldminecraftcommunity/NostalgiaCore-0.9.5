@@ -128,6 +128,8 @@ require_once(FILE_PATH . "/src/structure/Structure.php");
 require_once(FILE_PATH . "/src/world/generator/Populator.php");
 require_once(FILE_PATH . "/src/world/generator/LevelGenerator.php");
 
+require_once(FILE_PATH . "/src/world/generator/structure/StructureBase.php");
+require_once(FILE_PATH . "/src/world/generator/structure/StructureGenerator.php");
 require_once(FILE_PATH . "/src/plugin/Plugin.php");
 require_once(FILE_PATH . "/src/plugin/OtherPluginRequirement.php");
 require_once(FILE_PATH . "/src/plugin/DummyPlugin.php");

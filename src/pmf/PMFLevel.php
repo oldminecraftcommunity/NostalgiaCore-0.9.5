@@ -742,7 +742,7 @@ class PMFLevel extends PMF{
 				$this->createUnpopulatedChunk($X, $Z);
 			}
 		}
-		if($this->chunks[$index][$Y] === false){
+		if(!isset($this->chunks[$index][$Y]) || $this->chunks[$index][$Y] === false){
 			$this->fillMiniChunk($X, $Z, $Y);
 		}
 		$aX = $x - ($X << 4);
@@ -750,8 +750,8 @@ class PMFLevel extends PMF{
 		$aY = $y - ($Y << 4);
 		$bindex = (int) ($aY + ($aX << 6) + ($aZ << 10));
 		$mindex = (int) (($aY >> 1) + 16 + ($aX << 6) + ($aZ << 10));
-		$old_b = ord($this->chunks[$index][$Y][$bindex]);
-		$old_m = ord($this->chunks[$index][$Y][$mindex]);
+		$old_b = ord($this->chunks[$index][$Y][$bindex] ?? '\x00');
+		$old_m = ord($this->chunks[$index][$Y][$mindex] ?? '\x00');
 		if(($y & 1) === 0){
 			$m = ($old_m & 0xF0) | $meta;
 		}else{
