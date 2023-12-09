@@ -504,10 +504,13 @@ class Level{
 	}
 	
 	public function setBlock(Vector3 $pos, Block $block, $update = true, $tiles = false, $direct = false){
+		$pos->x = (int)$pos->x;
+		$pos->y = (int)$pos->y;
+		$pos->z = (int)$pos->z;
 		if(!isset($this->level) or (($pos instanceof Position) and $pos->level !== $this) or $pos->y < 0){
 			return false;
 		}
-		$ret = $this->level->setBlock($pos->x, $pos->y, $pos->z, $block->getID(), $block->getMetadata());
+		$ret = $this->level->setBlock((int)$pos->x, (int)$pos->y, (int)$pos->z, $block->getID(), $block->getMetadata());
 		if($ret === true){ 
 			if(!($pos instanceof Position)){
 				$pos = new Position($pos->x, $pos->y, $pos->z, $this);

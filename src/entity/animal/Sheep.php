@@ -37,7 +37,7 @@ class Sheep extends Animal{
 		$pk->event = EntityEventPacket::ENTITY_ANIM_10;
 		$this->server->api->player->broadcastPacket($this->level->players, $pk);
 		$this->server->schedule(38, [$this, "setSheared"], false);
-		$this->level->setblock(new Position($this->x, $this->y-1, $this->z, $this->level), new DirtBlock());
+		$this->level->setBlock(new Position($this->x, $this->y-1, $this->z, $this->level), new DirtBlock());
 	}
 	
 	public function setSheared($v = null){
