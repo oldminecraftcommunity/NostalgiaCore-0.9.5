@@ -569,6 +569,7 @@ class Player{
 		$z = $Z << 4;
 		$this->level->useChunk($X, $Z, $this);
 		$this->chunksLoaded["$X:$Z"] = true;
+		
 		$pk = new FullChunkDataPacket;
 		$pk->chunkX = $X;
 		$pk->chunkZ = $Z;
@@ -1131,16 +1132,6 @@ class Player{
 							}elseif($p->messageIndex !== 0){
 								if(isset($this->received[$p->messageIndex])){
 									continue;
-								}
-								switch($p->pid()){
-									case 0x01:
-									case ProtocolInfo::PING_PACKET:
-									case ProtocolInfo::PONG_PACKET:
-									case ProtocolInfo::MOVE_PLAYER_PACKET:
-									case ProtocolInfo::REQUEST_CHUNK_PACKET:
-									case ProtocolInfo::ANIMATE_PACKET:
-									case ProtocolInfo::SET_HEALTH_PACKET:
-										break;
 								}
 							}
 							$this->received[$p->messageIndex] = true;

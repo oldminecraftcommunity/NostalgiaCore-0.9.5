@@ -85,16 +85,19 @@ class Level{
 	}
 	
 	public function fastSetBlockUpdate($x, $y, $z, $id, $meta, $updateBlocksAround = false){
+		$x = (int)$x;
+		$y = (int)$y;
+		$z = (int)$z;
 		$this->level->setBlock($x, $y, $z, $id, $meta);
-		$pk = new UpdateBlockPacket;
-		$pk->x = $x;
-		$pk->y = $y;
-		$pk->z = $z;
-		$pk->block = $id;
-		$pk->meta = $meta;
-		$this->server->api->player->broadcastPacket($this->players, $pk); //TODO broadcast in another queue?
+		$this->sendBlockToAll($x, $y, $z);
 		if($updateBlocksAround){
 			$this->server->api->block->blockUpdateAround(new Position($x, $y, $z, $this), BLOCK_UPDATE_NORMAL, 1);
+		}
+	}
+	
+	public function sendBlockToAll($x, $y, $z){
+		foreach($this->players as $p){
+			$this->resendBlocksToPlayers[$p->CID]["$x.$y.$z"] = true;
 		}
 	}
 	
@@ -312,8 +315,11 @@ class Level{
 	}
 
 	public function freeAllChunks(Player $player){
-		foreach($this->usedChunks as $i => $c){
-			unset($this->usedChunks[$i][$player->CID]);
+		foreach($player->chunksLoaded as $chunk => $c){
+			$xz = explode(":", $chunk);
+			$x = $xz[0];
+			$z = $xz[1];
+			$player->stopUsingChunk($x, $z);
 		}
 	}
 
@@ -517,13 +523,7 @@ class Level{
 			}
 			$block->position($pos);
 			if($direct === true){
-				$pk = new UpdateBlockPacket;
-				$pk->x = $pos->x;
-				$pk->y = $pos->y;
-				$pk->z = $pos->z;
-				$pk->block = $block->getID();
-				$pk->meta = $block->getMetadata();
-				$this->server->api->player->broadcastPacket($this->players, $pk);
+				$this->sendBlockToAll($pos->x, $pos->y, $pos->z);
 			}else{
 				$i = ($pos->x >> 4) . ":" . ($pos->y >> 4) . ":" . ($pos->z >> 4);
 				if(!isset($this->changedBlocks[$i])){
