@@ -429,7 +429,7 @@ class Entity extends Position
 				$blockY = floor($this->y + $this->getEyeHeight() + $y);
 				$blockZ = floor($this->z + $z);
 			
-				if($this->level->getBlockWithoutVector($blockX, $blockY, $blockZ)->isSolid){
+				if(StaticBlock::getIsSolid($this->level->level->getBlockID($blockX, $blockY, $blockZ))){
 					$this->harm(1, "suffocation"); // Suffocation
 					$hasUpdate = true;
 					break;
