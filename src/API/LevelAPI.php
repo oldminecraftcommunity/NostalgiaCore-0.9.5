@@ -6,7 +6,9 @@ class LevelAPI{
 	 */
 	public $levels;
 	private $server, $default;
-
+	
+	public static $defaultLevelType = "DEFAULT";
+	
 	public function __construct(){
 		$this->server = ServerAPI::request();
 		$this->levels = [];
@@ -118,7 +120,17 @@ class LevelAPI{
 		}
 		return true;
 	}
-
+	
+	public static function createGenerator($type, $options = []){
+		return match($type){
+			"FLAT" => new SuperflatGenerator(),
+			"EXPERIMENTAL" => new ExperimentalGenerator($options),
+			"HELL", "NETHER" => new HellGenerator($options),
+			"END" => new EndGenerator($options),
+			default => new NormalGenerator($options)
+		};
+	}
+	
 	public function generateLevel($name, $seed = false, $generator = false){
 		if($this->levelExists($name)){
 			return false;
@@ -132,24 +144,7 @@ class LevelAPI{
 			$generator = new $generator($options);
 		}else{
 			$type = strtoupper($this->server->api->getProperty("level-type"));
-			switch($type){
-				case "FLAT":
-					$generator = new SuperflatGenerator($options);
-					break;
-				case "EXPERIMENTAL":
-					$generator = new ExperimentalGenerator($options);
-					break;
-				case "HELL":
-				case "NETHER":
-					$generator = new HellGenerator($options);
-					break;
-				case "END":
-					$generator = new EndGenerator($options);
-					break;
-				default:
-					$generator = new NormalGenerator($options);
-					break;
-			}
+			$generator = $this->createGenerator($type, $options);
 		}
 		$gen = new WorldGenerator($generator, $name, $seed === false ? Utils::readInt(Utils::getRandomBytes(4, false)) : (int) $seed);
 		$gen->generate();

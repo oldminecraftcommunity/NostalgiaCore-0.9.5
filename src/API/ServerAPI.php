@@ -143,6 +143,7 @@ class ServerAPI{
 		Biome::init();
 		$this->parseProperties();
 		MobSpawner::$MOB_LIMIT = $this->getProperty("mobs-amount", 50);
+		LevelAPI::$defaultLevelType = $this->getProperty("level-type");
 		//Load advanced properties
 		define("DEBUG", $this->getProperty("debug", 1));
 		define("ADVANCED_CACHE", $this->getProperty("enable-advanced-cache", false));
