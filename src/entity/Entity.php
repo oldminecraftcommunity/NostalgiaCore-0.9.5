@@ -601,7 +601,7 @@ class Entity extends Position
 				}
 				
 				$savedSpeedY = $this->speedY;
-				if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT)){
+				if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT) || $this->class === ENTITY_FALLING){
 					$water = false;
 					$aABB = $this->boundingBox->addCoord($this->speedX, $this->speedY, $this->speedZ);
 					$x0 = floor($aABB->minX);
@@ -645,26 +645,19 @@ class Entity extends Position
 				}
 				if($this->speedY != 0){
 					$ny = $this->y + $this->speedY;
-					if($this->class === ENTITY_FALLING && $ny <= $this->y){
-						$x = (int) ($this->x - 0.5);
-						$z = (int) ($this->z - 0.5);
-						$lim = (int) floor($ny);
-						for($y = (int) ceil($this->y) - 1; $y >= $lim; -- $y){
-							if($this->level->getBlockWithoutVector($x, $y, $z)->isSolid === true){
-								//$support = true;
-								$this->y = $ny;
-								$fall = $this->level->getBlock(new Vector3(intval($this->x - 0.5), intval(ceil($this->y)), intval($this->z - 0.5)));
-								$down = $this->level->getBlock(new Vector3(intval($this->x - 0.5), intval(ceil($this->y) - 1), intval($this->z - 0.5)));
-								if($fall->isFullBlock === false or $down->isFullBlock === false){
-								    $this->server->api->entity->drop($this, BlockAPI::getItem($this->data["Tile"] & 0xFFFF, $this->data["Metadata"], 1), true);
-								} else{
-								    $this->level->setBlock($fall, BlockAPI::get($this->data["Tile"], $this->data["Metadata"]), true, false, true);
-								}
-								$this->server->api->handle("entity.motion", $this);
-								$this->close();
-								return false;
-							}
+					if($this->class === ENTITY_FALLING){
+						if($support){
+							$this->level->fastSetBlockUpdate($this->x, $this->y, $this->z, $this->data["Tile"], 0);
+							$this->close();
+							return;
 						}
+						$id = $this->level->level->getBlockID($this->x, $this->y, $this->z);
+						if($id > 0 && !StaticBlock::getIsSolid($id) && !StaticBlock::getIsLiquid($id)){
+							$this->server->api->entity->drop($this, BlockAPI::getItem($this->data["Tile"], 0, 1));
+							$this->close();
+							return;
+						}
+						
 					}
 					$this->y = $ny;
 					
