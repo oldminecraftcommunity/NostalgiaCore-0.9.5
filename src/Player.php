@@ -960,11 +960,11 @@ class Player{
 		if($gm < 0 or $gm > 3 or $this->gamemode === $gm){
 			return false;
 		}
-
+		
 		if($this->server->api->dhandle("player.gamemode.change", ["player" => $this, "gamemode" => $gm]) === false){
 			return false;
 		}
-
+		
 		$inv =& $this->inventory;
 		if($gm === VIEW){
 			$this->armor = [];
@@ -988,23 +988,10 @@ class Player{
 			foreach($this->inventory as $slot => $item){
 				$inv[$slot] = BlockAPI::getItem(AIR, 0, 0);
 			}
+			$this->blocked = true;
 			$this->gamemode = $gm;
-			
-			$spwnPos = $this->getSpawn();
-			$pk = new StartGamePacket();
-			$pk->seed = $this->level->getSeed();
-			$pk->x = $this->x;
-			$pk->y = $this->y;
-			$pk->z = $this->z;
-			$pk->spawnX = $spwnPos->x;
-			$pk->spawnY = $spwnPos->y;
-			$pk->spawnZ = $spwnPos->z;
-			$pk->generator = $this->level->generatorType;
-			$pk->gamemode = $this->gamemode & 0x01;
-			$pk->eid = 0;
-			$this->dataPacket($pk);
-			$this->sendSettings();
-			
+			$this->sendChat("Your gamemode has been changed to " . $this->getGamemode() . ", you've to do a forced reconnect.\n");
+			$this->server->schedule(30, [$this, "close"], "gamemode change", false, true); //Forces a kick
 		}
 		
 		if($this->gamemode === SPECTATOR){

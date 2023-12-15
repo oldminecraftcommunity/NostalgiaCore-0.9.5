@@ -14,29 +14,12 @@ class Utils{
 	}*/
 	const emojiRegex = "([*#0-9](?>\\xEF\\xB8\\x8F)?\\xE2\\x83\\xA3|\\xC2[\\xA9\\xAE]|\\xE2..(\\xF0\\x9F\\x8F[\\xBB-\\xBF])?(?>\\xEF\\xB8\\x8F)?|\\xE3(?>\\x80[\\xB0\\xBD]|\\x8A[\\x97\\x99])(?>\\xEF\\xB8\\x8F)?|\\xF0\\x9F(?>[\\x80-\\x86].(?>\\xEF\\xB8\\x8F)?|\\x87.\\xF0\\x9F\\x87.|..(\\xF0\\x9F\\x8F[\\xBB-\\xBF])?|(((?<zwj>\\xE2\\x80\\x8D)\\xE2\\x9D\\xA4\\xEF\\xB8\\x8F\k<zwj>\\xF0\\x9F..(\k<zwj>\\xF0\\x9F\\x91.)?|(\\xE2\\x80\\x8D\\xF0\\x9F\\x91.){2,3}))?))";
 	public static function getEntityTypeByID($id){
-		switch($id){
-			case 10:
-			case 11:
-			case 12:
-			case 13:
-			case 32:
-			case 33:
-			case 34:
-			case 35:
-			case 36:
-				return ENTITY_MOB;
-			case 62:
-			case 65:
-			case 80:
-			case 81:
-			case 82:
-			case 83:
-			case 84:
-				return ENTITY_OBJECT;
-			case 66:
-				return FALLING_SAND;
-		}
-		return $id;
+		return match($id){
+			MOB_CHICKEN, MOB_COW, MOB_CREEPER, MOB_ENDERMAN, MOB_MOOSHROOM, MOB_PIG, MOB_PIGMAN, MOB_SHEEP, MOB_SILVERFISH, MOB_SKELETON, MOB_SLIME, MOB_SPIDER,
+				 MOB_VILLAGER, MOB_WOLF, MOB_ZOMBIE => ENTITY_MOB,
+			OBJECT_ARROW, OBJECT_EGG, OBJECT_MINECART, OBJECT_PAINTING, OBJECT_PRIMEDTNT, OBJECT_SNOWBALL, OBJECT_TRIPOD_CAMERA => ENTITY_OBJECT,
+			default => $id,
+		};
 	}
 	
 	public static function wrapAngleTo360($angle)
