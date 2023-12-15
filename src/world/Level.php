@@ -189,7 +189,7 @@ class Level{
 		}
 
 		$nbt = new NBT_new(NBT_new::LITTLE_ENDIAN);
-        foreach($chunkTiles as $tile){ //TODO rewrite TileEntity system
+		foreach($chunkTiles as $tile){ //TODO rewrite TileEntity system
 			switch($tile->class){
 				case TILE_SIGN:
 					$text = $tile->getText();
@@ -380,17 +380,6 @@ class Level{
 		}
 
 		if($this->nextSave < $now){
-			foreach($this->usedChunks as $i => $c){
-				if(count($c) === 0){
-					unset($this->usedChunks[$i]);
-					$X = explode(".", $i);
-					$Z = array_pop($X);
-					$X = array_pop($X);
-					if(!$this->isSpawnChunk($X, $Z)){
-						$this->level->unloadChunk((int) $X, (int) $Z, $this->server->saveEnabled);
-					}
-				}
-			}
 			$this->save(false, false);
 		}
 	}
@@ -464,6 +453,10 @@ class Level{
 							$this->freeChunk($xz[0], $xz[1], $p);
 							$p->stopUsingChunk($xz[0], $xz[1]);
 						}
+					}else{
+						unset($eids[$cid]);
+						unset($this->usedChunks[$c][$cid]);
+						ConsoleAPI::debug("Unloaded $c because $cid is not Player");
 					}
 				}
 				if(count($eids) <= 0){

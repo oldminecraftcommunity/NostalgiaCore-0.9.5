@@ -100,45 +100,53 @@ class EntityAPI{
 			case "despawn":
 				$cnt = 0;
 				if(!isset($args[0])){
-					$output .= "/despawn <all or (mobs,objects,items,fallings)>";
-					break;
-				}else{
-					if($args[0] === "all"){
-						$cnt = 0;
-						foreach($this->entities as $e){
-							if(isset($e) && $e != null && !$e->isPlayer()){ //if player, not despawning
-								$this->remove($e->eid);
-								$cnt++;
+					return "/despawn <all|mobs|objects|items|fallings|minecarts>";
+				}
+				
+				$despawnclass = 0;
+				$despawntype = 0;
+				switch($args[0]){
+					case "all":
+						foreach($this->entities as $entity){
+							if($entity instanceof Entity && !$entity->isPlayer()){
+								$entity->close();
+								++$cnt;
 							}
 						}
-					}else{
-						$array = explode(",", strtolower($args[0]));
-						if(count($array) > 4){
-							$output .= "Many arguments!";
-							break;
-						}
-						//terrible code
-						$list = "";
-						$temp = ["mobs" => "2", "objects" => "3", "items" => "4", "fallings" => "5"];
-						foreach($array as $value){
-							$list .= $temp[$value]." or ";
-						}
-						$despawning = substr($list, 0, -4);
-						$l = $this->server->query("SELECT EID FROM entities WHERE class = ".$despawning.";");
-						if($l !== false and $l !== true){
-							while(($e = $l->fetchArray(SQLITE3_ASSOC)) !== false){
-								$e = $this->get($e["EID"]);
-								if($e instanceof Entity){
-									$this->remove($e->eid);
-									$cnt++;
-								}
-							}
+						break;
+					case "minecarts":
+						$despawntype = OBJECT_MINECART;
+						break;
+					case "mobs":
+						$despawnclass = ENTITY_MOB;
+						break;
+					case "objects":
+						$despawnclass = ENTITY_OBJECT;
+						break;
+					case "items":
+						$despawnclass = ENTITY_ITEM;
+						break;
+					case "fallings":
+						$despawnclass = ENTITY_FALLING;
+						break;
+				}
+				if($despawnclass){
+					foreach($this->entities as $entity){
+						if($entity instanceof Entity && !$entity->isPlayer() && $entity->class === $despawnclass){
+							$entity->close();
+							++$cnt;
 						}
 					}
 				}
-				
-				$output = "$cnt entities have been despawned!";
-				break;
+				if($despawntype){
+					foreach($this->entities as $entity){
+						if($entity instanceof Entity && !$entity->isPlayer() && $entity->type === $despawntype){
+							$entity->close();
+							++$cnt;
+						}
+					}
+				}
+				return "$cnt entities have been despawned!";
 		}
 		return $output;
 	}
