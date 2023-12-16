@@ -70,6 +70,8 @@ class Player{
 	public $cratingItems;
 	public $sleepingTime = 0;
 	
+	public $prevChunkX = false, $prevChunkZ = false;
+	
 	public $blockSendQueue;
 	public $blockSendQueueLength = 0;
 	/**
@@ -238,7 +240,7 @@ class Player{
 			$this->entity->calculateVelocity();
 		}
 		
-		$this->orderChunks();
+		$this->orderChunks(true);
 		$this->getNextChunk($this->level);
 		$pk = new MovePlayerPacket;
 		$pk->eid = 0;
@@ -434,12 +436,18 @@ class Player{
 		
 		$this->dataPacket(new UnloadChunkPacket($X, $Z));
 	}
-	public function orderChunks(){
+	public function orderChunks($force = false){
 		if(!($this->entity instanceof Entity) or $this->connected === false){
 			return false;
 		}
 		$X = ((int)$this->entity->x) >> 4;
 		$Z = ((int)$this->entity->z) >> 4;
+		
+		if($force === false && $X == $this->prevChunkX && $Z == $this->prevChunkZ){
+			return; //doesnt need reorder
+		}
+		$this->prevChunkX = $X;
+		$this->prevChunkZ = $Z;
 		$this->chunksOrder = [];
 		//if($this->level->generatorType != 0) $chunkToUnload = $this->chunksLoaded;
 		$startX = $this->level->generatorType === 1 ? $X - 4 : 0;
@@ -533,30 +541,15 @@ class Player{
 
 		foreach($this->chunkCount as $count => $t){
 			if(isset($this->recoveryQueue[$count]) or isset($this->resendQueue[$count])){
-				//$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 				return;
 			}else{
 				unset($this->chunkCount[$count]);
 			}
 		}
 
-		/*if(is_array($this->lastChunk)){
-			$tiles = $this->server->query("SELECT ID FROM tiles WHERE spawnable = 1 AND level = '" . $this->level->getName() . "' AND x >= " . ($this->lastChunk[0] - 1) . " AND x < " . ($this->lastChunk[0] + 17) . " AND z >= " . ($this->lastChunk[1] - 1) . " AND z < " . ($this->lastChunk[1] + 17) . ";");
-			$this->lastChunk = false;
-			if($tiles !== false and $tiles !== true){
-				while(($tile = $tiles->fetchArray(SQLITE3_ASSOC)) !== false){
-					$tile = $this->server->api->tile->getByID($tile["ID"]);
-					if($tile instanceof Tile){
-						$tile->spawn($this);
-					}
-				}
-			}
-		}*/
-
 		$c = key($this->chunksOrder);
 		$d = $c != null ? $this->chunksOrder[$c] : null;
 		if($c === null or $d === null){
-			//$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 			return false;
 		}
 
@@ -575,17 +568,12 @@ class Player{
 		$pk->chunkZ = $Z;
 		$pk->data = $this->level->getOrderedFullChunk($X, $Z);
 		$cnt = $this->dataPacket($pk);
-		/*if($cnt === false){
-			return false;
-		}*/
 		$this->chunkCount = [];
 		foreach($cnt as $i => $count){
 			$this->chunkCount[$count] = true;
 		}
 
 		$this->lastChunk = [$x, $z];
-
-		//$this->server->schedule(MAX_CHUNK_RATE, [$this, "getNextChunk"], $world);
 	}
 
 	/**
@@ -1431,9 +1419,9 @@ class Player{
 				$pk->spawnX = (int) $this->spawnPosition->x;
 				$pk->spawnY = (int) $this->spawnPosition->y;
 				$pk->spawnZ = (int) $this->spawnPosition->z;
-				$pk->x = (int) $this->entity->x;
-				$pk->y = (int) $this->entity->y;
-				$pk->z = (int) $this->entity->z;
+				$pk->x = $this->entity->x;
+				$pk->y = $this->entity->y;
+				$pk->z = $this->entity->z;
 				$pk->generator = $this->level->generatorType; //1 - inf, 0 - old, 2 - flat
 				$pk->gamemode = $this->gamemode & 0x01;
 				$pk->eid = 0;
@@ -1473,41 +1461,18 @@ class Player{
 				
 				
 				console("[INFO] " . FORMAT_AQUA . $this->username . FORMAT_RESET . "[/" . $this->ip . ":" . $this->port . "] logged in with entity id " . $this->eid . " at (" . $this->entity->level->getName() . ", " . round($this->entity->x, 2) . ", " . round($this->entity->y, 2) . ", " . round($this->entity->z, 2) . ")");
-				//spawn!
-				/*if($this->spawned !== false){
-					break;
-				}*/
-						
-				//if($this->entity->y <= 0){// fix!!!
-					//$pos = new Position($this->entity->x, 64, $this->entity->z, $this->level);
-				//}
-				//else{
-					//$pos = new Position($this->entity->x, $this->entity->y, $this->entity->z, $this->level);
-				//}
-				//$pData = $this->data->get("position");
-				//$this->server->schedule(20, array($this, "teleport"), $pos);
-				//$this->teleport($pos, isset($pData["yaw"]) ? $pData["yaw"] : false, isset($pData["pitch"]) ? $pData["pitch"] : false, true, true);
 				$this->entity->setHealth($this->data->get("health"), "spawn", true);
 
 				$this->server->api->entity->spawnAll($this);
 				$this->server->api->entity->spawnToAll($this->entity);
 
-				//$this->server->schedule(5, [$this->entity, "update"], [], true);
-				//$this->server->schedule(2, [$this->entity, "updateMovement"], [], true);
-				//$this->sendArmor();
 				$array = explode("@n", (string)$this->server->motd);
 				foreach($array as $msg){
 					$this->sendChat($msg."\n");
 				}
 				$this->sendSettings();
-				//$this->teleport($pos);
-				//$this->orderChunks();
-				//$this->server->schedule(50, array($this, "orderChunks"), array(), true);
-				$this->server->schedule(50, array($this, "orderChunks"), array());
-				$this->getNextChunk($this->level);
 				$this->sendInventory();
 				
-				//$this->loadAllChunks();
 				$this->blocked = false;
 				break;
 			case ProtocolInfo::ROTATE_HEAD_PACKET:
@@ -1532,6 +1497,8 @@ class Player{
 					//console("Current position: {$this->entity}");
 					$this->server->api->player->spawnAllPlayers($this);
 					$this->server->api->player->spawnToAllPlayers($this);
+					$this->teleport($this->entity);
+					return;
 				}
 				if($this->isSleeping) break;
 				if(($this->entity instanceof Entity) and $packet->messageIndex > $this->lastMovement){
