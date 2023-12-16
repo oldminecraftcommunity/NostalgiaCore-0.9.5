@@ -448,7 +448,7 @@ class Level{
 					$p = $this->server->clients[$cid] ?? false;
 					if($p instanceof Player){
 						$dist = abs($xz[0] - (((int)$p->entity->x) >> 4)) + abs($xz[1] - (((int)$p->entity->z) >> 4));
-						if($dist > 8){
+						if($dist > PocketMinecraftServer::$chunkLoadingRadius*2){
 							//ConsoleAPI::debug("{$p->player} freeing chunk: {$xz[0]} {$xz[1]}");
 							$this->freeChunk($xz[0], $xz[1], $p);
 							$p->stopUsingChunk($xz[0], $xz[1]);

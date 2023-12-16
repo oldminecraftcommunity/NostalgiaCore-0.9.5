@@ -1,7 +1,7 @@
 <?php
 
 class PocketMinecraftServer{
-	public static $chukSendDelay = 5;
+	public static $chukSendDelay = 5, $chunkLoadingRadius = 4;
 	public $tCnt, $ticks;
 	public $extraprops, $serverID, $interface, $database, $version, $invisible, $tickMeasure, $preparedSQL, $seed, $gamemode, $name, $maxClients, $clients, $eidCnt, $custom, $description, $motd, $port, $saveEnabled;
 	/**

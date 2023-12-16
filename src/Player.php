@@ -449,34 +449,20 @@ class Player{
 		$this->prevChunkX = $X;
 		$this->prevChunkZ = $Z;
 		$this->chunksOrder = [];
-		//if($this->level->generatorType != 0) $chunkToUnload = $this->chunksLoaded;
-		$startX = $this->level->generatorType === 1 ? $X - 4 : 0;
-		$stopX = $this->level->generatorType === 1 ? $X + 4 : 15;
-		$startZ = $this->level->generatorType === 1 ? $Z - 4 : 0;
-		$stopZ = $this->level->generatorType === 1 ? $Z + 4 : 15;
+		
+		$startX = $this->level->generatorType === 1 ? $X - PocketMinecraftServer::$chunkLoadingRadius : 0;
+		$stopX = $this->level->generatorType === 1 ? $X + PocketMinecraftServer::$chunkLoadingRadius : 15;
+		$startZ = $this->level->generatorType === 1 ? $Z - PocketMinecraftServer::$chunkLoadingRadius : 0;
+		$stopZ = $this->level->generatorType === 1 ? $Z + PocketMinecraftServer::$chunkLoadingRadius : 15;
 		for($x = $startX; $x <= $stopX; ++$x){
 			for($z = $startZ; $z <= $stopZ; ++$z){
 				$d = $x . ":" . $z;
-				//if($this->level->generatorType != 0) unset($chunkToUnload[$d]);
-				//if($x < 0 || $x > 15 || $z < 0 || $z > 15) continue; 
 				if(!isset($this->chunksLoaded[$d])){
 					$this->chunksOrder[$d] = abs($x - $X) + abs($z - $Z);
 				}
 			}
 		}
 		asort($this->chunksOrder);
-		/*arsort($chunkToUnload);
-		if($this->level->generatorType != 0){
-			foreach($chunkToUnload as $chunk => $useless){
-				$chunkI = explode(":", $chunk);
-				$cX = $chunkI[0];
-				$cZ = $chunkI[1];
-				//console("Unloading chunk $cX:$cZ");
-				unset($this->chunksLoaded[$chunk]);
-				$this->level->freeChunk($cX, $cZ, $this);
-				$this->dataPacket(new UnloadChunkPacket($cX, $cZ));
-			}
-		}*/
 		
 		$this->reload = true;
 		

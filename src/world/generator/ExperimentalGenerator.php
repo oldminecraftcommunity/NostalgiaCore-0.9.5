@@ -54,7 +54,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 	
 	public function init(Level $level, Random $random){
 		$this->level = $level;
-		$this->random = $random;//new MersenneTwister();
+		$this->random = $random;
 		$this->random->setSeed($this->level->level->getSeed());
 		$this->noiseBase = new NoiseGeneratorPerlin($this->random, 4);
 		$this->selector = new BiomeSelector($this->random, BiomeSelector::$biomes[BIOME_PLAINS]);
@@ -154,8 +154,6 @@ class ExperimentalGenerator implements NewLevelGenerator{
 						$chunk .= (($noiseValue > 0) ? "\x01" : (($y <= $this->waterHeight) ? "\x09" : "\x00"));
 					}
 					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-					//$chunk .= str_repeat("\xff", 16);
-					//$chunk .= str_repeat("\xff", 16);
 					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"; //light
 					$chunk .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"; //more light
 				}

@@ -3,8 +3,8 @@
 class Entity extends Position
 {
 
-	const TYPE = - 1;
-	const CLASS_TYPE = - 1;
+	const TYPE = -1;
+	const CLASS_TYPE = -1;
 	const MIN_POSSIBLE_SPEED = 1/8000; //anything below will send 0 to player
 	
 	public $counter = 0;
@@ -76,6 +76,8 @@ class Entity extends Position
 	public $onGround, $inWater;
 	public $carryoverDamage;
 	public $gravity;
+	public $delayBeforePickup;
+	
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array())
 	{
 		$this->random = new Random();
@@ -354,19 +356,20 @@ class Entity extends Position
 		$hasUpdate = Entity::$updateOnTick ? $this->class === ENTITY_MOB : false; // force true for mobs
 		$time = microtime(true);
 		if($this->class === ENTITY_PLAYER and ($this->player instanceof Player) and $this->player->spawned === true and $this->player->blocked !== true && ! $this->dead){
+			$myBB = $this->boundingBox->grow(1, 0.5, 1);
 			foreach($this->server->api->entity->getRadius($this, 2, ENTITY_ITEM) as $item){ //TODO vanilla method of searching/radius
-				if(!$item->closed && $item->spawntime > 0 && ($time - $item->spawntime) >= 0.6){
-					if((($this->player->gamemode & 0x01) === 1 || $this->player->hasSpace($item->type, $item->meta, $item->stack) === true) && $this->server->api->dhandle("player.pickup", array(
-						"eid" => $this->player->eid,
-						"player" => $this->player,
-						"entity" => $item,
-						"block" => $item->type,
-						"meta" => $item->meta,
-						"target" => $item->eid
-					)) !== false){
-						$item->close();
-						// $item->spawntime = 0;
-						// $this->server->schedule(15, array($item, "close"));
+				if(!$item->closed && $item->spawntime > 0 && $item->delayBeforePickup == 0){
+					if($item->boundingBox->intersectsWith($myBB)){ 
+						if((($this->player->gamemode & 0x01) === 1 || $this->player->hasSpace($item->type, $item->meta, $item->stack) === true) && $this->server->api->dhandle("player.pickup", array(
+							"eid" => $this->player->eid,
+							"player" => $this->player,
+							"entity" => $item,
+							"block" => $item->type,
+							"meta" => $item->meta,
+							"target" => $item->eid
+						)) !== false){
+							$item->close();
+						}
 					}
 				}
 			}
@@ -492,8 +495,7 @@ class Entity extends Position
 		return $hasUpdate;
 	}
 	
-
-
+	public function updateEntityMovement(){}
 
 	public function isInVoid(){
 		return $this->y < -1.6;
@@ -571,6 +573,7 @@ class Entity extends Position
 				}
 			}
 			if(!$this->isPlayer()){
+				$this->updateEntityMovement();
 				$update = false;
 				if($this->speedX > -self::MIN_POSSIBLE_SPEED && $this->speedX < self::MIN_POSSIBLE_SPEED){
 					$this->speedX = 0;
@@ -669,9 +672,6 @@ class Entity extends Position
 					$this->speedY -= $this->inWater ? 0.02 : $this->gravity; // TODO: fix packet spam
 					$update = true;
 				} elseif($this->lastX != $this->x || $this->lastZ != $this->z || $this->lastY != $this->z){
-					// $this->speedX = 0;
-					// $this->speedY = 0;
-					// $this->speedZ = 0;
 					$this->server->api->handle("entity.move", $this);
 					$update = true;
 				}elseif ($this->lastYaw != $this->yaw || $this->lastPitch != $this->pitch || $this->lastHeadYaw != $this->headYaw) {
@@ -720,19 +720,9 @@ class Entity extends Position
 				$hasUpdate = true;
 			}
 		}
-		if($this->knockbackTime > 0){
-			--$this->knockbackTime;
-		}
 		
-		if($this->moveTime > 0){
-			-- $this->moveTime;
-		}
-		if($this->lookTime > 0){
-			-- $this->lookTime;
-		}
-		if($this->idleTime > 0){
-			-- $this->idleTime;
-		}
+		$this->counterUpdate();
+		
 		if($this->lastHeadYaw != $this->headYaw){
 			$this->sendHeadYaw();
 		}
@@ -747,7 +737,25 @@ class Entity extends Position
 		$this->needsUpdate = $hasUpdate;
 		$this->lastUpdate = $now;
 	}
-
+	
+	public function counterUpdate(){
+		if($this->knockbackTime > 0){
+			--$this->knockbackTime;
+		}
+		if($this->moveTime > 0){
+			-- $this->moveTime;
+		}
+		if($this->lookTime > 0){
+			-- $this->lookTime;
+		}
+		if($this->idleTime > 0){
+			-- $this->idleTime;
+		}
+		if($this->delayBeforePickup > 0){
+			--$this->delayBeforePickup;
+		}
+	}
+	
 	public function updateMovement()
 	{
 		if($this->closed === true){
