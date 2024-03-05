@@ -1249,6 +1249,10 @@ class Entity extends Position
 			for ($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (lcg_value() - lcg_value()) * 0.01) {
 				$d = (lcg_value() - lcg_value()) * 0.01;
 			}
+			if($this->isPlayer()){
+				//force reset speed
+				$this->speedX = $this->speedY = $this->speedZ = 0;
+			}
 			// attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) >
 			$this->knockBack($d, $d1);
 			if($this->isPlayer()){
@@ -1451,14 +1455,14 @@ class Entity extends Position
 		$f = sqrt($d * $d + $d1 * $d1);
 		$f1 = 0.4;
 		$this->speedX /= 2;
+		$this->speedY /= 2;
 		$this->speedZ /= 2;
-		$this->speedX -= ($d / (double) $f) * (double) $f1;
-		$this->speedY += 0.40000000596046448;
-		$this->speedZ -= ($d1 / (double) $f) * (double) $f1;
+		$this->speedX -= ($d / $f) * $f1;
+		$this->speedY += 0.4;
+		$this->speedZ -= ($d1 / $f) * $f1;
 		if($this->speedY > 0.40000000596046448){
 			$this->speedY = 0.40000000596046448;
 		}
-		//$this->speedY /= 2;
 	}
 
 	public function getHealth()
