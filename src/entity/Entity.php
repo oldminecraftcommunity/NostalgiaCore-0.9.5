@@ -1251,6 +1251,11 @@ class Entity extends Position
 			}
 			// attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) >
 			$this->knockBack($d, $d1);
+			if($this->isPlayer()){
+				$pk = new SetEntityMotionPacket();
+				$pk->entities = [[0, $this->speedX, $this->speedY, $this->speedZ]];
+				$this->player->directDataPacket($pk, 0);
+			}
 			$this->knockbackTime = 10;
 			$this->sendMotion();
 			
