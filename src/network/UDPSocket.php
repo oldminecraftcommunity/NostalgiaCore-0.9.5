@@ -42,7 +42,7 @@ class UDPSocket{
 		if($this->connected === false){
 			return false;
 		}
-		return @socket_recvfrom($this->sock, $buf, 65535, 0, $source, $port);;
+		return @socket_recvfrom($this->sock, $buf, 65535, 0, $source, $port);
 	}
 
 	public function write($data, $dest, $port){

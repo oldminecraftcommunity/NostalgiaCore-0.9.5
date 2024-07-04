@@ -140,11 +140,13 @@ class ServerAPI{
 			"auto-save" => true,
 			"chunk-send-delay-ticks" => PocketMinecraftServer::$chukSendDelay,
 			"chunk-loading-radius" => PocketMinecraftServer::$chunkLoadingRadius,
+            "abort-reading-after-N-packets" => PocketMinecraftServer::$PACKET_READING_LIMIT
 		]);
 		Biome::init();
 		$this->parseProperties();
 		MobSpawner::$MOB_LIMIT = $this->getProperty("mobs-amount", 50);
 		LevelAPI::$defaultLevelType = $this->getProperty("level-type");
+		PocketMinecraftServer::$PACKET_READING_LIMIT = $this->getProperty("abort-reading-after-N-packets", PocketMinecraftServer::$PACKET_READING_LIMIT);
 		//Load advanced properties
 		define("DEBUG", $this->getProperty("debug", 1));
 		define("ADVANCED_CACHE", $this->getProperty("enable-advanced-cache", false));

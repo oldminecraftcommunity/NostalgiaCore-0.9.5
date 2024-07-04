@@ -9,7 +9,8 @@ class PocketMinecraftServer{
 	 */
 	public $api;
 	private $serverip, $evCnt, $handCnt, $events, $eventsID, $handlers, $serverType, $lastTick, $memoryStats, $async = [], $asyncID = 0;
-	public $levelData, $doTick, $difficulty, $tiles, $entities, $schedule, $scheduleCnt, $whitelist, $spawn, $asyncThread, $stop;
+	
+	public static $PACKET_READING_LIMIT = 100;
 	function __construct($name, $gamemode = SURVIVAL, $seed = false, $port = 19132, $serverip = "0.0.0.0"){
 		$this->port = (int) $port;
 		$this->doTick = true;
@@ -227,7 +228,7 @@ class PocketMinecraftServer{
 				"url" => $url,
 				"data" => [
 					"username" => $name,
-					"content" => $this->extraprops->get("discord-ru-smiles") ? str_replace("@", " ", str_replace("Û", "<:imp_cool:1151085500396998719>", str_replace("Ü", "<:imp_badphp5:1151085478410457120>", str_replace("Ú", "<:imp_gudjava:1151085431962742784>", str_replace("¨", "<:imp_wut:1151085524241621012>", $msg))))) : str_replace("@", "", $msg)
+					"content" => $this->extraprops->get("discord-ru-smiles") ? str_replace("@", " ", str_replace("ï¿½", "<:imp_cool:1151085500396998719>", str_replace("ï¿½", "<:imp_badphp5:1151085478410457120>", str_replace("ï¿½", "<:imp_gudjava:1151085431962742784>", str_replace("ï¿½", "<:imp_wut:1151085524241621012>", $msg))))) : str_replace("@", "", $msg)
 				],
 			], null);
 		}
@@ -467,11 +468,18 @@ class PocketMinecraftServer{
 	{
 		$lastLoop = 0;
 		while($this->stop === false){
-			$packet = $this->interface->readPacket();
-			if($packet instanceof Packet){
-				$this->packetHandler($packet);
-				$lastLoop = 0;
-			} elseif($this->tick() > 0){
+		    $packetcnt = 0;
+		    startReadingAgain:
+		    $packet = $this->interface->readPacket();
+		    if($packet instanceof Packet){
+		        $this->packetHandler($packet);
+		        $lastLoop = 0;
+		        if(++$packetcnt > self::$PACKET_READING_LIMIT){
+		            ConsoleAPI::warn("Reading more than ".self::$PACKET_READING_LIMIT." packets per tick! Forcing ticking!");
+		        }else{
+		            goto startReadingAgain;
+		        }
+		    }elseif($this->tick() > 0){
 				$lastLoop = 0;
 			} else{
 				++ $lastLoop;
