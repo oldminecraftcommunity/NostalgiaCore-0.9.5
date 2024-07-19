@@ -1,4 +1,4 @@
-![](http://owouwu.ru/favicon.png)
+![](https://kotyara.nekoweb.org/images/nostalgiacore.png)
 
 # NostalgiaCore
 
