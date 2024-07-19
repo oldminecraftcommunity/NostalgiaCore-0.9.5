@@ -140,7 +140,7 @@ class ServerAPI{
 			"auto-save" => true,
 			"chunk-send-delay-ticks" => PocketMinecraftServer::$chukSendDelay,
 			"chunk-loading-radius" => PocketMinecraftServer::$chunkLoadingRadius,
-            "abort-reading-after-N-packets" => PocketMinecraftServer::$PACKET_READING_LIMIT
+			"abort-reading-after-N-packets" => PocketMinecraftServer::$PACKET_READING_LIMIT
 		]);
 		Biome::init();
 		$this->parseProperties();
