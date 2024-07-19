@@ -252,7 +252,12 @@ class Player{
 		$pk->yaw = $yaw;
 		$pk->teleport = true;
 		$this->dataPacket($pk);
+		
+		$pk = new SetEntityMotionPacket();
+		$pk->entities = [[0, 0, 0, 0]];
+		$this->dataPacket($pk);
 	}
+	
 	public function addToBlockSendQueue(RakNetDataPacket $packet){
 		if($this->connected === false) return false;
 		
@@ -1281,6 +1286,7 @@ class Player{
 				if($this->loggedIn === true){
 					break;
 				}
+				$this->blocked = true;
 				$this->username = $packet->username;
 				$this->iusername = strtolower($this->username);
 				$this->loginData = ["clientId" => $packet->clientId, "loginData" => $packet->loginData];
@@ -1478,6 +1484,7 @@ class Player{
 			case ProtocolInfo::MOVE_PLAYER_PACKET:
 				if($this->spawned === false){
 					$this->spawned = true;
+					$this->blocked = false;
 					$this->server->handle("player.spawn", $this);
 					$this->server->api->chat->broadcast($this->username." joined the game");
 					//console("Current position: {$this->entity}");
