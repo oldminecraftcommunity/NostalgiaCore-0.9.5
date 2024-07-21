@@ -1,32 +1,13 @@
 <?php
 
-/**
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
- */
-
 /***REM_START***/
 require_once("NoiseGenerator.php");
 /***REM_END***/
 
-abstract class NoiseGeneratorOctaves extends NoiseGenerator{
+class NoiseGeneratorOctaves extends NoiseGenerator{
 	public $octaves;
 	private $generatorCollection;
-	public function __construct(Random $random, $octaves){
+	public function __construct(MTRandom $random, $octaves){	
 		$this->generatorCollection = array();
 		$this->octaves = (int) $octaves;
 		for($o = 0; $o < $this->octaves; ++$o){
@@ -34,17 +15,22 @@ abstract class NoiseGeneratorOctaves extends NoiseGenerator{
 		}
 	}
 	
+	public function getValue($x, $y){
+		$noise = 0;
+		$scale = 1;
+		for($i = 0; $i < $this->octaves; ++$i){
+			$noise += $this->generatorCollection[$i]->getValue($x * $scale, $y * $scale) / $scale;
+			$scale /= 2;
+		}
+		return $noise;
+	}
+	
 	public function generateNoiseOctaves($int1, $int2, $int3, $int4, $int5, $int6, $par1 = false, $par2 = false, $par3 = false){
 		if($par1 === false or $par2 === false or $par3 === false){
 			return $this->generateNoiseOctaves($int1, 10, $int2, $int3, 1, $int4, $int5, 1, $int6);
 		}
 		
-		$floats = array();
-		$cnt = $int4 * $int5 * $int6;
-		for($i = 0; $i < $cnt; ++$i){
-			$floats[$i] = 0;
-		}
-		
+		$floats = array_fill(0, $int4 * $int5 * $int6, 0);
 		$d1 = 1;
 		
 		for($j = 0; $j < $this->octaves; ++$j){

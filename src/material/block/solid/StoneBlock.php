@@ -1,19 +1,9 @@
 <?php
 
 class StoneBlock extends SolidBlock{
-	
-	protected static $names = [
-		0 => "Stone",
-		1 => "Granite",
-		2 => "Polished Granite",
-		3 => "Diorite",
-		4 => "Polished Diorite",
-		5 => "Andesite",
-		6 => "Polished Andesite",
-	];
-	
-	public function __construct($meta = 0){
-		parent::__construct(STONE, $meta, self::$names[$meta] ?? "Stone");
+	public static $blockID;
+	public function __construct(){
+		parent::__construct(STONE, 0, "Stone");
 		$this->hardness = 30;
 	}
 
@@ -40,7 +30,7 @@ class StoneBlock extends SolidBlock{
 	public function getDrops(Item $item, Player $player){
 		if($item->getPickaxeLevel() >= 1){
 			return array(
-				array($this->meta == 0 ? COBBLESTONE : $this->id, $this->meta, 1),
+				array(COBBLESTONE, 0, 1),
 			);
 		}else{
 			return array();

@@ -12,7 +12,7 @@ abstract class RakNetDataPacket extends stdClass{
 	public $splitID;
 	public $splitIndex;
 	private $offset = 0;
-
+	
 	abstract public function encode();
 
 	abstract public function decode();

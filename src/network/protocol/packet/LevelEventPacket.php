@@ -1,6 +1,10 @@
 <?php
 
 class LevelEventPacket extends RakNetDataPacket{
+	
+	const EVENT_OPEN_DOOR_SOUND = 1003;
+	const EVENT_ALL_PLAYERS_SLEEPING = 9800;
+	
 	public $evid;
 	public $x;
 	public $y;

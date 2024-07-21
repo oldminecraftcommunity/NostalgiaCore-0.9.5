@@ -1,22 +1,47 @@
 <?php
-/*
-TODO:
-move methods
-*/
+
 abstract class Creature extends Living{
 	const CLASS_TYPE = ENTITY_MOB;
 	
 	public $inPanic;
-	public $ignited;
+	public $closestPlayerEID = false;
+	public $closestPlayerDist = INF;
+	
+	
 	public function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 		$this->inPanic = false; //force for now
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 1, "generic");
-		// $this->setName((isset($mobs[$this->type]) ? $mobs[$this->type]:$this->type));
-		$this->ai->addTask(new TaskLookAround());
-		$this->ai->addTask(new TaskRandomWalk());
-		$this->ai->addTask(new TaskLookAtPlayer());
-		$this->ai->addTask(new TaskSwimming());
+		$this->enableAutojump = true;
+		$this->searchForClosestPlayers = true;
+	}
+	
+	public function update($now){
+		$this->handlePrePlayerSearcher();
+		return parent::update($now);
+	}
+	
+	
+	public function handlePrePlayerSearcher(){
+		parent::handlePrePlayerSearcher();
+		if($this->closestPlayerEID !== false){
+			$player = $this->level->entityList[$this->closestPlayerEID] ?? false;
+			if($player === false){
+				$this->closestPlayerEID = false;
+				$this->closestPlayerDist = INF;
+			}else{
+				$dist = ($this->x - $player->x)*($this->x - $player->x) + ($this->y - $player->y)*($this->y - $player->y) + ($this->z - $player->z)*($this->z - $player->z);
+				$this->closestPlayerDist = $dist;
+			}
+		}
+	}
+	
+	public function handlePlayerSearcher(Player $player, $dist){
+		parent::handlePlayerSearcher($player, $dist);
+		if($this->closestPlayerDist >= $dist){
+			$this->closestPlayerEID = $player->entity->eid;
+			$this->closestPlayerDist = $dist;
+		}
 	}
 	
 	public function createSaveData(){
@@ -26,10 +51,10 @@ abstract class Creature extends Living{
 	}
 	
 	public function getSpeedModifer(){
-		return $this->speedModifer * ($this->inPanic ? 1.5 : 1.0);
+		return 0.7;
 	}
 	public function getArmorValue(){
-		return 2;
+		return 0;
 	}
 	public function spawn($player){
 		if(!($player instanceof Player)){
@@ -50,8 +75,15 @@ abstract class Creature extends Living{
 		$player->dataPacket($pk);
 				
 		$pk = new SetEntityMotionPacket;
-		$pk->entities = [[$this->eid, $this->speedX, $this->speedY, $this->speedZ]];
+		$pk->eid = $this->eid;
+		$pk->speedX = $this->speedX;
+		$pk->speedY = $this->speedY;
+		$pk->speedZ = $this->speedZ;
 		$player->dataPacket($pk);
+		
+		if($this->linkedEntity != 0 && $this->isRider){
+			$player->eventHandler(["rider" => $this->eid, "riding" => $this->linkedEntity, "type" => 0], "entity.link");
+		}
 	}
 	
 }

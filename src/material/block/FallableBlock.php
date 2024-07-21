@@ -25,7 +25,8 @@ class FallableBlock extends SolidBlock{
 	 */
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$ret = $this->level->setBlock($this, $this, true, false, true);
-		ServerAPI::request()->api->block->blockUpdate(clone $this, BLOCK_UPDATE_NORMAL);
+		$clz = StaticBlock::getBlock($this->getID());
+		$clz::neighborChanged($this->level, $this->x, $this->y, $this->z, 0, 0, 0, 0); //TODO move to another method
 		return $ret;
 	}
 }

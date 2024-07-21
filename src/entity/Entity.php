@@ -3,16 +3,20 @@
 class Entity extends Position
 {
 
-	const TYPE = -1;
-	const CLASS_TYPE = -1;
+	const TYPE = - 1;
+	const CLASS_TYPE = - 1;
 	const MIN_POSSIBLE_SPEED = 1/8000; //anything below will send 0 to player
 	
+	public $searchForClosestPlayers = false;
+	public $modifySpeedY = false;
+	public $modifedSpeedY = 0.0;
 	public $counter = 0;
-	public $invincible, $status, $health, $fire, $crouched, $position, $meta, $stack;
+	public $fallDistance = 0;
 	public static $updateOnTick, $allowedAI;
-	public $isCollidable;
+	public static $allowFly = true;
 	public $canBeAttacked;
 	public $moveTime, $lookTime, $idleTime, $knockbackTime = 0;
+	public $attackTimeout = 0;
 	public $needsUpdate = true;
 	public $speedModifer;
 	public $hasGravity;
@@ -22,11 +26,13 @@ class Entity extends Position
 	public $boundingBox;
 	public $age;
 	public $air;
+	public $maxAir = 300;
 	public $spawntime;
 	public $dmgcounter;
 	public $eid;
 	public $type;
 	public $name;
+	public $delayBeforePickup;
 	public $x, $y, $z;
 	public $speedX, $speedY, $speedZ, $speed;
 	public $lastX = 0, $lastY  = 0, $lastZ  = 0, $lastYaw  = 0, $lastPitch  = 0, $lastTime = 0, $lastHeadYaw = 0, $lastSpeedX = 0, $lastSpeedY = 0, $lastSpeedZ = 0;
@@ -64,28 +70,54 @@ class Entity extends Position
 	public $level;
 	public $isRiding = false;
 	public $lastUpdate;
-	public $linkedEntity = null;
+	public $linkedEntity = 0;
+	public $isRider = false;
 	public $check = true;
 	public $width = 1;
 	public $height = 1;
 	public $random;
 	public $radius;
 	public $inAction = false;
+	public $inActionCounter = 0;
 	public $hasKnockback;
 	public $hasJumped;
+	public $invincible, $crouched, $fire, $health, $status;
+	public $position;
 	public $onGround, $inWater;
 	public $carryoverDamage;
 	public $gravity;
-	public $delayBeforePickup;
 	
-	function __construct(Level $level, $eid, $class, $type = 0, $data = array())
+	public $stepHeight = 0.5;
+	public $enableAutojump = false;
+	public $yOffset = 0.0;
+	public $noClip = false;
+	
+	public $chunkX = 0;
+	public $chunkZ = 0;
+	
+	public $isCollidedHorizontally, $isCollidedVertically, $isCollided;
+	/**
+	 * Amount of ticks you can be in fire until you start receiving damage
+	 * @var integer
+	 */
+	public $fireResistance = 1;
+	
+	public $isImmuneToFire = false;
+	
+	public $inWeb;
+	public $inLava;
+	public $notOnGroundTicks = 0;
+	
+	public $moveStrafing, $moveForward;
+	
+	function __construct(Level $level, $eid, $class, $type = 0, $data = [])
 	{
 		$this->random = new Random();
 		$this->last = [&$this->lastX, &$this->lastY, &$this->lastZ, &$this->lastYaw, &$this->lastPitch, &$this->lastTime]; //pointers to variables
 		$this->canBeAttacked = false;
 		$this->hasKnockback = false;
 		$this->level = $level;
-		$this->speedModifer = 0.7;
+		$this->speedModifer = 1;
 		$this->fallY = false;
 		$this->fallStart = false;
 		$this->server = ServerAPI::request();
@@ -99,7 +131,7 @@ class Entity extends Position
 		$this->health = 20;
 		$this->hasGravity = false;
 		$this->dmgcounter = array(0, 0, 0);
-		$this->air = 200;
+		$this->air = $this->maxAir;
 		$this->fire = 0;
 		$this->crouched = false;
 		$this->invincible = false;
@@ -108,9 +140,9 @@ class Entity extends Position
 		$this->closed = false;
 		$this->isStatic = false;
 		$this->name = "";
+		$this->gravity = 0.08;
 		$this->state = $this->data["State"] = isset($this->data["State"]) ? $this->data["State"] : 0;
 		$this->tickCounter = 0;
-		$this->server->query("INSERT OR REPLACE INTO entities (EID, level, type, class, health, hasUpdate) VALUES (" . $this->eid . ", '" . $this->level->getName() . "', " . $this->type . ", " . $this->class . ", " . $this->health . ", 0);");
 		$this->x = isset($this->data["x"]) ? (float) $this->data["x"] : 0;
 		$this->y = isset($this->data["y"]) ? (float) $this->data["y"] : 0;
 		$this->z = isset($this->data["z"]) ? (float) $this->data["z"] : 0;
@@ -132,7 +164,6 @@ class Entity extends Position
 		$this->moveTime = 0;
 		$this->lookTime = 0;
 		$this->onGround = false;
-		$this->gravity = 0.08;
 		switch($this->class) {
 			case ENTITY_PLAYER:
 				$this->player = $this->data["player"];
@@ -143,60 +174,44 @@ class Entity extends Position
 				$this->hasKnockback = true;
 				$this->hasGravity = true;
 				$this->canBeAttacked = true;
-				break;
-			case ENTITY_ITEM:
-				if(isset($data["item"]) and ($data["item"] instanceof Item)){
-					$this->meta = $this->data["item"]->getMetadata();
-					$this->stack = $this->data["item"]->count;
-				} else{
-					$this->meta = (int) $this->data["meta"];
-					$this->stack = (int) $this->data["stack"];
-				}
-				$this->gravity = 0.06;
-				$this->hasGravity = true;
-				$this->setHealth(5, "generic");
-				$this->setSize(0.25, 0.25);
-				break;
-			case ENTITY_FALLING:
-				$this->setHealth(PHP_INT_MAX, "generic");
-				$this->height = 0.98;
-				$this->width = 0.98;
-				$this->gravity = 0.04;
-				$this->hasGravity = true;
+				$this->fireResistance = 20;
+				
 				break;
 			case ENTITY_OBJECT:
 				$this->x = isset($this->data["TileX"]) ? $this->data["TileX"] : $this->x;
 				$this->y = isset($this->data["TileY"]) ? $this->data["TileY"] : $this->y;
 				$this->z = isset($this->data["TileZ"]) ? $this->data["TileZ"] : $this->z;
 				$this->setHealth(1, "generic");
-				// $this->setName((isset($objects[$this->type]) ? $objects[$this->type]:$this->type));
-				$this->width = 1;
-				$this->height = 1;
-				if($this->type === OBJECT_SNOWBALL){
-					$this->server->schedule(1210, array(
-						$this,
-						"update"
-					)); // Despawn
-						// $this->update();
-				}
+				$this->stepHeight = false;
+				$this->setSize(1, 1);
 				break;
 		}
 		$this->radius = $this->width / 2;
 		$this->boundingBox = new AxisAlignedBB($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
-		//$this->update();
 		$this->updateLast();
 		$this->updatePosition();
 		if($this->isInVoid()){
 			$this->outOfWorld();
 		}
 	}
-	
+	public function handlePrePlayerSearcher(){
+		
+	}
 	public function isType(){
 		return in_array($this->type, func_get_args());
 	}
+	/**
+	 * @param Entity $entity
+	 * @param int $distance
+	 * @return boolean
+	 */
+	public function attackEntity($entity, $distance){
+		return false;
+	}
 	
-	public function attackEntity($entity){
-
+	public function setInWeb(){
+		$this->inWeb = true;
+		$this->fallDistance = 0;
 	}
 	
 	public function addVelocity($vX, $vY = 0, $vZ = 0)
@@ -208,13 +223,39 @@ class Entity extends Position
 		$this->speedY += $vY;
 		$this->speedZ += $vZ;
 	}
+	
+	public function isPushable(){
+		return $this->isPlayer();
+	}
+	
+	public function applyCollision(Entity $collided){
+		if(!($this->isPlayer() && $collided->isPlayer()) && $this->eid != $collided->eid){
+			$diffX = $collided->x - $this->x;
+			$diffZ = $collided->z - $this->z;
+			$maxDiff = max(abs($diffX), abs($diffZ));
+			if($maxDiff > 0.01){
+				$sqrtMax = sqrt($maxDiff);
+				$diffX /= $sqrtMax;
+				$diffZ /= $sqrtMax;
+				
+				$col = (($v = 1 / $sqrtMax) > 1 ? 1 : $v);
+				$diffX *= $col;
+				$diffZ *= $col;
+				$diffX *= 0.05;
+				$diffZ *= 0.05;
+				$this->addVelocity(-$diffX, 0, -$diffZ);
+				$collided->addVelocity($diffX, 0, $diffZ);
+			}
+		}
+	}
+	
 	public function isMovingHorizontally()
 	{
 		return ($this->speedX >= self::MIN_POSSIBLE_SPEED || $this->speedX <= -self::MIN_POSSIBLE_SPEED) || ($this->speedZ >= self::MIN_POSSIBLE_SPEED || $this->speedZ <= -self::MIN_POSSIBLE_SPEED);
 	}
 	public function isMoving()
 	{
-		return $this->isMovingHorizontally() || ($this->speedY > self::MIN_POSSIBLE_SPEED || $this->speedY < -self::MIN_POSSIBLE_SPEED);
+		return  $this->isMovingHorizontally() || ($this->speedY > self::MIN_POSSIBLE_SPEED || $this->speedY < -self::MIN_POSSIBLE_SPEED);
 	}
 
 	public function setVelocity($vX, $vY = 0, $vZ = 0)
@@ -280,7 +321,7 @@ class Entity extends Position
 	 *
 	 * @return number
 	 */
-	public function getHeight($a)
+	public function getHeight()
 	{
 		return $this->height;
 	}
@@ -293,24 +334,6 @@ class Entity extends Position
 	public function getWidth()
 	{
 		return $this->width;
-	}
-
-	public function lookOn(Vector3 $target)
-	{
-		$horizontal = sqrt(pow(($target->x - $this->x), 2) + pow(($target->z - $this->z), 2));
-		$vertical = $target->y - ($this->y + - 0.5); /* 0.5 = $entity->getEyeHeight() */
-		$pitch = - asin($horizontal) / M_PI * 180; // negative is up, positive is down
-
-		$xDist = $target->x - $this->x;
-		$zDist = $target->z - $this->z;
-
-		$yaw = atan2($zDist, $xDist) / M_PI * 180 - 90;
-		if($yaw < 0){
-			$yaw += 360.0;
-		}
-		$this->yaw = $yaw;
-		$this->pitch = $pitch;
-		$this->server->query("UPDATE entities SET pitch = " . $this->pitch . ", yaw = " . $this->yaw . " WHERE EID = " . $this->eid . ";");
 	}
 
 	public function getDrops()
@@ -350,15 +373,48 @@ class Entity extends Position
 			$this->server->api->entity->drop($this, BlockAPI::getItem($drop[0] & 0xFFFF, $drop[1] & 0xFFFF, $drop[2] & 0xFF), true);
 		}
 	}
-
-	public function environmentUpdate()
+	
+	public function canSee(Entity $e){
+		return $this->level->rayTraceBlocks(new Vector3($this->x, $this->y + $this->getEyeHeight(), $this->z), new Vector3($e->x, $e->y + $e->getEyeHeight(), $e->z)) == null;
+	}
+	
+	/**
+	 * Can entity be collided with or not
+	 * @return boolean
+	 */
+	public function isPickable(){
+		return $this->isPlayer() ? !$this->dead : false;
+	}
+	
+	public function handleLavaMovement(){ //TODO maybe try merging with water?
+		$this->inLava = $this->level->isLavaInBB($this->boundingBox->expand(-0.1, -0.4, -0.1));
+		return $this->inLava;
+	}
+	
+	public function handleWaterMovement(){
+		if($this->level->handleMaterialAcceleration($this->boundingBox->expand(0, -0.4, 0)->contract(0.001, 0.001, 0.001), 0, $this)){
+			$this->fallDistance = 0;
+			$this->inWater = true;
+			$this->fire = 0;
+		}else{
+			$this->inWater = false;
+		}
+		
+		return $this->inWater;
+	}
+	
+	public function environmentUpdate($time)
 	{
-		$hasUpdate = Entity::$updateOnTick ? $this->class === ENTITY_MOB : false; // force true for mobs
-		$time = microtime(true);
-		if($this->class === ENTITY_PLAYER and ($this->player instanceof Player) and $this->player->spawned === true and $this->player->blocked !== true && ! $this->dead){
+		$hasUpdate = $this->class === ENTITY_MOB; // force true for mobs
+		
+		$tickDiff = ($time - $this->lastUpdate) / 0.05;
+		if($this->attackTimeout > 0) $this->attackTimeout -= $tickDiff;
+		if($this->attackTimeout < 0) $this->attackTimeout = 0;
+		
+		if($this->isPlayer() && $this->player->spawned === true && $this->player->blocked !== true && !$this->dead){
 			$myBB = $this->boundingBox->grow(1, 0.5, 1);
-			foreach($this->server->api->entity->getRadius($this, 2, ENTITY_ITEM) as $item){ //TODO vanilla method of searching/radius
-				if(!$item->closed && $item->spawntime > 0 && $item->delayBeforePickup == 0){
+			foreach($this->server->api->entity->getRadius($this, 2, false) as $item){
+				if($item->class === ENTITY_ITEM && !$item->closed && $item->spawntime > 0 && $item->delayBeforePickup <= 0){
 					if($item->boundingBox->intersectsWith($myBB)){ 
 						if((($this->player->gamemode & 0x01) === 1 || $this->player->hasSpace($item->type, $item->meta, $item->stack) === true) && $this->server->api->dhandle("player.pickup", array(
 							"eid" => $this->player->eid,
@@ -371,8 +427,14 @@ class Entity extends Position
 							$item->close();
 						}
 					}
+				}else if($item->class == ENTITY_OBJECT && !$item->closed && $item->type == OBJECT_ARROW && $item->shotByPlayer && $item->inGround && $item->shake <= 0 && $item->boundingBox->intersectsWith($myBB)){
+					if(($this->player->gamemode & 0x01) == 1 || $this->player->hasSpace(ARROW, 0, 1)){
+						$this->player->addItem(ARROW, 0, 1);
+						$item->close();
+					}
 				}
 			}
+			unset($myBB);
 		} elseif($this->class === ENTITY_ITEM){
 			if(($time - $this->spawntime) >= 300){
 				$this->close(); // Despawn timer
@@ -385,348 +447,432 @@ class Entity extends Position
 			}
 		}
 
-		if($this->class !== ENTITY_PLAYER and ($this->y >= 128 or $this->y <= 0)){
-			$this->close();
-			return false;
-		}
-
 		if($this->dead === true){
 			$this->fire = 0;
-			$this->air = 200;
+			$this->air = $this->maxAir;
 			return false;
 		}
-		if($this->isInVoid()){
-			$this->outOfWorld();
-			$hasUpdate = true;
-		}
-
-		if($this->fire > 0){
-			if(($this->fire % 20) === 0){
-				$this->harm(1, "burning");
+		
+		$this->handleWaterMovement();
+		
+		if($this->fire > 0){ //TODO move somewhere
+			if(!$this->isImmuneToFire){
+				if(($this->fire % 20) == 0){
+					$this->harm(1, "burning");
+				}
+				--$this->fire;
+			}else{
+				$this->fire -= 4;
+				if($this->fire <= 0) $this->fire = 0;
 			}
-			$this->fire -= 10;
+			
 			if($this->fire <= 0){
-				$this->fire = 0;
 				$this->updateMetadata();
 			} else{
 				$hasUpdate = true;
 			}
-			if(($this->player instanceof Player) and ($this->player->gamemode & 0x01) === CREATIVE){
-				$this->fire = 0;
-			}
 		}
 
-		$startX = floor($this->boundingBox->minX);
-		$startY = floor($this->boundingBox->minY);
-		$startZ = floor($this->boundingBox->minZ);
-		$endX = ceil($this->boundingBox->maxX);
-		$endY = ceil($this->boundingBox->maxY);
-		$endZ = ceil($this->boundingBox->maxZ);
-		if(!($this instanceof Painting) && !($this->isPlayer() && $this->player->isSleeping !== false)){
-			for($i = 0; $i < 8; ++$i){
-				$x = ((($i >> 0) % 2) - 0.5) * $this->width * 0.8;
-				$y= ((($i >> 1) % 2) - 0.5) * 0.1;
-				$z = ((($i >> 2) % 2) - 0.5) * $this->width * 0.8;
-				
-				$blockX = floor($this->x + $x);
-				$blockY = floor($this->y + $this->getEyeHeight() + $y);
-				$blockZ = floor($this->z + $z);
-			
-				if(StaticBlock::getIsSolid($this->level->level->getBlockID($blockX, $blockY, $blockZ))){
-					$this->harm(1, "suffocation"); // Suffocation
-					$hasUpdate = true;
-					break;
-				}
+		if($this->handleLavaMovement()){
+			if(!$this->isImmuneToFire){
+				$this->harm(4, "fire");
+				$oldOnFire = $this->fire;
+				if($oldOnFire < 20*30) $this->fire = 20*30; //30 seconds
 			}
 		}
 		
+		if($this->isInVoid()){
+			$this->outOfWorld();
+			$hasUpdate = true;
+		}
 		
-		$waterDone = false;
-		for ($y = $startY; $y <= $endY; ++$y){
-			for ($x = $startX; $x <= $endX; ++$x){
-				for ($z = $startZ; $z <= $endZ; ++$z){
-					$pos = new Vector3($x, $y, $z);
-					$b = $this->level->getBlock($pos);
-					switch ($b->getID()) {
-						case WATER:
-						case STILL_WATER: // Drowing
-							if ($this->fire > 0 and $this->inBlock($pos)) {
-								$this->fire = 0;
-								$this->updateMetadata();
-							}
-							if (($this->air <= 0 && ! $waterDone) || $this->type === MOB_ENDERMAN) { //TODO check is correct
-								$this->harm(2, "water");
-								$hasUpdate = true;
-								$waterDone = true;
-							} elseif ($x == ($endX - 1) and $y == $endY and $z == ($endZ - 1 - (($b->getMetadata() % 8) / 9)) and ($this->class === ENTITY_MOB or $this->class === ENTITY_PLAYER) and !$waterDone) {
-								$this->air -= 1;
-								$waterDone = true;
-								$this->updateMetadata();
-								$hasUpdate = true;
-							}
-							break;
-						case LAVA: // Lava damage
-						case STILL_LAVA:
-							if ($this->inBlock($pos)) {
-								$this->harm(5, "lava");
-								$this->fire = 300;
-								$this->updateMetadata();
-								$hasUpdate = true;
-							}
-							break;
-						case FIRE: // Fire block damage
-							if ($this->inBlock($pos)) {
-								$this->harm(1, "fire");
-								$this->fire = 300;
-								$this->updateMetadata();
-								$hasUpdate = true;
-							}
-							break;
-						case CACTUS: // Cactus damage
-							if ($this->touchingBlock($pos)) {
-								$this->harm(1, "cactus");
-								$hasUpdate = true;
-							}
-							break;
+		if(!($this instanceof Painting) && !($this->isPlayer() && $this->player->isSleeping !== false)){ //TODO better way to fix	
+			$x = floor($this->x);
+			$y = floor($this->y + $this->getEyeHeight());
+			$z = floor($this->z);
+			if(!StaticBlock::getIsTransparent($this->level->level->getBlockID($x, $y, $z))){
+				$this->harm(1, "suffocation");
+			}
+		}
+		
+		//air damage
+		if($this->isPlayer() || $this instanceof Living){
+			$d = $this->y + $this->getEyeHeight();
+			$x = floor($this->x);
+			$y = floor($d);
+			$z = floor($this->z);
+			
+			$id = $this->level->level->getBlockID($x, $y, $z);
+			if($id == WATER || $id == STILL_WATER){
+				$f = LiquidBlock::getPercentAir($this->level->level->getBlockDamage($x, $y, $z)) - 0.1111111;
+				$f1 = ($y + 1) - $f;
+				if($d < $f1){
+					$this->air -= $tickDiff;
+					if($this->air <= -20){
+						$this->harm(2, "water");
+						$this->air = 0; //harm every 1 second
 					}
+				}else{
+					$this->air = $this->maxAir;
 				}
+			}else{
+				$this->air = $this->maxAir;
 			}
 		}
 		return $hasUpdate;
 	}
 	
+	public function moveFlying($strafe, $forward, $speed){ //TODO rename?
+		$v4 = $strafe*$strafe + $forward*$forward;
+		
+		if($v4 >= 0.0001){
+			$v4 = sqrt($v4);
+			if($v4 < 1) $v4 = 1;
+			
+			$v4 = $speed / $v4;
+			$strafe *= $v4;
+			$forward *= $v4;
+			
+			$v5 = sin($this->yaw * M_PI/180);
+			$v6 = cos($this->yaw * M_PI/180);
+			
+			$this->speedX += $strafe*$v6 - $forward*$v5;
+			$this->speedZ += $forward*$v6 + $strafe*$v5;
+		}
+	}
+	
 	public function updateEntityMovement(){}
-
+	
+	public function doBlocksCollision(){
+		$minX = floor($this->boundingBox->minX + 0.001);
+		$minY = floor($this->boundingBox->minY + 0.001);
+		$minZ = floor($this->boundingBox->minZ + 0.001);
+		$maxX = floor($this->boundingBox->maxX - 0.001);
+		$maxY = floor($this->boundingBox->maxY - 0.001);
+		$maxZ = floor($this->boundingBox->maxZ - 0.001);
+		
+		for($x = $minX; $x <= $maxX; ++$x){
+			for($y = $minY; $y <= $maxY; ++$y){
+				for($z = $minZ; $z <= $maxZ; ++$z){
+					$id = $this->level->level->getBlockID($x, $y, $z);
+					
+					if($id > 0){
+						StaticBlock::$prealloc[$id]::onEntityCollidedWithBlock($this->level, $x, $y, $z, $this);
+					}
+				}
+			}
+		}
+		
+	}
+	
+	public function move($dx, $dy, $dz){
+		$movX = $this->x;
+		$movY = $this->y;
+		$movZ = $this->z;
+		
+		if($this->inWeb){
+			$this->inWeb = false;
+			$dx *= 0.25;
+			$dy *= 0.05;
+			$dz *= 0.25;
+			
+			$this->speedX = $this->speedY = $this->speedZ = 0;
+		}
+		
+		
+		$savedDX = $dx;
+		$savedDY = $dy;
+		$savedDZ = $dz;
+		
+		$oldBB = clone $this->boundingBox;
+		
+		
+		$aaBBs = $this->level->getCubes($this, $this->boundingBox->addCoord($dx, $dy, $dz));
+		foreach($aaBBs as $bb){
+			$dy = $bb->calculateYOffset($this->boundingBox, $dy);
+		}
+		$this->boundingBox->offset(0, $dy, 0);
+		
+		foreach($aaBBs as $bb){
+			$dx = $bb->calculateXOffset($this->boundingBox, $dx);
+		}
+		$this->boundingBox->offset($dx, 0, 0);
+		
+		foreach($aaBBs as $bb){
+			$dz = $bb->calculateZOffset($this->boundingBox, $dz);
+		}
+		$this->boundingBox->offset(0, 0, $dz);
+		
+		
+		$fallingFlag = $this->onGround || $savedDY != $dy && $savedDY < 0;
+		
+		if($this->stepHeight > 0 && $fallingFlag && ($savedDX != $dx || $savedDZ != $dz)){
+			$cx = $dx;
+			$cy = $dy;
+			$cz = $dz;
+			
+			$dx = $savedDX;
+			$dy = $this->stepHeight;
+			$dz = $savedDZ;
+			$aabb1 = clone $this->boundingBox;
+			$this->boundingBox->setBB($oldBB);
+			
+			$aaBBs = $this->level->getCubes($this, $this->boundingBox->addCoord($dx, $dy, $dz));
+			
+			foreach($aaBBs as $bb){
+				$dy = $bb->calculateYOffset($this->boundingBox, $dy);
+			}
+			$this->boundingBox->offset(0, $dy, 0);
+			
+			foreach($aaBBs as $bb){
+				$dx = $bb->calculateXOffset($this->boundingBox, $dx);
+			}
+			$this->boundingBox->offset($dx, 0, 0);
+			
+			foreach($aaBBs as $bb){
+				$dz = $bb->calculateZOffset($this->boundingBox, $dz);
+			}
+			$this->boundingBox->offset(0, 0, $dz);
+			
+			if ($cx*$cx + $cz*$cz >= $dx*$dx + $dz*$dz)
+			{
+				$dx = $cx;
+				$dy = $cy;
+				$dz = $cz;
+				$this->boundingBox->setBB($aabb1);
+			}else{
+				$this->modifySpeedY = true;
+				$this->modifedSpeedY = 0.5;
+			}
+		}
+		
+		$this->x = ($this->boundingBox->minX + $this->boundingBox->maxX) / 2;
+		$this->y = $this->boundingBox->minY + $this->yOffset;
+		$this->z = ($this->boundingBox->minZ + $this->boundingBox->maxZ) / 2;
+		$this->isCollidedHorizontally = $savedDX != $dx || $savedDZ != $dz;
+		$this->isCollidedVertically = $savedDY != $dy;
+		$this->onGround = $savedDY != $dy && $savedDY < 0.0;
+		$this->isCollided = $this->isCollidedHorizontally || $this->isCollidedVertically;
+		$this->updateFallState($this->speedY);
+		
+		
+		if($savedDX != $dx) $this->speedX = 0;
+		if($savedDY != $dy) $this->speedY = 0;
+		if($savedDZ != $dz) $this->speedZ = 0;
+		
+		
+		
+		//TODO more stuff -> onEntityWalking
+		
+		$this->doBlocksCollision();
+		
+		$oldFire = $this->fire;
+		if($this->level->isBoundingBoxOnFire($this->boundingBox->contract(0.001, 0.001, 0.001))){
+			$this->harm(1, "fire");
+			if(!$this->inWater){
+				++$this->fire;
+				if($this->fire == 0) $this->fire = 8*20;
+			}
+		}elseif($this->fire <= 0){
+			$this->fire = -$this->fireResistance;
+		}
+		
+		if($this->inWater && $this->fire > 0){
+			$this->fire = -$this->fireResistance;
+		}
+		
+		if(($oldFire > 0 && $this->fire <= 0) || ($oldFire <= 0 && $this->fire > 0)){
+			$this->updateMetadata(); //TODO rewrite metadata
+		}
+	}
+	
+	//in MCP it is called isOffsetPositionInLiquid, in 0.8 - isFree
+	public function isFree($offsetX, $offsetY, $offsetZ){
+		$offsetBB = $this->boundingBox->getOffsetBoundingBox($offsetX, $offsetY, $offsetZ);
+		
+		$minX = floor($offsetBB->minX);
+		$minY = floor($offsetBB->minY);
+		$minZ = floor($offsetBB->minZ);
+		$maxX = floor($offsetBB->maxX + 1);
+		$maxY = floor($offsetBB->maxY + 1);
+		$maxZ = floor($offsetBB->maxZ + 1);
+		
+		$hasLiquid = false;
+		$result = false;
+		for($x = $minX; $x < $maxX; ++$x){
+			for($z = $minZ; $z < $maxZ; ++$z){
+				for($y = $minY - 1; $y < $maxY; ++$y){
+					$v12 = $this->level->level->getBlockID($x, $y, $z);
+					if($y != ($minY - 1)) $hasLiquid |= StaticBlock::getIsLiquid($v12);
+					if($v12 != 0){
+						$result = true;
+						break 3;
+					}
+				}
+			}
+		}
+		if($result) return !$hasLiquid;
+		return false;
+	}
+	
 	public function isInVoid(){
 		return $this->y < -1.6;
 	}
-
 	
-	public function update(){
+	public function handlePlayerSearcher(Player $player, $dist){
+		
+	}
+	
+	public function update($now){
 		if($this->closed === true){
 			return false;
 		}
 		
-		$now = microtime(true);
 		if($this->check === false){
 			$this->lastUpdate = $now;
 			return;
 		}
-		
-		if(!$this->isPlayer() && !isset($this->level->usedChunks[((int)$this->x >> 4).".".((int)$this->z >> 4)])){
-			$this->close();
-			return false;
-		}
-		
-		$tdiff = $now - $this->lastUpdate;
-		if($this->tickCounter === 0){
-			$this->tickCounter = 1;
-			$hasUpdate = $this->environmentUpdate();
-		} else{
-			$hasUpdate = true;
-			$this->tickCounter = 0;
-		}
+		$hasUpdate = $this->environmentUpdate($now);
 
 		if($this->closed === true){
 			return false;
 		}
 		++$this->counter;
+		
 		if($this->isStatic === false){
-			$startX = floor($this->x - 0.5 - $this->width - 1);
-			// prefix for flying when player on fence
-			$y = floor($this->y - 1);
-			$yC = ceil($this->y - 1);
-			$startZ = floor($this->z - 0.5 - $this->width - 1);
-			$endX = ceil($this->x - 0.5 + $this->width + 1);
-			$endZ = ceil($this->z - 0.5 + $this->width + 1);
-			$support = false;
-			$isFlying = true;
-			
-			if($this->isPlayer()){
-				for($z = $startZ; $z <= $endZ; ++ $z){
-					for($x = $startX; $x <= $endX; ++ $x){
-						$v = new Vector3($x, $y, $z);
-						$v1 = new Vector3($x, $yC, $z);
-						if($this->isSupport($v, $this->width)){
-							$b = $this->level->getBlock($v);
-							if($b->isSolid === true){
-								$support = true;
-								$isFlying = false;
-								break;
-							} elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
-								$isFlying = false;
-							}
-						} elseif($this->isSupport($v1, $this->width)){
-							$b = $this->level->getBlock($v1);
-							if($b->isSolid === true){
-								$support = true;
-								$isFlying = false;
-								break;
-							} elseif(($b instanceof LiquidBlock) or $b->getID() === COBWEB or $b->getID() === LADDER or $b->getID() === FENCE or $b->getID() === STONE_WALL or $b->getID() === IRON_BARS){
-								$isFlying = false;
-							}
-						}
-					}
-					if($support === true){
-						break;
-					}
-				}
-			}
 			if(!$this->isPlayer()){
+				$this->updateLast();
+				$this->updatePosition(); //TODO shouldnt be called in Entity
 				$this->updateEntityMovement();
 				$update = false;
-				if($this->speedX > -self::MIN_POSSIBLE_SPEED && $this->speedX < self::MIN_POSSIBLE_SPEED){
-					$this->speedX = 0;
-				}
-				if($this->speedZ > -self::MIN_POSSIBLE_SPEED && $this->speedZ < self::MIN_POSSIBLE_SPEED){
-					$this->speedZ = 0;
-				}
-				if($this->speedY > -self::MIN_POSSIBLE_SPEED && $this->speedY < self::MIN_POSSIBLE_SPEED){
-					$this->speedY = 0;
-				}
-				
-				$horizontalMultiplyFactor = 0.91;
-				if($this->onGround){
-					$horizontalMultiplyFactor = 0.54;
-					$b = $this->level->level->getBlockID(floor($this->x), floor($this->boundingBox->minX) - 1, floor($this->z));
-					if($b > 0){
-						$horizontalMultiplyFactor = StaticBlock::getSlipperiness($b) * 0.91;
-					}
-				}
-				if($this->inWater){
-					$this->speedX *= 0.8;
-					$this->speedY *= 0.8;
-					$this->speedZ *= 0.8;
-				}else{
-					$this->speedX *= $horizontalMultiplyFactor;
-					$this->speedY *= 0.98;
-					$this->speedZ *= $horizontalMultiplyFactor;
-				}
-				
-				$savedSpeedY = $this->speedY;
-				if($this->class === ENTITY_MOB || $this->class === ENTITY_ITEM || ($this->class === ENTITY_OBJECT && $this->type === OBJECT_PRIMEDTNT) || $this->class === ENTITY_FALLING){
-					$water = false;
-					$aABB = $this->boundingBox->addCoord($this->speedX, $this->speedY, $this->speedZ);
-					$x0 = floor($aABB->minX);
-					$x1 = ceil($aABB->maxX);
-					$y0 = floor($aABB->minY);
-					$y1 = ceil($aABB->maxY);
-					$z0 = floor($aABB->minZ);
-					$z1 = ceil($aABB->maxZ);
-					//$x1 = $x1 > 256 ? 256 : $x1;
-					//$y1 = $y1 > 128 ? 128 : $y1;
-					//$z1 = $z1 > 256 ? 256 : $z1;
-					for($x = $x0; $x < $x1; ++$x){
-						for($y = $y0; $y < $y1; ++$y){
-							for($z = $z0; $z < $z1; ++$z){
-								$pos = new Vector3($x, $y, $z);
-								$b = $this->level->getBlock($pos);
-								if($b->y == ($y1 - 1) && ($b->getID() === WATER || $b->getID() === STILL_WATER)){
-									$water = true;
-								}
-								if($b != false && $b->isSolid){
-									$this->speedY = $b->boundingBox->calculateYOffset($this->boundingBox, $this->speedY);
-									$this->speedX = $b->boundingBox->calculateXOffset($this->boundingBox, $this->speedX);
-									$this->speedZ = $b->boundingBox->calculateZOffset($this->boundingBox, $this->speedZ);
-								}
-							}
-						}
-					}
-					
-					$this->inWater = $water;
-				}
-				
-				$support = $savedSpeedY != $this->speedY && $savedSpeedY < 0;
-				
-				if($this->speedX != 0){
-					$this->x += $this->speedX;
-					$update = true;
-				}
-				if($this->speedZ != 0){
-					$this->z += $this->speedZ;
-					$update = true;
-				}
-				if($this->speedY != 0){
-					$ny = $this->y + $this->speedY;
-					if($this->class === ENTITY_FALLING){
-						if($support){
-							$this->level->fastSetBlockUpdate($this->x, $this->y, $this->z, $this->data["Tile"], 0);
-							$this->close();
-							return;
-						}
-						$id = $this->level->level->getBlockID($this->x, $this->y, $this->z);
-						if($id > 0 && !StaticBlock::getIsSolid($id) && !StaticBlock::getIsLiquid($id)){
-							$this->server->api->entity->drop($this, BlockAPI::getItem($this->data["Tile"], 0, 1));
-							$this->close();
-							return;
-						}
-						
-					}
-					$this->y = $ny;
-					
-					$update = true;
-				}
-				$this->onGround = $support;
-				
-				if($this->hasGravity){
-					$this->speedY -= $this->inWater ? 0.02 : $this->gravity; // TODO: fix packet spam
-					$update = true;
-				} elseif($this->lastX != $this->x || $this->lastZ != $this->z || $this->lastY != $this->z){
-					$this->server->api->handle("entity.move", $this);
+				if($this->lastX != $this->x || $this->lastZ != $this->z || $this->lastY != $this->z){
+					//$this->server->api->handle("entity.move", $this);
 					$update = true;
 				}elseif ($this->lastYaw != $this->yaw || $this->lastPitch != $this->pitch || $this->lastHeadYaw != $this->headYaw) {
 					$update = true;
 				}
-
+				
 				if($update === true){
 					$hasUpdate = true;
-					if(($this->server->ticks % 4 === 0 && $this->class === ENTITY_ITEM) || $this->class != ENTITY_ITEM){ //update item speed every 4 ticks
-						$this->server->api->handle("entity.motion", $this);
-						$this->lastSpeedZ = $this->speedZ;
-						$this->lastSpeedY = $this->speedY;
-						$this->lastSpeedX = $this->speedX;
-					}
-				}
-			} elseif($this->player instanceof Player){
-				if($isFlying === true and ($this->player->gamemode & 0x01) === 0x00){
-					if($this->fallY === false or $this->fallStart === false){
-						$this->fallY = $y;
-						$this->fallStart = microtime(true);
-					} elseif($y > $this->fallY){
-						$this->fallY = $y;
-					}
-				} elseif($this->fallY !== false){ // Fall damage!
-					if($y < $this->fallY){
-						$blockToFallOn = $this->level->getBlock(new Vector3($x, $y, $z));
-						if($blockToFallOn->getID() === FARMLAND){
-							$this->level->setBlock($blockToFallOn, new DirtBlock(), true, false, true);
-						}
-
-						$d = $this->level->getBlock(new Vector3($x, $y + 1, $z));
-						$d2 = $this->level->getBlock(new Vector3($x, $y + 2, $z));
-						$dmg = ($this->fallY - $y) - 3;
-						if($dmg > 0 and ! ($d instanceof LiquidBlock) and $d->getID() !== LADDER and $d->getID() !== COBWEB and ! ($d2 instanceof LiquidBlock) and $d2->getID() !== LADDER and $d2->getID() !== COBWEB){
-							$this->harm($dmg, "fall");
-						}
-					}
-					$this->fallY = false;
-					$this->fallStart = false;
-				}
-				$this->calculateVelocity();
-				if($this->speed <= 9 or ($this->speed <= 20 and ($this->player->gamemode & 0x01) === 0x01)){
-					$this->player->lastCorrect = new Vector3($this->last[0], $this->last[1], $this->last[2]);
 				}
 				
-				$hasUpdate = true;
+			} else{
+				$prevGroundState = $this->onGround;
+				$this->onGround = false;
+				$this->speedX = -($this->lastX - $this->x);
+				$this->speedY = -($this->lastY - $this->y);
+				$this->speedZ = -($this->lastZ - $this->z);
+				
+				$contractedCollisionBB = $this->boundingBox->contract(0.001, 0.001, 0.001);
+				$fireMinX = floor($contractedCollisionBB->minX);
+				$fireMinY = floor($contractedCollisionBB->minY);
+				$fireMinZ = floor($contractedCollisionBB->minZ);
+				$fireMaxX = floor($contractedCollisionBB->maxX + 1);
+				$fireMaxY = floor($contractedCollisionBB->maxY + 1);
+				$fireMaxZ = floor($contractedCollisionBB->maxZ + 1);
+				
+				$bbbottom = $this->boundingBox->addCoord(0, -0.05, 0);
+				$bbbottom->minX = round($this->x, 3) - $this->radius;
+				$bbbottom->maxX = round($this->x, 3) + $this->radius;
+				$bbbottom->minZ = round($this->z, 3) - $this->radius;
+				$bbbottom->maxZ = round($this->z, 3) + $this->radius;
+				
+				$handleFire = false;
+				$handleCactus = false;
+				for($x = floor($this->boundingBox->minX); $x < ceil($this->boundingBox->maxX); ++$x){
+					for($z = floor($this->boundingBox->minZ); $z < ceil($this->boundingBox->maxZ); ++$z){
+						for($y = floor($this->boundingBox->minY - 1); $y < ceil($this->boundingBox->maxY); ++$y){
+							$intersects = 0;
+							$id = $this->level->level->getBlockID($x, $y, $z);
+							$bounds = StaticBlock::$prealloc[$id]::getCollisionBoundingBoxes($this->level, $x, $y, $z, $this);
+							foreach($bounds as $bb){
+								if($bbbottom->intersectsWith($bb)){
+									++$intersects;
+								}
+							}
+							
+							if($id == WATER  || $id === STILL_WATER || $id === COBWEB || $id == LAVA  || $id === STILL_LAVA){
+								$this->notOnGroundTicks = 0;
+							}
+							
+							intersects:
+							if($y <= floor($this->boundingBox->minY) && !$this->onGround){
+								if($intersects > 0) $this->onGround = count($bounds) > 0;
+							}else{
+								$block = $this->level->level->getBlock($x, $y, $z);
+								$id = $block[0];
+								$meta = $block[1];
+								$handleFire = $handleFire || (($id == FIRE || $id == STILL_LAVA || $id == LAVA) && $x >= $fireMinX && $x < $fireMaxX && $y >= $fireMinY && $y < $fireMaxY && $z >= $fireMinZ && $z < $fireMaxZ);
+								$handleCactus = $handleCactus || ($id == CACTUS && $x >= $fireMinX && $x <= $fireMaxX && $y >= $fireMinY && $y <= $fireMaxY && $z >= $fireMinZ && $z <= $fireMaxZ);
+								
+								if($id === WATER || $id === STILL_WATER || $id === COBWEB){
+									$this->fallDistance = 0;
+									$this->fallStart = $this->y;
+								}
+							}
+							
+						}
+					}
+				}
+				
+				if($prevGroundState == $this->onGround && !$this->onGround){
+					++$this->notOnGroundTicks;
+				}else if($this->onGround){
+					$this->notOnGroundTicks = 0;
+				}
+				
+				if($this->notOnGroundTicks > 80){ //~70 ticks is needed to reach from 127 to 0
+					if(($this->player->gamemode & 1) != CREATIVE && !$this->player->blocked && $this->player->spawned){ //survival(0), adventure(2)
+						if(!Entity::$allowFly){
+							$this->player->close("flying");
+						}
+					}
+				}
+				
+				
+				if($this->isOnLadder()){
+					$this->fallDistance = 0;
+					$this->notOnGroundTicks = 0;
+					$this->fallStart = $this->y;
+				}
+				
+				if(!$this->onGround && $prevGroundState){
+					$this->fallStart = $this->y;
+				}
+				
+				$this->updateFallState(($this->speedY <=> 0)*0.1);
+				if($this->onGround) $this->fallDistance = 0;
+				
+				if($handleCactus){
+					$this->harm(1, "cactus");
+				}
+				$oldFire = $this->fire;
+				if($handleFire){
+					$this->harm(1, "fire");
+					if(!$this->inWater){
+						++$this->fire;
+						if($this->fire == 0) $this->fire = 8*20;
+					}
+				}elseif($this->fire <= 0){
+					$this->fire = -$this->fireResistance;
+				}
+				
+				if($this->inWater && $this->fire > 0){
+					$this->fire = -$this->fireResistance;
+				}
+				
+				if(($oldFire > 0 && $this->fire <= 0) || ($oldFire <= 0 && $this->fire > 0)){
+					$this->updateMetadata(); //TODO rewrite metadata
+				}
+				
+				$hasUpdate = true; 
 			}
 		}
 		
+		
 		$this->counterUpdate();
 		
-		if($this->lastHeadYaw != $this->headYaw){
-			$this->sendHeadYaw();
-		}
-		if($this->class === ENTITY_PLAYER || $update){
+		if($this->isPlayer()){
 			$this->updateMovement();
 		}
 		
@@ -737,23 +883,44 @@ class Entity extends Position
 		$this->needsUpdate = $hasUpdate;
 		$this->lastUpdate = $now;
 	}
+	public function isOnLadder(){
+		$x = (int)$this->x;
+		$y = (int)$this->boundingBox->minY;
+		$z = (int)$this->z;
+		return $this->level->level->getBlockID($x, $y, $z) === LADDER;
+	}
 	
-	public function counterUpdate(){
-		if($this->knockbackTime > 0){
-			--$this->knockbackTime;
+	public function fall(){
+		if($this->isPlayer()){
+			
+			$x = floor($this->x);
+			$y = floor($this->y - 1); //TODO not 1
+			$z = floor($this->z);
+			$bid = $this->level->level->getBlockID($x, $y, $z);
+			if($bid > 0){
+				$clz = StaticBlock::getBlock($bid);
+				$clz::fallOn($this->level, $x, $y, $z, $this, ceil($this->fallStart - $this->y));
+			}
+			
+			$dmg = ceil($this->fallStart - $this->y - 3);
+			if($dmg > 0){
+				$this->harm($dmg, "fall");
+			}
 		}
-		if($this->moveTime > 0){
-			-- $this->moveTime;
+	}
+	
+	public function canBeShot(){
+		return $this->isPlayer();
+	}
+	
+	public function updateFallState($fallTick){
+		if($this->onGround && $this->fallDistance > 0){
+			$this->fall();
+			$this->fallDistance = 0;
+		}elseif($fallTick < 0){
+			$this->fallDistance -= $fallTick;
 		}
-		if($this->lookTime > 0){
-			-- $this->lookTime;
-		}
-		if($this->idleTime > 0){
-			-- $this->idleTime;
-		}
-		if($this->delayBeforePickup > 0){
-			--$this->delayBeforePickup;
-		}
+		
 	}
 	
 	public function updateMovement()
@@ -763,18 +930,15 @@ class Entity extends Position
 		}
 		$now = microtime(true);
 		if($this->isStatic === false and ($this->lastX != $this->x or $this->lastY != $this->y or $this->lastZ != $this->z or $this->lastYaw != $this->yaw or $this->lastPitch != $this->pitch or $this->lastHeadYaw != $this->headYaw)){
-			if($this->class === ENTITY_PLAYER or ($this->last[5] + 8) < $now){
+			if($this->class === ENTITY_PLAYER){
 				if($this->server->api->handle("entity.move", $this) === false){
 					if($this->class === ENTITY_PLAYER){
 						$this->player->teleport(new Vector3($this->last[0], $this->last[1], $this->last[2]), $this->last[3], $this->last[4]);
-					} else{
-						//TODO fix $this->setPosition($this->last[0], $this->last[1], $this->last[2], $this->last[3], $this->last[4]);
 					}
 				} else{
-					$this->updateLast();
 					$players = $this->server->api->player->getAll($this->level);
 					if($this->player instanceof Player){
-						//console("gujnbguib");
+						$this->updateLast();
 						unset($players[$this->player->CID]);
 						$pk = new MovePlayerPacket();
 						$pk->eid = $this->eid;
@@ -785,21 +949,10 @@ class Entity extends Position
 						$pk->pitch = $this->pitch;
 						$pk->bodyYaw = $this->yaw;
 						$this->server->api->player->broadcastPacket($players, $pk);
-					} else{
-						
-						$pk = new MoveEntityPacket;
-						$pk->entities = [[$this->eid, $this->x, $this->y, $this->z, $this->yaw, $this->pitch]];
-						$this->server->api->player->broadcastPacket($players, $pk);
 					}
 				}
-			} else{
-				$this->updatePosition();
-				$this->updateLast();
 			}
-			
-			
 		}
-
 		$this->lastUpdate = $now;
 	}
 	
@@ -815,22 +968,22 @@ class Entity extends Position
 		}
 	}
 	
-	public function getEyeHeight(){
-		return $this->isPlayer() ? 1.62 : $this->width;
+	public function getEyeHeight(){ //TODO in vanilla player's eyeHeight is 0.12
+		return $this->isPlayer() ? $this->height - 0.12 : $this->height * 0.85;
 	}
 	
 	public function interactWith(Entity $e, $action)
 	{
-		if($this->class === ENTITY_PLAYER and ($this->server->api->getProperty("pvp") == false or $this->server->difficulty <= 0 or ($e->player->gamemode & 0x01) === 0x01)){
+		if($this->isPlayer() and ($this->server->api->getProperty("pvp") == false or $this->server->difficulty <= 0 or ($this->player->gamemode & 0x01) === 0x01)){
 			return false;
 		}
 
 		if($action === InteractPacket::ACTION_ATTACK && $e->isPlayer()){
 			$slot = $e->player->getHeldItem();
-			$damage = $slot->getDamageAgainstOf($e);
+			$damage = $slot->getDamageAgainstOf($this);
 			$this->harm($damage, $e->eid);
-			if($slot->isTool() === true and ($e->player->gamemode & 0x01) === 0){
-				if($slot->useOn($e) and $slot->getMetadata() >= $slot->getMaxDurability()){
+			if($slot->isTool() && (!$this->isPlayer() || ($this->player->gamemode & 0x01) === 0)){
+				if($slot->useOn($this) and $slot->getMetadata() >= $slot->getMaxDurability()){
 					$e->player->removeItem($slot->getID(), $slot->getMetadata(), 1, true);
 				}
 			}
@@ -841,7 +994,7 @@ class Entity extends Position
 
 	public function getDirection()
 	{
-		$rotation = ((int)($this->yaw - 90)) % 360;
+		$rotation = ($this->yaw - 90) % 360;
 		if($rotation < 0){
 			$rotation += 360.0;
 		}
@@ -859,7 +1012,7 @@ class Entity extends Position
 	}
 
 	/**
-	 * METADATA VALUES(EXPEREMENTAL)
+	 * METADATA VALUES
 	 * *****************
 	 * Types: Get input type of <value>
 	 * 0 -> Byte
@@ -877,10 +1030,10 @@ class Entity extends Position
 	 * 17 => ["type" => 6, "value" => [0, 0, 0]] --> Bed Position <?>
 	 *
 	 *
-	 * DATA FLAGS IDS<br>
-	 * 0 - fire<br>
-	 * 1 - crouching<br>
-	 * 4 - inAction(ex.: using a bow)<br>
+	 * DATA FLAGS IDS
+	 * 0 - fire
+	 * 1 - crouching
+	 * 4 - inAction(ex.: using a bow)
 	 */
 	public function getMetadata()
 	{
@@ -895,7 +1048,7 @@ class Entity extends Position
 			],
 			1 => [
 				"type" => 1,
-				"value" => $this->air
+				"value" => (int)$this->air
 			],
 			14 => [
 				"type" => 0,
@@ -915,7 +1068,7 @@ class Entity extends Position
 			]
 		];
 		$d[16]["value"] = $this->data["State"];
-		if($this->class === ENTITY_PLAYER){
+		if($this->isPlayer()){
 			if($this->player->isSleeping !== false){
 				$d[16]["value"] = 2;
 				$d[17]["value"] = [
@@ -961,10 +1114,13 @@ class Entity extends Position
 				$pk->itemID = 0;
 				$pk->itemAuxValue = 0;
 				$pk->metadata = $this->getMetadata();
-				$player->dataPacket($pk);
+				$player->directDataPacket($pk, 2, true);
 
 				$pk = new SetEntityMotionPacket();
-				$pk->entities = [[$this->eid, $this->speedX, $this->speedY, $this->speedZ]];
+				$pk->eid = $this->eid;
+				$pk->speedX = $this->speedX;
+				$pk->speedY = $this->speedY;
+				$pk->speedZ = $this->speedZ;
 				$player->dataPacket($pk);
 
 				$pk = new PlayerEquipmentPacket();
@@ -975,48 +1131,53 @@ class Entity extends Position
 				$player->dataPacket($pk);
 				$this->player->sendArmor($player);
 				break;
-			case ENTITY_ITEM:
-				$pk = new AddItemEntityPacket();
-				$pk->eid = $this->eid;
-				$pk->x = $this->x;
-				$pk->y = $this->y;
-				$pk->z = $this->z;
-				$pk->yaw = $this->yaw;
-				$pk->pitch = $this->pitch;
-				$pk->roll = 0;
-				$pk->item = BlockAPI::getItem($this->type, $this->meta, $this->stack);
-				$pk->metadata = $this->getMetadata();
-				$player->dataPacket($pk);
-
-				$pk = new SetEntityMotionPacket();
-				$pk->entities = [[$this->eid, $this->speedX, $this->speedY, $this->speedZ]];
-				$player->dataPacket($pk);
-				break;
 			case ENTITY_FALLING:
-				$pk = new AddEntityPacket(); //TODO fix
+				$pk = new AddEntityPacket();
 				$pk->eid = $this->eid;
 				$pk->type = $this->type;
 				$pk->x = $this->x;
 				$pk->y = $this->y;
 				$pk->z = $this->z;
-				$pk->did = -($this->data["Tile"] | $this->data["Metadata"] << 0x10);
+				$pk->speedX = $this->speedX;
+				$pk->speedY = $this->speedY;
+				$pk->speedZ = $this->speedZ;
+				$pk->did = -$this->data["Tile"];
 				$player->dataPacket($pk);
-
-				$pk = new SetEntityMotionPacket();
-				$pk->entities = [[$this->eid, $this->speedX, $this->speedY, $this->speedZ]];
-				$player->dataPacket($pk);
-				break;
+		}
+		
+		if($this->linkedEntity != 0 && $this->isRider){
+			$player->eventHandler(["rider" => $this->eid, "riding" => $this->linkedEntity, "type" => 0], "entity.link"); //TODO fix it
+		}
+		
+	}
+	
+	public function counterUpdate(){
+		if($this->knockbackTime > 0){
+			--$this->knockbackTime;
+		}
+		if($this->delayBeforePickup > 0){
+			--$this->delayBeforePickup;
+		}
+		if($this->moveTime > 0){
+			--$this->moveTime;
+		}
+		if($this->lookTime > 0){
+			--$this->lookTime;
+		}
+		if($this->idleTime > 0){
+			--$this->idleTime;
+		}
+		
+		
+		if($this->inAction){
+			++$this->inActionCounter;
 		}
 	}
-
+	
 	public function close()
 	{
 		if($this->closed === false){
 			$this->closed = true;
-			if($this?->linkedEntity?->linkedEntity?->eid === $this->eid){
-				$this->linkedEntity->linkedEntity = false;
-			}
-			$this->linkedEntity = false;
 			$this->server->api->entity->remove($this->eid);
 		}
 	}
@@ -1039,7 +1200,6 @@ class Entity extends Position
 	public function setName($name)
 	{
 		$this->name = $name;
-		// $this->server->query("UPDATE entities SET name = '".str_replace("'", "", $this->name)."' WHERE EID = ".$this->eid.";"); is this neccessary for database?
 	}
 
 	public function look($pos2)
@@ -1048,51 +1208,24 @@ class Entity extends Position
 		$angle = Utils::angle3D($pos2, $pos);
 		$this->yaw = $angle["yaw"];
 		$this->pitch = $angle["pitch"];
-		$this->server->query("UPDATE entities SET pitch = " . $this->pitch . ", yaw = " . $this->yaw . " WHERE EID = " . $this->eid . ";");
-	}
-
-	public function move(Vector3 $pos, $yaw = 0, $pitch = 0)
-	{
-		$this->x += $pos->x;
-		$this->y += $pos->y;
-		$this->z += $pos->z;
-		$this->yaw += $yaw;
-		$this->yaw %= 360;
-		$this->pitch += $pitch;
-		$this->pitch %= 90;
-		$this->server->query("UPDATE entities SET x = " . $this->x . ", y = " . $this->y . ", z = " . $this->z . ", pitch = " . $this->pitch . ", yaw = " . $this->yaw . " WHERE EID = " . $this->eid . ";");
-		$this->updateAABB();
 	}
 
 	public function updateAABB()
 	{
-		$this->boundingBox->setBounds($this->x - $this->radius, $this->y, $this->z - $this->radius, $this->x + $this->radius, $this->y + $this->height, $this->z + $this->radius);
+		$this->boundingBox->setBounds(
+			$this->x - $this->radius, $this->y - $this->yOffset, $this->z - $this->radius, 
+			$this->x + $this->radius, $this->y + $this->height - $this->yOffset, $this->z + $this->radius
+		);
 	}
 
 	public function updatePosition()
 	{
-		$this->server->query("UPDATE entities SET level = '" . $this->level->getName() . "', x = " . $this->x . ", y = " . $this->y . ", z = " . $this->z . ", pitch = " . $this->pitch . ", yaw = " . $this->yaw . " WHERE EID = " . $this->eid . ";");
 		$this->sendMoveUpdate();
-		// $this->sendMotion();
 		$this->updateAABB();
 	}
 	
-	public function sendHeadYaw(){
-		$pk = new RotateHeadPacket;
-		$pk->entities = [[$this->eid, $this->headYaw]];
-		$this->server->api->player->broadcastPacket($this->level->players, $pk);
-	}
-	
-	public function setPosition(Vector3 $pos, $yaw = false, $pitch = false)
+	public function setPosition(Vector3 $pos, $yaw = false, $pitch = false, $headYaw = false)
 	{
-		if($pos instanceof Position and $pos->level instanceof Level and $this->level !== $pos->level){
-			$this->level = $pos->level;
-			$this->server->preparedSQL->entity->setLevel->reset();
-			$this->server->preparedSQL->entity->setLevel->clear();
-			$this->server->preparedSQL->entity->setLevel->bindValue(":level", $this->level->getName(), SQLITE3_TEXT);
-			$this->server->preparedSQL->entity->setLevel->bindValue(":eid", $this->eid, SQLITE3_INTEGER);
-			$this->server->preparedSQL->entity->setLevel->execute();
-		}
 		$this->x = $pos->x;
 		$this->y = $pos->y;
 		$this->z = $pos->z;
@@ -1102,17 +1235,13 @@ class Entity extends Position
 		if($pitch !== false){
 			$this->pitch = $pitch;
 		}
-		$this->server->preparedSQL->entity->setPosition->reset();
-		$this->server->preparedSQL->entity->setPosition->clear();
-		$this->server->preparedSQL->entity->setPosition->bindValue(":x", $this->x, SQLITE3_TEXT);
-		$this->server->preparedSQL->entity->setPosition->bindValue(":y", $this->y, SQLITE3_TEXT);
-		$this->server->preparedSQL->entity->setPosition->bindValue(":z", $this->z, SQLITE3_TEXT);
-		$this->server->preparedSQL->entity->setPosition->bindValue(":pitch", $this->pitch, SQLITE3_TEXT);
-		$this->server->preparedSQL->entity->setPosition->bindValue(":yaw", $this->yaw, SQLITE3_TEXT);
-		$this->server->preparedSQL->entity->setPosition->bindValue(":eid", $this->eid, SQLITE3_INTEGER);
-		$this->server->preparedSQL->entity->setPosition->execute();
+		
+		if($headYaw !== false) $this->headYaw = $headYaw;
 	}
-
+	public function inBlockNonVector($x, $y, $z, $radius = 0.8)
+	{
+		return $y == ceil($this->y) || $y == (ceil($this->y)+1) && max(abs($x - ($this->x-0.5)), abs($z - ($this->z-0.5)));
+	}
 	public function inBlock(Vector3 $block, $radius = 0.8)
 	{
 		$me = new Vector3($this->x - 0.5, $this->y, $this->z - 0.5);
@@ -1143,18 +1272,10 @@ class Entity extends Position
 
 	public function resetSpeed()
 	{
-		$this->speedMeasure = array(
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0
-		);
+		$this->speedMeasure = array(0, 0, 0, 0, 0, 0, 0);
 	}
 
-	public function getSpeed()
+	public function getSpeed() //TODO rename to getBaseSpeed
 	{
 		return $this->speed;
 	}
@@ -1198,6 +1319,9 @@ class Entity extends Position
 				0 => $this->yaw,
 				1 => $this->pitch,
 			],
+			"speedX" => $this->speedX,
+			"speedY" => $this->speedY,
+			"speedZ" => $this->speedZ,
 			
 		];
 		if($this->class === ENTITY_OBJECT){
@@ -1207,61 +1331,85 @@ class Entity extends Position
 		}
 		if($this->class === ENTITY_FALLING){
 			$data["Tile"] = $this->data["Tile"];
-			$data["Metadata"] = $this->data["Metadata"];
 		}
 		if($this->class === ENTITY_ITEM){
 			$data["Item"] = [
-				"id" => $this->type,
+				"id" => $this->itemID,
 				"Damage" => $this->meta,
 				"Count" => $this->stack,
 			];
+			
+			$data["id"] = 64; //ty shoghicp
 		}
 		return $data;
 	}
  
 	public function updateLast()
 	{
-		$this->last[0] = $this->x;
-		$this->last[1] = $this->y;
-		$this->last[2] = $this->z;
-		$this->last[3] = $this->yaw;
-		$this->last[4] = $this->pitch;
-		$this->last[5] = microtime(true);
+		$this->lastX = $this->x;
+		$this->lastY = $this->y;
+		$this->lastZ = $this->z;
+		$this->lastYaw = $this->yaw;
+		$this->lastPitch = $this->pitch;
+		$this->lastTime = microtime(true);
 		$this->lastHeadYaw = $this->headYaw;
+		$this->lastSpeedZ = $this->speedZ;
+		$this->lastSpeedY = $this->speedY;
+		$this->lastSpeedX = $this->speedX;
 	}
 
 	public function getPosition($round = false)
 	{
-		return ! isset($this->position) ? false : ($round === true ? array_map("floor", $this->position) : $this->position);
+		return !isset($this->position) ? false : ($round === true ? array_map("floor", $this->position) : $this->position);
 	}
 
 	public function harm($dmg, $cause = "generic", $force = false)
 	{
-		if (! $this->canBeAttacked) {
+		if (!$this->canBeAttacked) {
 			return false;
 		}
-		$dmg = $this->applyArmor($dmg, $cause); //TODO HURTCAM
+		if(is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false){
+			if($this->attackTimeout > 0) return false;
+			if(!$entity->isPlayer()){
+				switch($this->server->difficulty){
+					//case 0: looks like mobs also have 0 attack dmg in peaceful mode
+					//	$dmg = 0;
+					//	break;
+					case 1:
+						$dmg = (int)($dmg / 3) + 1;
+						break;
+					case 3:
+						$dmg = 3 * (int)($dmg / 2);
+						break;
+				}
+			}
+		}
+		
+		$dmg = $this->applyArmor($dmg, $cause);
 		$ret = $this->setHealth(max(- 128, $this->getHealth() - ((int) $dmg)), $cause, $force);
-
+		
+		if($ret && is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false){ //TODO simplify
+			$this->attackTimeout = 10;
+		}
+		
 		if ($ret != false && $this->hasKnockback && is_numeric($cause) && ($entity = $this->server->api->entity->get($cause)) != false) {
+			
 			$d = $entity->x - $this->x;
 
 			for ($d1 = $entity->z - $this->z; $d * $d + $d1 * $d1 < 0.0001; $d1 = (lcg_value() - lcg_value()) * 0.01) {
 				$d = (lcg_value() - lcg_value()) * 0.01;
 			}
-			if($this->isPlayer()){
-				//force reset speed
-				$this->speedX = $this->speedY = $this->speedZ = 0;
-			}
-			// attackedAtYaw = (float)((Math.atan2($d1, $d) * 180D) / 3.1415927410125732D) >
+			
 			$this->knockBack($d, $d1);
 			if($this->isPlayer()){
 				$pk = new SetEntityMotionPacket();
-				$pk->entities = [[0, $this->speedX, $this->speedY, $this->speedZ]];
+				$pk->eid = 0;
+				$pk->speedX = $this->speedX;
+				$pk->speedY = $this->speedY;
+				$pk->speedZ = $this->speedZ;
 				$this->player->directDataPacket($pk, 0);
 			}
 			$this->knockbackTime = 10;
-			$this->sendMotion();
 			
 		}
 
@@ -1284,19 +1432,55 @@ class Entity extends Position
 	{
 		return $this->setHealth(min(20, $this->getHealth() + ((int) $health)), $cause);
 	}
-
-	public function sendMotion()
-	{
-		$pk = new SetEntityMotionPacket();
-		$pk->entities = [[$this->eid, $this->speedX, $this->speedY, $this->speedZ]];
-		$this->server->api->player->broadcastPacket($this->level->players, $pk);
+	
+	public function stopRiding(){
+		if(isset($this->level->entityList[$this->linkedEntity])){
+			$e = $this->level->entityList[$this->linkedEntity];
+			if(!$e->dead && !$e->closed){
+				$this->linkedEntity = 0;
+				$e->linkedEntity = 0;
+				$this->server->api->dhandle("entity.link", ["rider" => $this->eid, "riding" => -1, "type" => 1]);
+				$this->server->api->dhandle("entity.link", ["rider" => $this->linkedEntity, "riding" => -1, "type" => 1]);
+				$this->isRider = false;
+			}
+		}else{
+			$this->linkedEntity = 0;
+		}
 	}
-
-	public function linkEntity(Entity $e, $type)
+	
+	public function setPos($x, $y, $z){
+		$this->x = $x;
+		$this->y = $y;
+		$this->z = $z;
+		
+		$this->boundingBox->minX = $x - $this->radius;
+		$this->boundingBox->minY = ($y - $this->yOffset); //TODO what is this + $this->ySize;
+		$this->boundingBox->minZ = $z - $this->radius;
+		
+		$this->boundingBox->maxX = $x + $this->radius;
+		$this->boundingBox->maxY = $this->boundingBox->minY + $this->height;
+		$this->boundingBox->maxZ = $z + $this->radius;
+	}
+	
+	public function setRiding(Entity $e, $type = 0)
 	{
-		//if($e->isPlayer()){
-		$this->server->api->dhandle("entity.link", ["rider" => $e->eid, "riding" => $this->eid, "type" => 0]);
-		//}
+		if(!isset($this->level->entityList[$e->eid])){
+			ConsoleAPI::warn("Tried linking $this with $e that doesnt exist in the world!");
+			return;
+		}
+		
+		if($this->linkedEntity == $e->eid || $e->eid == $this->eid){
+			$this->linkedEntity = 0;
+			$e->linkedEntity = 0;
+			$this->server->api->dhandle("entity.link", ["rider" => $this->eid, "riding" => $e->eid, "type" => $type]);
+		}else{
+			$this->linkedEntity = $e->eid;
+			$e->linkedEntity = $this->eid;
+			$this->isRider = true;
+			$this->server->api->dhandle("entity.link", ["rider" => $this->eid, "riding" => $e->eid, "type" => 0]);
+		}
+		
+		
 	}
 
 	public function isPlayer()
@@ -1307,18 +1491,15 @@ class Entity extends Position
 	public function sendMoveUpdate()
 	{
 		if($this->class === ENTITY_PLAYER){
-			$this->player->teleport(new Vector3($this->x, $this->y, $this->z));
+			$this->player->teleport(new Vector3($this->x, $this->y, $this->z), false, false, true, false);
 			return;
 		}
-		$pk = new MoveEntityPacket();
-		$pk->entities = [[$this->eid, $this->x, $this->y, $this->z, $this->yaw, $this->pitch]];
-		$this->server->api->player->broadcastPacket($this->level->players, $pk);
 	}
 
 	public function moveEntityWithOffset($oX, $oY, $oZ)
 	{
 		$oX = $oX === 0 ? $this->speedX : ($this->getSpeedModifer() * $oX * $this->getSpeed());
-		$oY = $oY <= 0 ? $this->speedY : (0.42);
+		$oY = $oY <= 0 ? $this->speedY : (0.40);
 		$oZ = $oZ === 0 ? $this->speedZ : ($this->getSpeedModifer() * $oZ * $this->getSpeed());
 		$this->setVelocity($oX, $oY, $oZ);
 	}
@@ -1357,15 +1538,16 @@ class Entity extends Position
 		if($health < $this->health){
 			$harm = true;
 			$dmg = $this->health - $health;
-			if(($this->class !== ENTITY_PLAYER or (($this->player instanceof Player) and (($this->player->gamemode & 0x01) === 0x00 or $force === true))) and ($this->dmgcounter[0] < microtime(true) or $this->dmgcounter[1] < $dmg) and ! $this->dead){
+			if(($this->class !== ENTITY_PLAYER or (($this->player instanceof Player) and (($this->player->gamemode & 0x01) === 0x00 or $force === true))) and ($this->dmgcounter[0] < microtime(true) or $this->dmgcounter[1] < $dmg) and !$this->dead){
 				$this->dmgcounter[0] = microtime(true) + 0.5;
 				$this->dmgcounter[1] = $dmg;
 			} else{
 				return false; // Entity inmunity
 			}
-		} elseif($health === $this->health and ! $this->dead){
-			return false;
+		}elseif($health === $this->health and !$this->dead){
+			$harm = true;
 		}
+		
 		if($this->server->api->dhandle("entity.health.change", array(
 			"entity" => $this,
 			"eid" => $this->eid,
@@ -1373,12 +1555,19 @@ class Entity extends Position
 			"cause" => $cause
 		)) !== false or $force === true){
 			$this->health = min(127, max(- 127, $health));
-			$this->server->query("UPDATE entities SET health = " . $this->health . " WHERE EID = " . $this->eid . ";");
 			if($harm === true){
 				$pk = new EntityEventPacket;
 				$pk->eid = $this->eid;
 				$pk->event = EntityEventPacket::ENTITY_DAMAGE;
-				$this->server->api->player->broadcastPacket($this->level->players, $pk);
+				foreach($this->level->players as $p){
+					if(($p->entity instanceof Entity) && $p->entity->eid == $this->eid){
+						$pk2 = clone $pk;
+						$pk2->eid = 0;
+						$p->dataPacket($pk2);
+					}else{
+						$p->dataPacket(clone $pk);
+					}
+				}
 			}
 			if($this->player instanceof Player){
 				$pk = new SetHealthPacket();
@@ -1405,7 +1594,7 @@ class Entity extends Position
 	public function makeDead($cause){
 		if($this->server->api->dhandle("entity.death", ["entity" => $this, "cause" => $cause]) === false) return false;
 		$this->spawnDrops();
-		$this->air = 200;
+		$this->air = $this->maxAir;
 		$this->fire = 0;
 		$this->crouched = false;
 		$this->fallY = false;
@@ -1415,9 +1604,9 @@ class Entity extends Position
 		if($this->player instanceof Player){
 			$pk = new MoveEntityPacket_PosRot();
 			$pk->eid = $this->eid;
-			$pk->x = - 256;
+			$pk->x = -256;
 			$pk->y = 128;
-			$pk->z = - 256;
+			$pk->z = -256;
 			$pk->yaw = 0;
 			$pk->pitch = 0;
 			$this->server->api->player->broadcastPacket($this->level->players, $pk);
@@ -1427,6 +1616,7 @@ class Entity extends Position
 			$pk->event = EntityEventPacket::ENTITY_DEAD;
 			$this->server->api->player->broadcastPacket($this->level->players, $pk);
 		}
+
 		if($this->player instanceof Player){
 			$this->player->blocked = true;
 			$this->server->api->dhandle("player.death", [
@@ -1437,7 +1627,12 @@ class Entity extends Position
 				$this->server->api->ban->ban($this->player->username);
 			}
 		} else{
-			$this->server->api->schedule(40, [$this, "close"], []);
+			if($this instanceof Painting || $this instanceof Minecart){ //TODO better fix
+				$this->close();
+			}
+			else{
+				$this->server->api->schedule(40, [$this, "close"], []);
+			}
 		}
 	}
 	
@@ -1452,6 +1647,9 @@ class Entity extends Position
 
 	public function knockBack($d, $d1)
 	{
+		if($this->closed || $this->dead){
+			return false;
+		}
 		$f = sqrt($d * $d + $d1 * $d1);
 		$f1 = 0.4;
 		$this->speedX /= 2;
@@ -1460,8 +1658,8 @@ class Entity extends Position
 		$this->speedX -= ($d / $f) * $f1;
 		$this->speedY += 0.4;
 		$this->speedZ -= ($d1 / $f) * $f1;
-		if($this->speedY > 0.40000000596046448){
-			$this->speedY = 0.40000000596046448;
+		if($this->speedY > 0.4){
+			$this->speedY = 0.4;
 		}
 	}
 

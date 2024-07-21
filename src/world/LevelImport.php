@@ -49,8 +49,7 @@ class LevelImport{
 			"spawnZ" => $level["SpawnZ"],
 			"extra" => "",
 			"width" => 16,
-			"height" => 8,
-			"generator" => get_class(LevelAPI::createGenerator(LevelAPI::$defaultLevelType))
+			"height" => 8
 		]);
 		$chunks = new PocketChunkParser();
 		$chunks->loadFile($this->path . "chunks.dat");
@@ -73,12 +72,8 @@ class LevelImport{
 						$meta = $chunks->getChunkColumn($X, $Z, $x, $z, 1);
 						for($Y = 0; $Y < 8; ++$Y){
 							$chunk[$Y] .= substr($block, $Y << 4, 16);
-							$metaf = str_split(substr($meta, $Y << 3, 8));
-							foreach($metaf as $m2){
-								$chunk[$Y] .= chr(ord($m2) << 4) . chr(ord($m2) & 0xf);
-							}
-							$chunk[$Y] .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-							$chunk[$Y] .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+							$chunk[$Y] .= substr($meta, $Y << 3, 8);
+							$chunk[$Y] .= "\x00\x00\x00\x00\x00\x00\x00\x00";
 						}
 					}
 				}

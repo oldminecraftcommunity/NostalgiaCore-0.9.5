@@ -26,7 +26,7 @@ class Vector2{
 	}
 
 	public function subtract($x = 0, $y = 0){
-		if(($x instanceof Vector2) === true){
+		if($x instanceof Vector2){
 			return $this->add(-$x->x, -$x->y);
 		}else{
 			return $this->add(-$x, -$y);
@@ -34,7 +34,7 @@ class Vector2{
 	}
 
 	public function add($x = 0, $y = 0){
-		if(($x instanceof Vector2) === true){
+		if($x instanceof Vector2){
 			return $this->add($x->x, $x->y);
 		}else{
 			$this->x += $x;

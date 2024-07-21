@@ -1,6 +1,7 @@
 <?php
 
 class StonecutterBlock extends SolidBlock{
+	public static $blockID;
 	public function __construct($meta = 0){
 		parent::__construct(STONECUTTER, $meta, "Stonecutter");
 		$this->isActivable = true;
@@ -12,8 +13,13 @@ class StonecutterBlock extends SolidBlock{
 	}
 
 	public function getDrops(Item $item, Player $player){
-		return array(
-			array($this->id, 0, 1),
-		);
+		if($item->getPickaxeLevel() >= ItemTool::WOODEN_LEVEL){
+			return [
+				[$this->id, 0, 1],
+			];
+		}else{
+			return [];
+		}
+		
 	}	
 }

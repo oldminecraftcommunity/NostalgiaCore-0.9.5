@@ -4,40 +4,47 @@ class Skeleton extends Monster{
 	function __construct(Level $level, $eid, $class, $type = 0, $data = []){
 		$this->setSize(0.6, 1.99);
 		parent::__construct($level, $eid, $class, $type, $data);
-		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 15, "generic");
+		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 10, "generic");
 		$this->setName("Skeleton");
 		$this->ai->removeTask("TaskAttackPlayer");
 		$this->setSpeed(0.25);
-		$this->update();
+		
+		$this->ai->addTask(new TaskRandomWalk(1.0));
+		$this->ai->addTask(new TaskLookAround());
+		$this->ai->addTask(new TaskSwimming());
+		$this->ai->addTask(new TaskRangedAttack(1.0, 16));
 	}
 	
 	public function getAttackDamage(){
-		return 0; //TODO special attack
+		return 0;
 	}
 	
 	public function updateBurning(){
-		if($this->fire > 0 or !$this->level->isDay()){
+		if($this->fire > 0 or !$this->level->isDay() || $this->inWater){ //TODO fix burning in water
 			return false;
 		}
 		
 		for($y = $this->y; $y < 129; $y++){
-			$block = $this->level->getBlockWithoutVector($this->x, $y, $this->z);
-			if($block->isSolid){
+			$block = $this->level->level->getBlockID($this->x, $y, $this->z);
+			if(StaticBlock::getIsSolid($block)){
 				return false;
 			}
 		}
-		if($block->getID() === AIR){
+		if($block === AIR){
+			$oldFire = $this->fire;
 			$this->fire = 160; //Value from 0.8.1
-			$this->updateMetadata();
+			if(($oldFire > 0 && $this->fire <= 0) || ($oldFire <= 0 && $this->fire > 0)){
+				$this->updateMetadata(); //TODO rewrite metadata
+			}
 			return true;
 		}else{
 			return false;
 		}
 	}
 	
-	public function update(){
+	public function update($now){
 		$this->updateBurning();
-		parent::update();
+		parent::update($now);
 	}
 	
 	public function getDrops(){

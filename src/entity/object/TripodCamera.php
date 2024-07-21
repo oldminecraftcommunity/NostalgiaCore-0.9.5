@@ -8,6 +8,10 @@ class TripodCamera extends Entity{
 		$this->setHealth(PHP_INT_MAX, "generic");
 	}
 	
+	public function isPickable(){
+		return !$this->dead;
+	}
+	
 	public function interactWith(Entity $e, $action){
 		if($e->isPlayer() and $action === InteractPacket::ACTION_HOLD){
 			//todo

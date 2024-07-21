@@ -95,7 +95,6 @@ class Item{
 		QUARTZ => "QuartzItem",
 		CAMERA => "CameraItem",
 		BEETROOT_SEEDS => "BeetrootSeedsItem",
-		EMERALD => "EmeraldItem",
 		
 		//tool
 		IRON_SHOVEL => "IronShovelItem",
@@ -130,13 +129,13 @@ class Item{
 		SHEARS => "ShearsItem",
 		
 	);
-	protected $block;
-	protected $id;
-	protected $meta;
+	public $block;
+	public $id;
+	public $meta;
 	public $count;
-	protected $maxStackSize = 64;
-	protected $durability = 0;
-	protected $name;
+	public $maxStackSize = 64;
+	public $durability = 0;
+	public $name;
 	public $isActivable = false;
 	
 	public function __construct($id, $meta = 0, $count = 1, $name = "Unknown"){
@@ -237,15 +236,15 @@ class Item{
 			return false;
 		}
 		
-		$levels = [
-			2 => 40, //GOLD
-			1 => 59, //WOODEN
-			3 => 131, //STONE
-			4 => 250, //IRON
-			5 => 1561, //DIAMOND(called EMERALD in disassembled code)
+		$levels = [ //TODO rewrite(item usage too)
+			2 => 33, //GOLD
+			1 => 60, //WOODEN
+			3 => 132, //STONE
+			4 => 251, //IRON
+			5 => 1562, //DIAMOND(called EMERALD in disassembled code)
 			FLINT_STEEL => 65, //lets assume it is correct
 			SHEARS => 239, //x2
-			BOW => 2 //x3
+			BOW => 385 //x3
 		];
 
 		if(($type = $this->getLevel()) === false){
@@ -310,6 +309,30 @@ class Item{
 	
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		return false;
+	}
+	
+	public static function getFoodHeal($id){
+		return match($id){
+			APPLE => 4,
+			MUSHROOM_STEW => 10,
+			BEETROOT_SOUP => 10,
+			BREAD => 5,
+			RAW_PORKCHOP => 3,
+			COOKED_PORKCHOP => 8,
+			BEEF => 3,
+			STEAK => 8,
+			COOKED_CHICKEN => 6,
+			RAW_CHICKEN => 2,
+			MELON_SLICE => 2,
+			GOLDEN_APPLE => 10,
+			PUMPKIN_PIE => 8,
+			CARROT => 4,
+			POTATO => 1,
+			BAKED_POTATO => 6,
+			BEETROOT => 1,
+			
+			default => 0
+		};
 	}
 	
 }

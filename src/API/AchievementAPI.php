@@ -159,23 +159,23 @@ class AchievementAPI{
 	
 	public function viewAchievements($cmd, $params, $issuer, $alias)
 	{
-		if(!($issuer instanceof Player) && !isset($params[0])){
-			return "Please enter a nickname.";
-		} else{
-			if(! ($issuer instanceof Player) || (isset($params[0]) && $this->server->api->ban->isOp($issuer->username))){
-				$player = $this->server->api->player->get($params[0]);
-				if($player instanceof Player){
-					$data = $player->data;
-				} else{
-					$data = $this->server->api->player->getOffline(trim($params[0]), false);
-				}
-			} else{
+		if(!isset($params[0])){
+			if(!($issuer instanceof Player)){
+				return "Please enter a nickname.";
+			}else{
 				$data = $issuer->achievements;
 			}
+		}elseif(!($issuer instanceof Player) || $this->server->api->ban->isOp($issuer->iusername)){
+			$player = $this->server->api->player->get($params[0]);
+			$data = $player instanceof Player ? $player->data : $this->server->api->player->getOffline(trim($params[0]), false);
+		}else{
+			return false;
 		}
-		if($data === false){
-			return "Player {$params[0]} is not found.";
+		
+		if(!$data){
+			return "Player is not found.";
 		}
+		
 		if($data instanceof Config){
 			$achs = $data->get("achievements");
 		}else{

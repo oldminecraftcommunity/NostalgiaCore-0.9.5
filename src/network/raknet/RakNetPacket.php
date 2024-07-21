@@ -2,7 +2,7 @@
 
 class RakNetPacket extends Packet{
 
-	private $packetID;
+	public $packetID;
 
 	public function __construct($packetID){
 		$this->packetID = (int) $packetID;

@@ -3,11 +3,12 @@
 //Unsecure, not used for "Real Randomness"
 class Random{
 
-	public $x, $y, $z, $w;
-	public $i, $j, $state;
-	public $haveNextNextGaussian = false;
-	public $nextNextGaussian = 0;
-
+	private $x, $y, $z, $w;
+	private $haveNextNextGaussian = false;
+	private $nextNextGaussian = 0;
+	
+	public $state;
+	public $i, $j;
 	public function __construct($seed = false){
 		$this->setSeed($seed);
 	}
@@ -49,18 +50,8 @@ class Random{
 	public function nextFloat(){
 		return $this->nextInt() / 0x7FFFFFFF;
 	}
-	
-	public function nextLong($n = -1){
-		if($n > 0){
-			return Utils::readLong($this->nextBytes(8)) & 0x7FFFFFFF % $n;
-		}
-		return Utils::readLong($this->nextBytes(8)) & 0x7FFFFFFF;
-	}
-	
-	public function nextInt($n = -1){
-		if($n > 0){
-			return Utils::readInt($this->nextBytes(4)) & 0x7FFFFFFF % $n;
-		}
+
+	public function nextInt(){
 		return Utils::readInt($this->nextBytes(4)) & 0x7FFFFFFF;
 	}
 

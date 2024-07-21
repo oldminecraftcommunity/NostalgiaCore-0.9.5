@@ -1,6 +1,7 @@
 <?php
 
 class WorkbenchBlock extends SolidBlock{
+	public static $blockID;
 	public function __construct($meta = 0){
 		parent::__construct(WORKBENCH, $meta, "Crafting Table");
 		$this->isActivable = true;

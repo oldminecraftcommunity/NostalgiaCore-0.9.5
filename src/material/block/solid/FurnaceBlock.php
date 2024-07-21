@@ -6,6 +6,7 @@ require_once("BurningFurnaceBlock.php");
 
 
 class FurnaceBlock extends BurningFurnaceBlock{
+	public static $blockID;
 	public function __construct($meta = 0){
 		parent::__construct($meta);
 		$this->id = FURNACE;

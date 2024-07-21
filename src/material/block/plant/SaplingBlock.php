@@ -1,12 +1,11 @@
 <?php
 
 class SaplingBlock extends FlowableBlock{
+	public static $blockID;
 	const OAK = 0;
 	const SPRUCE = 1;
 	const BIRCH = 2;
 	const JUNGLE = 3;
-	const ACACIA = 4;
-	const DARK_OAK = 5;
 	const BURN_TIME = 5;
 	
 	public function __construct($meta = SaplingBlock::OAK){
@@ -17,13 +16,13 @@ class SaplingBlock extends FlowableBlock{
 			1 => "Spruce Sapling",
 			2 => "Birch Sapling",
 			3 => "Jungle Sapling",
-			4 => "Acacia Sapling",
-			5 => "Dark Oak Sapling",
 		);
-		$this->name = $names[$this->meta & 0x07];
+		$this->name = $names[$this->meta & 0x03];
 		$this->hardness = 0;
 	}
-	
+	public static function getAABB(Level $level, $x, $y, $z){
+		return null;
+	}
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$down = $this->getSide(0);
 		if($down->getID() === GRASS or $down->getID() === DIRT or $down->getID() === FARMLAND){
@@ -36,40 +35,36 @@ class SaplingBlock extends FlowableBlock{
 	
 	public function onActivate(Item $item, Player $player){
 		if($item->getID() === DYE and $item->getMetadata() === 0x0F){ //Bonemeal
-			TreeObject::growTree($this->level, $this, new Random(), $this->meta);
+			TreeObject::growTree($this->level, $this, new Random(), $this->meta & 0x03);
 			if(($player->gamemode & 0x01) === 0){
-				$player->removeItem(DYE, 0x0F, 1);
+				$player->removeItem(DYE,0x0F,1);
 			}
 			return true;
 		}
 		return false;
 	}
-	public function onUpdate($type){
-		if($type === BLOCK_UPDATE_NORMAL){
-			if($this->getSide(0)->isTransparent === true){ //Replace with common break method
-				ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem($this->id, $this->getMetadata()));
-				$this->level->setBlock($this, new AirBlock(), false, false, true);
-				return BLOCK_UPDATE_NORMAL;
-			}
-		}elseif($type === BLOCK_UPDATE_RANDOM){ //Growth
-			if(mt_rand(1, 7) === 1){
-				if(($this->meta & 0x08) === 0x08){
-					TreeObject::growTree($this->level, $this, new Random(), $this->meta & 0x07);
-				}else{
-					$this->meta |= 0x08;
-					$this->level->setBlock($this, $this, true, false, true);
-					return BLOCK_UPDATE_RANDOM;
-				}
+	public static function neighborChanged(Level $level, $x, $y, $z, $nX, $nY, $nZ, $oldID){
+		if(StaticBlock::getIsTransparent($level->level->getBlockID($x, $y - 1, $z))){ //Replace with common break method
+			[$id, $meta] = $level->level->getBlock($x, $y, $z);
+			ServerAPI::request()->api->entity->drop(new Position($x+0.5, $y, $z+0.5, $level), BlockAPI::getItem($id, $meta));
+			$level->fastSetBlockUpdate($x, $y, $z, 0, 0);
+		}
+	}
+	public static function onRandomTick(Level $level, $x, $y, $z){
+		if(mt_rand(1,7) === 1){
+			$meta = $level->level->getBlockDamage($x, $y, $z);
+			if(($meta & 0x08) === 0x08){
+				TreeObject::growTree($level, new Vector3($x, $y, $z), new Random(), $meta & 0x03);
 			}else{
-				return BLOCK_UPDATE_RANDOM;
+				$meta |= 0x08;
+				$level->fastSetBlockUpdate($x, $y, $z, SAPLING, $meta);
+				//$level->setBlock($this, $this, true, false, true);
 			}
 		}
-		return false;
 	}
-	
 	public function getDrops(Item $item, Player $player){
 		return array(
-			array($this->id, $this->meta & 0x07, 1),
+			array($this->id, $this->meta & 0x03, 1),
 		);
 	}
 }

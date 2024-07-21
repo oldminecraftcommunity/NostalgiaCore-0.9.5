@@ -10,7 +10,35 @@ class TileAPI{
 		$this->tiles = [];
 		$this->server = ServerAPI::request();
 	}
-
+	public function getXYZ(Level $level, $x, $y, $z){
+		$tile = $this->server->query("SELECT * FROM tiles WHERE level = '{$level->getName()}' AND x = $x AND y = $y AND z = $z;", true);
+		if($tile !== false and $tile !== true and ($tile = $this->getByID($tile["ID"])) !== false){
+			return $tile;
+		}
+		return false;
+	}
+	
+	public function invalidateAll(Level $level, $x, $y, $z){
+		$x = (int) $x;
+		$y = (int) $y;
+		$z = (int) $z;
+		$tile = $this->server->query("SELECT id FROM tiles WHERE level = '{$level->getName()}' AND x = $x AND y = $y AND z = $z;", false);
+		$invcnt = 0;
+		if($tile instanceof SQLite3Result){
+			while(($t = $tile->fetchArray(SQLITE3_ASSOC)) !== false){
+				$tl = $this->getByID($t["ID"]);
+				if($tl instanceof Tile){
+					++$invcnt;
+					$tl->close();
+				}
+				
+				if($invcnt > 1){
+					ConsoleAPI::warn("{$level->getName()}: ($x $y $z) has more than 1 tile entity! Invalidated ID {$t["ID"]} (Total invaliated: $invcnt)");
+				}
+			}
+		}
+	}
+	
 	public function get(Position $pos){
 		$tile = $this->server->query("SELECT * FROM tiles WHERE level = '" . $pos->level->getName() . "' AND x = {$pos->x} AND y = {$pos->y} AND z = {$pos->z};", true);
 		if($tile !== false and $tile !== true and ($tile = $this->getByID($tile["ID"])) !== false){

@@ -1,13 +1,12 @@
 <?php
 class AxisAlignedBB{
-
 	public $minX;
 	public $minY;
 	public $minZ;
 	public $maxX;
 	public $maxY;
 	public $maxZ;
-
+	
 	public function __construct($minX, $minY, $minZ, $maxX, $maxY, $maxZ){
 		$this->minX = $minX;
 		$this->minY = $minY;
@@ -28,6 +27,10 @@ class AxisAlignedBB{
 		return $this;
 	}
 
+	public function addMinMax($minX, $minY, $minZ, $maxX, $maxY, $maxZ){
+		return new AxisAlignedBB($this->minX + $minX, $this->minY + $minY, $this->minZ + $minZ, $this->maxX + $maxX, $this->maxY + $maxY, $this->maxZ + $maxZ);
+	}
+	
 	public function addCoord($x, $y, $z){
 		$minX = $this->minX;
 		$minY = $this->minY;
@@ -60,19 +63,11 @@ class AxisAlignedBB{
 	public function grow($x, $y, $z){
 		return new AxisAlignedBB($this->minX - $x, $this->minY - $y, $this->minZ - $z, $this->maxX + $x, $this->maxY + $y, $this->maxZ + $z);
 	}
-	
-	public function expand($x, $y, $z){
-		$this->minX -= $x;
-		$this->minY -= $y;
-		$this->minZ -= $z;
-		$this->maxX += $x;
-		$this->maxY += $y;
-		$this->maxZ += $z;
 
-		return $this;
+	public function expand($x, $y, $z){
+		return new AxisAlignedBB($this->minX - $x, $this->minY - $y, $this->minZ - $z, $this->maxX + $x, $this->maxY + $y, $this->maxZ + $z);
 	}
-	
-	
+
 	public function offset($x, $y, $z){
 		$this->minX += $x;
 		$this->minY += $y;
@@ -89,14 +84,7 @@ class AxisAlignedBB{
 	}
 
 	public function contract($x, $y, $z){
-		$this->minX += $x;
-		$this->minY += $y;
-		$this->minZ += $z;
-		$this->maxX -= $x;
-		$this->maxY -= $y;
-		$this->maxZ -= $z;
-
-		return $this;
+		return new AxisAlignedBB($this->minX + $x, $this->minY + $y, $this->minZ + $z, $this->maxX - $x, $this->maxY - $y, $this->maxZ - $z);
 	}
 
 	public function setBB(AxisAlignedBB $bb){
@@ -183,30 +171,33 @@ class AxisAlignedBB{
 	}
 	
 	public function intersectsWith(AxisAlignedBB $bb){
-		if($bb->maxX > $this->minX and $bb->minX < $this->maxX){
-			if($bb->maxY > $this->minY and $bb->minY < $this->maxY){
-				return $bb->maxZ > $this->minZ and $bb->minZ < $this->maxZ;
-			}
-		}
-
-		return false;
+		return $bb->maxX >= $this->minX && $bb->minX <= $this->maxX && $bb->maxZ >= $this->minZ && $bb->minZ <= $this->maxZ && $bb->maxY >= $this->minY && $bb->minY <= $this->maxY;
 	}
-	
-	public function isXYZInside($x, $y, $z){
-		if($x <= $this->minX or $x >= $this->maxX){
+	public function isXYZInsideNS($x, $y, $z){
+		if($x < $this->minX or $x > $this->maxX){
 			return false;
 		}
-		if($y <= $this->minY or $y >= $this->maxY){
+		if($y < $this->minY or $y > $this->maxY){
+			return false;
+		}
+		
+		return $z > $this->minZ and $z < $this->maxZ;
+	}
+	public function isXYZInside($x, $y, $z){
+		if($x < $this->minX or $x > $this->maxX){
+			return false;
+		}
+		if($y < $this->minY or $y > $this->maxY){
 			return false;
 		}
 		
 		return $z > $this->minZ and $z < $this->maxZ;
 	}
 	public function isVectorInside(Vector3 $vector){
-		if($vector->x <= $this->minX or $vector->x >= $this->maxX){
+		if($vector->x < $this->minX or $vector->x > $this->maxX){
 			return false;
 		}
-		if($vector->y <= $this->minY or $vector->y >= $this->maxY){
+		if($vector->y < $this->minY or $vector->y > $this->maxY){
 			return false;
 		}
 
@@ -228,14 +219,19 @@ class AxisAlignedBB{
 	public function isVectorInXY(Vector3 $vector){
 		return $vector->x >= $this->minX and $vector->x <= $this->maxX and $vector->y >= $this->minY and $vector->y <= $this->maxY;
 	}
-
+	
+	/**
+	 * @param Vector3 $pos1
+	 * @param Vector3 $pos2
+	 * @return NULL|MovingObjectPosition
+	 */
 	public function calculateIntercept(Vector3 $pos1, Vector3 $pos2){
-		$v1 = $pos1->getIntermediateWithXValue($pos2, $this->minX);
-		$v2 = $pos1->getIntermediateWithXValue($pos2, $this->maxX);
-		$v3 = $pos1->getIntermediateWithYValue($pos2, $this->minY);
-		$v4 = $pos1->getIntermediateWithYValue($pos2, $this->maxY);
-		$v5 = $pos1->getIntermediateWithZValue($pos2, $this->minZ);
-		$v6 = $pos1->getIntermediateWithZValue($pos2, $this->maxZ);
+		$v1 = $pos1->clipX($pos2, $this->minX);
+		$v2 = $pos1->clipX($pos2, $this->maxX);
+		$v3 = $pos1->clipY($pos2, $this->minY);
+		$v4 = $pos1->clipY($pos2, $this->maxY);
+		$v5 = $pos1->clipZ($pos2, $this->minZ);
+		$v6 = $pos1->clipZ($pos2, $this->maxZ);
 
 		if($v1 !== null and !$this->isVectorInYZ($v1)){
 			$v1 = null;
@@ -306,30 +302,8 @@ class AxisAlignedBB{
 		return MovingObjectPosition::fromBlock(0, 0, 0, $f, $vector);
 	}
 	
-	public function expandTo(AxisAlignedBB $bb){
-		$this->minX = min($this->minX, $bb->minX);
-		$this->minY = min($this->minY, $bb->minY);
-		$this->minZ = min($this->minZ, $bb->minZ);
-		$this->maxX = max($this->maxX, $bb->maxX);
-		$this->maxY = max($this->maxY, $bb->maxY);
-		$this->maxZ = max($this->maxZ, $bb->maxZ);
-	}
-	
-	public function getXSize(){
-		return $this->maxX - $this->minX + 1;
-	}
-	
-	public function getYSize(){
-		return $this->maxY - $this->minY + 1;
-	}
-	
-	public function getZSize(){
-		return $this->maxZ - $this->minZ + 1;
-	}
-	
-	
 	public function __toString(){
-		return "min: {$this->minX}, {$this->minY}, {$this->minZ}, max:  {$this->maxX}, {$this->maxY}, {$this->maxZ}";
+		return "AABB min: {$this->minX}, {$this->minY}, {$this->minZ}, max:  {$this->maxX}, {$this->maxY}, {$this->maxZ}";
 	}
 	
 }

@@ -1,6 +1,7 @@
 <?php
 
 class NetherReactorBlock extends SolidBlock{
+	public static $blockID;
 	public static $enableReactor = true;
 	public function __construct($meta = 0){
 		parent::__construct(NETHER_REACTOR, $meta, "Nether Reactor");
@@ -50,19 +51,16 @@ class NetherReactorBlock extends SolidBlock{
 	
 	public function getDrops(Item $item, Player $player){
 		if($item->getPickaxeLevel() >= 1){
-			return array(
-				[DIAMOND, 0, 3],
-				[IRON_INGOT, 0, 6],
-			);
+			return [[NETHER_REACTOR, 0, 1]];
 		}
 	}
 	
 	private function decay($x, $y, $z, $aOne, $aTwo, $aThree, $bOne, $bTwo, $bThree, $cOne, $cTwo, $cThree) {
-		for($a = $aOne; $a < $aTwo; $a += $aThree) { //wth those cycles are? TODO simplify if possible(makes server lag)
+		for($a = $aOne; $a < $aTwo; $a += $aThree) {
 			for($b = $bOne; $b < $bTwo; $b += $bThree) {
 				for($c = $cOne; $c < $cTwo; $c += $cThree) {
-					if ($this->level->getBlock(new Vector3($x+$a, $y+$b, $z+$c))->getID() === 87 && lcg_value() > 0.75){
-						$this->level->setBlock(new Vector3($x+$a, $y+$b, $z+$c), new AirBlock());
+					if ($this->level->level->getBlockID($x+$a, $y+$b, $z+$c) === NETHERRACK && lcg_value() > 0.75){
+						$this->level->fastSetBlockUpdate($x+$a, $y+$b, $z+$c, 0, 0);
 					}
 				}
 			}
@@ -80,7 +78,6 @@ class NetherReactorBlock extends SolidBlock{
 		}
 		return $pigCount < 3 ? $pigCount < 2 ? 2 : 1 : 0;
 	}
-
 	public function spawnItems($data) {
 		$x = $this->x;
 		$y = $this->y;
@@ -117,7 +114,6 @@ class NetherReactorBlock extends SolidBlock{
 			$server->api->entity->spawnToAll($e);
 		}
 	}
-
 	public function glow($part){
 		$x = $this->x;
 		$y = $this->y;
@@ -184,17 +180,16 @@ class NetherReactorBlock extends SolidBlock{
 				break;
 		}
 	}
-	
 	private function isCorrect($x, $y, $z){
 		$offsetX = -1;
 		$offsetZ = -1;
 		foreach($this->core as $yOffset => $layer){
 			foreach($layer as $line){
 				foreach(str_split($line) as $char){
-					$b = $this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getID();
+					$b = $this->level->level->getBlockID($x + $offsetX, $y + $yOffset, $z + $offsetZ);
 					switch($char){
 						case "G":
-							if($b === GOLD_BLOCK){ //TODO make it use structure class
+							if($b === GOLD_BLOCK){
 								break;
 							}
 							return false;
@@ -204,7 +199,7 @@ class NetherReactorBlock extends SolidBlock{
 							}
 							return false;
 						case "R":
-							if($b === NETHER_REACTOR and $this->level->getBlock(new Vector3($x + $offsetX, $y + $yOffset, $z + $offsetZ))->getMetadata() === 0){
+							if($b === NETHER_REACTOR and $this->level->level->getBlockDamage($x + $offsetX, $y + $yOffset, $z + $offsetZ) === 0){
 								break;
 							}
 							return false;
@@ -213,8 +208,6 @@ class NetherReactorBlock extends SolidBlock{
 								break;
 							}
 							return false;
-						default:
-							break;
 					}
 					++$offsetX;
 				}

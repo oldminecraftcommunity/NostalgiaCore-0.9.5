@@ -187,6 +187,7 @@ LICENSE;
 			"sv" => "Svenska",
 			"fi" => "Suomi",
 			"tr" => "Türkçe",
+			"uk" => "Український"
 			//"et" => "Eesti",
 		);
 		private $texts = array();

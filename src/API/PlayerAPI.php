@@ -9,7 +9,6 @@ class PlayerAPI{
 	}
 
 	public function init(){
-		$this->server->schedule(20 * 15, [$this, "handle"], 1, true, "server.regeneration");
 		$this->server->addHandler("player.death", [$this, "handle"], 1);
 		$this->registerCmd("list");
 		$this->registerCmd("kill", "<player>");
@@ -19,7 +18,8 @@ class PlayerAPI{
 		$this->registerCmd("spawn");
 		$this->registerCmd("ping");
 		$this->registerCmd("loc");
-
+		$this->registerCmd("hotbar", "<slotcount>");
+		
 		$this->server->api->console->alias("lag", "ping");
 		$this->server->api->console->alias("gm", "gamemode");
 		$this->server->api->console->alias("who", "list");
@@ -32,7 +32,7 @@ class PlayerAPI{
 		$this->server->api->console->cmdWhitelist("ping");
 		$this->server->api->console->cmdWhitelist("spawn");
 		$this->server->api->console->cmdWhitelist("loc");
-		$this->server->preparedSQL->selectPlayersToHeal = $this->server->database->prepare("SELECT EID FROM entities WHERE class = " . ENTITY_PLAYER . " AND health < 20;");
+		$this->server->api->console->cmdWhitelist("hotbar");
 	}
 
 	public function registerCmd($cmd, $help = ""){
@@ -41,33 +41,19 @@ class PlayerAPI{
 
 	public function handle($data, $event){
 		switch($event){
-			case "server.regeneration":
-				if($this->server->difficulty === 0){
-					$result = $this->server->preparedSQL->selectPlayersToHeal->execute();
-					if($result !== false){
-						while(($player = $result->fetchArray()) !== false){
-							if(($player = $this->server->api->entity->get($player["EID"])) !== false){
-								if($player->getHealth() <= 0){
-									continue;
-								}
-								$player->setHealth(min(20, $player->getHealth() + $data), "regeneration");
-							}
-						}
-						return true;
-					}
-				}
-				break;
 			case "player.death":
 				if(is_numeric($data["cause"])){
 					$e = $this->server->api->entity->get($data["cause"]);
 					if($e instanceof Entity){
-						switch($e->class){
-							case ENTITY_PLAYER:
-								$message = " was killed by " . $e->name;
-								break;
-							default:
-								$message = " was killed by {$e->getName()}";
-								break;
+						if($e instanceof Arrow){
+							if($e->shotByEntity && isset($this->server->api->entity->entities[$e->shooterEID]) && $this->server->api->entity->entities[$e->shooterEID] instanceof Entity){
+								$message = " was shot by {$this->server->api->entity->entities[$e->shooterEID]->name}";
+							}else{
+								$message = " was shot";	
+							}
+							
+						}else{
+							$message = " was killed by {$e->name}";
 						}
 					}
 				}else{
@@ -106,7 +92,6 @@ class PlayerAPI{
 				}
 				$this->server->api->chat->broadcast($data["player"]->username . $message);
 				return true;
-				break;
 		}
 	}
 
@@ -136,6 +121,21 @@ class PlayerAPI{
 
 				$target->setSpawn($spawn);
 				return "Spawnpoint set correctly!\n";
+			case "hotbar":
+				if(!($issuer instanceof Player)) return "Please run this command in-game.";
+				if(count($args) < 1) return "Slots in hotbar on server: {$issuer->slotCount}";
+				
+				$scrw = $args[0];
+				if(is_numeric($scrw)){
+					$sc = (int)$scrw;
+					if($sc < 5 || $sc > 9) return "Slot count must be between 5 and 9.";
+					
+					$issuer->slotCount = $sc;
+					$issuer->sendInventory();
+					return "Changed slot count to $sc";
+				}else{
+					return "Usage: /$cmd <slotcount>";
+				}
 			case "spawn":
 				if(!($issuer instanceof Player)){
 					return "Please run this command in-game.";
@@ -257,7 +257,11 @@ class PlayerAPI{
 				$level = $issuer->entity->level->getName();
 				$compass = [0 => "X+", 1 => "Z+", 2 => "X-", 3 => "Z-", null => "null"];
 				$direction = $compass[$issuer->entity->getDirection()];
-				return "Your coordinates: X: $x, Y: $y, Z: $z, world: $level.\nDirection: $direction";
+				
+				$xChunk = $x >> 4;
+				$zChunk = $z >> 4;
+				
+				return "Your coordinates: X: $x ($xChunk), Y: $y, Z: $z ($zChunk), world: $level.\nDirection: $direction";
 		}
 		return $output;
 	}
@@ -307,7 +311,6 @@ class PlayerAPI{
 		}
 		$player = $this->get($target);
 		if(($player instanceof Player) and ($player->entity instanceof Entity)){
-			$target = $player->username;
 			$origin = $this->get($name);
 			if($origin instanceof Player){
 				$name = $origin->username;
@@ -360,6 +363,7 @@ class PlayerAPI{
 					"z" => $player->level->getSpawn()->z,
 				]);
 			}
+			$player->level->players[$CID] = $player;
 			$this->server->query("INSERT OR REPLACE INTO players (CID, ip, port, name) VALUES (" . $player->CID . ", '" . $player->ip . "', " . $player->port . ", '" . strtolower($player->username) . "');");
 		}
 	}
@@ -388,15 +392,16 @@ class PlayerAPI{
 			"lastIP" => "",
 			"lastID" => 0,
 			"achievements" => [],
+			"slot-count" => 7
 		];
 
 		if(!file_exists(DATA_PATH . "players/" . $iname . ".yml")){
-			if($this->server->extraprops->get("save-player-data") && $create){
+			if(PocketMinecraftServer::$SAVE_PLAYER_DATA && $create){
 				console("[NOTICE] Player data not found for \"" . $iname . "\", creating new profile");
 				$data = new Config(DATA_PATH . "players/" . $iname . ".yml", CONFIG_YAML, $default);
 				$data->save();
 			}else{
-				return false;
+				return new Config(DATA_PATH . "players/$iname.yml", CONFIG_YAML, $default);
 			}
 		}
 
@@ -429,16 +434,8 @@ class PlayerAPI{
 
 	public function getAll($level = null){
 		if($level instanceof Level){
-			$clients = [];
-			$l = $this->server->query("SELECT EID FROM entities WHERE level = '" . $level->getName() . "' AND class = '" . ENTITY_PLAYER . "';");
-			if($l !== false and $l !== true){
-				while(($e = $l->fetchArray(SQLITE3_ASSOC)) !== false){
-					$e = $this->getByEID($e["EID"]);
-					if($e instanceof Player){
-						$clients[$e->CID] = $e;
-					}
-				}
-			}			return $clients;
+			//safe_var_dump($level->players);
+			return $level->players;
 
 		}
 		return $this->server->clients;
@@ -475,13 +472,14 @@ class PlayerAPI{
 	public function remove($CID){
 		if(isset($this->server->clients[$CID])){
 			$player = $this->server->clients[$CID];
+			unset($this->server->clients[$CID]);
 			$player->close();
 			if($player->username != "" and ($player->data instanceof Config)){
 				$this->saveOffline($player->data);
 			}
 			$this->server->query("DELETE FROM players WHERE name = '" . $player->username . "';");
 			$this->server->api->entity->remove($player->eid);
-			unset($this->server->clients[$CID]);
+			unset($player->level->players[$player->CID]);
 			if($player->entity instanceof Entity){
 				unset($player->entity->player);
 				//unset($player->entity);
@@ -493,7 +491,7 @@ class PlayerAPI{
 	}
 
 	public function saveOffline(Config $data){
-		if($this->server->extraprops->get("save-player-data")){
+		if(PocketMinecraftServer::$SAVE_PLAYER_DATA){
 			$this->server->handle("player.offline.save", $data);
 			$data->save();
 		}

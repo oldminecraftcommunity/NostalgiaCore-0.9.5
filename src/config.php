@@ -7,7 +7,6 @@ if(ini_get("date.timezone") == ""){ //No Timezone set
 	if(strpos(" " . strtoupper(php_uname("s")), " WIN") !== false){
 		$time = time();
 		$time -= $time % 60;
-		//TODO: Parse different time & date formats by region. ¬¬ world
 		//Example: USA
 		exec("time.exe /T", $hour);
 		$i = array_map("intval", explode(":", trim($hour[0])));
@@ -48,10 +47,10 @@ set_include_path(get_include_path() . PATH_SEPARATOR . FILE_PATH);
 ini_set("memory_limit", "256M"); //Default
 define("LOG", true);
 define("START_TIME", microtime(true));
-define("MAJOR_VERSION", "2.0.0dev");
-define("CODENAME", "Breadfence"); //i'm not very creative - kotyaralih
-define("CURRENT_MINECRAFT_VERSION", "v0.9.5 alpha");
-define("CURRENT_API_VERSION", '13.1');
+define("MAJOR_VERSION", "1.1.0dev");
+define("CODENAME", "懐かしさ (Nostalgia)"); //i'm not very creative - kotyaralih
+define("CURRENT_MINECRAFT_VERSION", "v0.8.1 alpha");
+define("CURRENT_API_VERSION", '12.1');
 define("CURRENT_PHP_VERSION", "8.0");
 $gitsha1 = false;
 if(file_exists(FILE_PATH . ".git/refs/heads/master")){ //Found Git information!

@@ -1,18 +1,15 @@
 <?php
 
 class TreeObject{
-	public function __construct(){}
+
 	public $overridable = [
 		0 => true,
 		6 => true,
 		18 => true,
 	];
-	public function isBlockCorrect(int $id)
-	{
-		return $id == 0 || ($id == LEAVES || $id == LEAVES2) || $id == GRASS || $id == DIRT || $id == TRUNK || $id == TRUNK2 || $id == SAPLING || $id == VINES;
-	}
+
 	public static function growTree(Level $level, Vector3 $pos, Random $random, $type = 0){
-		switch($type & 0xf){
+		switch($type & 0x03){
 			case SaplingBlock::SPRUCE:
 				if($random->nextRange(0, 1) === 1){
 					$tree = new SpruceTreeObject();
@@ -21,16 +18,12 @@ class TreeObject{
 				}
 				break;
 			case SaplingBlock::BIRCH:
-				$tree = new SmallTreeObject(SaplingBlock::BIRCH);
+				$tree = new SmallTreeObject();
+				$tree->type = SaplingBlock::BIRCH;
 				break;
 			case SaplingBlock::JUNGLE:
-				$tree = new SmallTreeObject(SaplingBlock::JUNGLE);
-				break;
-			case SaplingBlock::ACACIA:
-				$tree = new AcaciaTreeObject();
-				break;
-			case SaplingBlock::DARK_OAK:
-				
+				$tree = new SmallTreeObject();
+				$tree->type = SaplingBlock::JUNGLE;
 				break;
 			default:
 			case SaplingBlock::OAK:

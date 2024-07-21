@@ -6,9 +6,7 @@ class LevelAPI{
 	 */
 	public $levels;
 	private $server, $default;
-	
-	public static $defaultLevelType = "DEFAULT";
-	
+
 	public function __construct(){
 		$this->server = ServerAPI::request();
 		$this->levels = [];
@@ -20,7 +18,6 @@ class LevelAPI{
 		$this->server->api->console->register("save-on", "", [$this, "commandHandler"]);
 		$this->server->api->console->register("save-off", "", [$this, "commandHandler"]);
 		$this->server->api->console->register("setwspawn", "Set the spawn position for your current world. ", [$this, "commandHandler"]);
-		$this->server->api->console->register("place", "", [$this, "commandHandler"]);
 		$this->default = $this->server->api->getProperty("level-name");
 		if($this->loadLevel($this->default) === false){
 			$this->generateLevel($this->default, $this->server->seed);
@@ -43,6 +40,16 @@ class LevelAPI{
 			console("[ERROR] Could not load level \"" . $name . "\"");
 			return false;
 		}
+		
+		if(PocketMinecraftServer::$KEEP_CHUNKS_LOADED){
+			for($X = 0; $X < 16; ++$X){
+				for($Z = 0; $Z < 16; ++$Z){
+					$level->loadChunk($X, $Z);
+				}
+			}
+		}
+		
+		
 		$entities = new Config($path . "entities.yml", CONFIG_YAML);
 		if(file_exists($path . "tileEntities.yml")){
 			@rename($path . "tileEntities.yml", $path . "tiles.yml");
@@ -62,9 +69,10 @@ class LevelAPI{
 			$entity["pitch"] = $entity["Rotation"][1];
 			
 			if($entity["id"] === 64){ //Item Drop
-				$e = $this->server->api->entity->add($this->levels[$name], ENTITY_ITEM, $entity["Item"]["id"], [
+				$e = $this->server->api->entity->add($this->levels[$name], ENTITY_ITEM, ENTITY_ITEM_TYPE, [
 					"meta" => $entity["Item"]["Damage"],
 					"stack" => $entity["Item"]["Count"],
+					"itemID" => $entity["Item"]["id"],
 					"x" => $entity["Pos"][0],
 					"y" => $entity["Pos"][1],
 					"z" => $entity["Pos"][2],
@@ -95,11 +103,15 @@ class LevelAPI{
 
 		$timeu = microtime(true);
 		foreach($blockUpdates->getAll() as $bupdate){
-			$this->server->api->block->scheduleBlockUpdate(new Position((int) $bupdate["x"], (int) $bupdate["y"], (int) $bupdate["z"], $this->levels[$name]), (float) $bupdate["delay"], (int) $bupdate["type"]);
+			if($bupdate["type"] !== BLOCK_UPDATE_RANDOM) $this->server->api->block->scheduleBlockUpdate(new Position((int) $bupdate["x"], (int) $bupdate["y"], (int) $bupdate["z"], $this->levels[$name]), (float) $bupdate["delay"], (int) $bupdate["type"]);
 		}
+		
 		return true;
 	}
-
+	/**
+	 * @param string $name
+	 * @return Level|boolean
+	 */
 	public function get($name){
 		if(isset($this->levels[$name])){
 			return $this->levels[$name];
@@ -120,17 +132,7 @@ class LevelAPI{
 		}
 		return true;
 	}
-	
-	public static function createGenerator($type, $options = []){
-		return match($type){
-			"FLAT" => new SuperflatGenerator(),
-			"EXPERIMENTAL" => new ExperimentalGenerator($options),
-			"HELL", "NETHER" => new HellGenerator($options),
-			"END" => new EndGenerator($options),
-			default => new NormalGenerator($options)
-		};
-	}
-	
+
 	public function generateLevel($name, $seed = false, $generator = false){
 		if($this->levelExists($name)){
 			return false;
@@ -143,8 +145,17 @@ class LevelAPI{
 		if($generator !== false and class_exists($generator)){
 			$generator = new $generator($options);
 		}else{
-			$type = strtoupper($this->server->api->getProperty("level-type"));
-			$generator = $this->createGenerator($type, $options);
+			switch(strtoupper($this->server->api->getProperty("level-type"))){
+				case "FLAT":
+					$generator = new SuperflatGenerator($options);
+					break;
+				case "VANILLA":
+					$generator = new VanillaGenerator($options);
+					break;
+				default:
+					$generator = new TemporalGenerator($options);
+					break;
+			}
 		}
 		$gen = new WorldGenerator($generator, $name, $seed === false ? Utils::readInt(Utils::getRandomBytes(4, false)) : (int) $seed);
 		$gen->generate();
@@ -159,11 +170,6 @@ class LevelAPI{
 	public function commandHandler($cmd, $params, $issuer, $alias){
 		$output = "";
 		switch($cmd){
-			case "place":
-				if(!isset($params[0]) or $params[0] == "") return "/$cmd <feature class>";
-				$class = $params[0];
-				(new $class())->build($issuer->entity->level, $issuer->entity->x, $issuer->entity->y, $issuer->entity->z);
-				break;
 			case "setwspawn":
 				if(!($issuer instanceof Player)){
 					return ("Please run this command in-game. ");
@@ -173,6 +179,9 @@ class LevelAPI{
 				break;
 			case "save-all":
 				$output .= "Saving...\n";
+				foreach($this->server->clients as $p){
+					$p->sendChat("Saving world, server might lag a bit...");
+				}
 				$save = $this->server->saveEnabled;
 				$this->server->saveEnabled = true;
 				$this->saveAll();

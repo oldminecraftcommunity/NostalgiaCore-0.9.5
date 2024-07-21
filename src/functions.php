@@ -10,15 +10,8 @@ if(!function_exists("cli_set_process_title")){
 		}
 	}
 }
-function copydir($src, $dest){
-	if(!is_dir($dest)) mkdir($dest);
-	foreach(scandir($src) as $f){
-		if($f != "." && $f != ".."){
-			if(is_dir("$src/$f")) copydir("$src/$f", "$dest/$f");
-			else copy("$src/$f", "$dest/$f");
-		}
-	}
-}
+
+
 function dummy(){
 
 }
@@ -70,7 +63,7 @@ function kill($pid){
 }
 
 /**
- * @deprecated Use $expr ?? $null
+ * @deprecated Use $a ?? $null
  */
 function nullsafe(&$a, $null){
 	return $a ?? $null;

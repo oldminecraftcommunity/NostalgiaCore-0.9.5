@@ -1,6 +1,7 @@
 <?php
 
 class GoldBlock extends SolidBlock{
+	public static $blockID;
 	public function __construct(){
 		parent::__construct(GOLD_BLOCK, 0, "Gold Block");
 		$this->hardness = 30;

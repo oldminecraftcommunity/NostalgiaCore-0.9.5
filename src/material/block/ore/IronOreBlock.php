@@ -1,6 +1,7 @@
 <?php
 
 class IronOreBlock extends SolidBlock{
+	public static $blockID;
 	public function __construct(){
 		parent::__construct(IRON_ORE, 0, "Iron Ore");
 		$this->hardness = 15;
@@ -23,7 +24,7 @@ class IronOreBlock extends SolidBlock{
 	}
 	
 	public function getDrops(Item $item, Player $player){
-		if($item->getPickaxeLevel() >= 3){
+		if($item->getPickaxeLevel() >= ItemTool::STONE_LEVEL){
 			return array(
 				array(IRON_ORE, 0, 1),
 			);

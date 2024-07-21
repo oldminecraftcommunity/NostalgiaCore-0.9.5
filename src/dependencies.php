@@ -22,8 +22,6 @@ if(version_compare("8.0.0", PHP_VERSION) > 0){
 	++$errors;
 }
 
-define("USE_NATIVE_RANDOM", version_compare("8.2.0", PHP_VERSION) <= 0);
-
 if(php_sapi_name() !== "cli"){
 	console("[ERROR] You must run NostalgiaCore using the CLI.", true, true, 0);
 	++$errors;
@@ -76,37 +74,16 @@ if($errors > 0){
 $sha1sum = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 /***REM_START***/
 require_once(FILE_PATH . "/src/math/Vector3.php");
-require_once(FILE_PATH . "/src/math/AxisAlignedBB.php");
 require_once(FILE_PATH . "/src/world/Position.php");
 require_once(FILE_PATH . "/src/pmf/PMF.php");
 
-require_once(FILE_PATH . "/src/astarnavigator/IElement.php");
-require_once(FILE_PATH . "/src/astarnavigator/PHPUtils.php");
-require_once(FILE_PATH . "/src/astarnavigator/PathTile.php");
-
-require_once(FILE_PATH . "/src/astarnavigator/algorithms/IDistanceAlgorithm.php");
-require_once(FILE_PATH . "/src/astarnavigator/algorithms/Pythagoras3D.php");
-require_once(FILE_PATH . "/src/astarnavigator/algorithms/ManhattanHeuristic3D.php");
-
-require_once(FILE_PATH . "/src/astarnavigator/providers/INeighborProvider.php");
-require_once(FILE_PATH . "/src/astarnavigator/providers/MCDiagonalProvider.php");
-
-require_once(FILE_PATH . "/src/astarnavigator/providers/IBlockedProvider.php");
-require_once(FILE_PATH . "/src/astarnavigator/providers/MCBlockedProvider.php");
-
-require_once(FILE_PATH . "/src/astarnavigator/ITileNavigator.php");
 require_once(FILE_PATH . "/src/astarnavigator/TileNavigator.php");
 
-require_once(FILE_PATH . "/src/nbt/tag/NamedTag.php");
 
 require_once(FILE_PATH . "/src/entity/ai/tasks/TaskBase.php");
-require_once(FILE_PATH. "/src/entity/ai/tasks/TaskTempt.php");
 
 require_once(FILE_PATH . "/src/entity/Rideable.php");
-require_once(FILE_PATH . "/src/entity/Attachable.php");
-require_once(FILE_PATH . "/src/entity/Damageable.php");
 require_once(FILE_PATH . "/src/entity/Breedable.php");
-require_once(FILE_PATH . "/src/entity/Damageable.php");
 require_once(FILE_PATH . "/src/entity/Pathfindable.php");
 require_once(FILE_PATH . "/src/entity/Entity.php");
 require_once(FILE_PATH . "/src/entity/Living.php");
@@ -126,35 +103,14 @@ require_once(FILE_PATH . "/src/material/item/base/ItemSword.php");
 require_once(FILE_PATH . "/src/material/item/armor/ArmorItem.php");
 
 require_once(FILE_PATH . "/src/structure/Structure.php");
-require_once(FILE_PATH . "/src/world/generator/Populator.php");
-require_once(FILE_PATH . "/src/world/generator/LevelGenerator.php");
 
-require_once(FILE_PATH . "/src/world/generator/structure/StructureBase.php");
-require_once(FILE_PATH . "/src/world/generator/structure/StructureGenerator.php");
 require_once(FILE_PATH . "/src/plugin/Plugin.php");
 require_once(FILE_PATH . "/src/plugin/OtherPluginRequirement.php");
 require_once(FILE_PATH . "/src/plugin/DummyPlugin.php");
 require_once(FILE_PATH . "/src/plugin/phar/IClassLoader.php");
 require_once(FILE_PATH . "/src/plugin/phar/PharUtils.php");
-
-require_once(FILE_PATH . "/src/world/generator/LevelGenerator.php");
-require_once(FILE_PATH . "/src/world/generator/NewLevelGenerator.php");
-
-require_once(FILE_PATH . "/src/world/generator/biome/BiomeDecorator.php");
-
-require_once(FILE_PATH . "/src/world/generator/biome/Biome.php");
-require_once(FILE_PATH . "/src/world/generator/biome/BiomeSelector.php");
-require_once(FILE_PATH . "/src/world/generator/biome/NormalGeneratorBiomeSelector.php");
-require_once(FILE_PATH . "/src/world/generator/biome/biomes/BiomeWithGrass.php");
-require_once(FILE_PATH . "/src/world/generator/biome/biomes/BiomeWithSand.php");
-require_once(FILE_PATH . "/src/world/generator/biome/biomes/BiomeWithSnow.php");
-require_once(FILE_PATH . "/src/world/generator/biome/biomes/BiomeExtremeHills.php");
-
-
-require_once(FILE_PATH . "/src/world/generator/populator/TreePopulator.php");
-
-
-
+require_once(FILE_PATH . "/src/world/generator/vanilla/biome/Biome.php");
+require_once(FILE_PATH . "/src/world/generator/vanilla/feature/Feature.php");
 
 require_all(FILE_PATH . "src/");
 

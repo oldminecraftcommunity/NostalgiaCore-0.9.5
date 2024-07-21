@@ -14,38 +14,78 @@ class Utils{
 	}*/
 	const emojiRegex = "([*#0-9](?>\\xEF\\xB8\\x8F)?\\xE2\\x83\\xA3|\\xC2[\\xA9\\xAE]|\\xE2..(\\xF0\\x9F\\x8F[\\xBB-\\xBF])?(?>\\xEF\\xB8\\x8F)?|\\xE3(?>\\x80[\\xB0\\xBD]|\\x8A[\\x97\\x99])(?>\\xEF\\xB8\\x8F)?|\\xF0\\x9F(?>[\\x80-\\x86].(?>\\xEF\\xB8\\x8F)?|\\x87.\\xF0\\x9F\\x87.|..(\\xF0\\x9F\\x8F[\\xBB-\\xBF])?|(((?<zwj>\\xE2\\x80\\x8D)\\xE2\\x9D\\xA4\\xEF\\xB8\\x8F\k<zwj>\\xF0\\x9F..(\k<zwj>\\xF0\\x9F\\x91.)?|(\\xE2\\x80\\x8D\\xF0\\x9F\\x91.){2,3}))?))";
 	public static function getEntityTypeByID($id){
-		return match($id){
-			MOB_CHICKEN, MOB_COW, MOB_CREEPER, MOB_ENDERMAN, MOB_MOOSHROOM, MOB_PIG, MOB_PIGMAN, MOB_SHEEP, MOB_SILVERFISH, MOB_SKELETON, MOB_SLIME, MOB_SPIDER,
-				 MOB_VILLAGER, MOB_WOLF, MOB_ZOMBIE => ENTITY_MOB,
-			OBJECT_ARROW, OBJECT_EGG, OBJECT_MINECART, OBJECT_PAINTING, OBJECT_PRIMEDTNT, OBJECT_SNOWBALL, OBJECT_TRIPOD_CAMERA => ENTITY_OBJECT,
-			default => $id,
-		};
+		switch($id){
+			case 10:
+			case 11:
+			case 12:
+			case 13:
+			case 32:
+			case 33:
+			case 34:
+			case 35:
+			case 36:
+				return ENTITY_MOB;
+			case 62:
+			case 65:
+			case 80:
+			case 81:
+			case 82:
+			case 83:
+			case 84:
+				return ENTITY_OBJECT;
+			case 66:
+				return FALLING_SAND;
+		}
+		return $id;
 	}
 	
 	public static function wrapAngleTo360($angle)
 	{
-		$angle = (int)$angle % 360;
+		$angle = fmod($angle, 360);
 		return $angle < 0 ? $angle + 360 : $angle;
 	}
 	
-	public static function chunkPos2Int($x, $z){
-		return ($x & 0xFFFFFFFF) | (($z & 0xFFFFFFFF) << 32);
+	public static function getSeedNumeric($seed){
+		if($seed === "") return false;
+		elseif(is_int($seed)) return (int)$seed;
+		else{
+			$i = 0;
+			for($j = 0; $j < strlen($seed); ++$j){
+				$i = $i * 31 + ord($seed[$j]);
+			}
+			return (int)$i;
+		}
+	}
+	
+	public static function sint32($r){
+		$r &= 0xFFFFFFFF;
+		if ($r & 0x80000000)
+		{
+			$r &= ~0x80000000;
+			return -2147483648 + $r;
+		}
+		return $r;
 	}
 	
 	public static function wrapAngleTo180($angle)
 	{
-		$angle = fmod($angle+180, 360);
-		return $angle < 0 ? $angle + 360 : $angle - 180;
+		$angle = fmod($angle, 360);
+		
+		if($angle >= 180) $angle -= 360;
+		if($angle < -180) $angle += 360;
+		return $angle;
 	}
-	
 	public static function getSign($v){
-		return $v > 0 ? 1 : ($v < 0 ? -1  : 0);
+		return $v <=> 0;
 	}
 	
 	public static function clampDegrees($v){
 		return floor(($v % 360 + 360) % 360);
 	}
 	
+	/**
+	 * PHP8 has internal function for doing it: {@link str_ends_with}
+	 */
 	public static function endsWith($str, $check) {
 		return substr($str, -strlen($check)) === $check;
 	}
@@ -66,37 +106,29 @@ class Utils{
 		return $num >= $min && $num <= $max;
 	}
 	
-	public function xrange($start, $limit, $step = 1) {
-		if ($start <= $limit) {
-			if ($step <= 0) {
-				throw new LogicException('Step must be positive');
-			}
-			
-			for ($i = $start; $i <= $limit; $i += $step) {
-				yield $i;
-			}
-		} else {
-			if ($step >= 0) {
-				throw new LogicException('Step must be negative');
-			}
-			
-			for ($i = $start; $i >= $limit; $i += $step) {
-				yield $i;
-			}
-		}
-	}
-	
 	public static function getUniqueID($raw = false, $extra = ""){
 		$machine = php_uname("a");
-		$machine .= file_exists("/proc/cpuinfo") ? file_get_contents("/proc/cpuinfo") : "";
+		$machine .= file_exists("/proc/cpuinfo") ? `cat /proc/cpuinfo | grep "model name"` : "";
 		$machine .= sys_get_temp_dir();
 		$machine .= $extra;
-		if(Utils::getOS() == "win"){
-			exec("ipconfig /ALL", $mac);
+		$os = Utils::getOS();
+		if($os === "win"){
+			@exec("ipconfig /ALL", $mac);
 			$mac = implode("\n", $mac);
-			if(preg_match_all("#Physical Address[. ]{1,}: ([0-9A-F\-]{17})#", $mac, $matches)){
+			if(preg_match_all("#Physical Address[. ]{1,}: ([0-9A-F\\-]{17})#", $mac, $matches)){
 				foreach($matches[1] as $i => $v){
 					if($v == "00-00-00-00-00-00"){
+						unset($matches[1][$i]);
+					}
+				}
+				$machine .= implode(" ", $matches[1]); //Mac Addresses
+			}
+		}elseif($os === "linux"){
+			@exec("ifconfig", $mac);
+			$mac = implode("\n", $mac);
+			if(preg_match_all("#HWaddr[ \t]{1,}([0-9a-f:]{17})#", $mac, $matches)){
+				foreach($matches[1] as $i => $v){
+					if($v == "00:00:00:00:00:00"){
 						unset($matches[1][$i]);
 					}
 				}
@@ -304,7 +336,7 @@ class Utils{
 	}
 
 	public static function readShort($str, $signed = true){
-		if(strlen($str) === 0){
+		if(strlen($str) < 2){
 			return;
 		}
 
@@ -417,12 +449,8 @@ class Utils{
 		return $data;
 	}
 	
-	public static function php8_nulcoal(&$arr, $else){
-		return isset($arr) ? $arr : $else;
-	}
-	
 	public static function readTriad($str){
-		return @unpack("N", "\x00" . $str)[1];
+		return strlen($str) < 3 ? false : @unpack("N", "\x00$str")[1];
 	}
 
 	public static function writeDataArray($data){
@@ -446,15 +474,15 @@ class Utils{
 		return $raw ? random_bytes($length) : bin2hex(random_bytes($length)); //nobody would ever notice other parameters
 	}
 	
-	public static function chance($i){
+	public static function chance($i){//GameHerobrine's code
 		return lcg_value() <= $i / 100;
 	}
+	
 	/**
-	 * @deprecated use lcg_value() instead.
-	 * @return number
+	 * @deprecated use lcg_value instead
 	 */
 	public static function randomFloat(){
-		return rand() / getrandmax();
+		return lcg_value();
 	}
 
 	public static function round($number){
@@ -557,16 +585,13 @@ class Utils{
 	}
 
 	public static function writeBool($b){
-		return Utils::writeByte($b === true ? 1 : 0);
+		return Utils::writeByte($b ? 1 : 0);
 	}
 
 	public static function readInt($str){
 		if(strlen($str) <= 0) return; 
-		if(PHP_INT_SIZE === 8){
-			return @unpack("N", $str)[1] << 32 >> 32;
-		}else{
-			return @unpack("N", $str)[1];
-		}
+		
+		return @unpack("N", $str)[1] << 32 >> 32; //php has no signed long unpack
 	}
 
 	public static function writeInt($value){
@@ -577,12 +602,12 @@ class Utils{
 	}
 
 	public static function readFloat($str){
-		list(, $value) = ENDIANNESS === BIG_ENDIAN ? @unpack("f", $str) : @unpack("f", strrev($str));
+		list(, $value) = unpack("G", $str);
 		return $value;
 	}
 
 	public static function writeFloat($value){
-		return ENDIANNESS === BIG_ENDIAN ? pack("f", $value) : strrev(pack("f", $value));
+		return pack("G", $value);
 	}
 
 	public static function printFloat($value){
@@ -590,73 +615,37 @@ class Utils{
 	}
 
 	public static function readDouble($str){
-		list(, $value) = ENDIANNESS === BIG_ENDIAN ? @unpack("d", $str) : @unpack("d", strrev($str));
+		list(, $value) = @unpack("E", $str);
 		return $value;
 	}
 
 	public static function writeDouble($value){
-		return ENDIANNESS === BIG_ENDIAN ? pack("d", $value) : strrev(pack("d", $value));
+		return pack("E", $value);
 	}
 
 	public static function readLDouble($str){
-		list(, $value) = ENDIANNESS === BIG_ENDIAN ? @unpack("d", strrev($str)) : @unpack("d", $str);
+		list(, $value) = @unpack("e", $str);
 		return $value;
 	}
 
 	public static function writeLDouble($value){
-		return ENDIANNESS === BIG_ENDIAN ? strrev(pack("d", $value)) : pack("d", $value);
+		return pack("e", $value);
 	}
 
 	public static function readLLong($str){
-		return Utils::readLong(strrev($str));
+		return unpack("P", $str)[1];
 	}
 
 	public static function readLong($x, $signed = true){
-		$value = "0";
-		if($signed === true){
-			$negative = ((ord($x[0]) & 0x80) === 0x80) ? true : false;
-			if($negative){
-				$x = ~$x;
-			}
-		}else{
-			$negative = false;
-		}
-
-		for($i = 0; $i < 8; $i += 4){
-			$value = bcmul($value, "4294967296", 0); //4294967296 == 2^32
-			$value = bcadd($value, 0x1000000 * ord(@$x[$i]) + ((ord(@$x[$i + 1]) << 16) | (ord(@$x[$i + 2]) << 8) | ord(@$x[$i + 3])), 0);
-		}
-		return ($negative === true ? "-" . $value : $value);
+		return strlen($x) < 8 ? 0 : @unpack("J", $x)[1]; //signed is useless since number cant be more than 2^63-1 in php
 	}
 
 	public static function writeLLong($value){
-		return strrev(Utils::writeLong($value));
+		return pack("P", $value);
 	}
 
 	public static function writeLong($value){
-		$x = "";
-		$value = (string) $value;
-		if(!is_float($value)){
-			if(strval($value[0] == null ? '' : $value[0]) === "-"){
-				$negative = true;
-				$value = bcadd($value, "1");
-				if(strval($value[0]) === "-"){
-					$value = substr($value, 1);
-				}
-			}else{
-				$negative = false;
-			}
-			while(bccomp($value, "0", 0) > 0){
-				$temp = bcmod($value, "16777216");
-				$x = chr($temp >> 16) . chr($temp >> 8) . chr($temp) . $x;
-				$value = bcdiv($value, "16777216", 0);
-			}
-			$x = str_pad(substr($x, 0, 8), 8, "\x00", STR_PAD_LEFT);
-			if($negative === true){
-				$x = ~$x;
-			}
-			return $x;
-		}
+		return pack("J", $value);
 	}
 }
 

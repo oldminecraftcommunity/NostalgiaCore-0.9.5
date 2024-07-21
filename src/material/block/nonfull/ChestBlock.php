@@ -1,12 +1,17 @@
 <?php
 
 class ChestBlock extends TransparentBlock{
+	public static $blockID;
 	public function __construct($meta = 0){
 		parent::__construct(CHEST, $meta, "Chest");
 		$this->isActivable = true;
 		$this->isFullBlock = false;
 		$this->hardness = 15;
 	}
+	public static function getCollisionBoundingBoxes(Level $level, $x, $y, $z, Entity $entity){
+		return [new AxisAlignedBB($x + 0.025, $y, $z + 0.025, $x + 0.975, $y + 0.95, $z + 0.975)];
+	}
+	
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$server = ServerAPI::request();
 		$faces = array(
@@ -42,7 +47,8 @@ class ChestBlock extends TransparentBlock{
 			"y" => $this->y,
 			"z" => $this->z
 		));
-
+		$server->api->tile->spawnToAll($tile);
+		
 		if($chest instanceof Tile){
 			$chest->pairWith($tile);
 			$tile->pairWith($chest);

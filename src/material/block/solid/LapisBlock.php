@@ -1,6 +1,7 @@
 <?php
 
 class LapisBlock extends SolidBlock{
+	public static $blockID;
 	public function __construct(){
 		parent::__construct(LAPIS_BLOCK, 0, "Lapis Block");
 		$this->hardness = 15;

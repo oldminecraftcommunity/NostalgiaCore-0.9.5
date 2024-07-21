@@ -1,6 +1,7 @@
 <?php
 
 class BurningFurnaceBlock extends SolidBlock implements LightingBlock{
+	public static $blockID;
 	public function __construct($meta = 0){
 		parent::__construct(BURNING_FURNACE, $meta, "Burning Furnace");
 		$this->isActivable = true;
@@ -18,17 +19,16 @@ class BurningFurnaceBlock extends SolidBlock implements LightingBlock{
 		$this->level->setBlock($block, $this, true, false, true);
 		return true;
 	}
-
 	public function getMaxLightValue(){
 		return 13;
 	}
-
 	public function onBreak(Item $item, Player $player){
 		$this->level->setBlock($this, new AirBlock(), true, true, true);
 		return true;
 	}
 
 	public function onActivate(Item $item, Player $player){
+
 		$server = ServerAPI::request();
 		$t = $server->api->tile->get($this);
 		$furnace = false;

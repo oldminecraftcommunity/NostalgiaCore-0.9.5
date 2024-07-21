@@ -29,7 +29,7 @@ class BigTreeObject extends TreeObject{
 		$leaves = $this->getLeafGroupPoints($level, $pos);
 		foreach($leaves as $leafGroup){
 			$groupX = $leafGroup->getBlockX();
-			$groupY = $leafGrou->getBlockY();
+			$groupY = $leafGroup->getBlockY();
 			$groupZ = $leafGroup->getBlockZ();
 			for($yy = $groupY; $yy < $groupY + $this->leafDistanceLimit; ++$yy){
 				$this->generateGroupLayer($level, $groupX, $yy, $groupZ, $this->getLeafGroupLayerSize($yy - $groupY));

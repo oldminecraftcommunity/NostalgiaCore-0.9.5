@@ -1,7 +1,8 @@
 <?php
 
 class RotateHeadPacket extends RakNetDataPacket{
-	public $entities;
+	public $eid;
+	public $yaw;
 	/**
 	 * Should yaw be modifed<br>
 	 * false = <b>yaw  / 360 / 0.0039062</b><br>
@@ -21,11 +22,8 @@ class RotateHeadPacket extends RakNetDataPacket{
 	
 	public function encode(){
 		$this->reset();
-		$this->putInt(count($this->entities));
-		foreach($this->entities as $d){
-		    $this->putInt($d[0]); //eid
-		    $this->putByte((int) ($d[1] / 360 / 0.0039062)); //wraps 360 angle to 0xff
-		}
+		$this->putInt($this->eid);
+		$this->putByte($this->rawYaw ? $this->yaw : ($this->yaw / 360 / 0.0039062)); //wraps 360 angle to 0xff
 	}
 
 }

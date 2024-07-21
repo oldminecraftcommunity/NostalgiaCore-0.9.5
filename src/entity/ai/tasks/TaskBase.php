@@ -1,8 +1,10 @@
 <?php
-
+//TODO mutexBits
 abstract class TaskBase
 {
 	public $isStarted = false, $selfCounter = 0;
+	
+	public function __construct(){}
 	
 	/**
 	 * Executed when entity starts task. It is recommended to set counter here.

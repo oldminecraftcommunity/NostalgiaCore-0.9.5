@@ -1,9 +1,8 @@
 <?php
 
 class Vector3{
-
 	public $x, $y, $z;
-
+	
 	public function __construct($x = 0, $y = 0, $z = 0){
 		$this->x = $x;
 		$this->y = $y;
@@ -132,10 +131,10 @@ class Vector3{
 	}
 
 	public function distanceSquared($x = 0, $y = 0, $z = 0){
-		if(($x instanceof Vector3) === true){
+		if($x instanceof Vector3){
 			return $this->distanceSquared($x->x, $x->y, $x->z);
 		}else{
-			return pow($this->x - $x, 2) + pow($this->y - $y, 2) + pow($this->z - $z, 2);
+			return ($this->x - $x)*($this->x - $x) + ($this->y - $y)*($this->y - $y) + ($this->z - $z)*($this->z - $z);
 		}
 	}
 
@@ -185,5 +184,97 @@ class Vector3{
 	
 	public function __toString(){
 		return "Vector3(x=" . $this->x . ",y=" . $this->y . ",z=" . $this->z . ")";
+	}
+	
+	
+	/**
+	 * Returns a new vector with x value equal to the second parameter, along the line between this vector and the
+	 * passed in vector, or null if not possible.
+	 *
+	 * @param Vector3 $v
+	 * @param float   $x
+	 *
+	 * @return Vector3
+	 */
+	public function clipX(Vector3 $v, $x){
+		$xDiff = $v->x - $this->x;
+		$yDiff = $v->y - $this->y;
+		$zDiff = $v->z - $this->z;
+		
+		if(($xDiff * $xDiff) < 0.0000001){
+			return null;
+		}
+		
+		$f = ($x - $this->x) / $xDiff;
+		
+		if($f < 0 or $f > 1){
+			return null;
+		}else{
+			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
+		}
+	}
+	public function getIntermediateWithXValue(Vector3 $v, $y){
+		return $this->clipX($v, $y);
+	}
+	
+	/**
+	 * Returns a new vector with y value equal to the second parameter, along the line between this vector and the
+	 * passed in vector, or null if not possible.
+	 *
+	 * @param Vector3 $v
+	 * @param float   $y
+	 *
+	 * @return Vector3
+	 */
+	public function clipY(Vector3 $v, $y){
+		$xDiff = $v->x - $this->x;
+		$yDiff = $v->y - $this->y;
+		$zDiff = $v->z - $this->z;
+		
+		if(($yDiff * $yDiff) < 0.0000001){
+			return null;
+		}
+		
+		$f = ($y - $this->y) / $yDiff;
+		
+		if($f < 0 or $f > 1){
+			return null;
+		}else{
+			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
+		}
+	}
+	
+	public function getIntermediateWithYValue(Vector3 $v, $y){
+		return $this->clipY($v, $y);
+	}
+	/**
+	 * Returns a new vector with z value equal to the second parameter, along the line between this vector and the
+	 * passed in vector, or null if not possible.
+	 *
+	 * @param Vector3 $v
+	 * @param float   $z
+	 *
+	 * @return Vector3
+	 */
+	public function clipZ(Vector3 $v, $z){
+		$xDiff = $v->x - $this->x;
+		$yDiff = $v->y - $this->y;
+		$zDiff = $v->z - $this->z;
+		
+		if(($zDiff * $zDiff) < 0.0000001){
+			return null;
+		}
+		
+		$f = ($z - $this->z) / $zDiff;
+		
+		if($f < 0 or $f > 1){
+			return null;
+		}else{
+			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
+		}
+	}
+	
+	public function getIntermediateWithZValue(Vector3 $v, $y){
+		return $this->clipZ($v, $y);
 	}
 }

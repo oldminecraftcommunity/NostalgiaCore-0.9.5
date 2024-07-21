@@ -201,6 +201,7 @@ class BanAPI{
 						$reason = $reason == "" ? "No reason" : $reason;
 
 						$this->server->schedule(60, [$player, "close"], "You have been kicked: " . $reason); //Forces a kick
+						$player->lastCorrect = new Vector3($player->entity->x, $player->entity->y, $player->entity->z); //TODO better fix
 						$player->blocked = true;
 						if($issuer instanceof Player){
 							$this->server->api->chat->broadcast($player->username . " has been kicked by " . $issuer->username . ": $reason");

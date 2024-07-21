@@ -2,13 +2,12 @@
 
 class QueryAPI{
 
-	public static $NOT_FOUND_VALUE;
+	public static $NOT_FOUND_VALUE = null;
 	private $queryData;
 	private $server;
 
 	public function __construct(){
 		$this->server = ServerAPI::request();
-		QueryAPI::$NOT_FOUND_VALUE = new NFV();
 		$this->updateQueryData("splitnum", chr(128));
 		$this->updateQueryData("hostname", $this->server->name);
 		$this->updateQueryData("gametype", ($this->server->gamemode & 0x01) === 0 ? "SMP" : "CMP");
@@ -35,8 +34,4 @@ class QueryAPI{
 	public function getQueryData(){
 		return $this->queryData;
 	}
-}
-
-class NFV{
-
 }

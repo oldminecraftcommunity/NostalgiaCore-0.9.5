@@ -1,6 +1,7 @@
 <?php
 
 class DoubleSlabBlock extends SolidBlock{
+	public static $blockID;
 	public function __construct($meta = 0){
 		parent::__construct(DOUBLE_SLAB, $meta, "Double Slab");
 		$names = array(

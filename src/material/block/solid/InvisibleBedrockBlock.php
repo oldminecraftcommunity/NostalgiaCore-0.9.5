@@ -1,6 +1,7 @@
 <?php
 
 class InvisibleBedrockBlock extends SolidBlock{
+	public static $blockID;
 	public function __construct(){
 		parent::__construct(INVISIBLE_BEDROCK, 0, ".name<");
 		$this->breakable = false;

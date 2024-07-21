@@ -3,39 +3,27 @@
 class BlockAPI{
 
 	public static $creative = [
+
 		//Building
 		[STONE, 0],
-		[STONE, 1],
-		[STONE, 2],
-		[STONE, 3],
-		[STONE, 4],
-		[STONE, 5],
-		[STONE, 6],
 		[COBBLESTONE, 0],
 		[STONE_BRICKS, 0],
 		[STONE_BRICKS, 1],
 		[STONE_BRICKS, 2],
-		[STONE_BRICKS, 3],
 		[MOSS_STONE, 0],
 		[WOODEN_PLANKS, 0],
 		[WOODEN_PLANKS, 1],
 		[WOODEN_PLANKS, 2],
 		[WOODEN_PLANKS, 3],
-		[WOODEN_PLANKS, 4],
-		[WOODEN_PLANKS, 5],
 		[BRICKS, 0],
-		[EMERALD_BLOCK, 0],
-		[EMERALD_ORE, 0],
+
 		[DIRT, 0],
 		[GRASS, 0],
 		[CLAY_BLOCK, 0],
 		[SANDSTONE, 0],
 		[SANDSTONE, 1],
 		[SANDSTONE, 2],
-		[LOG2, 0],
-		[LOG2, 1],
 		[SAND, 0],
-		[SAND, 1],
 		[GRAVEL, 0],
 		[TRUNK, 0],
 		[TRUNK, 1],
@@ -49,8 +37,6 @@ class BlockAPI{
 		[SPRUCE_WOODEN_STAIRS, 0],
 		[BIRCH_WOODEN_STAIRS, 0],
 		[JUNGLE_WOODEN_STAIRS, 0],
-		[ACACIA_WOOD_STAIRS, 0],
-		[DARK_OAK_WOOD_STAIRS, 0],
 		[BRICK_STAIRS, 0],
 		[SANDSTONE_STAIRS, 0],
 		[STONE_BRICK_STAIRS, 0],
@@ -62,8 +48,6 @@ class BlockAPI{
 		[WOODEN_SLAB, 1],
 		[WOODEN_SLAB, 2],
 		[WOODEN_SLAB, 3],
-		[WOODEN_SLAB, 4],
-		[WOODEN_SLAB, 5],
 		[SLAB, 3],
 		[SLAB, 4],
 		[SLAB, 5],
@@ -80,35 +64,10 @@ class BlockAPI{
 		[OBSIDIAN, 0],
 		[ICE, 0],
 		[SNOW_BLOCK, 0],
-		[BROWN_MUSHROOM_BLOCK, 0],
-		[BROWN_MUSHROOM_BLOCK, 14],
-		[BROWN_MUSHROOM_BLOCK, 15],
-		[RED_MUSHROOM_BLOCK, 14],
-		[MYCELIUM, 0],
-		[PODZOL, 0],
-		[STAINED_CLAY, 0],
-		[STAINED_CLAY, 1],
-		[STAINED_CLAY, 2],
-		[STAINED_CLAY, 3],
-		[STAINED_CLAY, 4],
-		[STAINED_CLAY, 5],
-		[STAINED_CLAY, 6],
-		[STAINED_CLAY, 7],
-		[STAINED_CLAY, 8],
-		[STAINED_CLAY, 9],
-		[STAINED_CLAY, 10],
-		[STAINED_CLAY, 11],
-		[STAINED_CLAY, 12],
-		[STAINED_CLAY, 13],
-		[STAINED_CLAY, 14],
-		[STAINED_CLAY, 15],
-		[HARDENED_CLAY, 0],
-		[END_STONE, 0],
 
 		//Decoration
 		[COBBLESTONE_WALL, 0],
 		[COBBLESTONE_WALL, 1],
-		[LILY_PAD, 0],
 		[GOLD_BLOCK, 0],
 		[IRON_BLOCK, 0],
 		[DIAMOND_BLOCK, 0],
@@ -117,7 +76,6 @@ class BlockAPI{
 		[SNOW_LAYER, 0],
 		[GLASS, 0],
 		[GLOWSTONE_BLOCK, 0],
-		[VINES, 0],
 		[NETHER_REACTOR, 0],
 		[WOOL, 0],
 		[WOOL, 7],
@@ -152,14 +110,6 @@ class BlockAPI{
 		[FURNACE, 0],
 		[DANDELION, 0],
 		[CYAN_FLOWER, 0],
-		[CYAN_FLOWER, 1],
-		[CYAN_FLOWER, 2],
-		[CYAN_FLOWER, 3],
-		[CYAN_FLOWER, 4],
-		[CYAN_FLOWER, 5],
-		[CYAN_FLOWER, 6],
-		[CYAN_FLOWER, 7],
-		[CYAN_FLOWER, 8],
 		[BROWN_MUSHROOM, 0],
 		[RED_MUSHROOM, 0],
 		[CACTUS, 0],
@@ -175,14 +125,10 @@ class BlockAPI{
 		[SAPLING, 1],
 		[SAPLING, 2],
 		[SAPLING, 3],
-		[SAPLING, 4],
-		[SAPLING, 5],
 		[LEAVES, 0],
 		[LEAVES, 1],
 		[LEAVES, 2],
 		[LEAVES, 3],
-		[LEAVES2, 0],
-		[LEAVES2, 1],
 		[CAKE, 0],
 		[SIGN, 0],
 		[CARPET, 0],
@@ -201,8 +147,6 @@ class BlockAPI{
 		[CARPET, 10],
 		[CARPET, 9],
 		[CARPET, 8],
-		[END_PORTAL_FRAME, 0],
-		[MONSTER_SPAWNER, 0],
 
 		//Tools
 		[RAIL, 0],
@@ -224,17 +168,7 @@ class BlockAPI{
 		[SPAWN_EGG, MOB_COW],
 		[SPAWN_EGG, MOB_PIG],
 		[SPAWN_EGG, MOB_SHEEP],
-		[SPAWN_EGG, MOB_VILLAGER],
-		[SPAWN_EGG, MOB_WOLF],
-		[SPAWN_EGG, MOB_MOOSHROOM],
-		[SPAWN_EGG, MOB_CREEPER],
-		[SPAWN_EGG, MOB_ENDERMAN],
-		[SPAWN_EGG, MOB_SILVERFISH],
-		[SPAWN_EGG, MOB_SKELETON],
-		[SPAWN_EGG, MOB_SLIME],
-		[SPAWN_EGG, MOB_SPIDER],
-		[SPAWN_EGG, MOB_ZOMBIE],
-		[SPAWN_EGG, MOB_PIGMAN],
+
 		//Seeds
 		[SUGARCANE, 0],
 		[WHEAT, 0],
@@ -260,13 +194,8 @@ class BlockAPI{
 		[DYE, 11],
 		[DYE, 10],
 		[DYE, 9],
-		[DYE, 8],
-		[DOUBLE_PLANT, 0],
-		[DOUBLE_PLANT, 1],
-		[DOUBLE_PLANT, 2],
-		[DOUBLE_PLANT, 3],
-		[DOUBLE_PLANT, 4],
-		[DOUBLE_PLANT, 5],
+		[DYE, 8]
+
 	];
 	private $server;
 	private $scheduledUpdates = [];
@@ -275,12 +204,7 @@ class BlockAPI{
 	function __construct(){
 		$this->server = ServerAPI::request();
 	}
-	/**
-	 * @param integer $id
-	 * @param number $meta
-	 * @param boolean $v
-	 * @return GenericBlock
-	 */
+
 	public static function get($id, $meta = 0, $v = false){
 		if(isset(Block::$class[$id])){
 			$classname = Block::$class[$id];
@@ -349,7 +273,7 @@ class BlockAPI{
 						$coords[$i] = round($coord, 0);
 					}
 					elseif(is_numeric($args[$i])){
-						if($args[$i] > 0 and $args[$i] < 255){
+						if($args[$i] >= 0 and $args[$i] <= ($i === 1 ? 127 : 255)){
 							$coords[$i] = $args[$i];
 						}
 					}
@@ -374,12 +298,10 @@ class BlockAPI{
 				if($player instanceof Player){			
 					$item = self::fromString($args[1] ?? "");
 					if(($player->gamemode & 0x01) === 0x01){
-						$output .= "Player is in creative mode.";
-						break;
+						return "Player is in creative mode.";
 					}
 					if($item->getID() === 0){
-						$output .= "You cannot give an air block to a player.";
-						break;
+						return "You cannot give an air block to a player.";
 					}
 					
 					if(!isset($args[2])){
@@ -535,7 +457,8 @@ class BlockAPI{
 				return $this->cancelAction($block, $player);
 			}
 		}
-		$this->blockUpdate($target, BLOCK_UPDATE_TOUCH);
+		
+		StaticBlock::getBlock($target->getID())::interact($target->level, $target->x, $target->y, $target->z, $player);
 
 		if($target->isActivable === true){
 			if($this->server->api->dhandle("player.block.activate", ["player" => $player, "block" => $block, "target" => $target, "item" => $item]) !== false and $target->onActivate($item, $player) === true){
@@ -552,6 +475,7 @@ class BlockAPI{
 		if($block->y > 127 or $block->y < 0){
 			return false;
 		}
+
 		if($item->isActivable === true and $item->onActivate($player->level, $player, $block, $target, $face, $fx, $fy, $fz) === true){
 			if($item->count <= 0){
 				$player->setSlot($player->slot, BlockAPI::getItem(AIR, 0, 0), false);
@@ -604,27 +528,29 @@ class BlockAPI{
 	}
 
 	public function blockUpdate(Position $pos, $type = BLOCK_UPDATE_NORMAL){
-		if(!($pos instanceof Block)){
-			$block = $pos->level->getBlock($pos);
-		}else{
-			$pos = new Position($pos->x, $pos->y, $pos->z, $pos->level);
-			$block = $pos->level->getBlock($pos);
-		}
+		$block = StaticBlock::getBlock($pos->level->level->getBlockID($pos->x, $pos->y, $pos->z));
 		if($block === false){
 			return false;
 		}
-
-		$level = $block->onUpdate($type);
-		if($level === BLOCK_UPDATE_NORMAL){
-			$this->blockUpdateAround($block, $level);
-			$this->server->api->entity->updateRadius($pos, 1);
-		}elseif($level === BLOCK_UPDATE_RANDOM){
-			//$this->nextRandomUpdate($pos); old version, change back if any issues will start to happen with this one(please note that old version makes a lot of lag)
-			$this->scheduleBlockUpdate($pos, (mt_rand(25, 75) + Utils::getRandomUpdateTicks() * 0.05) / 0.05, BLOCK_UPDATE_RANDOM);
-		}
+		$level = $block::onUpdate($pos->level, $pos->x, $pos->y, $pos->z, $type);
+		
 		return $level;
 	}
+	
+
+	
 	public function blockUpdateAround(Position $pos, $type = BLOCK_UPDATE_NORMAL, $delay = false){
+		
+		if($type == BLOCK_UPDATE_NORMAL){
+			try{
+				throw new Exception("Deprecated: tried updating $pos using BLOCK_UPDATE_NORMAL.");
+			}catch(Exception $e){
+				ConsoleAPI::error($e->getMessage());
+				ConsoleAPI::error($e->getTraceAsString());
+			}
+			return;
+		}
+		
 		if($delay !== false){
 			$this->scheduleBlockUpdate($pos->getSide(0), $delay, $type);
 			$this->scheduleBlockUpdate($pos->getSide(1), $delay, $type);
@@ -641,7 +567,22 @@ class BlockAPI{
 			$this->blockUpdate($pos->getSide(5), $type);
 		}
 	}
-
+	public function scheduleBlockUpdateXYZ(Level $level, $x, $y, $z, $type = BLOCK_UPDATE_SCHEDULED, $delay = false){
+		$type = (int) $type;
+		if($delay < 0){
+			return false;
+		}
+		
+		$index = $x . "." . $y . "." . $z . "." . $level->getName() . "." . $type;
+		$delay = microtime(true) + $delay * 0.05;
+		if(!isset($this->scheduledUpdates[$index])){
+			$this->scheduledUpdates[$index] = new Position($x, $y, $z, $level); //TODO dont create a position
+			$this->server->query("INSERT INTO blockUpdates (x, y, z, level, type, delay) VALUES ($x, $y, $z, '{$level->getName()}', $type, $delay);");
+			return true;
+		}
+		return false;
+	}
+	
 	public function scheduleBlockUpdate(Position $pos, $delay, $type = BLOCK_UPDATE_SCHEDULED){
 		$type = (int) $type;
 		if($delay < 0){

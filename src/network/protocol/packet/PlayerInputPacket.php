@@ -1,6 +1,6 @@
 <?php
 class PlayerInputPacket extends RakNetDataPacket{
-	public $unk1, $unk2, $sneaking, $unk4;
+	public $moveStrafe, $moveForward, $isJumping, $isSneaking;
 	public function encode()
 	{
 		
@@ -13,10 +13,10 @@ class PlayerInputPacket extends RakNetDataPacket{
 
 	public function decode()
 	{
-		$this->unk1 = $this->getFloat();
-		$this->unk2 = $this->getFloat();
-		$this->sneaking = bin2hex($this->buffer)[$this->getOffset()] === 4;
-		$this->unk4 = bin2hex($this->buffer)[$this->getOffset()+1] === 4;
+		$this->moveStrafe = $this->getFloat();
+		$this->moveForward = $this->getFloat();
+		$this->isJumping = $this->getByte() != 0;
+		$this->isSneaking = $this->getByte() != 0;
 	}
 	
 }

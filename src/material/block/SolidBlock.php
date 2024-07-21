@@ -11,4 +11,8 @@ class SolidBlock extends GenericBlock{
 		$this->isSolid = true;
 		$this->isFullBlock = true;
 	}
+	
+	public static function getCollisionBoundingBoxes(Level $level, $x, $y, $z, Entity $entity){
+		return [new AxisAlignedBB($x, $y, $z, $x + 1, $y + 1, $z + 1)];
+	}
 }

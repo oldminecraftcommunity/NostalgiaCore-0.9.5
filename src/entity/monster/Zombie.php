@@ -4,10 +4,14 @@ class Zombie extends Monster{
 	function __construct(Level $level, $eid, $class, $type = 0, $data = array()){
 		$this->setSize(0.6, 1.85);
 		parent::__construct($level, $eid, $class, $type, $data);
-		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 20, "generic");
+		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 12, "generic");
 		$this->setName("Zombie");
 		$this->setSpeed(0.23);
-		$this->update();
+		
+		$this->ai->addTask(new TaskRandomWalk(1.0));
+		$this->ai->addTask(new TaskLookAround());
+		$this->ai->addTask(new TaskSwimming());
+		$this->ai->addTask(new TaskAttackPlayer(1.0, 16));
 	}
 	
 	public function getArmorValue(){
@@ -15,19 +19,22 @@ class Zombie extends Monster{
 	}
 	
 	public function updateBurning(){
-		if($this->fire > 0 or !$this->level->isDay()){
+		if($this->fire > 0 || !$this->level->isDay() || $this->inWater){ //TODO fix burning in water
 			return false;
 		}
 		
 		for($y = $this->y; $y < 129; $y++){
-			$block = $this->level->getBlockWithoutVector($this->x, $y, $this->z);
-			if($block->isSolid){
+			$block = $this->level->level->getBlockID($this->x, $y, $this->z);
+			if(StaticBlock::getIsSolid($block)){
 				return false;
 			}
 		}
-		if($block->getID() === AIR){
+		if($block === AIR){
+			$oldFire = $this->fire;
 			$this->fire = 160; //Value from 0.8.1
-			$this->updateMetadata();
+			if(($oldFire > 0 && $this->fire <= 0) || ($oldFire <= 0 && $this->fire > 0)){
+				$this->updateMetadata(); //TODO rewrite metadata
+			}
 			return true;
 		}else{
 			return false;
@@ -35,12 +42,12 @@ class Zombie extends Monster{
 	}
 	
 	public function getAttackDamage(){
-		return 4; //TODO vanillafy(zombies might be able to hold items)
+		return 4;
 	}
 	
-	public function update(){
+	public function update($now){
 		$this->updateBurning();
-		parent::update();
+		parent::update($now);
 	}
 	
 	public function getDrops(){

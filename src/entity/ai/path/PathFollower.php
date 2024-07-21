@@ -11,15 +11,38 @@ class PathFollower{
 	}
 	
 	public function followPath(){
-		if(!isset($entity) or $this->entity->path == null){
-			return;
+		
+		if(!isset($this->entity) || !($this->entity instanceof Living)) return;
+		if(!$this->entity->hasPath()) return;
+		
+		if($this->entity->currentNode == null){
+			$this->entity->currentNode = $this->entity->path[$this->entity->currentIndex];
 		}
-		if((is_array($this->entity->path) && count($this->entity->path) <= 0 || $this->entity->currentIndex >= count($this->entity->path))){
+		$moveX = ($this->entity->currentNode >> 16 & 0xff) + 0.5;
+		$moveY = $this->entity->currentNode & 0xff;
+		$moveZ = ($this->entity->currentNode >> 8 & 0xff) + 0.5;
+		$this->entity->ai->mobController->setMovingTarget($moveX, $moveY, $moveZ, 1.0);
+		if($this->entity->boundingBox->isXYZInsideNS($moveX, $moveY, $moveZ)){
+			++$this->entity->currentIndex;
+			//console("next");
+			$this->entity->currentNode = null;
+		}
+		
+		
+		if($this->entity->currentIndex >= count($this->entity->path)){
+			console("path finished.");
+			$this->entity->currentNode = null;
 			$this->entity->path = null;
 			$this->entity->currentIndex = 0;
-			$this->entity->currentNode = false;
-		}elseif(($this->entity->currentNode == false || $this->entity->ai->mobController->moveTo($this->entity->currentNode->x, $this->entity->currentNode->y, $this->entity->currentNode->z) === false)){
-			$this->entity->currentNode = $this->entity->path[$this->entity->currentIndex++];
+			
+			/*foreach($this->entity->pathEIDS as $eid){
+				$pk = new RemoveEntityPacket();
+				$pk->eid = $eid;
+				foreach($this->entity->level->players as $player){
+					$player->dataPacket($pk);
+				}
+			}*/
+			
 		}
 	}
 	

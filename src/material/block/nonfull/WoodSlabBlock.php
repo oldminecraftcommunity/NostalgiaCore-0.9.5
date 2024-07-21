@@ -1,6 +1,7 @@
 <?php
-
+//TODO make it extend SlabBlock
 class WoodSlabBlock extends TransparentBlock{
+	public static $blockID;
 	public function __construct($meta = 0){
 		parent::__construct(WOOD_SLAB, $meta, "Wooden Slab");
 		$names = array(
@@ -8,8 +9,6 @@ class WoodSlabBlock extends TransparentBlock{
 			1 => "Spruce",
 			2 => "Birch",
 			3 => "Jungle",
-			4 => "Acacia",
-			5 => "Dark Oak"
 		);
 		$this->name = (($this->meta & 0x08) === 0x08 ? "Upper ":"") . $names[$this->meta & 0x07] . " Wooden Slab";	
 		if(($this->meta & 0x08) === 0x08){
@@ -18,6 +17,31 @@ class WoodSlabBlock extends TransparentBlock{
 			$this->isFullBlock = false;
 		}		
 		$this->hardness = 15;
+	}
+	
+	public static function updateShape(Level $level, $x, $y, $z){
+		
+		[$id, $meta] = $level->level->getBlock($x, $y, $z);
+		
+		if($meta & 0x08 == 0x08){
+			StaticBlock::setBlockBounds($id, 0, 0, 0, 1, 1, 1);
+		}else{
+			$bottom = (($meta ^ 8) >> 3) & 1;
+			if($bottom) StaticBlock::setBlockBounds($id, 0, 0, 0, 1, 0.5, 1);
+			else StaticBlock::setBlockBounds($id, 0, 0.5, 0, 1, 1, 1);
+		}
+	}
+	
+	public static function getCollisionBoundingBoxes(Level $level, $x, $y, $z, Entity $entity){
+		self::updateShape($level, $x, $y, $z);
+		$id = $level->level->getBlockID($x, $y, $z);
+		
+		return [
+			new AxisAlignedBB(
+				$x + StaticBlock::$minXs[$id], $y + StaticBlock::$minYs[$id], $z + StaticBlock::$minZs[$id],
+				$x + StaticBlock::$maxXs[$id], $y + StaticBlock::$maxYs[$id], $z + StaticBlock::$maxZs[$id]
+				)
+		];
 	}
 	
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
@@ -84,7 +108,7 @@ class WoodSlabBlock extends TransparentBlock{
 	
 	public function getDrops(Item $item, Player $player){
 		return array(
-			array($this->id, $this->meta & 0x07, 1),
+				array($this->id, $this->meta & 0x07, 1),
 		);
 	}
 }

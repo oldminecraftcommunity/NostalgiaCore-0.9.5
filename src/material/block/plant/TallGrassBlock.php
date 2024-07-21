@@ -1,27 +1,28 @@
 <?php
 
 class TallGrassBlock extends FlowableBlock{
+	public static $blockID;
 	public function __construct($meta = 1){
-		parent::__construct(TALL_GRASS, $meta, "Grass");
+		parent::__construct(TALL_GRASS, $meta, "Tall Grass");
 		$this->isReplaceable = true;
 		$names = array(
 			0 => "Dead Shrub",
-			1 => "Grass",
+			1 => "Tall Grass",
 			2 => "Fern",
 		);
-		$this->name = $names[$this->meta & 0x02];
+		$this->name = $names[$this->meta & 0x03];
 		$this->hardness = 0;
 	}
 
-	public function onUpdate($type){
-		if($type === BLOCK_UPDATE_NORMAL){
-			if($this->getSide(0)->isTransparent === true){ //Replace with common break method
-				$this->level->setBlock($this, new AirBlock(), false, false, true);
-			  	if(Utils::chance(15)) ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem(WHEAT_SEEDS));
-				return BLOCK_UPDATE_NORMAL;
-			}
+	public static function neighborChanged(Level $level, $x, $y, $z, $nX, $nY, $nZ, $oldID){
+		if(StaticBlock::getIsTransparent($level->level->getBlockID($x, $y - 1, $z))){ //Replace with common break method
+			if(Utils::chance(15)) ServerAPI::request()->api->entity->drop(new Position($x+0.5, $y, $z+0.5, $level), BlockAPI::getItem(WHEAT_SEEDS));
+			$level->fastSetBlockUpdate($x, $y, $z, 0, 0);
 		}
-		return false;
+	}
+	
+	public static function getAABB(Level $level, $x, $y, $z){
+		return null;
 	}
 	
 	public function getDrops(Item $item, Player $player){

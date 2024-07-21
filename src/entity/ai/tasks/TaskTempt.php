@@ -2,73 +2,79 @@
 
 class TaskTempt extends TaskBase
 {
-	public $target = false;
+	public function __construct($speed){
+		$this->speedMultiplier = $speed;
+		$this->targetDistance = 10*10;
+	}
 	
 	public function onStart(EntityAI $ai)
 	{
 		$this->selfCounter = 1;
 	}
-
+	
 	public function onEnd(EntityAI $ai)
 	{
-		unset($this->target);
-		unset($ai->entity->target);
-		$ai->entity->pitch = 0;
+		$ai->entity->target = false;
 	}
-
+	
 	public function onUpdate(EntityAI $ai)
 	{
-		if(!($this->target instanceof Entity) || ($this->target instanceof Entity && !$this->target->isPlayer()) || (Utils::distance_noroot($this->target, $ai->entity) > 100) || !$ai->entity->isFood($this->target->player->getHeldItem()->getID()) || $this->target->level->getName() != $ai->entity->level->getName()){
+		if(!$this->isTargetValid($ai) || $ai->entity->inPanic || $ai->isStarted("TaskMate")){
 			$this->reset();
-			return;
-		}
-		
-		$ai->mobController->moveTo($this->target->x, floor($ai->entity->y), $this->target->z);
-		$ai->mobController->lookOn($this->target);
-	}
-
-	public function canBeExecuted(EntityAI $ai)
-	{
-		if(!($ai->entity instanceof Breedable) || $ai->entity->inPanic){ //TODO Work with path
+			$this->onEnd($ai);
 			return false;
 		}
-		$target = $this->findTarget($ai->entity, 10);
-		if($target instanceof Entity && $target->class === ENTITY_PLAYER && $target->isPlayer() && $ai->entity->isFood($target->player->getHeldItem()->getID())){
-			$this->target = $target;
-			$ai->entity->target = $target;
-			return true;
+		
+		$target = $ai->entity->target;
+		$xdiff = ($target->x - $ai->entity->x);
+		$ydiff = ($target->y - $ai->entity->y);
+		$zdiff = ($target->z - $ai->entity->z);
+		$dist = $xdiff*$xdiff + $ydiff*$ydiff + $zdiff*$zdiff;
+		$ai->mobController->setLookPosition($target->x, $target->y + $target->getEyeHeight(), $target->z, 30, $ai->entity->getVerticalFaceSpeed());
+		if($dist >= 6.25){
+			$ai->mobController->setMovingTarget($target->x, $target->y, $target->z, $this->speedMultiplier);
+		}else{
+			$ai->mobController->headYawIsYaw = true;
 		}
 		
+		
+	}
+	
+	public function isTargetValid(EntityAI $ai){
+		$e = $ai->entity;
+		if($e->target instanceof Entity && !$e->target->closed && $e->isFood($e->target->player->getHeldItem()->id)){
+			$t = $e->target;
+			$xDiff = ($t->x - $e->x);
+			$yDiff = ($t->y - $e->y);
+			$zDiff = ($t->z - $e->z);
+			return ($xDiff*$xDiff + $yDiff*$yDiff + $zDiff*$zDiff) <= $this->targetDistance;
+		}
 		return false;
 	}
 	
-	protected function findTarget($e, $r){
-		$svd = null;
-		$svdDist = -1;
-		foreach($e->level->players as $p){
-			$p = $p->entity;
-			if(Utils::distance_noroot($e, $p) > $r*$r){
-				continue;
-			}
-			if($svdDist === -1){
-				$svdDist = Utils::distance_noroot($e, $p);
-				$svd = $p;
-				continue;
-			}
-			if($svd != null && $svdDist === 0){
-				$svd = $p;
-			}
-			if(($cd = Utils::distance_noroot($e, $p)) < $svdDist){
-				$svdDist = $cd;
-				$svd = $p;
+	public function canBeExecuted(EntityAI $ai)
+	{
+		return !$ai->entity->inPanic && !$ai->isStarted("TaskMate") && $this->tryTargeting($ai);
+	}
+	
+	public function tryTargeting(EntityAI $ai){
+		$e = $ai->entity;
+		if($e->target instanceof Entity){
+			$t = $e->target;
+			$xDiff = ($t->x - $e->x);
+			$yDiff = ($t->y - $e->y);
+			$zDiff = ($t->z - $e->z);
+			if(($xDiff*$xDiff + $yDiff*$yDiff + $zDiff*$zDiff) <= $this->targetDistance){
+				return true;
 			}
 		}
 		
-		if($svd == null){
-			return null;
-		}
+		$closestTarget = $e->closestPlayerThatCanFeedDist <= $this->targetDistance ? $e->level->entityList[$e->closestPlayerThatCanFeedEID] : null;
 		
-		return $svd;
+		if($closestTarget != null){
+			$e->target = $closestTarget; //TODO dont save entity object ?
+			return true;
+		}
+		return false;
 	}
 }
-

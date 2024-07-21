@@ -1,6 +1,7 @@
 <?php
 
 class BeetrootBlock extends FlowableBlock{
+	public static $blockID;
 	public function __construct($meta = 0){
 		parent::__construct(BEETROOT_BLOCK, $meta, "Beetroot Block");
 		$this->isActivable = true;
@@ -16,7 +17,14 @@ class BeetrootBlock extends FlowableBlock{
 		}
 		return false;
 	}
-	
+	public static function onRandomTick(Level $level, $x, $y, $z){
+		if(mt_rand(0, 2) == 1){
+			$b = $level->level->getBlock($x, $y, $z);
+			if($b[1] < 0x07){
+				$level->fastSetBlockUpdate($x, $y, $z, $b[0], $b[1] + 1);
+			}
+		}
+	}
 	public function onActivate(Item $item, Player $player){
 		if($item->getID() === DYE and $item->getMetadata() === 0x0F){ //Bonemeal
 			$this->meta += mt_rand(0, 3) + 2;
@@ -32,25 +40,11 @@ class BeetrootBlock extends FlowableBlock{
 		return false;
 	}
 
-	public function onUpdate($type){
-		if($type === BLOCK_UPDATE_NORMAL){
-			if($this->getSide(0)->getID() != 60){
-				ServerAPI::request()->api->entity->drop(new Position($this->x + 0.5, $this->y, $this->z + 0.5, $this->level), BlockAPI::getItem(BEETROOT_SEEDS, 0, 1));
-				$this->level->setBlock($this, new AirBlock(), false, false, true);
-				return BLOCK_UPDATE_NORMAL;
-			}
-		}elseif($type === BLOCK_UPDATE_RANDOM){
-			if(mt_rand(0, 2) == 1){
-				if($this->meta < 0x07){
-					++$this->meta;
-					$this->level->setBlock($this, $this, true, false, true);
-					return BLOCK_UPDATE_RANDOM;
-				}
-			}else{
-				return BLOCK_UPDATE_RANDOM;
-			}
+	public static function neighborChanged(Level $level, $x, $y, $z, $nX, $nY, $nZ, $oldID){
+		if($level->level->getBlockID($x, $y - 1, $z) != FARMLAND){
+			ServerAPI::request()->api->entity->drop(new Position($x + 0.5, $y, $z + 0.5, $level), BlockAPI::getItem(BEETROOT_SEEDS, 0, 1));
+			$level->fastSetBlockUpdate($x, $y, $z, 0, 0);
 		}
-		return false;
 	}
 	
 	public function getDrops(Item $item, Player $player){

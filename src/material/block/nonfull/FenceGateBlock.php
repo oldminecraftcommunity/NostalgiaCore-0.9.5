@@ -1,6 +1,27 @@
 <?php
 
 class FenceGateBlock extends TransparentBlock{
+	public static $blockID;
+	public static function getCollisionBoundingBoxes(Level $level, $x, $y, $z, Entity $entity){
+		$aabb = static::getAABB($level, $x, $y, $z);
+		if($aabb == null) return [];
+		return [$aabb];
+	}
+	
+	public static function getAABB(Level $level, $x, $y, $z){
+		$data = $level->level->getBlockDamage($x, $y, $z);
+		
+		if($data & 4){
+			return null;
+		}
+		
+		if($data != 2 && $data != 0){
+			return new AxisAlignedBB($x + 0.375, $y, $z, $x + 0.625, $y + 1.5, $z + 1.0);
+		}else{
+			return new AxisAlignedBB($x, $y, $z + 0.375, $x + 1, $y + 1.5, $z + 0.625);
+		}
+	}
+	
 	public function __construct($meta = 0){
 		parent::__construct(FENCE_GATE, $meta, "Fence Gate");
 		$this->isActivable = true;
@@ -28,9 +49,23 @@ class FenceGateBlock extends TransparentBlock{
 		);
 	}
 	public function onActivate(Item $item, Player $player){
-				$this->meta ^= 0x04;
-		$this->level->setBlock($this, $this, true, false, true);
-		$players = ServerAPI::request()->api->player->getAll($this->level);
+		
+		$meta = $this->meta;
+		if(($meta & 4) != 0){
+			$meta ^= 4;
+		}else{
+			$direction = ($player->entity->yaw * 4 / 360) + 0.5;
+			$blockDirection = (int)$direction;
+			if($direction < $blockDirection) --$blockDirection;
+			$blockDirection &= 3;
+			if(($meta & 3) == (($blockDirection + 2) & 3)){
+				$meta = $blockDirection;
+			}
+			$meta |= 4;
+		}
+		
+		$this->level->fastSetBlockUpdate($this->x, $this->y, $this->z, $this->id, $meta);
+		$players = $this->level->players;
 		unset($players[$player->CID]);
 		$pk = new LevelEventPacket;
 		$pk->x = $this->x;
@@ -40,5 +75,5 @@ class FenceGateBlock extends TransparentBlock{
 		$pk->data = 0;
 		ServerAPI::request()->api->player->broadcastPacket($players, $pk);
 		return true;
-	}	
+	}
 }

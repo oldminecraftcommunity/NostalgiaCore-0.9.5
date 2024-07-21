@@ -7,7 +7,7 @@ require_once("LevelGenerator.php");
 class SuperflatGenerator implements LevelGenerator{
 
 	private $level, $random, $structure, $chunks, $options, $floorLevel, $populators = [];
-	public $preset;
+
 	public function __construct(array $options = []){
 		$this->preset = "2;7,59x1,3x3,2;1;spawn(radius=10 block=89),decoration(treecount=80 grasscount=45)";
 		$this->options = $options;
@@ -25,16 +25,10 @@ class SuperflatGenerator implements LevelGenerator{
 				new OreType(new LapisOreBlock(), 1, 6, 0, 32),
 				new OreType(new GoldOreBlock(), 2, 8, 0, 32),
 				new OreType(new DiamondOreBlock(), 1, 7, 0, 16),
-				new OreType(new EmeraldOreBlock(), 1, 7, 0, 16), //TODO
-
 				new OreType(new DirtBlock(), 20, 32, 0, 128),
 				new OreType(new GravelBlock(), 10, 16, 0, 128),
-				new OreType(new StoneBlock(1), 20, 32, 0, 128),
-				new OreType(new StoneBlock(3), 20, 32, 0, 128),
-				new OreType(new StoneBlock(5), 20, 32, 0, 128),
 			]);
 			$this->populators[] = $ores;
-			//$this->populators[] = new PondPopulator();
 		}
 
 		/*if(isset($this->options["mineshaft"])){
@@ -78,9 +72,9 @@ class SuperflatGenerator implements LevelGenerator{
 					$metas = "";
 					for($y = $startY; $y < $endY; ++$y){
 						$blocks .= chr($this->structure[$y]->getID());
-						$metas .= chr($this->structure[$y]->getMetadata());
+						$metas .= substr(dechex($this->structure[$y]->getMetadata()), -1);
 					}
-					$this->chunks[$Y] .= $blocks . $metas . "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" . "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+					$this->chunks[$Y] .= $blocks . hex2bin($metas) . "\x00\x00\x00\x00\x00\x00\x00\x00";
 				}
 			}
 		}
@@ -111,7 +105,6 @@ class SuperflatGenerator implements LevelGenerator{
 		for($Y = 0; $Y < 8; ++$Y){
 			$this->level->setMiniChunk($chunkX, $chunkZ, $Y, $this->chunks[$Y]);
 		}
-		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, str_repeat(chr(BIOME_PLAINS), 256));
 	}
 
 	public function populateChunk($chunkX, $chunkZ){
@@ -139,7 +132,7 @@ class SuperflatGenerator implements LevelGenerator{
 			$end = 128 + $spawn[0];
 			for($x = $start; $x <= $end; ++$x){
 				for($z = $start; $z <= $end; ++$z){
-					if(floor(sqrt(pow($x - 128, 2) + pow($z - 128, 2))) <= $spawn[0]){
+					if(floor(sqrt(($x - 128)*($x - 128)+ ($z - 128)*($z - 128))) <= $spawn[0]){
 						$this->level->setBlockRaw(new Vector3($x, $this->floorLevel - 1, $z), $spawn[1], null);
 					}
 				}

@@ -39,10 +39,12 @@ class RCON{
 
 	public function stop(){
 		for($n = 0; $n < $this->threads; ++$n){
-			$this->workers[$n]->close();
-			$this->workers[$n]->join();
-			usleep(50000);
-			$this->workers[$n]->kill();
+			if(isset($this->workers[$n]) && $this->workers[$n] instanceof RCONInstance){
+				$this->workers[$n]->close();
+				$this->workers[$n]->join();
+				//usleep(50000);
+				//$this->workers[$n]->kill();
+			}
 		}
 		@socket_close($this->socket);
 		$this->threads = 0;
@@ -134,7 +136,7 @@ class RCONInstance extends Thread{
 								}else{
 									$disconnect[$id] = $sock;
 									$this->writePacket($sock, -1, 2, "");
-									$this->logger->info("Unsuccessful connection from: /$addr:$port (wrong password)");
+									console("Unsuccessful connection from: /$addr:$port (wrong password)");
 								}
 								break;
 							case 2: //Command

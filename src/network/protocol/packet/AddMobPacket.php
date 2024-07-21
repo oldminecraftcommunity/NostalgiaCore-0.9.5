@@ -22,9 +22,9 @@ class AddMobPacket extends RakNetDataPacket{
 		$this->reset();
 		$this->putInt($this->eid);
 		$this->putInt($this->type);
-		$this->putInt($this->x);
-		$this->putInt($this->y);
-		$this->putInt($this->z);
+		$this->putFloat($this->x);
+		$this->putFloat($this->y);
+		$this->putFloat($this->z);
 		$this->putByte($this->yaw);
 		$this->putByte($this->pitch);
 		$this->put(Utils::writeMetadata($this->metadata));

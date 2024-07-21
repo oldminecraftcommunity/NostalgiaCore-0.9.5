@@ -84,9 +84,9 @@ class Async extends Thread{
 
 	public function run(){
 		if(($this->result = call_user_func_array($this->method, $this->params))){
-			return true;
+			//return true;
 		}else{
-			return false;
+			//return false;
 		}
 	}
 

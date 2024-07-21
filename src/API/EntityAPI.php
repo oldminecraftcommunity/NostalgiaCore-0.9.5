@@ -4,7 +4,7 @@ class EntityAPI{
 	public $entities;
 	private $server;
 	private $eCnt = 1;
-	public $serverSpawnAnimals, $serverSpawnMobs;
+	private $serverSpawnAnimals, $serverSpawnMobs;
 	function __construct(){
 		$this->entities = [];
 		$this->server = ServerAPI::request();
@@ -22,24 +22,17 @@ class EntityAPI{
 	
 	
 	public function commandHandler($cmd, $args, $issuer, $alias){
-		//todo "MOB_".strtoupper($args[0]);
 		$mob = [
 			"chicken" => 10,
 			"cow" => 11,
 			"pig" => 12,
 			"sheep" => 13,
-			"wolf" => 14,
-			"villager" => 15,
-			"mooshroom" => 16,
 			
 			"zombie" => 32,
 			"creeper" => 33,
 			"skeleton" => 34,
 			"spider" => 35,
-			"pigman" => 36,
-			"slime" => 37,
-			"enderman" => 38,
-			"silverfish" => 39,
+			"pigman" => 36
 		];
 		$output = "";
 		switch($cmd){
@@ -55,9 +48,8 @@ class EntityAPI{
 				}
 				
 				if(is_int($args[0])) $type = $args[0];
-				elseif(isset($mob[strtolower($args[0])])) $type = $mob[strtolower($args[0])];
-				else return "Unknown mob.";
-				if($type < 10 || $type > 39){
+				else $type = $mob[strtolower($args[0])] ?? 0;
+				if($type < 10 || $type > 36){
 					return "Unknown mob.";
 				}
 				$mobName = ucfirst(array_flip($mob)[$type]);
@@ -78,8 +70,8 @@ class EntityAPI{
 				}
 				elseif(is_numeric($args[1])){//summon <mob> [amount]
 					$amount = (int) $args[1];
-					if($amount > 100){
-						return "Cannot spawn > 100 mobs";
+					if($amount > 1000){
+						return "Cannot spawn > 1000 mobs";
 					}
 					$isBaby = false;
 					if(isset($args[2]) and strtolower($args[2]) === 'baby'){//summon <mob> [amount] [baby]
@@ -146,6 +138,7 @@ class EntityAPI{
 						}
 					}
 				}
+				
 				return "$cnt entities have been despawned!";
 		}
 		return $output;
@@ -169,6 +162,9 @@ class EntityAPI{
 		}else{
 			$this->entities[$eid] = new Entity($level, $eid, $class, $type, $data);
 		}
+		$cX = (int)$this->entities[$eid]->x >> 4;
+		$cZ = (int)$this->entities[$eid]->z >> 4;
+		$level->entityListPositioned["$cX $cZ"][$eid] = $eid;
 		$level->entityList[$eid] = &$this->entities[$eid];
 		$this->server->handle("entity.add", $this->entities[$eid]);
 		return $this->entities[$eid];
@@ -188,7 +184,19 @@ class EntityAPI{
 	
 	public function remove($eid){
 		if(isset($this->entities[$eid])){
+			$level = $this->entities[$eid]->level;
 			$this->entities[$eid]->closed = true;
+			if($level instanceof Level){
+				$cX = (int)$this->entities[$eid]->x >> 4;
+				$cZ = (int)$this->entities[$eid]->z >> 4;
+				$index = "$cX $cZ";
+				unset($level->entityListPositioned[$index][$eid]);
+				if(isset($level->mobSpawner->entityAffectedPlayers[$eid])){
+					$pid = $level->mobSpawner->entityAffectedPlayers[$eid];
+					unset($level->mobSpawner->entityAffectedPlayers[$eid]);
+					unset($level->mobSpawner->playerAffectedEIDS[$pid][$eid]);
+				}
+			}
 			if($this->entities[$eid]->isPlayer()){
 				$pk = new RemovePlayerPacket;
 				$pk->eid = $eid;
@@ -202,26 +210,30 @@ class EntityAPI{
 			$this->server->api->dhandle("entity.remove", $this->entities[$eid]);
 			unset($this->entities[$eid]->level->entityList[$eid]);
 			unset($this->entities[$eid]);
-			$this->server->query("DELETE FROM entities WHERE EID = " . $eid . ";");
 		}
-	}
-	
-	public function updateRadius(Position $center, $radius = 15, $class = false){
-		$this->server->query("UPDATE entities SET hasUpdate = 1 WHERE level = '" . $center->level->getName() . "' " . ($class !== false ? "AND class = $class " : "") . "AND abs(x - {$center->x}) <= $radius AND abs(y - {$center->y}) <= $radius AND abs(z - {$center->z}) <= $radius;");
 	}
 	
 	public function getRadius(Position $center, $radius = 15, $class = false){
-		$entities = [];
-		$l = $this->server->query("SELECT EID FROM entities WHERE level = '" . $center->level->getName() . "' " . ($class !== false ? "AND class = $class " : "") . "AND abs(x - {$center->x}) <= $radius AND abs(y - {$center->y}) <= $radius AND abs(z - {$center->z}) <= $radius;");
-		if($l !== false and $l !== true){
-			while(($e = $l->fetchArray(SQLITE3_ASSOC)) !== false){
-				$e = $this->get($e["EID"]);
-				if($e instanceof Entity){
-					$entities[$e->eid] = $e;
+		$minChunkX = ((int)($center->x - $radius)) >> 4;
+		$minChunkZ = ((int)($center->z - $radius)) >> 4;
+		$maxChunkX = ((int)($center->x + $radius)) >> 4;
+		$maxChunkZ = ((int)($center->z + $radius)) >> 4;
+		$ents = [];
+		//TODO also index by chunkY?
+		for($chunkX = $minChunkX; $chunkX <= $maxChunkX; ++$chunkX){
+			for($chunkZ = $minChunkZ; $chunkZ <= $maxChunkZ; ++$chunkZ){
+				$ind = "$chunkX $chunkZ";
+				foreach($center->level->entityListPositioned[$ind] ?? [] as $ind2 => $entid){
+					if(isset($this->entities[$entid]) && $this->entities[$entid] instanceof Entity && ($class === false || $this->entities[$entid]->class == $class)){
+						$ents[$entid] = $this->entities[$entid];
+					}elseif(!isset($this->entities[$entid])){
+						ConsoleAPI::debug("Removing entity from level array at index $ind/$ind2: $entid");
+						unset($center->level->entityListPositioned[$ind][$ind2]);
+					}
 				}
 			}
 		}
-		return $entities;
+		return $ents;
 	}
 	
 	public function heal($eid, $heal, $cause){
@@ -236,25 +248,27 @@ class EntityAPI{
 		$e->setHealth($e->getHealth() - $attack, $cause, $force);
 	}
 	
-	public function dropRawPos(Position $pos, $item, $speedX, $speedY, $speedZ){
+	public function dropRawPos(Level $level, $x, $y, $z, $item, $speedX, $speedY, $speedZ){
 		if($item->getID() === AIR or $item->count <= 0){
 			return;
 		}
 		$data = [
-			"x" => $pos->x,
-			"y" => $pos->y,
-			"z" => $pos->z,
-			"level" => $pos->level,
+			"x" => $x,
+			"y" => $y,
+			"z" => $z,
+			"level" => $level,
 			"speedX" => $speedX,
 			"speedY" => $speedY,
 			"speedZ" => $speedZ,
 			"item" => $item,
+			"itemID" => $item->getID()
 		];
+		
 		if($this->server->api->handle("item.drop", $data) !== false){
 			for($count = $item->count; $count > 0;){
 				$item->count = min($item->getMaxStackSize(), $count);
 				$count -= $item->count;
-				$e = $this->add($pos->level, ENTITY_ITEM, $item->getID(), $data);
+				$e = $this->add($level, ENTITY_ITEM, ENTITY_ITEM_TYPE, $data);
 				$this->spawnToAll($e);
 				$this->server->api->handle("entity.motion", $e);
 			}
@@ -274,12 +288,13 @@ class EntityAPI{
 			"speedY" => 0.2,
 			"speedZ" => lcg_value() * 0.2 - 0.1,
 			"item" => $item,
+			"itemID" => $item->getID()
 		];
 		if($this->server->api->handle("item.drop", $data) !== false){
 			for($count = $item->count; $count > 0;){
 				$item->count = min($item->getMaxStackSize(), $count);
 				$count -= $item->count;
-				$e = $this->add($pos->level, ENTITY_ITEM, $item->getID(), $data);
+				$e = $this->add($pos->level, ENTITY_ITEM, ENTITY_ITEM_TYPE, $data);
 				$this->spawnToAll($e);
 				$this->server->api->handle("entity.motion", $e);
 			}
@@ -287,7 +302,7 @@ class EntityAPI{
 	}
 	
 	public function spawnAll(Player $player){
-		foreach($this->getAll($player->level) as $e){
+		foreach($player->level->entityList as $e){
 			if($e->class !== ENTITY_PLAYER){
 				$e->spawn($player);
 			}
@@ -299,5 +314,12 @@ class EntityAPI{
 			return $level->entityList;
 		}
 		return $this->entities;
+	}
+	
+	/**
+	 * @deprecated this function doesnt do anything
+	 */
+	public function updateRadius(Position $center, $radius = 15, $class = false){
+		
 	}
 }

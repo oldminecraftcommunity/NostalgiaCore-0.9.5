@@ -15,6 +15,10 @@ class TransparentBlock extends GenericBlock{
 		$this->isReplaceable = false;
 		$this->isPlaceable = true;		
 		$this->isSolid = true;
-		$this->boundingBox->setBounds($this->x, $this->y, $this->z, $this->x + 1, $this->y + 1.2, $this->z + 1);
+		$this->boundingBox->setBounds($this->x, $this->y, $this->z, $this->x + 1, $this->y + 1, $this->z + 1);
+	}
+	
+	public static function getCollisionBoundingBoxes(Level $level, $x, $y, $z, Entity $entity){
+		return [];
 	}
 }

@@ -3,20 +3,25 @@
 class Sheep extends Animal{
 	public $color;
 	const TYPE = MOB_SHEEP;
+	
 	function __construct(Level $level, $eid, $class, $type = 0, $data = []){
-		$this->setSize($this->isBaby() ? 0.45 : 0.9, $this->isBaby() ? 0.675 : 1.3);
+		$this->setSize(0.9, 1.3);
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"] : 8, "generic");
 		$this->setName("Sheep");
 		$this->data["Sheared"] = isset($this->data["Sheared"]) ? $this->data["Sheared"] : 0;
 		$this->data["Color"] = isset($this->data["Color"]) ? $this->data["Color"] : $this->sheepColor();
 		$this->setSpeed(0.25);
-		$this->update();
-		if($this->isSheared() and Entity::$updateOnTick){ //if ai enabled
-			$this->server->schedule(mt_rand(60, 400), [$this, "eatGrass"], null, true); //unknown time
-		}elseif($this->isBaby() and Entity::$updateOnTick){
-			$this->server->schedule(mt_rand(400, 1000), [$this, "eatGrass"], null, true); //unknown time
-		}
+		
+		$this->ai->addTask(new TaskRandomWalk(1.0));
+		$this->ai->addTask(new TaskLookAtPlayer(6));
+		$this->ai->addTask(new TaskPanic(1.5));
+		$this->ai->addTask(new TaskEatTileGoal());
+		$this->ai->addTask(new TaskLookAround());
+		$this->ai->addTask(new TaskSwimming());
+		$this->ai->addTask(new TaskTempt(1.0));
+		$this->ai->addTask(new TaskMate(1.0));
+		$this->ai->addTask(new TaskFollowParent(1.0));
 	}
 	
 	public function createSaveData(){
@@ -27,17 +32,12 @@ class Sheep extends Animal{
 	}
 	
 	public function eatGrass(){
-		$downBlock = $this->level->getBlock(new Vector3($this->x, $this->y-1, $this->z));
-		if($downBlock->getID() !== GRASS){
-			//console("eww i don't wanna eat this $downBlock");
-			return false;
+		$this->setSheared(0);
+		if($this->isBaby()){
+			$age = $this->getAge() + 1200;
+			if($age > 0) $age = 0; //TODO simplify
+			$this->setAge($age);
 		}
-		$pk = new EntityEventPacket;
-		$pk->eid = $this->eid;
-		$pk->event = EntityEventPacket::ENTITY_ANIM_10;
-		$this->server->api->player->broadcastPacket($this->level->players, $pk);
-		$this->server->schedule(38, [$this, "setSheared"], false);
-		$this->level->setBlock(new Position($this->x, $this->y-1, $this->z, $this->level), new DirtBlock());
 	}
 	
 	public function setSheared($v = null){
@@ -74,11 +74,13 @@ class Sheep extends Animal{
 		if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
 			$slot = $e->player->getHeldItem();
 			if($slot->getID() === SHEARS){
-				if(!$this->isSheared()){
+				if(!$this->isSheared() && !$this->isBaby()){
 					if($e->player->gamemode != 1) $slot->useOn($this);
 					$this->setSheared(1);
-					$this->server->api->entity->drop($this, BlockAPI::getItem(WOOL, $this->getColor(), mt_rand(1, 3)));
-					//$this->server->schedule(20, [$this, "eatGrass"]);
+					$speedX = (lcg_value() * 0.2 - 0.1) + (lcg_value() - lcg_value()) * 0.1;
+					$speedZ = (lcg_value() * 0.2 - 0.1) + (lcg_value() - lcg_value()) * 0.1;
+					$speedY =  0.2 + (lcg_value()) * 0.05;
+					$this->server->api->entity->dropRawPos($this->level, $this->x, $this->y + 1, $this->z, BlockAPI::getItem(WOOL, $this->getColor(), mt_rand(1, 3)), $speedX, $speedY, $speedZ);
 					if($slot->getMetadata() >= $slot->getMaxDurability()){
 						$e->player->removeItem($slot->getID(), $slot->getMetadata(), $slot->count, true);
 					}else{
@@ -123,6 +125,6 @@ class Sheep extends Animal{
 		if(mt_rand(0, 500)){
 			return 0x0;
 		}
-		return 0x0;
+		return 0x6;
 	}
 }

@@ -35,7 +35,6 @@ class ServerAPI{
 	 */
 	public $entity;
 
-	//TODO: Instead of hard-coding functions, use PHPDoc-compatible methods to load APIs.
 	/**
 	 * @var TimeAPI
 	 */
@@ -56,7 +55,6 @@ class ServerAPI{
 	 * @var PluginAPI
 	 */
 	public $plugin;
-	
 	/**
 	 * @var QueryHandler
 	 */
@@ -105,7 +103,6 @@ class ServerAPI{
 			}
 		}
 
-		$version = new VersionString();
 		console("[INFO] Starting Minecraft PE server version " . FORMAT_AQUA . CURRENT_MINECRAFT_VERSION);
 
 		console("[INFO] Loading properties...");
@@ -122,14 +119,14 @@ class ServerAPI{
 			"spawn-protection" => 16,
 			"view-distance" => 10,
 			"max-players" => 20,
-			"allow-flight" => false,
+			"allow-flight" => true,
 			"spawn-animals" => true,
 			"spawn-mobs" => true,
 			"mobs-amount" => 50,
 			"gamemode" => SURVIVAL,
 			"hardcore" => false,
 			"pvp" => true,
-			"difficulty" => 1,
+			"difficulty" => 2,
 			"generator-settings" => "",
 			"level-name" => "world",
 			"level-seed" => "",
@@ -138,41 +135,33 @@ class ServerAPI{
 			"enable-rcon" => false,
 			"rcon.password" => substr(base64_encode(Utils::getRandomBytes(20, false)), 3, 10),
 			"auto-save" => true,
-			"chunk-send-delay-ticks" => PocketMinecraftServer::$chukSendDelay,
-			"chunk-loading-radius" => PocketMinecraftServer::$chunkLoadingRadius,
+			"enable-mob-ai" => true,
 			"abort-reading-after-N-packets" => PocketMinecraftServer::$PACKET_READING_LIMIT
 		]);
-		Biome::init();
+		Entity::$allowFly = $this->getProperty("allow-flight", true);
+		if(!Entity::$allowFly){
+			ConsoleAPI::warn("Fly checking is enabled! Players may experience issues with kicking while not flying!");
+		}
 		$this->parseProperties();
 		MobSpawner::$MOB_LIMIT = $this->getProperty("mobs-amount", 50);
-		LevelAPI::$defaultLevelType = $this->getProperty("level-type");
+		Entity::$allowedAI = $this->getProperty("enable-mob-ai", true);
 		PocketMinecraftServer::$PACKET_READING_LIMIT = $this->getProperty("abort-reading-after-N-packets", PocketMinecraftServer::$PACKET_READING_LIMIT);
 		//Load advanced properties
 		define("DEBUG", $this->getProperty("debug", 1));
-		define("ADVANCED_CACHE", $this->getProperty("enable-advanced-cache", false));
+		define("ADVANCED_CACHE", false);
 		//define("MAX_CHUNK_RATE", 20 / $this->getProperty("max-chunks-per-second", 8)); //Default rate ~512 kB/s
-		if(ADVANCED_CACHE == true){
-			console("[INFO] Advanced cache enabled");
-		}
 		MobSpawner::$spawnAnimals = $this->getProperty("spawn-animals");
 		MobSpawner::$spawnMobs = $this->getProperty("spawn-mobs");
-		PocketMinecraftServer::$chukSendDelay = $this->getProperty("chunk-send-delay-ticks");
-		PocketMinecraftServer::$chunkLoadingRadius = $this->getProperty("chunk-loading-radius");
-		
-		if(PocketMinecraftServer::$chunkLoadingRadius < 4){
-			ConsoleAPI::warn("Players may not be able to join if chunk loading radius is less than 4!");
-		}
-		
 		if($this->getProperty("upnp-forwarding") == true){
 			console("[INFO] [UPnP] Trying to port forward...");
 			UPnP_PortForward($this->getProperty("server-port"));
 		}
 
-		$this->server = new PocketMinecraftServer($this->getProperty("server-name"), $this->getProperty("gamemode"), ($seed = $this->getProperty("level-seed")) != "" ? (int) $seed : false, $this->getProperty("server-port"), ($ip = $this->getProperty("server-ip")) != "" ? $ip : "0.0.0.0");
+		$this->server = new PocketMinecraftServer($this->getProperty("server-name"), $this->getProperty("gamemode"), Utils::getSeedNumeric($this->getProperty("level-seed")), $this->getProperty("server-port"), ($ip = $this->getProperty("server-ip")) != "" ? $ip : "0.0.0.0");
 		$this->server->api = $this;
 		self::$serverRequest = $this->server;
 		$this->server->send2Discord("[INFO] Starting Minecraft PE server version " . CURRENT_MINECRAFT_VERSION);
-		console("[INFO] This server is running NostalgiaCore version " . ($version->isDev() ? FORMAT_YELLOW : "") . MAJOR_VERSION . FORMAT_RESET . " \"" . CODENAME . "\" (MCPE: " . CURRENT_MINECRAFT_VERSION . ") (API " . CURRENT_API_VERSION . ") (PHP " . PHP_VERSION . ")", true, true, 0);
+		console("[INFO] This server is running NostalgiaCore version " . MAJOR_VERSION . FORMAT_RESET . " \"" . CODENAME . "\" (MCPE: " . CURRENT_MINECRAFT_VERSION . ") (API " . CURRENT_API_VERSION . ") (PHP " . PHP_VERSION . ")", true, true, 0);
 		console("[INFO] NostalgiaCore is distributed under the LGPL License", true, true, 0);
 
 		$this->loadProperties();

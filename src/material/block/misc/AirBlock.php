@@ -1,6 +1,8 @@
 <?php
 
 class AirBlock extends TransparentBlock{
+	public static $blockID;
+	
 	public function __construct(){
 		parent::__construct(AIR, 0, "Air");
 		$this->isActivable = false;

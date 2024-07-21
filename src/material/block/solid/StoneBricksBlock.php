@@ -1,6 +1,7 @@
 <?php
 
 class StoneBricksBlock extends SolidBlock{
+	public static $blockID;
 	public function __construct($meta = 0){
 		parent::__construct(STONE_BRICKS, $meta, "Stone Bricks");
 		$names = array(

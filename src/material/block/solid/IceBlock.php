@@ -1,16 +1,23 @@
 <?php
 
 class IceBlock extends TransparentBlock{
+	public static $blockID;
 	public function __construct(){
 		parent::__construct(ICE, 0, "Ice");
 		$this->hardness = 2.5;
 		$this->slipperiness = 0.98;
 	}
+	
+	public static function getCollisionBoundingBoxes(Level $level, $x, $y, $z, Entity $entity){
+		return [new AxisAlignedBB($x, $y, $z, $x + 1, $y + 1, $z + 1)];
+	}
+	
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$ret = $this->level->setBlock($this, $this, true, false, true);
 		$this->level->scheduleBlockUpdate(new Position($this, 0, 0, $this->level), Utils::getRandomUpdateTicks(), BLOCK_UPDATE_RANDOM);
 		return $ret;
 	}
+	
 	public function onBreak(Item $item, Player $player){
 		if(($player->gamemode & 0x01) === 0){
 			$this->level->setBlock($this, new WaterBlock(), true, false, true);
@@ -20,11 +27,7 @@ class IceBlock extends TransparentBlock{
 		}
 		return true;
 	}
-	/*
-		Scan for blocks which can emit light
-		args: offsetX: int, offsetY: int, offsetZ: int
-		do not set offsets more than 15 : no lighting sources are giving so much light
-	*/
+	
 	private function scanForNearbyLightSources($offsetX, $offsetY, $offsetZ){ 
 		for($x = -$offsetX; $x <= $offsetX; ++$x){ //i hope it is possible to optimize it
 			for($z = -$offsetZ; $z <= $offsetZ; ++$z){
@@ -32,7 +35,7 @@ class IceBlock extends TransparentBlock{
 					$pX = $this->x+$x;
 					$pY = $this->y+$y;
 					$pZ = $this->z+$z;
-					$block = $this->level->getBlock(new Vector3($pX, $pY, $pZ));
+					$block = $this->level->getBlock(new Vector3($pX, $pY, $pZ)); //D= slow what was u thinking of gameherobrine from 2022
 					if($block instanceof LightingBlock){ //idk is it possible to make it better
 						return $block;
 					}
@@ -40,8 +43,8 @@ class IceBlock extends TransparentBlock{
 			}	
 		}
 	}
-	public function onUpdate($type){ /*Taken from https://github.com/PocketMine/PocketMine-MP/issues/3249*/
-		if($type === BLOCK_UPDATE_RANDOM){
+	//public static function onUpdate(Level $level, $x, $y, $z, $type){ /*Taken from https://github.com/PocketMine/PocketMine-MP/issues/3249*/
+		/*if($type === BLOCK_UPDATE_RANDOM){
 			$light = $this->scanForNearbyLightSources(3,3,3);
 			if(LightUtils::getLightValueFromNearbySource($light,$this) > 12){
 				$this->level->setBlock($this, new WaterBlock(), true);
@@ -49,8 +52,8 @@ class IceBlock extends TransparentBlock{
 			}
 			return BLOCK_UPDATE_RANDOM;
 		}
-		return false;
-	}
+		return false;*/ //TODO ice melting(after light?)
+	//}
 	public function getBreakTime(Item $item, Player $player){
 		if(($player->gamemode & 0x01) === 0x01){
 			return 0.20;

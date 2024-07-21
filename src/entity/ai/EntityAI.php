@@ -24,6 +24,12 @@ class EntityAI
 		$this->mobController = new MobController($entity);
 	}
 	
+	
+	public function canSee(Entity $entity){
+		//TODO caches
+		return $this->entity->canSee($entity);
+	}
+	
 	/**
 	 * Add a task for entity
 	 * @param TaskBase $task
@@ -49,14 +55,12 @@ class EntityAI
 	}
 	
 	public function isStarted($id){
-		$task = @$this->getTask($id);
+		$task = $this->getTask($id);
 		return $task instanceof TaskBase && $task->isStarted;
 	}
 
 	public function updateTasks(){
-		if(!isset($this->entity) or !($this->entity instanceof Entity)){
-			return;
-		}
+		if(!isset($this->entity) || !($this->entity instanceof Entity)) return;
 		foreach($this->tasks as $t){
 			if(!$t->isStarted && $t->canBeExecuted($this)){
 				$t->isStarted = true;

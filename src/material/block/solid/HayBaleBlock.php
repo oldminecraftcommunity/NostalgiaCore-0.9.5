@@ -1,6 +1,7 @@
 <?php
 
 class HayBaleBlock extends SolidBlock{
+	public static $blockID;
 	public function __construct($meta = 0){
 		parent::__construct(HAY_BALE, $meta, "Hay Bale");
 		$this->hardness = 10;

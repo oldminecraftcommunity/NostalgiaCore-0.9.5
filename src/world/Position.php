@@ -15,7 +15,12 @@ class Position extends Vector3{
 
 		$this->level = $level;
 	}
-
+	public function setXYZLevel($x, $y, $z, Level $level){
+		$this->x = $x;
+		$this->y = $y;
+		$this->z = $z;
+		$this->level = $level;
+	}
 	public function getSide($side, $step = 1){
 		return new Position(parent::getSide($side, $step), 0, 0, $this->level);
 	}

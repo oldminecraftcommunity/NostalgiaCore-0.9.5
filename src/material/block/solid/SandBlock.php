@@ -1,13 +1,9 @@
 <?php
 
 class SandBlock extends FallableBlock{
-	public function __construct($meta = 0){
-		parent::__construct(SAND, $meta, "Sand");
-		$names = [
-			0 => "Sand",
-			1 => "Red Sand"
-		];
-		$this->name = $names[$this->meta & 0x01];
+	public static $blockID;
+	public function __construct(){
+		parent::__construct(SAND, 0, "Sand");
 		$this->hardness = 2.5;
 	}
 	

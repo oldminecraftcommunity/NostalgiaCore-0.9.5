@@ -1,20 +1,21 @@
 <?php
 
 class DeadBushBlock extends FlowableBlock{
+	public static $blockID;
 	public function __construct(){
 		parent::__construct(DEAD_BUSH, 0, "Dead Bush");
 		//$this->isReplaceable = true;
 		$this->hardness = 0;
 	}
-
-	public function onUpdate($type){
-		if($type === BLOCK_UPDATE_NORMAL){
-			if($this->getSide(0)->isTransparent === true){ //Replace with common break method
-				$this->level->setBlock($this, new AirBlock(), false, false, true);
-				return BLOCK_UPDATE_NORMAL;
-			}
+	
+	public static function getAABB(Level $level, $x, $y, $z){
+		return null;
+	}
+	
+	public static function neighborChanged(Level $level, $x, $y, $z, $nX, $nY, $nZ, $oldID){
+		if(StaticBlock::getIsTransparent($level->level->getBlockID($x, $y - 1, $z))){ //Replace with common break method
+			$level->fastSetBlockUpdate($x, $y, $z, 0, 0);
 		}
-		return false;
 	}
 	
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
@@ -26,11 +27,13 @@ class DeadBushBlock extends FlowableBlock{
 		return false;
 	}
 	
-		public function getDrops(Item $item, Player $player){
-			if($item->isShears()){
-				return array(
-				array(DEAD_BUSH, 0, 1),
-			);
-			}
+	public function getDrops(Item $item, Player $player){
+		if($item->isShears()){
+			return [
+				[DEAD_BUSH, 0, 1],
+			];
 		}
+			
+		return [];
+	}
 }

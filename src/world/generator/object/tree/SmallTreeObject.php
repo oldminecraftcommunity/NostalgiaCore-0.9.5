@@ -2,22 +2,19 @@
 
 /***REM_START***/
 require_once("TreeObject.php");
-/***REM_END***/
 
+/***REM_END***/
 class SmallTreeObject extends TreeObject{
 
 private static $leavesHeight = 4;
 	private static $leafRadii = [1, 1.41, 2.83, 2.24];
-	public $type = 0;
+		public $type = 0; // All trees appear to be 4 tall
 	public $treeHeight = 7;
 	private $trunkHeight = 5;
 	private $addLeavesVines = false;
 	private $addLogVines = false;
 	private $addCocoaPlants = false;
-	public function __construct($treeType = 0){
-		parent::__construct();
-		$this->type = $treeType;
-	}
+
 	public function canPlaceObject(Level $level, Vector3 $pos, Random $random){
 		$radiusToCheck = 0;
 		for($yy = 0; $yy < $this->trunkHeight + 3; ++$yy){
@@ -48,12 +45,12 @@ private static $leavesHeight = 4;
 				$xOff = abs($xx - $x);
 				for($zz = $z - $mid; $zz <= $z + $mid; ++$zz){
 					$zOff = abs($zz - $z);
-					if($xOff === $mid and $zOff === $mid and ($yOff === 0 or mt_rand(0, 1) === 0)){
+					if($xOff === $mid and $zOff === $mid and ($yOff === 0 or mt_rand(0, 2) === 0)){
 						continue;
 					}
-					$b = $level->getBlock(new Vector3($xx, $yy, $zz));
-					if(($b instanceof LeavesBlock) || $b->getID() == 0){
-						$level->setBlockRaw($b, new LeavesBlock($this->type));
+					if(!$level->getBlock(new Vector3($xx, $yy, $zz))->isSolid){
+						$leafpos = new Vector3($xx, $yy, $zz);
+						$level->setBlockRaw($leafpos, new LeavesBlock($this->type));
 					}
 				}
 			}

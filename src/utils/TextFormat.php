@@ -41,93 +41,93 @@ class TextFormat{
 		$tokens = 0;
 		foreach($string as $token){
 			switch($token){
-				case TextFormat::BOLD:
+				case FORMAT_BOLD:
 					$newString .= "<span style=font-weight:bold>";
 					++$tokens;
 					break;
-				case TextFormat::OBFUSCATED:
+				case FORMAT_OBFUSCATED:
 					//$newString .= "<span style=text-decoration:line-through>";
 					//++$tokens;
 					break;
-				case TextFormat::ITALIC:
+				case FORMAT_ITALIC:
 					$newString .= "<span style=font-style:italic>";
 					++$tokens;
 					break;
-				case TextFormat::UNDERLINE:
+				case FORMAT_UNDERLINE:
 					$newString .= "<span style=text-decoration:underline>";
 					++$tokens;
 					break;
-				case TextFormat::STRIKETHROUGH:
+				case FORMAT_STRIKETHROUGH:
 					$newString .= "<span style=text-decoration:line-through>";
 					++$tokens;
 					break;
-				case TextFormat::RESET:
+				case FORMAT_RESET:
 					$newString .= str_repeat("</span>", $tokens);
 					$tokens = 0;
 					break;
 
 				//Colors
-				case TextFormat::BLACK:
+				case FORMAT_BLACK:
 					$newString .= "<span style=color:#000>";
 					++$tokens;
 					break;
-				case TextFormat::DARK_BLUE:
+				case FORMAT_DARK_BLUE:
 					$newString .= "<span style=color:#00A>";
 					++$tokens;
 					break;
-				case TextFormat::DARK_GREEN:
+				case FORMAT_DARK_GREEN:
 					$newString .= "<span style=color:#0A0>";
 					++$tokens;
 					break;
-				case TextFormat::DARK_AQUA:
+				case FORMAT_DARK_AQUA:
 					$newString .= "<span style=color:#0AA>";
 					++$tokens;
 					break;
-				case TextFormat::DARK_RED:
+				case FORMAT_DARK_RED:
 					$newString .= "<span style=color:#A00>";
 					++$tokens;
 					break;
-				case TextFormat::DARK_PURPLE:
+				case FORMAT_DARK_PURPLE:
 					$newString .= "<span style=color:#A0A>";
 					++$tokens;
 					break;
-				case TextFormat::GOLD:
+				case FORMAT_GOLD:
 					$newString .= "<span style=color:#FA0>";
 					++$tokens;
 					break;
-				case TextFormat::GRAY:
+				case FORMAT_GRAY:
 					$newString .= "<span style=color:#AAA>";
 					++$tokens;
 					break;
-				case TextFormat::DARK_GRAY:
+				case FORMAT_DARK_GRAY:
 					$newString .= "<span style=color:#555>";
 					++$tokens;
 					break;
-				case TextFormat::BLUE:
+				case FORMAT_BLUE:
 					$newString .= "<span style=color:#55F>";
 					++$tokens;
 					break;
-				case TextFormat::GREEN:
+				case FORMAT_GREEN:
 					$newString .= "<span style=color:#5F5>";
 					++$tokens;
 					break;
-				case TextFormat::AQUA:
+				case FORMAT_AQUA:
 					$newString .= "<span style=color:#5FF>";
 					++$tokens;
 					break;
-				case TextFormat::RED:
+				case FORMAT_RED:
 					$newString .= "<span style=color:#F55>";
 					++$tokens;
 					break;
-				case TextFormat::LIGHT_PURPLE:
+				case FORMAT_LIGHT_PURPLE:
 					$newString .= "<span style=color:#F5F>";
 					++$tokens;
 					break;
-				case TextFormat::YELLOW:
+				case FORMAT_YELLOW:
 					$newString .= "<span style=color:#FF5>";
 					++$tokens;
 					break;
-				case TextFormat::WHITE:
+				case FORMAT_WHITE:
 					$newString .= "<span style=color:#FFF>";
 					++$tokens;
 					break;

@@ -22,7 +22,7 @@ class RailLogic
 		$this->updateConnections($meta);
 	}
 	public function getRail($v){
-		if(($b = $this->level->getBlock($v)) instanceof RailBaseBlock){
+		if(($b = $this->level->getBlock($v)) instanceof RailBaseBlock){ //TODO git rid of getBlock
 			return new RailLogic($b);
 		}elseif(($b = $this->level->getBlockWithoutVector($v->x, $v->y + 1, $v->z)) instanceof RailBaseBlock){
 			return new RailLogic($b);
@@ -47,7 +47,7 @@ class RailLogic
 			if($logic != null && $this->connectsTo($logic)){
 				$this->railPositions[$ind] = new Vector3($logic->x, $logic->y, $logic->z);
 			}else{
-				unset($this->railPositions[$ind--]); //TODO check?
+				unset($this->railPositions[$ind--]);
 				$this->railPositions = array_values($this->railPositions); //reindexing
 			}
 		}
@@ -63,7 +63,6 @@ class RailLogic
 	}
 	
 	public function canConnectTo(RailLogic $rail){
-		//return this.isRailChunkPositionCorrect(par1BlockBaseRailLogic) ? true : (this.railChunkPosition.size() == 2 ? false : (this.railChunkPosition.isEmpty() ? true : true));
 		return $this->connectsTo($rail) ? true : (count($this->railPositions) == 2 ? false : (empty($this->railPositions) ? true : true));
 	}
 	
@@ -117,7 +116,7 @@ class RailLogic
 			}
 		}
 		
-		
+
 		if($state === 0){
 			if(RailBaseBlock::isRailBlock($this->level, $this->x, $this->y + 1, $this->z - 1)) $state = 4;
 			if(RailBaseBlock::isRailBlock($this->level, $this->x, $this->y + 1, $this->z + 1)) $state = 5;
@@ -147,7 +146,7 @@ class RailLogic
 					
 				}
 			}
-			
+		
 		}
 		
 	}
@@ -177,7 +176,7 @@ class RailLogic
 			if($hasZneg && $hasXneg && !($hasZpos && $hasXpos)) $state = 8;
 			if($hasZneg && $hasXpos && !($hasZpos && $hasXneg)) $state = 9;
 		}
-		
+
 		if($state == 0){
 			if(RailBaseBlock::isRailBlock($this->level, $this->x, $this->y + 1, $this->z - 1)) $state = 4;
 			if(RailBaseBlock::isRailBlock($this->level, $this->x, $this->y + 1, $this->z + 1)) $state = 5;
@@ -246,3 +245,4 @@ class RailLogic
 		}
 	}
 }
+

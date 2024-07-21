@@ -24,9 +24,15 @@ class ExplodePacket extends RakNetDataPacket{
 		$this->putInt(@count($this->records));
 		if(@count($this->records) > 0){
 			foreach($this->records as $record){
-				$this->putByte($record->x);
-				$this->putByte($record->y);
-				$this->putByte($record->z);
+				if($record instanceof Vector3){
+					$this->putByte($record->x);
+					$this->putByte($record->y);
+					$this->putByte($record->z);
+				}else{
+					$this->putByte($record >> 16);
+					$this->putByte($record & 0xff);
+					$this->putByte($record >> 8 & 0xff);
+				}
 			}
 		}
 	}

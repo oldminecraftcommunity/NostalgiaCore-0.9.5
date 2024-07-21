@@ -7,6 +7,15 @@ abstract class RailBaseBlock extends FlowableBlock //TODO move some methods here
 		$id = $l->level->getBlockID($x, $y, $z);
 		return $id === POWERED_RAIL || $id === RAIL;
 	}
+	
+	public static function isRailID($id){
+		return $id == POWERED_RAIL || $id == RAIL;
+	}
+	
+	public static function getAABB(Level $level, $x, $y, $z){
+		return null;
+	}
+	
 	public function place(Item $item, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$down = $this->getSide(0);
 		if($down->getID() !== AIR and $down instanceof SolidBlock){
@@ -21,36 +30,23 @@ abstract class RailBaseBlock extends FlowableBlock //TODO move some methods here
 	
 	public function updateState(){}
 	
-	public function onUpdate($type){
-		if($type === BLOCK_UPDATE_NORMAL){
-			
-			$meta = $this->getMetadata();
-			if($this->id === POWERED_RAIL){
-				$meta &= 7;
-			}
-			$x = $this->x;
-			$y = $this->y;
-			$z = $this->z;
-			if(
-				($this->level->level->getBlockID($x, $y - 1, $z) == 0) ||
-				(($meta == 2) && $this->level->level->getBlockID($x + 1, $y, $z) == 0) ||
-				(($meta == 3) && $this->level->level->getBlockID($x - 1, $y, $z) == 0) ||
-				(($meta == 4) && $this->level->level->getBlockID($x, $y, $z - 1) == 0) ||
-				(($meta == 5) && $this->level->level->getBlockID($x, $y, $z + 1) == 0)
-				){
-					$this->level->setBlock($this, new AirBlock(), true, false, true);
-					ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem($this->id, $this->meta, 1));
-			}else{
-				$this->updateState();
-			}
-			
-			
-			//if($this->getSide(0)->getID() === AIR){//Replace with common break method
-			//	ServerAPI::request()->api->entity->drop($this, BlockAPI::getItem($this->id, $this->meta, 1));
-			//	$this->level->setBlock($this, new AirBlock(), true, false, true);
-			//}
-			
+	public static function neighborChanged(Level $level, $x, $y, $z, $nX, $nY, $nZ, $oldID){
+		[$id, $meta] = $level->level->getBlock($x, $y, $z);
+		if($id === POWERED_RAIL){
+			$meta &= 7;
 		}
-		
+		if(
+			($level->level->getBlockID($x, $y - 1, $z) === 0) || 
+			(($meta == 2) && $level->level->getBlockID($x + 1, $y, $z) === 0) ||
+			(($meta == 3) && $level->level->getBlockID($x - 1, $y, $z) === 0) ||
+			(($meta == 4) && $level->level->getBlockID($x, $y, $z - 1) === 0) ||
+			(($meta == 5) && $level->level->getBlockID($x, $y, $z + 1) === 0)
+		){
+			$level->fastSetBlockUpdate($x, $y, $z, 0, 0, true);
+			ServerAPI::request()->api->entity->drop(new Position($x, $y, $z, $level), BlockAPI::getItem($id, $meta, 1));
+		}else{
+			//TODO fix me pls $this->updateState();			
+		}
 	}
 }
+

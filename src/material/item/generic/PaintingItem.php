@@ -68,7 +68,7 @@ class PaintingItem extends Item{
 					$validMotives[] = $motive;
 				}
 			}
-			$motive = $validMotives[array_rand($validMotives)]; //TODO simplify if possible
+			$motive = $validMotives[array_rand($validMotives)];
 			$data = array(
 				"x" => $target->x,
 				"y" => $target->y,

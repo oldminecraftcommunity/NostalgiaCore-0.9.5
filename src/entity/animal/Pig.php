@@ -3,13 +3,21 @@ class Pig extends Animal implements Rideable{
 	const TYPE = MOB_PIG;
 	
 	public function __construct(Level $level, $eid, $class, $type = 0, $data = []){
-		$this->setSize($this->isBaby() ? 0.45 : 0.9, $this->isBaby() ? 0.45 : 0.9);
+		$this->setSize(0.9, 0.9);
 		parent::__construct($level, $eid, $class, $type, $data);
 		$this->setHealth(isset($this->data["Health"]) ? $this->data["Health"]:10, "generic");
 		$this->server = ServerAPI::request();
 		$this->setName("Pig");
 		$this->setSpeed(0.25);
-		$this->update();
+		
+		$this->ai->addTask(new TaskRandomWalk(1.0));
+		$this->ai->addTask(new TaskLookAtPlayer(6));
+		$this->ai->addTask(new TaskPanic(1.5));
+		$this->ai->addTask(new TaskLookAround());
+		$this->ai->addTask(new TaskSwimming());
+		$this->ai->addTask(new TaskTempt(1.0));
+		$this->ai->addTask(new TaskMate(1.0));
+		$this->ai->addTask(new TaskFollowParent(1.1));
 	}
 	/**
 	 * @return boolean
@@ -26,25 +34,32 @@ class Pig extends Animal implements Rideable{
 	}
 	
 	public function canRide($e){
-		return $this->isSaddled() && !($this->linkedEntity instanceof Entity);
+		return $this->isSaddled() && $this->linkedEntity == 0 && $e->linkedEntity == 0;
 	}
-
+	
+	public function updateEntityMovement(){
+		/*if($this->linkedEntity != 0){
+			$e = $this->level->entityList[$this->linkedEntity] ?? false;
+			if($e instanceof Entity){
+				$this->setAIMoveSpeed($this->getSpeed());
+				$this->moveStrafing = $e->player->moveStrafe;
+				$this->moveForward = $e->player->moveForward;
+				$this->yaw = $e->headYaw;
+			}
+		}*/
+		
+		parent::updateEntityMovement();
+	}
+	
 	public function interactWith(Entity $e, $action)
 	{
 		if($e->isPlayer() && $action === InteractPacket::ACTION_HOLD){
 			$slot = $e->player->getHeldItem();
 			if($this->canRide($e)){
-				$this->linkedEntity = $e;
-				$e->isRiding = true;
-				$this->linkEntity($e, SetEntityLinkPacket::TYPE_RIDE);
+				$e->setRiding($this);
 				return true;
 			}
-			if($e->isRiding && $this->linkedEntity->eid = $e->eid){
-				$this->linkEntity($e, SetEntityLinkPacket::TYPE_REMOVE);
-				$e->isRiding = false;
-				$this->linkedEntity = 0;
-				return true;
-			}
+			
 			if($slot->getID() === SADDLE){
 				if(!$this->isSaddled()){
 					$e->player->removeItem($slot->getID(), 0, 1);

@@ -1,7 +1,7 @@
 <?php
 
 class TallGrassObject{
-	//checking biome
+
 	public static function growGrass(Level $level, Vector3 $pos, Random $random, $count = 15, $radius = 10){
 		$arr = [
 			BlockAPI::get(DANDELION, 0),
@@ -15,9 +15,12 @@ class TallGrassObject{
 		for($c = 0; $c < $count; ++$c){
 			$x = $random->nextRange($pos->x - $radius, $pos->x + $radius);
 			$z = $random->nextRange($pos->z - $radius, $pos->z + $radius);
-			if($level->level->getBlockID($x, $pos->y + 1, $z) === AIR and $level->level->getBlockID($x, $pos->y, $z) === GRASS){
-				$t = $arr[$random->nextRange(0, $arrC)];
-				$level->setBlockRaw(new Vector3($x, $pos->y + 1, $z), $t);
+			for($y = $pos->y - 2; $y <= $pos->y + 2; ++$y){
+				if($level->level->getBlockID($x, $y + 1, $z) === AIR and $level->level->getBlockID($x, $y, $z) === GRASS){
+					$t = $arr[$random->nextRange(0, $arrC)];
+					$level->setBlockRaw(new Vector3($x, $y + 1, $z), $t);
+					break;
+				}
 			}
 		}
 	}

@@ -10,25 +10,115 @@ class DoorBlock extends TransparentBlock{
 		parent::__construct($id, $meta, $name);
 		$this->isSolid = false;
 	}
-
-	/**
-	 * @param int $type
-	 *
-	 * @return bool|int
-	 */
-	 public function onUpdate($type){
-		if($type === BLOCK_UPDATE_NORMAL){
-			if($this->getSide(0)->getID() === AIR){ //Replace with common break method
-				$this->level->setBlock($this, new AirBlock(), false);
-			  		if($this->getID() == 64) ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y, $this->z+0.5, $this->level), BlockAPI::getItem(324, 0, 1));
-			  		elseif($this->getID() == 71) ServerAPI::request()->api->entity->drop(new Position($this->x+0.5, $this->y, $this->z+0.5, $this->level), BlockAPI::getItem(330, 0, 1));
-				if($this->getSide(1) instanceof DoorBlock){
-					$this->level->setBlock($this->getSide(1), new AirBlock(), false);
+	public static function updateShape(Level $level, $x, $y, $z){
+		$id = $level->level->getBlockID($x, $y, $z);
+		StaticBlock::setBlockBounds($id, 0.0, 0.0, 0.0, 1.0, 2.0, 1.0);
+		$fullMeta = self::getCompositeData($level, $x, $y, $z);
+		switch($fullMeta & 3){
+			case 0:
+				if(($fullMeta & 4) != 0){
+					if(($fullMeta & 16) == 0) StaticBlock::setBlockBounds($id, 0, 0, 0, 1, 1, 0.1875);
+					else StaticBlock::setBlockBounds($id, 0, 0, 1 - 0.1875, 1, 1, 1);
+				}else{
+					StaticBlock::setBlockBounds($id, 0, 0, 0, 0.1875, 1, 1);
 				}
-				return BLOCK_UPDATE_NORMAL;
+				break;
+			case 1:
+				if(($fullMeta & 4) != 0){
+					if(($fullMeta & 16) == 0) StaticBlock::setBlockBounds($id, 1 - 0.1875, 0, 0, 1, 1, 1);
+					else StaticBlock::setBlockBounds($id, 0, 0, 0, 0.1875, 1, 1);
+				}else{
+					StaticBlock::setBlockBounds($id, 0, 0, 0, 1, 1, 0.1875);
+				}
+				break;
+			case 2:
+				if(($fullMeta & 4) != 0){
+					if(($fullMeta & 16) == 0) StaticBlock::setBlockBounds($id, 0, 0, 1 - 0.1875, 1, 1, 1);
+					else StaticBlock::setBlockBounds($id, 0, 0, 0, 1, 1, 0.1875);
+				}else{
+					StaticBlock::setBlockBounds($id, 1 - 0.1875, 0, 0, 1, 1, 1);
+				}
+				break;
+			case 3:
+				if(($fullMeta & 4) != 0){
+					if(($fullMeta & 16) == 0) StaticBlock::setBlockBounds($id, 0, 0, 0, 0.1875, 1, 1);
+					else StaticBlock::setBlockBounds($id, 1 - 0.1875, 0, 0, 1, 1, 1);
+				}else{
+					StaticBlock::setBlockBounds($id, 0, 0, 1 - 0.1875, 1, 1, 1);
+				}
+				break;
+		}
+	}
+	public static function getCollisionBoundingBoxes(Level $level, $x, $y, $z, Entity $entity){
+		$aabb = new AxisAlignedBB(0, 0, 0, 1, 2, 1);
+		$fullMeta = self::getCompositeData($level, $x, $y, $z);
+		switch($fullMeta & 3){
+			case 0:
+				if(($fullMeta & 4) != 0){
+					if(($fullMeta & 16) == 0) $aabb->setBounds(0, 0, 0, 1, 1, 0.1875);
+					else $aabb->setBounds(0, 0, 1 - 0.1875, 1, 1, 1);
+				}else{
+					$aabb->setBounds(0, 0, 0, 0.1875, 1, 1);
+				}
+				break;
+			case 1:
+				if(($fullMeta & 4) != 0){
+					if(($fullMeta & 16) == 0) $aabb->setBounds(1 - 0.1875, 0, 0, 1, 1, 1);
+					else $aabb->setBounds(0, 0, 0, 0.1875, 1, 1);
+				}else{
+					$aabb->setBounds(0, 0, 0, 1, 1, 0.1875);
+				}
+				break;
+			case 2:
+				if(($fullMeta & 4) != 0){
+					if(($fullMeta & 16) == 0) $aabb->setBounds(0, 0, 1 - 0.1875, 1, 1, 1);
+					else $aabb->setBounds(0, 0, 0, 1, 1, 0.1875);
+				}else{
+					$aabb->setBounds(1 - 0.1875, 0, 0, 1, 1, 1);
+				}
+				break;
+			case 3:
+				if(($fullMeta & 4) != 0){
+					if(($fullMeta & 16) == 0) $aabb->setBounds(0, 0, 0, 0.1875, 1, 1);
+					else $aabb->setBounds(1 - 0.1875, 0, 0, 1, 1, 1);
+				}else{
+					$aabb->setBounds(0, 0, 1 - 0.1875, 1, 1, 1);
+				}
+				break;
+		}
+		
+		
+		return [$aabb->offset($x, $y, $z)];
+	}
+	
+	public static function getCompositeData(Level $level, $x, $y, $z){
+		$myMeta = $level->level->getBlockDamage($x, $y, $z);
+		
+		if(($myMeta & 8) != 0){
+			$metaLower = $level->level->getBlockDamage($x, $y - 1, $z);
+			$metaUpper = $myMeta;
+		}else{
+			$metaLower = $myMeta;
+			$metaUpper = $level->level->getBlockDamage($x, $y + 1, $z);
+		}
+		
+		return $metaLower & 7 | (($myMeta & 8) != 0 ? 8 : 0) | (($metaUpper & 1 != 0) ? 16 : 0);
+	}
+
+	
+	public static function neighborChanged(Level $level, $x, $y, $z, $nX, $nY, $nZ, $oldID){
+		if($level->level->getBlockID($x, $y - 1, $z) == AIR){ //Replace with common break method
+			$level->fastSetBlockUpdate($x, $y, $z, 0, 0);
+			$id = $level->level->getBlockID($x, $y, $z);
+			
+			if($id == 64) ServerAPI::request()->api->entity->drop(new Position($x+0.5, $y, $z+0.5, $level), BlockAPI::getItem(324, 0, 1));
+			elseif($id == 71) ServerAPI::request()->api->entity->drop(new Position($x+0.5, $y, $z+0.5, $level), BlockAPI::getItem(330, 0, 1));
+				
+			$top = $level->level->getBlockID($x, $y + 1, $z);
+			if($top == IRON_DOOR_BLOCK || $top == DOOR_BLOCK){
+				$level->fastSetBlockUpdate($x, $y + 1, $z, 0, 0);
 			}
 		}
-		return false;
 	}
 
 

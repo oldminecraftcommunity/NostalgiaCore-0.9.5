@@ -1,6 +1,7 @@
 <?php
 
 class BedrockBlock extends SolidBlock{
+	public static $blockID;
 	public function __construct(){
 		parent::__construct(BEDROCK, 0, "Bedrock");
 		$this->breakable = false;
