@@ -169,7 +169,7 @@ class PocketMinecraftServer{
 	public function titleTick(){
 		$time = microtime(true);
 		if(defined("DEBUG") and DEBUG >= 0){
-			echo "\x1b]0;NostalgiaCore " . MAJOR_VERSION . " | Online " . count($this->clients) . "/" . $this->maxClients . " | RAM " . round((memory_get_usage() / 1024) / 1024, 2) . "MB | U " . round(($this->interface->bandwidth[1] / max(1, $time - $this->interface->bandwidth[2])) / 1024, 2) . " D " . round(($this->interface->bandwidth[0] / max(1, $time - $this->interface->bandwidth[2])) / 1024, 2) . " kB/s | TPS " . $this->getTPS() . "\x07";
+			//echo "\x1b]0;NostalgiaCore " . MAJOR_VERSION . " | Online " . count($this->clients) . "/" . $this->maxClients . " | RAM " . round((memory_get_usage() / 1024) / 1024, 2) . "MB | U " . round(($this->interface->bandwidth[1] / max(1, $time - $this->interface->bandwidth[2])) / 1024, 2) . " D " . round(($this->interface->bandwidth[0] / max(1, $time - $this->interface->bandwidth[2])) / 1024, 2) . " kB/s | TPS " . $this->getTPS() . "\x07";
 		}
 
 		$this->interface->bandwidth = [0, 0, $time];
@@ -613,7 +613,13 @@ class PocketMinecraftServer{
 					$return = false;
 				}else{
 					++$actionCount;
-					$return = call_user_func($this->schedule[$cid][0], $this->schedule[$cid][1], $this->schedule[$cid][2]);
+					try{
+						$return = @call_user_func($this->schedule[$cid][0] ?? function(){}, $this->schedule[$cid][1], $this->schedule[$cid][2]); //somehow args can be null
+					}catch(TypeError $e){
+						$m = $e->getMessage()."\nStack trace:\n".$e->getTraceAsString();
+						ConsoleAPI::error($m);
+						$return = false;
+					}
 				}
 
 				if($action["repeat"] == 0 or $return === false){
