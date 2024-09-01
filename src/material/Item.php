@@ -60,7 +60,7 @@ class Item{
 		GOLD_INGOT => "GoldIngotItem",
 		STICK => "StickItem",
 		BOWL => "BowlItem",
-		'STRING' => "StringItem",
+		STRING => "StringItem",
 		FEATHER => "FeatherItem",
 		GUNPOWDER => "GunpowderItem",
 		WHEAT_SEEDS => "WheatSeedsItem",
