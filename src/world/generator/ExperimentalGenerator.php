@@ -175,6 +175,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
 	}
+	
 	public static function getFastNoise3D(NoiseGenerator $noise, $xSize, $ySize, $zSize, $xSamplingRate, $ySamplingRate, $zSamplingRate, $x, $y, $z){
 		$noiseArray = array_fill(0, $xSize + 1, array_fill(0, $zSize + 1, []));
 		

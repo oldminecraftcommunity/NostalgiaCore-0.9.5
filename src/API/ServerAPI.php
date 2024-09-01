@@ -325,7 +325,7 @@ class ServerAPI{
 		}
 
 		if($this->getProperty("enable-query") === true){
-			$this->query = new QueryHandler();
+			//$this->query = new QueryHandler(); this breaks mt gen TODO
 		}
 		CraftingRecipes::init();
 		$this->server->init();

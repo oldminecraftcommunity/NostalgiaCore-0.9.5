@@ -413,7 +413,6 @@ class PocketMinecraftServer{
 	public function init(){
 		register_tick_function([$this, "tick"]);
 		declare(ticks=5000); //Minimum TPS for main thread locks
-
 		$this->loadEvents();
 		register_shutdown_function([$this, "dumpError"]);
 		register_shutdown_function([$this, "close"]);

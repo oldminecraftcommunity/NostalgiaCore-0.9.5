@@ -670,6 +670,7 @@ class PMFLevel extends PMF{
 			$this->loadChunk($X, $Z);
 		}
 		if(strlen($data) !== 16384){
+			console("$X $Z $Y: fail: ".strlen($data));
 			return false;
 		}
 		$index = $this->getIndex($X, $Z);

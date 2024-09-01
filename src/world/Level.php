@@ -424,9 +424,25 @@ class Level{
 		}
 		return $ret;
 	}
+
 	
 	public function onTick(PocketMinecraftServer $server){
 		//$ents = $server->api->entity->getAll($this);
+		if($this->generator instanceof ThreadedLevelGenerator){
+			foreach($this->generator->thread->finished as $k => $chunk){
+				$this->level->initCleanChunk($chunk[0], $chunk[1]);
+				for($y = 0; $y < 8; ++$y) {
+					$this->level->setMiniChunk($chunk[0], $chunk[1], $y, $chunk[2][$y]);
+				}
+				$this->level->setPopulated($chunk[0], $chunk[1], false);
+				foreach($this->players as $player){
+					$player->stopUsingChunk($chunk[0], $chunk[1]);
+				}
+				$this->unloadChunk($chunk[0], $chunk[1], true); //TODO: maybe make mtgen save chunk into file?
+				unset($this->generator->thread->finished[$k]);
+			}
+		}
+		
 		if(!$this->stopTime) $this->time+=2;
 		foreach($this->entityList as $k => $e){
 			if(!($e instanceof Entity)){

@@ -30,6 +30,11 @@ class WorldGenerator{
 	}
 
 	public function generate(){
+		if($this->generator instanceof ThreadedLevelGenerator){
+			ConsoleAPI::warn("Multithreaded generator detected!");
+			$this->generator->requestChunk(0, 0);
+			return;
+		}
 		$this->generator->init($this->level, $this->random);
 		for($Z = 0; $Z < $this->width; ++$Z){
 			for($X = 0; $X < $this->width; ++$X){

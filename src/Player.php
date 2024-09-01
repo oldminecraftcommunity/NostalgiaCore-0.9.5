@@ -543,14 +543,15 @@ class Player{
 		if($c === null or $d === null){
 			return false;
 		}
-
-		unset($this->chunksOrder[$c]);
-		$this->chunksLoaded[$c] = true;
+		
 		$id = explode(":", $c);
 		$X = $id[0];
 		$Z = $id[1];
 		$x = $X << 4;
 		$z = $Z << 4;
+		unset($this->chunksOrder[$c]);
+		$this->chunksLoaded[$c] = true;
+		
 		$this->level->useChunk($X, $Z, $this);
 		$this->chunksLoaded["$X:$Z"] = true;
 		
