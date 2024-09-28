@@ -177,7 +177,9 @@ class Player{
 							$pk = new MoveEntityPacket;
 							$pk->entities = [[$this->entity->eid, -256, 128, -256, 0, 0]];
 							$e->player->dataPacket($pk);
-							$pk->entities[0] = $e->eid;
+							
+							$pk = new MoveEntityPacket;
+							$pk->entities = [[$e->eid, -256, 128, -256, 0, 0]];
 							$this->dataPacket($pk);
 						}else{
 							$pk = new RemoveEntityPacket;
