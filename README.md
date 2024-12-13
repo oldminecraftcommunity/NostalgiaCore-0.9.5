@@ -15,7 +15,7 @@ You should not use it now.
 https://github.com/kotyaralih/NostalgiaCore/releases/
 <h3> PHP binaries download</h3>
 
-* https://github.com/pmmp/PHP-Binaries/releases/tag/php-8.0-latest PHP8 (Use PM4 version)
+* https://github.com/pmmp/PHP-Binaries/releases/tag/pm4-php-8.0-latest PHP8
 * https://github.com/DaisukeDaisuke/AndroidPHP/releases/tag/8.0.28 PHP8 for ARMv8
 <h3> How to use auto-restart?</h3>
 
