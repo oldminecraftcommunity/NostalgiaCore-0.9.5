@@ -16,6 +16,25 @@ class DoubleTallGrass extends FlowableBlock
 		$this->hardness = 0;
 	}
 	
+	public function onBreak(Item $item, Player $player){
+		$x = $this->x;
+		$y = $this->y;
+		$z = $this->z;
+		if($this->meta & 0x8 > 0){ //breaking top
+			$y -= 1;
+		}
+		
+		if($this->level->level->getBlockID($x, $y, $z) == DOUBLE_PLANT){
+			$this->level->fastSetBlockUpdate($x, $y, $z, 0, 0, false);
+		}
+ 		
+		if($this->level->level->getBlockID($x, $y+1, $z) == DOUBLE_PLANT){ //make sure to not break bedrock or something similar
+			$this->level->fastSetBlockUpdate($x, $y+1, $z, 0, 0, false);
+		}
+		
+		return true;
+	}
+
 	public function onUpdate($type){
 		if($type === BLOCK_UPDATE_NORMAL){ //TODO destroy if 2nd block occupied
 			//if($this->meta & 0x8 == 0 && $this->getSide(0)->isTransparent === true){ //Replace with common break method

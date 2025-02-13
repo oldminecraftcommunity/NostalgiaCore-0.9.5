@@ -1612,7 +1612,7 @@ class Player{
 				//$this->lastChunk = [$packet->chunkX, $packet->chunkZ];
 				break;
 			case ProtocolInfo::UPDATE_BLOCK_PACKET:
-			    $this->level->resendBlocksToPlayers[$this->CID]["{$packet->x}.{$packet->y}.{$packet->z}"] = true;
+				$this->level->resendBlocksToPlayers[$this->CID]["{$packet->x}.{$packet->y}.{$packet->z}"] = true;
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
 				if(!($this->entity instanceof Entity)){
