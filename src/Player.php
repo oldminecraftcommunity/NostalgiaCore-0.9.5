@@ -6,7 +6,7 @@ class Player{
 	public $data;
 	/** @var Entity */
 	public $entity = false;
-	
+	public $is0105Client = false;
 	private $reload = true;
 	public $auth = false;
 	public $CID;
@@ -1107,7 +1107,11 @@ class Player{
 							}
 							$this->received[$p->messageIndex] = true;
 						}
-						$p->decode();
+						if($p instanceof UseItemPacket && $this->is0105Client){
+							$p->decode0105();
+						}else{
+							$p->decode();
+						}
 						$this->handleDataPacket($p);
 					}
 				}
@@ -1299,19 +1303,33 @@ class Player{
 					$this->close("server is full!", false);
 					return;
 				}
-				if($packet->protocol1 !== 17 && $packet->protocol1 !== ProtocolInfo::CURRENT_PROTOCOL){
-					if($packet->protocol1 < ProtocolInfo::CURRENT_PROTOCOL){
-						$pk = new LoginStatusPacket;
-						$pk->status = 1;
-						$this->directDataPacket($pk);
-					}else{
-						$pk = new LoginStatusPacket;
-						$pk->status = 2;
-						$this->directDataPacket($pk);
-					}
-					$this->close("Incorrect protocol #" . $packet->protocol1, false);
-					return;
+				
+				if((PocketMinecraftServer::$crossplay0105 || PocketMinecraftServer::$is0105) && $packet->protocol1 == 20) {
+					$this->is0105Client = true;
+					goto next;
 				}
+				if(!PocketMinecraftServer::$is0105 && ($packet->protocol1 === 17 && $packet->protocol1 === ProtocolInfo::CURRENT_PROTOCOL)){
+					$this->is0105Client = false;
+					goto next;
+				}
+				if(PocketMinecraftServer::$crossplay0105 && ($packet->protocol1 === 17 || $packet->protocol1 === ProtocolInfo::CURRENT_PROTOCOL)){
+					
+					goto next;
+				}
+
+				if($packet->protocol1 < ProtocolInfo::CURRENT_PROTOCOL){
+					$pk = new LoginStatusPacket;
+					$pk->status = 1;
+					$this->directDataPacket($pk);
+				}else{
+					$pk = new LoginStatusPacket;
+					$pk->status = 2;
+					$this->directDataPacket($pk);
+				}
+				$this->close("Incorrect protocol #" . $packet->protocol1, false);
+				return;
+				next:
+
 				if(preg_match('#[^a-zA-Z0-9_]#', $this->username) > 0 or $this->username === "" or $this->iusername === "rcon" or $this->iusername === "console" or $this->iusername === "server"){
 					$this->close("Bad username", false);
 					return;

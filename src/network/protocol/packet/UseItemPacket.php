@@ -32,9 +32,23 @@ class UseItemPacket extends RakNetDataPacket{
 		$this->fz = $this->getFloat();
 		$this->posX = $this->getFloat();
 		$this->posY = $this->getFloat();
-		$this->posZ = $this->getFloat();		
+		$this->posZ = $this->getFloat();
 	}
-	
+	public function decode0105(){
+		$this->x = $this->getInt();
+		$this->y = $this->getInt();
+		$this->z = $this->getInt();
+		$this->face = $this->getByte();
+		$this->item = $this->getShort();
+		$this->meta = $this->getShort();
+		$this->eid = $this->getInt();
+		$this->fx = $this->getFloat();
+		$this->fy = $this->getFloat();
+		$this->fz = $this->getFloat();
+		$this->posX = $this->getFloat();
+		$this->posY = $this->getFloat();
+		$this->posZ = $this->getFloat();
+	}
 	public function encode(){
 
 	}

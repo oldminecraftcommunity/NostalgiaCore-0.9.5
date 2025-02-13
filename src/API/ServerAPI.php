@@ -140,10 +140,19 @@ class ServerAPI{
 			"auto-save" => true,
 			"chunk-send-delay-ticks" => PocketMinecraftServer::$chukSendDelay,
 			"chunk-loading-radius" => PocketMinecraftServer::$chunkLoadingRadius,
-			"abort-reading-after-N-packets" => PocketMinecraftServer::$PACKET_READING_LIMIT
+			"abort-reading-after-N-packets" => PocketMinecraftServer::$PACKET_READING_LIMIT,
+			"add-0.10-features" => PocketMinecraftServer::$is0105,
+			"enable-0.10-0.9-crossplay" => PocketMinecraftServer::$crossplay0105
 		]);
 		Biome::init();
 		$this->parseProperties();
+		PocketMinecraftServer::$is0105 = $this->getProperty("add-0.10-features");
+		PocketMinecraftServer::$crossplay0105 = $this->getProperty("enable-0.10-0.9-crossplay");
+		if(PocketMinecraftServer::$is0105 && PocketMinecraftServer::$crossplay0105){
+			ConsoleAPI::error("Crosplay AND 0.10 features are enabled. Impossible to continue.");
+			exit(0);
+			return;
+		}
 		MobSpawner::$MOB_LIMIT = $this->getProperty("mobs-amount", 50);
 		LevelAPI::$defaultLevelType = $this->getProperty("level-type");
 		PocketMinecraftServer::$PACKET_READING_LIMIT = $this->getProperty("abort-reading-after-N-packets", PocketMinecraftServer::$PACKET_READING_LIMIT);

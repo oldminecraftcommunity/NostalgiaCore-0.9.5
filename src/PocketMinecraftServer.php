@@ -2,6 +2,7 @@
 
 class PocketMinecraftServer{
 	public static $chukSendDelay = 5, $chunkLoadingRadius = 4;
+	public static $is0105 = false, $crossplay0105 = false;
 	public $tCnt, $ticks;
 	public $extraprops, $serverID, $interface, $database, $version, $invisible, $tickMeasure, $preparedSQL, $seed, $gamemode, $name, $maxClients, $clients, $eidCnt, $custom, $description, $motd, $port, $saveEnabled;
 	/**
@@ -32,6 +33,15 @@ class PocketMinecraftServer{
 		}*/
 		
 		console("[INFO] Starting Minecraft PE server on " . ($this->serverip === "0.0.0.0" ? "*" : $this->serverip) . ":" . $this->port);
+		
+		if(PocketMinecraftServer::$is0105){
+			Block::$class[SPRUCE_FENCE_GATE] = "SpruceFenceGateBlock";
+			Block::$class[BIRCH_FENCE_GATE] = "BirchFenceGateBlock";
+			Block::$class[JUNGLE_FENCE_GATE] = "JungleFenceGateBlock";
+			Block::$class[ACACIA_FENCE_GATE] = "AcaciaFenceGateBlock";
+			Block::$class[DARK_OAK_FENCE_GATE] = "DarkOakFenceGateBlock";
+		}
+
 		EntityRegistry::registerEntities();
 		Structures::initialize();
 		Feature::init();

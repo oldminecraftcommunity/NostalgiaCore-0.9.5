@@ -92,8 +92,8 @@ class CraftingRecipes{
 		//Building
 		"WOOL:?x3,WOODEN_PLANKS:?x3=>BED:0x1",
 		"WOODEN_PLANKS:?x8=>CHEST:0x1",
-		"STICK:?x6=>FENCE:0x2",
-		"STICK:?x4,WOODEN_PLANKS:?x2=>FENCE_GATE:0x1",
+		//fence moved to init
+		//fencegate
 		"COBBLESTONE:?x8=>FURNACE:0x1",
 		"GLASS:?x6=>GLASS_PANE:0x16",
 		"STICK:?x7=>LADDER:0x2",
@@ -219,6 +219,29 @@ class CraftingRecipes{
 	public static function init(){
 		$server = ServerAPI::request();
 		$id = 1;
+		if(PocketMinecraftServer::$is0105){
+			$add = [
+				"STICK:?x2,WOODEN_PLANKS:0x4=>FENCE:0x3",
+				"STICK:?x2,WOODEN_PLANKS:1x4=>FENCE:1x3",
+				"STICK:?x2,WOODEN_PLANKS:2x4=>FENCE:2x3",
+				"STICK:?x2,WOODEN_PLANKS:3x4=>FENCE:3x3",
+				"STICK:?x2,WOODEN_PLANKS:4x4=>FENCE:4x3",
+				"STICK:?x2,WOODEN_PLANKS:5x4=>FENCE:5x3",
+				"STICK:?x4,WOODEN_PLANKS:0x2=>FENCE_GATE:0x1",
+				"STICK:?x4,WOODEN_PLANKS:1x2=>SPRUCE_FENCE_GATE:0x1",
+				"STICK:?x4,WOODEN_PLANKS:2x2=>BIRCH_FENCE_GATE:0x1",
+				"STICK:?x4,WOODEN_PLANKS:3x2=>JUNGLE_FENCE_GATE:0x1",
+				"STICK:?x4,WOODEN_PLANKS:4x2=>ACACIA_FENCE_GATE:0x1",
+				"STICK:?x4,WOODEN_PLANKS:5x2=>DARK_OAK_FENCE_GATE:0x1"
+			];
+			foreach($add as $r){
+				self::$big[] = $r;
+			}
+		}else{
+			self::$big[] = "STICK:?x6=>FENCE:0x2";
+			self::$big[] = "STICK:?x4,WOODEN_PLANKS:?x2=>FENCE_GATE:0x1";
+		}
+
 		foreach(CraftingRecipes::$small as $recipe){
 			$recipe = CraftingRecipes::parseRecipe($recipe);
 			$recipe[3] = 0; //Type

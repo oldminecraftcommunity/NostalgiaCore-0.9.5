@@ -274,6 +274,23 @@ class BlockAPI{
 
 	function __construct(){
 		$this->server = ServerAPI::request();
+		if(PocketMinecraftServer::$is0105){
+			$arr = [
+				[FENCE, 1],
+				[FENCE, 2],
+				[FENCE, 3],
+				[FENCE, 4],
+				[FENCE, 5],
+				[SPRUCE_FENCE_GATE, 0],
+				[BIRCH_FENCE_GATE, 0],
+				[JUNGLE_FENCE_GATE, 0],
+				[ACACIA_FENCE_GATE, 0],
+				[DARK_OAK_FENCE_GATE, 0],
+			];
+			foreach($arr as $e){
+				$creative[] = $e;
+			}
+		}
 	}
 	/**
 	 * @param integer $id

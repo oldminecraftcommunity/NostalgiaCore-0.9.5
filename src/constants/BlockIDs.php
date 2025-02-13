@@ -159,6 +159,14 @@ define("REEDS", 83);
 define("SUGARCANE_BLOCK", 83);
 
 define("FENCE", 85);
+
+//0.10.5
+define("SPRUCE_FENCE", "85:1");
+define("BIRCH_FENCE", "85:2");
+define("JUNGLE_FENCE", "85:3");
+define("ACACIA_FENCE", "85:4");
+define("DARK_OAK_FENCE", "85:5");
+
 define("PUMPKIN", 86);
 define("NETHERRACK", 87);
 define("SOUL_SAND", 88);
@@ -186,6 +194,13 @@ define("PUMPKIN_STEM", 104);
 define("MELON_STEM", 105);
 define("VINES", 106);
 define("FENCE_GATE", 107);
+
+define("SPRUCE_FENCE_GATE", 183);
+define("BIRCH_FENCE_GATE", 184);
+define("JUNGLE_FENCE_GATE", 185);
+define("ACACIA_FENCE_GATE", 186);
+define("DARK_OAK_FENCE_GATE", 187);
+
 define("BRICK_STAIRS", 108);
 define("STONE_BRICK_STAIRS", 109);
 define("MYCELIUM", 110);
