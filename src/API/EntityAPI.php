@@ -261,7 +261,7 @@ class EntityAPI{
 		}
 	}
 	
-	public function drop(Position $pos, Item $item){
+	public function drop(Position $pos, Item $item, $pickupDelay = 10){
 		if($item->getID() === AIR or $item->count <= 0){
 			return;
 		}
@@ -280,6 +280,7 @@ class EntityAPI{
 				$item->count = min($item->getMaxStackSize(), $count);
 				$count -= $item->count;
 				$e = $this->add($pos->level, ENTITY_ITEM, $item->getID(), $data);
+				$e->delayBeforePickup = $pickupDelay;
 				$this->spawnToAll($e);
 				$this->server->api->handle("entity.motion", $e);
 			}

@@ -156,6 +156,7 @@ class Entity extends Position
 				$this->hasGravity = true;
 				$this->setHealth(5, "generic");
 				$this->setSize(0.25, 0.25);
+				$this->delayBeforePickup = 40; //in vanilla it is 0 by default
 				break;
 			case ENTITY_FALLING:
 				$this->setHealth(PHP_INT_MAX, "generic");
