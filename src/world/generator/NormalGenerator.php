@@ -88,6 +88,7 @@ class NormalGenerator implements NewLevelGenerator{
 		$hills = array();
 		$base = array();
 		$biomes = str_repeat(chr(BIOME_PLAINS), 256);
+		$biomecolors = str_repeat("\x00\xff\xff\x00\x00\x00\x00\xff", 128);
 		for($z = 0; $z < 16; ++$z){
 			for($x = 0; $x < 16; ++$x){
 				$biomes[($z << 4) + $x] = chr($this->pickBiome($chunkX * 16 + $x, $chunkZ * 16 + $z)->id);
@@ -156,6 +157,7 @@ class NormalGenerator implements NewLevelGenerator{
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
 		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, $biomes);
+		$this->level->level->setGrassColorArrayForChunk($chunkX, $chunkZ, $biomecolors);
 		if(self::HIDDEN_FEATURES) {
 			$this->caveGenerator->generate($this->level, $chunkX, $chunkZ); //TODO speedup
 			$this->mineshaftGenerator->generate($this->level, $chunkX, $chunkZ);

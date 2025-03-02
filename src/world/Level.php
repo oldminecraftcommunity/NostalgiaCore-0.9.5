@@ -153,7 +153,7 @@ class Level{
 		$orderedSkyLight = ""; //str_repeat("\xff", 16*16*64);
 		$orderedLight = ""; //str_repeat("\xff", 16*16*64);
 		$orderedBiomeIds = ""; //
-		$orderedBiomeColors = str_repeat("\x00\x85\xb2\x4a", 256); // also PM 1.4
+		$orderedBiomeColors = ""; //str_repeat("\x00\x85\xb2\x4a", 256); // also PM 1.4
 		$tileEntities = "";
 		if($gen) $this->level->generateChunk($X, $Z, $this->generator);
 		if(!$this->level->isChunkLoaded($X, $Z)){
@@ -164,8 +164,11 @@ class Level{
 		for($y = 0; $y < 8; ++$y){
 			$miniChunks[$y] = $gen ? $this->level->getMiniChunk($X, $Z, $y) : str_repeat("\x00", 8192);
 		}
-		$orderedBiomeIds = $this->level->chunkInfo[$this->level->getIndex($X, $Z)][0];
-		
+
+		$ci = $this->level->getIndex($X, $Z);
+		$orderedBiomeIds = $this->level->chunkInfo[$ci][0];
+		$orderedBiomeColors = $this->level->chunkInfo[$ci][1];
+
 		for ($i = 0; $i < 16; $i++){
 			for ($j = 0; $j < 16; $j++){
 				$bIndex = ($i << 6) + ($j << 10);
