@@ -27,6 +27,11 @@ abstract class Biome{
 		return $this->id;
 	}
 	
+	public function setTempDown($temp, $down){
+		$this->temperature = $temp;
+		$this->downfall = $down;
+	}
+	
 	public function setMinMax($min, $max){
 		$this->minY = $min;
 		$this->maxY = $max;
@@ -48,6 +53,17 @@ abstract class Biome{
 		$this->fillerBlock = $id;
 	}
 	
+	public function getGrassColor($x, $z){
+		$temp = $this->temperature;
+		$down = $this->downfall;
+		if($temp > 1) $temp = 1;
+		if($temp < 0) $temp = 0;
+		if($down > 1) $down = 1;
+		if($down < 0) $down = 0;
+		return GrassColor::getGrassColor($temp, $down);
+	}
+	
+	
 	public function getBiomeAt($x, $z){
 		self::$biomeLookup[$x + $z * 64];
 	}
@@ -67,13 +83,14 @@ abstract class Biome{
 		BiomeSelector::registerBiome(new BiomeIcePlains(BIOME_ICE_PLAINS, "Ice Plains"));
 		BiomeSelector::registerBiome(new BiomeDesert(BIOME_DESERT, "Desert"));
 		BiomeSelector::registerBiome(new BiomeTaiga(BIOME_TAIGA, "Taiga"));
-		BiomeSelector::registerBiome(new BiomeForest(BIOME_FOREST, "Forest"));
-		BiomeSelector::registerBiome(new BiomeForest(BIOME_BIRCH_FOREST, "Birch Forest"));
+		BiomeSelector::registerBiome($bf = new BiomeForest(BIOME_FOREST, "Forest"));
+		$bf->setTempDown(0.7, 0.8);
+		BiomeSelector::registerBiome($bf = new BiomeForest(BIOME_BIRCH_FOREST, "Birch Forest"));
+		$bf->setTempDown(0.6, 0.6);
 		BiomeSelector::registerBiome(new BiomeJungle(BIOME_JUNGLE, "Jungle"));
 
 	}
 
 	private static $initialized = false;
-	public static $temperature, $rainfall;
-	public static $biomes = [];
+	public $temperature, $downfall;
 }

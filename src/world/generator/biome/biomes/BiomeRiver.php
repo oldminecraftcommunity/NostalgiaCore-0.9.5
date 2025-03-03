@@ -14,5 +14,6 @@ class BiomeRiver extends BiomeWithGrass{
 		$this->addPopulator($tallGrass);
 		*/
 		$this->setMinMax(58, 62);
+		$this->setTempDown(0.5, 0.5);
 	}
 }

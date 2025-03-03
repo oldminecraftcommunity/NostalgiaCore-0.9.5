@@ -15,6 +15,7 @@ class BiomeSwamp extends BiomeWithGrass
 		$this->addPopulator($lilypad);
 		 */
 		$this->setMinMax(62, 63);
+		$this->setTempDown(0.8, 0.9);
 	}
 }
 

@@ -88,7 +88,7 @@ class NormalGenerator implements NewLevelGenerator{
 		$hills = array();
 		$base = array();
 		$biomes = str_repeat(chr(BIOME_PLAINS), 256);
-		$biomecolors = str_repeat("\x00\xff\xff\x00\x00\x00\x00\xff", 128);
+		$biomecolors = ""; //str_repeat("\x00\xff\xff\x00\x00\x00\x00\xff", 128);
 		for($z = 0; $z < 16; ++$z){
 			for($x = 0; $x < 16; ++$x){
 				$biomes[($z << 4) + $x] = chr($this->pickBiome($chunkX * 16 + $x, $chunkZ * 16 + $z)->id);
@@ -101,6 +101,14 @@ class NormalGenerator implements NewLevelGenerator{
 				}
 			}
 		}
+		
+		for($i = 0; $i < 256; ++$i){
+			$biome = BiomeSelector::get(ord($biomes[$i]));
+			$col = $biome->getGrassColor(0, 0); //TODO move to populate, add blending
+			$biomecolors .= $col;
+		}
+
+
 		for($chunkY = 0; $chunkY < 8; ++$chunkY){
 			$chunk = "";
 			$startY = $chunkY << 4;

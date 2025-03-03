@@ -42,6 +42,7 @@ class PocketMinecraftServer{
 			Block::$class[DARK_OAK_FENCE_GATE] = "DarkOakFenceGateBlock";
 		}
 
+		GrassColor::init();
 		EntityRegistry::registerEntities();
 		Structures::initialize();
 		Feature::init();
