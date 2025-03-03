@@ -125,6 +125,16 @@ class Level{
 		}
 	}
 	
+	public function getBiomeId($x, $z){
+		$X = $x >> 4;
+		$Z = $z >> 4;
+		//$gen = $this->generatorType === 1 || !($X > 15 || $X < 0 || $Z > 15 || $Z < 0);
+		if(!$this->level->isChunkLoaded($X, $Z) && $this->level->loadChunk($X, $Z, false) === false){
+			$this->level->createUnpopulatedChunk($X, $Z);
+		}
+		return $this->level->getBiomeId($x, $z);
+	}
+	
 	public function fastSetBlockUpdateMeta($x, $y, $z, $meta, $updateBlock = false){
 		$this->level->setBlockDamage($x, $y, $z, $meta);
 		$pk = new UpdateBlockPacket;
@@ -156,6 +166,9 @@ class Level{
 		$orderedBiomeColors = ""; //str_repeat("\x00\x85\xb2\x4a", 256); // also PM 1.4
 		$tileEntities = "";
 		if($gen) $this->level->generateChunk($X, $Z, $this->generator);
+		if(!$this->level->isChunkPopulated($X, $Z)){
+			$this->level->unloadChunk($X, $Z);
+		}
 		if(!$this->level->isChunkLoaded($X, $Z)){
 			$this->level->loadChunk($X, $Z, true);
 		}
@@ -171,6 +184,7 @@ class Level{
 
 		for ($i = 0; $i < 16; $i++){
 			for ($j = 0; $j < 16; $j++){
+				//$orderedBiomeColors .= GrassColor::getBlendedGrassColor($this, $j+$X*16, $i+$Z*16);
 				$bIndex = ($i << 6) + ($j << 10);
 				foreach($miniChunks as $chunk){
 					$orderedIds .= substr($chunk, $bIndex, 16);

@@ -489,11 +489,16 @@ class PMFLevel extends PMF{
 		return true;
 	}
 
+	public function isChunkPopulated($X, $Z){
+		return $this->populated[self::getIndex($X, $Z)] ?? false;
+	}
+	
 	public function isChunkLoaded($X, $Z){
 		$index = $this->getIndex($X, $Z);
 		if(!isset($this->chunks[$index]) or $this->chunks[$index] === false){
 			return false;
 		}
+
 		return true;
 	}
 
