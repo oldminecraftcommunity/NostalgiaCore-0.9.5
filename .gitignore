@@ -8,7 +8,7 @@ bin/*
 *.pmf
 *.txt
 *.properties
-
+*.swp
 
 ############
 ## Windows
