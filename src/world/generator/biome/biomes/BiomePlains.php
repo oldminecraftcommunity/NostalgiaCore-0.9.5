@@ -8,6 +8,6 @@ class BiomePlains extends BiomeWithGrass{
 	}
 	
 	public function getTree(Random $random){
-		return $random->nextInt(10) == 0 ? new SmallTreeObject(SaplingBlock::OAK) : null;
+		return $random->nextInt(20) == 0 ? new SmallTreeObject(SaplingBlock::OAK) : null;
 	}
 }

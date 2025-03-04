@@ -88,7 +88,7 @@ abstract class Biome{
 		BiomeSelector::registerBiome($bf = new BiomeForest(BIOME_BIRCH_FOREST, "Birch Forest"));
 		$bf->setTempDown(0.6, 0.6);
 		BiomeSelector::registerBiome(new BiomeJungle(BIOME_JUNGLE, "Jungle"));
-
+		BiomeSelector::registerBiome(new BiomeSavanna(BIOME_SAVANNA, "Savanna"));
 	}
 
 	private static $initialized = false;

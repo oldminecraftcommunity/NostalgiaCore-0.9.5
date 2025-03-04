@@ -43,7 +43,7 @@ class CaveGenerator extends StructureBase
 		$chunkCenterX = $chunkX*16 + 8;
 		$chunkCenterZ = $chunkZ*16 + 8;
 		$f = $f3 = 0;
-		$random = new MTRandom($this->rand->nextInt());
+		$random = new XorShift128Random($this->rand->nextInt());
 		
 		if($unk_2 <= 0){
 			$i = ($this->range * 16) - 16;
@@ -76,8 +76,6 @@ class CaveGenerator extends StructureBase
 			$f += ($random->nextFloat() - $random->nextFloat()) * $random->nextFloat() * 2;
 			
 			if(!$z2 && $unk_1 == $var27 && $randFloat > 1 && $unk_2 > 0){
-				//this.generateCaveNode(random.nextLong(), chunkX, chunkZ, par5ArrayOfByte, x, y, z, random.nextFloat() * 0.5F + 0.5F, f1 - ((float)Math.PI / 2F), f2 / 3.0F, unk_1, unk_2, 1.0D);
-				//this.generateCaveNode(random.nextLong(), chunkX, chunkZ, par5ArrayOfByte, x, y, z, random.nextFloat() * 0.5F + 0.5F, f1 + ((float)Math.PI / 2F), f2 / 3.0F, unk_1, unk_2, 1.0D);
 				$this->generateCaveNode($level, $chunkX, $chunkZ, $x, $y, $z, $random->nextFloat() * 0.5 + 0.5, $f1 - (M_PI / 2), $f2 / 3, $unk_1, $unk_2, 1);
 				$this->generateCaveNode($level, $chunkX, $chunkZ, $x, $y, $z, $random->nextFloat() * 0.5 + 0.5, $f1 + (M_PI / 2), $f2 / 3, $unk_1, $unk_2, 1);
 				return;

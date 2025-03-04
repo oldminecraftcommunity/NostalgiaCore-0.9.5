@@ -101,12 +101,6 @@ class NormalGenerator implements NewLevelGenerator{
 				}
 			}
 		}
-		
-		/*for($i = 0; $i < 256; ++$i){
-			$biome = BiomeSelector::get(ord($biomes[$i]));
-			$col = $biome->getGrassColor(0, 0); //TODO move to populate, add blending
-			$biomecolors .= $col;
-		}*/
 
 
 		for($chunkY = 0; $chunkY < 8; ++$chunkY){
@@ -165,9 +159,11 @@ class NormalGenerator implements NewLevelGenerator{
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
 		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, $biomes);
-
+		if(PocketMinecraftServer::$generateCaves){
+			$this->caveGenerator->generate($this->level, $chunkX, $chunkZ);
+		}
+		
 		if(self::HIDDEN_FEATURES) {
-			$this->caveGenerator->generate($this->level, $chunkX, $chunkZ); //TODO speedup
 			$this->mineshaftGenerator->generate($this->level, $chunkX, $chunkZ);
 		}
 	}
