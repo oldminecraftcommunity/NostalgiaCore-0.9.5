@@ -34,7 +34,7 @@ class NormalGenerator implements NewLevelGenerator{
 		$this->noiseHills = new NoiseGeneratorPerlin($this->random, 3);
 		$this->noisePatches = new NoiseGeneratorPerlin($this->random, 2);
 		$this->noisePatchesSmall = new NoiseGeneratorPerlin($this->random, 2);
-		$this->noiseBase = new NoiseGeneratorPerlin($this->random, 16);
+		$this->noiseBase = new NoiseGeneratorSimplex($this->random, 12);
 		$this->biomeSelector = new NormalGeneratorBiomeSelector($this->random, BiomeSelector::$biomes[BIOME_PLAINS]);
 		
 		$ores = new OrePopulator();
@@ -93,9 +93,9 @@ class NormalGenerator implements NewLevelGenerator{
 			for($x = 0; $x < 16; ++$x){
 				$biomes[($z << 4) + $x] = chr($this->pickBiome($chunkX * 16 + $x, $chunkZ * 16 + $z)->id);
 				$i = ($z << 4) + $x;
-				$hills[$i] = $this->noiseHills->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.11, 12, true);
+				$hills[$i] = $this->noiseHills->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.15, 12, true);
 				$patches[$i] = $this->noisePatches->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.03, 16, true);
-				$base[$i] = $this->noiseBase->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.7, 16, true);
+				$base[$i] = $this->noiseBase->noise2D($x + ($chunkX << 4), $z + ($chunkZ << 4), 0.7, 32, true);
 				if($base[$i] < 0){
 					$base[$i] *= 0.5;
 				}
