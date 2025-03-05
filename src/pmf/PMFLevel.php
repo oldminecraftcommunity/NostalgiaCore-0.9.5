@@ -140,7 +140,7 @@ class PMFLevel extends PMF{
 		$this->chunks[$index] = [];
 		$this->chunkChange[$index] = [-1 => false];
 		$this->chunkInfo[$index][0] = str_repeat(ord(BIOME_PLAINS), 256);
-		$this->chunkInfo[$index][1] = str_repeat("\x00\x85\xb2\x4a", 256); //TODO some way to regenerate coltable?
+		$this->chunkInfo[$index][1] = ""; //biome color data, passing strlen==0 to force regenerate on next normal chunk load
 		$this->setPopulated($X, $Z);
 		
 		for($Y = 0; $Y < $this->levelData["height"]; ++$Y){
@@ -201,7 +201,7 @@ class PMFLevel extends PMF{
 		$this->chunks[$index] = [];
 		$this->chunkChange[$index] = [-1 => false];
 		$this->chunkInfo[$index][0] = substr($chunk, $offset, 256); //Biome data
-		$this->chunkInfo[$index][1] = str_repeat("\x00\x85\xb2\x4a", 256); //TODO some way to regenerate coltable?
+		$this->chunkInfo[$index][1] = ""; //biome color data, passing strlen==0 to force regenerate on next normal chunk load
 		$offset += 256;
 		for($Y = 0; $Y < $this->levelData["height"]; ++$Y){
 			$t = 1 << $Y;
@@ -450,10 +450,14 @@ class PMFLevel extends PMF{
 		return ord($this->chunkInfo[$index][0][$aX + ($aZ << 4)]);
 	}
 	public function setGrassColorArrayForChunk($x, $z, $biomecols){
-		$this->chunkInfo[$this->getIndex($x, $z)][1] = $biomecols;
+		$index = $this->getIndex($x, $z);
+		$this->chunkChange[$index][-1] = true;
+		$this->chunkInfo[$index][1] = $biomecols;
 	}
 	public function setBiomeIdArrayForChunk($x, $z, $biomeIds){
-		$this->chunkInfo[$this->getIndex($x, $z)][0] = $biomeIds;
+		$index = $this->getIndex($x, $z);
+		$this->chunkChange[$index][-1] = true;
+		$this->chunkInfo[$index][0] = $biomeIds;
 	}
 	public function setBiomeId($x, $z, $id){
 		$X = $x >> 4;
@@ -513,7 +517,7 @@ class PMFLevel extends PMF{
 			return false;
 		}
 		$index = $this->getIndex($X, $Z);
-		if(!isset($this->chunkChange[$index]) or $this->chunkChange[$index][-1] === false){//No changes in chunk
+		if(!isset($this->chunkChange[$index]) or $this->chunkChange[$index][-1] === false){ //No changes in chunk
 			return true;
 		}
 
@@ -522,10 +526,13 @@ class PMFLevel extends PMF{
 		for($Y = 0; $Y < 8; ++$Y){
 			$bitmap |= ($this->chunks[$index][$Y] !== false and ((isset($this->chunkChange[$index][$Y]) and $this->chunkChange[$index][$Y] === 0) or !$this->isMiniChunkEmpty($X, $Z, $Y))) << $Y;
 		}
-		gzwrite($chunk, Utils::writeShort($bitmap), 2); //2 bytes locmap(actually it should be only 1)
-		gzwrite($chunk, chr($this->populated[$index]), 1); //isPopulated
+		
 		$biomedata = $this->chunkInfo[$index][0];
 		$biomecolordata = $this->chunkInfo[$index][1];
+		
+		gzwrite($chunk, Utils::writeShort($bitmap), 2); //2 bytes locmap(actually it should be only 1)
+		gzwrite($chunk, chr($this->populated[$index]), 1); //isPopulated
+		gzwrite($chunk, chr(strlen($biomecolordata) == 1024), 1); //has biome color data
 		if(strlen($biomedata) < 256){
 			$biomedata = str_repeat("\x01", 256);
 		}
@@ -615,6 +622,8 @@ class PMFLevel extends PMF{
 		$offset+=2;
 		$populated = ord($chunk[$offset]) > 0;
 		++$offset;
+		$hasbiomecolors = ord($chunk[$offset]) > 0;
+		++$offset;
 		$this->chunks[$index] = [];
 		$this->chunkChange[$index] = [-1 => false];
 		$this->chunkInfo[$index][0] = substr($chunk, $offset, 256); //Biome data
@@ -637,6 +646,15 @@ class PMFLevel extends PMF{
 		$this->setPopulated($X, $Z, $populated);
 		if($populate && !$populated){
 			$this->level->generator->populateChunk($X, $Z);
+		}else if($populated && !$hasbiomecolors){
+			$biomecolors = "";
+			for($z = 0; $z < 16; ++$z){
+				for($x = 0; $x < 16; ++$x){
+					$color = GrassColor::getBlendedGrassColor($this->level, $X*16+$x, $Z*16+$z);
+					$biomecolors .= $color;
+				}
+			}
+			$this->setGrassColorArrayForChunk($X, $Z, $biomecolors);
 		}
 		return true;
 	}
