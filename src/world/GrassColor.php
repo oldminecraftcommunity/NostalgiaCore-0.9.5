@@ -36,8 +36,8 @@ class GrassColor{
 		$red = (int) ($red / 96);
 		$green = (int) ($green / 96);
 		$blue = (int) ($blue / 96);
-		
-		return "\x00".chr($red & 0xff).chr($green & 0xff).chr($blue & 0xff);
+		$biome = $level->getBiomeId($x, $z); //used for LevelChunk::getBiome in mcpe(i love mojang)
+		return chr($biome).chr($red & 0xff).chr($green & 0xff).chr($blue & 0xff);
 	}
 
 	public static function init(){

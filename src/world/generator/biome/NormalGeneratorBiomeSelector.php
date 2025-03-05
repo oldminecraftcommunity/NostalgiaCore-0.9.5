@@ -14,6 +14,8 @@ class NormalGeneratorBiomeSelector extends BiomeSelector
 		if($r < 0.50){
 			if($t < 0.75){
 				return BIOME_PLAINS;
+			}else if($t < 0.9){
+				return BIOME_SAVANNA;
 			}else{
 				return BIOME_DESERT;
 			}

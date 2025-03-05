@@ -9,8 +9,7 @@ class BiomeSavanna extends BiomeWithGrass
 	}
 	
 	public function getTree(Random $random){
-		console("yes");
-		return new AcaciaTreeObject();
+		return $random->nextInt(5) == 0 ? new AcaciaTreeObject() : null;
 	}
 }
 
