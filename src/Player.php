@@ -522,7 +522,7 @@ class Player{
 		if(count($this->chunksOrder) <= 0 && $this->level->generatorType != 0){
 			$this->orderChunks();
 		}
-	
+		//console("biome: ".$this->entity->level->level->getBiomeId((int)$this->entity->x, (int)$this->entity->z));
 		if($this->isSleeping) ++$this->sleepingTime;
 		if($this->chunkTicker++ > PocketMinecraftServer::$chukSendDelay){
 			$this->getNextChunk($this->level);
