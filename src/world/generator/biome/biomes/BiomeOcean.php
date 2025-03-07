@@ -6,6 +6,7 @@ class BiomeOcean extends BiomeWithGrass
 		parent::__construct($id, $name);
 		//TODO pop sugarcane, tallgrass
 		$this->setMinMax(46, 68);
+		$this->setTempDown(0.5, 0.5);
 	}
 }
 

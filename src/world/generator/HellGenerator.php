@@ -127,6 +127,15 @@ class HellGenerator implements NewLevelGenerator{
 			$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
+		
+		$biomecolors = "";
+		for($z = 0; $z < 16; ++$z){
+			for($x = 0; $x < 16; ++$x){
+				$color = GrassColor::getBlendedGrassColor($this->level, ($chunkX*16)+$x, ($chunkZ*16)+$z);
+				$biomecolors .= $color;
+			}
+		}
+		$this->level->level->setGrassColorArrayForChunk($chunkX, $chunkZ, $biomecolors);
 	}
 
 	public function getSpawn(){

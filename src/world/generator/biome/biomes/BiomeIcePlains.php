@@ -6,6 +6,7 @@ class BiomeIcePlains extends BiomeWithSnow
 		parent::__construct($id, $name);
 		
 		$this->setMinMax(63, 74);
+		$this->setTempDown(0.0, 0.5);
 	}
 }
 

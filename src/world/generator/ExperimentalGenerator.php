@@ -61,7 +61,7 @@ class ExperimentalGenerator implements NewLevelGenerator{
 		$ores = new OrePopulator();
 		$ores->setOreTypes(array(
 			new OreType(new CoalOreBlock(), 20, 16, 0, 128),
-			new OreType(New IronOreBlock(), 20, 8, 0, 64),
+			new OreType(new IronOreBlock(), 20, 8, 0, 64),
 			new OreType(new RedstoneOreBlock(), 8, 7, 0, 16),
 			new OreType(new LapisOreBlock(), 1, 6, 0, 32),
 			new OreType(new GoldOreBlock(), 2, 8, 0, 32),
@@ -174,6 +174,15 @@ class ExperimentalGenerator implements NewLevelGenerator{
 		foreach($this->populators as $populator){
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
+		
+		$biomecolors = "";
+		for($z = 0; $z < 16; ++$z){
+			for($x = 0; $x < 16; ++$x){
+				$color = GrassColor::getBlendedGrassColor($this->level, ($chunkX*16)+$x, ($chunkZ*16)+$z);
+				$biomecolors .= $color;
+			}
+		}
+		$this->level->level->setGrassColorArrayForChunk($chunkX, $chunkZ, $biomecolors);
 	}
 	public static function getFastNoise3D(NoiseGenerator $noise, $xSize, $ySize, $zSize, $xSamplingRate, $ySamplingRate, $zSamplingRate, $x, $y, $z){
 		$noiseArray = array_fill(0, $xSize + 1, array_fill(0, $zSize + 1, []));

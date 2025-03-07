@@ -453,7 +453,7 @@ class Player{
 		$X = ((int)$this->entity->x) >> 4;
 		$Z = ((int)$this->entity->z) >> 4;
 		
-		if($force === false && $X == $this->prevChunkX && $Z == $this->prevChunkZ){
+		if($force === false && $X === $this->prevChunkX && $Z === $this->prevChunkZ){
 			return; //doesnt need reorder
 		}
 		$this->prevChunkX = $X;
@@ -522,7 +522,7 @@ class Player{
 		if(count($this->chunksOrder) <= 0 && $this->level->generatorType != 0){
 			$this->orderChunks();
 		}
-	
+		//console("biome: ".$this->entity->level->level->getBiomeId((int)$this->entity->x, (int)$this->entity->z));
 		if($this->isSleeping) ++$this->sleepingTime;
 		if($this->chunkTicker++ > PocketMinecraftServer::$chukSendDelay){
 			$this->getNextChunk($this->level);
@@ -534,7 +534,7 @@ class Player{
 		if($this->connected === false or $world != $this->level){
 			return false;
 		}
-
+		
 		foreach($this->chunkCount as $count => $t){
 			if(isset($this->recoveryQueue[$count]) or isset($this->resendQueue[$count])){
 				return;
@@ -548,7 +548,7 @@ class Player{
 		if($c === null or $d === null){
 			return false;
 		}
-
+		
 		unset($this->chunksOrder[$c]);
 		$this->chunksLoaded[$c] = true;
 		$id = explode(":", $c);

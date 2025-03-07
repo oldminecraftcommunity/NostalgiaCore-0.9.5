@@ -1,15 +1,15 @@
 <?php
 
-class BiomeJungle extends BiomeWithGrass
+class BiomeSavanna extends BiomeWithGrass
 {
 	public function __construct($id, $name){
 		parent::__construct($id, $name);
 		$this->setMinMax(63, 81);
-		$this->setTempDown(0.95, 0.9);
+		$this->setTempDown(1.2, 0.0);
 	}
 	
 	public function getTree(Random $random){
-		return new SmallTreeObject(SaplingBlock::JUNGLE);
+		return $random->nextInt(5) == 0 ? new AcaciaTreeObject() : null;
 	}
 }
 

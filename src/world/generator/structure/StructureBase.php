@@ -6,7 +6,7 @@ abstract class StructureBase
 	public $rand;
 	
 	public function __construct(){
-		$this->rand = new MTRandom();
+		$this->rand = new XorShift128Random();
 	}
 	
 	public function generate(Level $level, $chunkX, $chunkZ){

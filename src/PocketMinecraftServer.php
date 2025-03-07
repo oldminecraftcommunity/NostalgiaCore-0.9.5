@@ -1,6 +1,7 @@
 <?php
 
 class PocketMinecraftServer{
+	public static $generateCaves = false;
 	public static $chukSendDelay = 5, $chunkLoadingRadius = 4;
 	public static $is0105 = false, $crossplay0105 = false;
 	public $tCnt, $ticks;
@@ -42,6 +43,7 @@ class PocketMinecraftServer{
 			Block::$class[DARK_OAK_FENCE_GATE] = "DarkOakFenceGateBlock";
 		}
 
+		GrassColor::init();
 		EntityRegistry::registerEntities();
 		Structures::initialize();
 		Feature::init();
