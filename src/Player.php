@@ -1308,7 +1308,7 @@ class Player{
 					$this->is0105Client = true;
 					goto next;
 				}
-				if(!PocketMinecraftServer::$is0105 && ($packet->protocol1 === 17 && $packet->protocol1 === ProtocolInfo::CURRENT_PROTOCOL)){
+				if(!PocketMinecraftServer::$is0105 && ($packet->protocol1 === 17 || $packet->protocol1 === ProtocolInfo::CURRENT_PROTOCOL)){
 					$this->is0105Client = false;
 					goto next;
 				}
