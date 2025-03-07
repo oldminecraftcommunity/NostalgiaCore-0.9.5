@@ -10,7 +10,7 @@ define("BIOME_TAIGA", 5);
 define("BIOME_SWAMP", 6);
 define("BIOME_RIVER", 7);
 define("BIOME_HELL", 8); //yes it is a biome in 0.9
-//id 9 found, not sure about name, maybe sky
+define("BIOME_SKY", 9); //class name: TheEndBiome
 define("BIOME_FROZEN_OCEAN", 10);
 define("BIOME_FROZEN_RIVER", 11);
 define("BIOME_ICE_PLAINS", 12);

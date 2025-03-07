@@ -89,6 +89,8 @@ abstract class Biome{
 		$bf->setTempDown(0.6, 0.6);
 		BiomeSelector::registerBiome(new BiomeJungle(BIOME_JUNGLE, "Jungle"));
 		BiomeSelector::registerBiome(new BiomeSavanna(BIOME_SAVANNA, "Savanna"));
+		BiomeSelector::registerBiome(new BiomeHell(BIOME_HELL, "Hell"));
+		BiomeSelector::registerBiome(new BiomeEnd(BIOME_SKY, "Sky")); //crashes the game
 	}
 
 	private static $initialized = false;

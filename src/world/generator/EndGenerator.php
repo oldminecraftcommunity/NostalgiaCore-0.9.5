@@ -104,7 +104,7 @@ class EndGenerator implements NewLevelGenerator{
 			}
 			$this->level->setMiniChunk($chunkX, $chunkZ, $chunkY, $chunk);
 		}
-		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, str_repeat(chr(9), 256));
+		$this->level->level->setBiomeIdArrayForChunk($chunkX, $chunkZ, str_repeat(chr(BIOME_OCEAN), 256)); //BIOME_SKY crashes the game, BIOME_OCEAN seems to have same color as end
 		foreach($this->generationPopulators as $populator){
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
@@ -116,6 +116,15 @@ class EndGenerator implements NewLevelGenerator{
 			$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
+
+		$biomecolors = "";
+		for($z = 0; $z < 16; ++$z){
+			for($x = 0; $x < 16; ++$x){
+				$color = GrassColor::getBlendedGrassColor($this->level, ($chunkX*16)+$x, ($chunkZ*16)+$z);
+				$biomecolors .= $color;
+			}
+		}
+		$this->level->level->setGrassColorArrayForChunk($chunkX, $chunkZ, $biomecolors);
 	}
 
 	public function getSpawn(){
