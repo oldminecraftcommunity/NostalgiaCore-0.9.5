@@ -129,7 +129,12 @@ class NormalGenerator implements NewLevelGenerator{
 							}
 						}elseif($y <= $this->waterHeight){
 							if(($this->waterHeight - $y) <= 1 and $diff === 0){
-								$chunk .= ($biomeID === BIOME_TAIGA) ? chr(GRASS) : chr(SAND);
+								if($biomeID === BIOME_TAIGA){
+									if($y == $this->waterHeight) $chunk .= chr(GRASS);
+									else $chunk .= chr(DIRT);
+								}else{
+									$chunk .= chr(SAND);
+								}
 							}elseif($diff === 0){
 								$chunk .= "\x03"; //dirt
 							}else{
